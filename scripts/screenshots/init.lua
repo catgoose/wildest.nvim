@@ -347,6 +347,7 @@ local theme_names = {
   "everforest_dark",
   "everforest_light",
   "dracula",
+  "solarized_dark",
 }
 
 -- Theme configs are lazy: store factory functions so only the selected

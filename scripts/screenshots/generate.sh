@@ -73,6 +73,7 @@ THEME_CONFIGS=(
   theme_everforest_dark
   theme_everforest_light
   theme_dracula
+  theme_solarized_dark
 )
 
 FEATURE_CONFIGS=(
