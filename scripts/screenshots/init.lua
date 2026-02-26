@@ -197,6 +197,56 @@ configs.renderer_mux = function()
   }
 end
 
+-- ── Pipeline configs ─────────────────────────────────────────────
+
+-- Lua expression completion (:lua vim.)
+configs.lua_pipeline = function()
+  return {
+    pipeline = w.branch(w.lua_pipeline(), w.cmdline_pipeline({ fuzzy = true })),
+    renderer = w.theme("auto").renderer({
+      highlighter = w.fzy_highlighter(),
+      left = left_with_devicons(),
+      right = { " ", w.popupmenu_scrollbar() },
+    }),
+  }
+end
+
+-- Help tag completion (:help)
+configs.help_pipeline = function()
+  return {
+    pipeline = w.branch(w.help_pipeline({ fuzzy = true }), w.cmdline_pipeline({ fuzzy = true })),
+    renderer = w.theme("auto").renderer({
+      highlighter = w.fzy_highlighter(),
+      left = left_with_devicons(),
+      right = { " ", w.popupmenu_scrollbar() },
+    }),
+  }
+end
+
+-- History completion
+configs.history_pipeline = function()
+  return {
+    pipeline = w.branch(w.history_pipeline(), w.cmdline_pipeline({ fuzzy = true })),
+    renderer = w.theme("auto").renderer({
+      highlighter = w.fzy_highlighter(),
+      left = { " " },
+      right = { " ", w.popupmenu_scrollbar() },
+    }),
+  }
+end
+
+-- Kind icons showcase
+configs.kind_icons = function()
+  return {
+    pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
+    renderer = w.theme("auto").renderer({
+      highlighter = w.fzy_highlighter(),
+      left = { " ", w.popupmenu_kind_icon() },
+      right = { " ", w.popupmenu_scrollbar() },
+    }),
+  }
+end
+
 -- ── Custom highlight configs ──────────────────────────────────────
 
 -- Neon: bright cyberpunk-inspired highlights
