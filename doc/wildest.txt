@@ -1291,6 +1291,13 @@ wildest.ResultOpts                                          *wildest.ResultOpts*
         {output?}       (fun(data:table,candidate:any):string)
 
 
+                                     *wildest.renderer.setup_default_highlights*
+M.setup_default_highlights()
+     Define all Wildest* highlight groups with default links to standard Neovim
+     groups. Uses `default = true` so these are no-ops when a theme has already
+     set explicit colors for these groups.
+
+
 M.parse_dimension({value}, {total})           *wildest.renderer.parse_dimension*
      Parse a dimension value: integer, percentage string, or 'auto'
 
