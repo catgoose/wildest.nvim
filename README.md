@@ -26,6 +26,7 @@
     - [Buffer Flags](#buffer-flags)
   - [Highlighters](#highlighters)
     - [Gradient Highlighting](#gradient-highlighting)
+  - [Highlight Groups](#highlight-groups)
   - [War Paint (Themes)](#war-paint-themes)
     - [Auto Theme](#auto-theme)
     - [Custom Theme](#custom-theme)
@@ -196,6 +197,8 @@ that take input and produce completion candidates. Think of it like a cattle
 drive - input goes in one end, completions come out the other.
 
 ### Built-in Pipelines
+
+![Search Pipeline](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png)
 
 | Pipeline                 | What it wrangles                                              |
 | ------------------------ | ------------------------------------------------------------- |
@@ -440,6 +443,17 @@ handles everything else.
 
 ## Brandin' Iron (Renderers)
 
+<table>
+<tr>
+<td align="center"><strong>Popupmenu</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu.png" width="400"></td>
+<td align="center"><strong>Bordered</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_border.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>Palette</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_palette.png" width="400"></td>
+<td align="center"><strong>Wildmenu</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu.png" width="400"></td>
+</tr>
+</table>
+
 ### Plain Popupmenu
 
 ```lua
@@ -563,6 +577,8 @@ w.renderer_mux({
 
 ## Tin Stars (Components)
 
+![Devicons](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons.png)
+
 Decorate your popupmenu and wildmenu with components:
 
 ### Popupmenu Components
@@ -616,6 +632,8 @@ Make them matched characters glow like campfire embers:
 
 ### Gradient Highlighting
 
+![Gradient Highlighting](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient.png)
+
 ```lua
 local gradient = {}
 for i = 0, 15 do
@@ -627,6 +645,49 @@ for i = 0, 15 do
 end
 w.gradient_highlighter(w.basic_highlighter(), gradient)
 ```
+
+## Highlight Groups
+
+Wildest defines its own highlight groups linked to standard Neovim groups by
+default. If no theme is active, your colorscheme's popup colors shine through.
+When a theme is applied, it overrides these with explicit colors.
+
+| Group | Default Link | Used For |
+| --- | --- | --- |
+| `WildestDefault` | `Pmenu` | Popup background and text |
+| `WildestSelected` | `PmenuSel` | Selected candidate |
+| `WildestAccent` | `PmenuMatch` | Matched characters |
+| `WildestSelectedAccent` | `PmenuMatchSel` | Matched characters (selected) |
+| `WildestBorder` | `FloatBorder` | Border decoration |
+| `WildestPrompt` | `Pmenu` | Palette prompt area |
+| `WildestPromptCursor` | `Cursor` | Palette prompt cursor |
+| `WildestScrollbar` | `PmenuSbar` | Scrollbar track |
+| `WildestScrollbarThumb` | `PmenuThumb` | Scrollbar thumb |
+| `WildestSpinner` | `Special` | Loading spinner |
+| `WildestError` | `ErrorMsg` | Error messages |
+
+Override any group in your config to customize without a theme:
+
+```lua
+vim.api.nvim_set_hl(0, "WildestBorder", { bg = "#1a1a2e", fg = "#4488cc" })
+vim.api.nvim_set_hl(0, "WildestAccent", { fg = "#ff6600", bold = true })
+```
+
+<details>
+<summary><strong>Custom Highlight Examples</strong> (click to expand)</summary>
+
+<table>
+<tr>
+<td align="center"><strong>Neon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_neon.png" width="400"></td>
+<td align="center"><strong>Ember</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ember.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>Ocean</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ocean.png" width="400"></td>
+<td></td>
+</tr>
+</table>
+
+</details>
 
 ## War Paint (Themes)
 
@@ -661,6 +722,42 @@ w.setup({
 | `kanagawa`        | bordered | Deep ink, warm autumn - the far east frontier      |
 | `kanagawa_dragon` | bordered | Dark earth tones - dragon in the canyon            |
 | `kanagawa_lotus`  | bordered | Light parchment - lotus in the desert spring       |
+
+<details>
+<summary><strong>Theme Gallery</strong> (click to expand)</summary>
+
+<table>
+<tr>
+<td align="center"><strong>auto</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_auto.png" width="400"></td>
+<td align="center"><strong>default</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_default.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>saloon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_saloon.png" width="400"></td>
+<td align="center"><strong>outlaw</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_outlaw.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>sunset</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_sunset.png" width="400"></td>
+<td align="center"><strong>prairie</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_prairie.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>dusty</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dusty.png" width="400"></td>
+<td align="center"><strong>midnight</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_midnight.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>wanted</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_wanted.png" width="400"></td>
+<td align="center"><strong>cactus</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_cactus.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>tumbleweed</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tumbleweed.png" width="400"></td>
+<td align="center"><strong>kanagawa</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>kanagawa_dragon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_dragon.png" width="400"></td>
+<td align="center"><strong>kanagawa_lotus</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_lotus.png" width="400"></td>
+</tr>
+</table>
+
+</details>
 
 ### Auto Theme
 

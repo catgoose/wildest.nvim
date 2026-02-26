@@ -32,7 +32,7 @@ function M.new(opts)
   local border_info = border_theme.apply({
     border = opts.border or "single",
     highlights = opts.highlights,
-    content_hl = opts.hl or "Pmenu",
+    content_hl = opts.hl or "WildestDefault",
   })
 
   local state = renderer_util.create_base_state(opts)

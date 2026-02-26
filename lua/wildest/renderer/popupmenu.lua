@@ -101,9 +101,12 @@ function M.new(opts)
     vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
     renderer_util.apply_line_highlights(state.buf, state.ns_id, lines, line_highlights)
 
+    -- +2 compensates for the top+bottom border rows that bordered renderers
+    -- get from nvim_open_win's native border decoration.  Without this offset
+    -- the borderless popup overlaps the last buffer line above the statusline.
     renderer_util.open_or_update_win(state, {
       relative = "editor",
-      row = math.max(0, row - height),
+      row = math.max(0, row - height + 2),
       col = col,
       width = width,
       height = height,

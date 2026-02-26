@@ -12,8 +12,8 @@ function M.new(opts)
   opts = opts or {}
   local thumb_char = opts.thumb or "█"
   local bar_char = opts.bar or " "
-  local bar_hl = opts.hl or "PmenuSbar"
-  local thumb_hl = opts.thumb_hl or "PmenuThumb"
+  local bar_hl = opts.hl or "WildestScrollbar"
+  local thumb_hl = opts.thumb_hl or "WildestScrollbarThumb"
 
   local component = {}
 

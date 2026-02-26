@@ -112,10 +112,7 @@ function M.apply(opts)
   local border = parse_border(opts.border or "single")
   local border_hl = (opts.highlights and opts.highlights.border) or "WildestBorder"
   local bottom_border_hl = (opts.highlights and opts.highlights.bottom_border) or border_hl
-  local content_hl = opts.content_hl or "Pmenu"
-
-  -- Create the border highlight if it doesn't exist
-  pcall(vim.api.nvim_set_hl, 0, "WildestBorder", { link = "FloatBorder" })
+  local content_hl = opts.content_hl or "WildestDefault"
 
   -- Build native border highlights: border fg on content bg so the frame blends
   local hl_mod = require("wildest.highlight")
