@@ -148,8 +148,12 @@ function M.create_accent_highlights(state)
 
   local sel_accent_hl = vim.api.nvim_get_hl(0, { name = "WildestSelectedAccent" })
   if sel_accent_hl.link then
-    state.highlights.selected_accent =
-      hl_mod.hl_with_attr("WildestSelectedAccent_derived", state.highlights.selected, "underline", "bold")
+    state.highlights.selected_accent = hl_mod.hl_with_attr(
+      "WildestSelectedAccent_derived",
+      state.highlights.selected,
+      "underline",
+      "bold"
+    )
   else
     state.highlights.selected_accent = "WildestSelectedAccent"
   end
@@ -491,11 +495,18 @@ end
 ---@param selected_accent_hl? string
 ---@param is_selected? boolean
 ---@return table[]
-function M.get_candidate_spans(highlighter, query, candidate, accent_hl, selected_accent_hl, is_selected)
+function M.get_candidate_spans(
+  highlighter,
+  query,
+  candidate,
+  accent_hl,
+  selected_accent_hl,
+  is_selected
+)
   local spans = {}
   if highlighter and query ~= "" then
     local raw = highlighter.highlight(query, candidate)
-if raw then
+    if raw then
       for _, span in ipairs(raw) do
         -- span[3]: custom hl group (e.g. gradient), span[4]: selected variant
         local hl

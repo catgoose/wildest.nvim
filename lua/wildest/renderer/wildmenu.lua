@@ -213,7 +213,9 @@ function M.new(opts)
         -- Build a set of custom highlight groups from spans (e.g. gradient)
         local custom_hls = {}
         for _, span in ipairs(spans) do
-          if span[3] then custom_hls[span[3]] = true end
+          if span[3] then
+            custom_hls[span[3]] = true
+          end
         end
         -- Convert spans to chunks — spans_to_chunks already applies span[3]
         local cand_chunks = hl_mod.spans_to_chunks(candidate, spans, base_hl)

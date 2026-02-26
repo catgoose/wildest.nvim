@@ -49,7 +49,7 @@ function M.new(base_highlighter, gradient, opts)
 
     for _, span in ipairs(base_spans) do
       local start = span[1] -- 0-indexed byte position
-      local len = span[2]   -- byte length
+      local len = span[2] -- byte length
 
       -- Split multi-byte spans into per-character spans so each
       -- matched character gets its own gradient color.
@@ -66,7 +66,7 @@ function M.new(base_highlighter, gradient, opts)
 
         table.insert(gradient_spans, {
           start + offset, -- 0-indexed byte position
-          1,              -- single byte
+          1, -- single byte
           grad_hl,
           sel_grad_hl,
         })
