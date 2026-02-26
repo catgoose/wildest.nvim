@@ -197,6 +197,8 @@ drive - input goes in one end, completions come out the other.
 
 ### Built-in Pipelines
 
+![Search Pipeline](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png)
+
 | Pipeline                 | What it wrangles                                              |
 | ------------------------ | ------------------------------------------------------------- |
 | `cmdline_pipeline()`     | Command names, args, files, options - the whole ranch         |
@@ -440,6 +442,17 @@ handles everything else.
 
 ## Brandin' Iron (Renderers)
 
+<table>
+<tr>
+<td align="center"><strong>Popupmenu</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu.png" width="400"></td>
+<td align="center"><strong>Bordered</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_border.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>Palette</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_palette.png" width="400"></td>
+<td align="center"><strong>Wildmenu</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu.png" width="400"></td>
+</tr>
+</table>
+
 ### Plain Popupmenu
 
 ```lua
@@ -563,6 +576,8 @@ w.renderer_mux({
 
 ## Tin Stars (Components)
 
+![Devicons](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons.png)
+
 Decorate your popupmenu and wildmenu with components:
 
 ### Popupmenu Components
@@ -616,6 +631,8 @@ Make them matched characters glow like campfire embers:
 
 ### Gradient Highlighting
 
+![Gradient Highlighting](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient.png)
+
 ```lua
 local gradient = {}
 for i = 0, 15 do
@@ -661,6 +678,42 @@ w.setup({
 | `kanagawa`        | bordered | Deep ink, warm autumn - the far east frontier      |
 | `kanagawa_dragon` | bordered | Dark earth tones - dragon in the canyon            |
 | `kanagawa_lotus`  | bordered | Light parchment - lotus in the desert spring       |
+
+<details>
+<summary><strong>Theme Gallery</strong> (click to expand)</summary>
+
+<table>
+<tr>
+<td align="center"><strong>auto</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_auto.png" width="400"></td>
+<td align="center"><strong>default</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_default.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>saloon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_saloon.png" width="400"></td>
+<td align="center"><strong>outlaw</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_outlaw.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>sunset</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_sunset.png" width="400"></td>
+<td align="center"><strong>prairie</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_prairie.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>dusty</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dusty.png" width="400"></td>
+<td align="center"><strong>midnight</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_midnight.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>wanted</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_wanted.png" width="400"></td>
+<td align="center"><strong>cactus</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_cactus.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>tumbleweed</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tumbleweed.png" width="400"></td>
+<td align="center"><strong>kanagawa</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>kanagawa_dragon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_dragon.png" width="400"></td>
+<td align="center"><strong>kanagawa_lotus</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_lotus.png" width="400"></td>
+</tr>
+</table>
+
+</details>
 
 ### Auto Theme
 

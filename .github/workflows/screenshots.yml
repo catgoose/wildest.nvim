@@ -1,0 +1,57 @@
+name: Screenshots
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/screenshots/**"
+      - "lua/wildest/themes/**"
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: nightly
+
+      - name: Install VHS and ttyd
+        run: |
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+          sudo apt-get update
+          sudo apt-get install -y vhs ttyd
+
+      - name: Install JetBrainsMono Nerd Font
+        run: |
+          mkdir -p ~/.local/share/fonts
+          curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz \
+            | tar -xJf - -C ~/.local/share/fonts
+          fc-cache -fv
+
+      - name: Build fuzzy.so
+        run: make build
+
+      - name: Clone nvim-web-devicons
+        run: |
+          mkdir -p deps
+          git clone --depth 1 https://github.com/nvim-tree/nvim-web-devicons deps/nvim-web-devicons
+
+      - name: Generate screenshots
+        run: scripts/screenshots/generate.sh
+
+      - name: Push to screenshots branch
+        run: |
+          cd scripts/screenshots/output
+          git init
+          git checkout -b screenshots
+          git add *.png
+          git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" \
+            commit -m "Update screenshots [skip ci]"
+          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git push --force origin screenshots

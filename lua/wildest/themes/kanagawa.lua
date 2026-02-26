@@ -21,6 +21,9 @@ return themes.define({
     -- crystalBlue cursor
     WildestPromptCursor = { bg = "#7E9CD8", fg = "#1F1F28" },
     WildestSpinner = { fg = "#7E9CD8" },
+    -- scrollbar: sumiInk4 bg for bar, sumiInk6 fg for thumb
+    WildestScrollbar = { bg = "#2A2A37" },
+    WildestScrollbarThumb = { bg = "#54546D" },
   },
   renderer_opts = {
     border = "rounded",

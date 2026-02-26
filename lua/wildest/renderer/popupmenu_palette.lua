@@ -63,8 +63,15 @@ function M.new(opts)
   state.prompt_border = prompt_border
   state.prompt_position = prompt_position
 
-  pcall(vim.api.nvim_set_hl, 0, "WildestPrompt", { link = "Pmenu" })
-  pcall(vim.api.nvim_set_hl, 0, "WildestPromptCursor", { link = "Cursor" })
+  -- Only set defaults if these groups don't already exist (themes may have set them)
+  local existing_prompt = vim.api.nvim_get_hl(0, { name = "WildestPrompt", link = false })
+  if vim.tbl_isempty(existing_prompt) then
+    pcall(vim.api.nvim_set_hl, 0, "WildestPrompt", { link = "Pmenu" })
+  end
+  local existing_cursor = vim.api.nvim_get_hl(0, { name = "WildestPromptCursor", link = false })
+  if vim.tbl_isempty(existing_cursor) then
+    pcall(vim.api.nvim_set_hl, 0, "WildestPromptCursor", { link = "Cursor" })
+  end
 
   -- Separator highlight: border fg on prompt/content bg so it blends with the content area
   local border_def = vim.api.nvim_get_hl(0, { name = state.highlights.border, link = false })
