@@ -9,6 +9,7 @@
 #   ./generate.sh --renderers      # Generate renderer screenshots only
 #   ./generate.sh --features       # Generate feature screenshots only
 #   ./generate.sh --gifs           # Also generate animated GIFs
+#   ./generate.sh -j4              # Run 4 screenshots in parallel
 #   ./generate.sh --install-deps   # Install VHS, ttyd, and Nerd Font (for CI)
 #
 # Requirements:
@@ -62,6 +63,13 @@ FEATURE_CONFIGS=(
   gradient
   search
   renderer_mux
+  kind_icons
+)
+
+PIPELINE_CONFIGS=(
+  lua_pipeline
+  help_pipeline
+  history_pipeline
 )
 
 HIGHLIGHT_CONFIGS=(
@@ -70,10 +78,11 @@ HIGHLIGHT_CONFIGS=(
   hl_ocean
 )
 
-ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@]}" "${HIGHLIGHT_CONFIGS[@]}")
+ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@]}" "${PIPELINE_CONFIGS[@]}" "${HIGHLIGHT_CONFIGS[@]}")
 
 # ── Settings ───────────────────────────────────────────────────────
 
+PARALLEL_JOBS=1
 WIDTH=1200
 HEIGHT=600
 FONT_SIZE=14
@@ -156,8 +165,12 @@ get_cmd_input() {
     search)          echo "/function" ;;
     devicons)        echo ":e lua/wildest/" ;;
     fuzzy)           echo ":colo" ;;
-    gradient)        echo ":set no" ;;
+    gradient)        echo ":help help-" ;;
     renderer_mux)    echo ":set " ;;
+    lua_pipeline)    echo ":lua vim.api." ;;
+    help_pipeline)   echo ":help nvim_b" ;;
+    history_pipeline) echo ":set " ;;
+    kind_icons)      echo ":set " ;;
     *)               echo ":set " ;;
   esac
 }
@@ -261,6 +274,9 @@ main() {
         echo "Features:"
         printf "  %s\n" "${FEATURE_CONFIGS[@]}"
         echo ""
+        echo "Pipelines:"
+        printf "  %s\n" "${PIPELINE_CONFIGS[@]}"
+        echo ""
         echo "Highlights:"
         printf "  %s\n" "${HIGHLIGHT_CONFIGS[@]}"
         exit 0
@@ -268,8 +284,10 @@ main() {
       --themes)      configs_to_run+=("${THEME_CONFIGS[@]}") ;;
       --renderers)   configs_to_run+=("${RENDERER_CONFIGS[@]}") ;;
       --features)    configs_to_run+=("${FEATURE_CONFIGS[@]}") ;;
+      --pipelines)   configs_to_run+=("${PIPELINE_CONFIGS[@]}") ;;
       --highlights)  configs_to_run+=("${HIGHLIGHT_CONFIGS[@]}") ;;
       --gifs)        GENERATE_GIFS=true ;;
+      -j*)           PARALLEL_JOBS="${1#-j}" ;;
       --install-deps) install_deps ;;
       *)
         # Single config name
@@ -288,20 +306,40 @@ main() {
   ensure_devicons
   mkdir -p "$OUTPUT_DIR"
 
-  echo "Generating ${#configs_to_run[@]} screenshot(s)..."
+  echo "Generating ${#configs_to_run[@]} screenshot(s) (jobs: $PARALLEL_JOBS)..."
   echo "Output: $OUTPUT_DIR/"
   echo ""
 
-  local failed=0
-  local succeeded=0
+  if [ "$PARALLEL_JOBS" -gt 1 ] 2>/dev/null; then
+    # Export everything the child processes need
+    export OUTPUT_DIR INIT_LUA SAMPLE_LUA GENERATE_GIFS
+    export WIDTH HEIGHT FONT_SIZE FONT_FAMILY PADDING VHS_THEME
 
-  for config in "${configs_to_run[@]}"; do
-    if run_config "$config"; then
-      succeeded=$((succeeded + 1))
-    else
-      failed=$((failed + 1))
-    fi
-  done
+    export -f generate_tape run_config get_cmd_input
+
+    printf '%s\n' "${configs_to_run[@]}" \
+      | xargs -P "$PARALLEL_JOBS" -I {} bash -c 'run_config "$@"' _ {}
+
+    local succeeded=0 failed=0
+    for config in "${configs_to_run[@]}"; do
+      if [ -f "$OUTPUT_DIR/${config}.png" ]; then
+        succeeded=$((succeeded + 1))
+      else
+        failed=$((failed + 1))
+      fi
+    done
+  else
+    local failed=0
+    local succeeded=0
+
+    for config in "${configs_to_run[@]}"; do
+      if run_config "$config"; then
+        succeeded=$((succeeded + 1))
+      else
+        failed=$((failed + 1))
+      fi
+    done
+  fi
 
   echo ""
   echo "Done: $succeeded succeeded, $failed failed"

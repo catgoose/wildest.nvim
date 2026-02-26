@@ -149,18 +149,22 @@ end
 
 -- Gradient highlighting
 configs.gradient = function()
+  local rainbow = {
+    "#ff0000", "#ff4400", "#ff8800", "#ffcc00",
+    "#ffff00", "#88ff00", "#00ff44", "#00ffaa",
+    "#00ffff", "#00aaff", "#0044ff", "#4400ff",
+    "#8800ff", "#cc00ff", "#ff00ff", "#ff0088",
+  }
   local gradient = {}
-  for i = 0, 15 do
+  for i, color in ipairs(rainbow) do
     local name = "WildestGradient" .. i
-    vim.api.nvim_set_hl(0, name, {
-      fg = string.format("#%02x%02x%02x", 255 - i * 16, 100 + i * 8, i * 16),
-    })
+    vim.api.nvim_set_hl(0, name, { fg = color, bold = true })
     table.insert(gradient, name)
   end
   return {
     pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
     renderer = w.theme("auto").renderer({
-      highlighter = w.gradient_highlighter(w.basic_highlighter(), gradient),
+      highlighter = w.gradient_highlighter(w.fzy_highlighter(), gradient),
       left = { " " },
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -193,6 +197,56 @@ configs.renderer_mux = function()
         highlighter = w.basic_highlighter(),
         separator = " | ",
       }),
+    }),
+  }
+end
+
+-- ── Pipeline configs ─────────────────────────────────────────────
+
+-- Lua expression completion (:lua vim.)
+configs.lua_pipeline = function()
+  return {
+    pipeline = w.branch(w.lua_pipeline(), w.cmdline_pipeline({ fuzzy = true })),
+    renderer = w.theme("auto").renderer({
+      highlighter = w.fzy_highlighter(),
+      left = left_with_devicons(),
+      right = { " ", w.popupmenu_scrollbar() },
+    }),
+  }
+end
+
+-- Help tag completion (:help)
+configs.help_pipeline = function()
+  return {
+    pipeline = w.branch(w.help_pipeline({ fuzzy = true }), w.cmdline_pipeline({ fuzzy = true })),
+    renderer = w.theme("auto").renderer({
+      highlighter = w.fzy_highlighter(),
+      left = left_with_devicons(),
+      right = { " ", w.popupmenu_scrollbar() },
+    }),
+  }
+end
+
+-- History completion
+configs.history_pipeline = function()
+  return {
+    pipeline = w.branch(w.history_pipeline(), w.cmdline_pipeline({ fuzzy = true })),
+    renderer = w.theme("auto").renderer({
+      highlighter = w.fzy_highlighter(),
+      left = { " " },
+      right = { " ", w.popupmenu_scrollbar() },
+    }),
+  }
+end
+
+-- Kind icons showcase
+configs.kind_icons = function()
+  return {
+    pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
+    renderer = w.theme("auto").renderer({
+      highlighter = w.fzy_highlighter(),
+      left = { " ", w.popupmenu_kind_icon() },
+      right = { " ", w.popupmenu_scrollbar() },
     }),
   }
 end

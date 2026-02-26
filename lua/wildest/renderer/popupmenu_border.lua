@@ -85,7 +85,7 @@ function M.new(opts)
       local accent_hl = is_selected and state.highlights.selected_accent or state.highlights.accent
 
       local candidate_spans =
-        renderer_util.get_candidate_spans(state.highlighter, query, candidate, accent_hl)
+        renderer_util.get_candidate_spans(state.highlighter, query, candidate, accent_hl, state.highlights.selected_accent, is_selected)
       local left_parts, right_parts =
         renderer_util.render_components(state, ctx, result, i, is_selected)
 
