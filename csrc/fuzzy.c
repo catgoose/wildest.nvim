@@ -23,8 +23,8 @@
 #define SCORE_MATCH_CAPITAL     (0.7)
 #define SCORE_MATCH_DOT         (0.6)
 
-#define MAX_NEEDLE_LEN  128
-#define MAX_HAYSTACK_LEN 1024
+#define MAX_NEEDLE_LEN  1024
+#define MAX_HAYSTACK_LEN 8192
 
 /* Case-insensitive char comparison */
 static inline bool chars_match(char a, char b) {
@@ -91,14 +91,18 @@ double fuzzy_score(const char *needle, const char *haystack) {
         return SCORE_MIN;
 
     /*
-     * DP matrices (stack-allocated for performance):
-     * D[i][j] = best score ending with needle[i] matching haystack[j] (consecutive)
-     * M[i][j] = best score for needle[0..i] matching in haystack[0..j]
+     * DP matrices (heap-allocated, flat layout):
+     * D[i*m + j] = best score ending with needle[i] matching haystack[j] (consecutive)
+     * M[i*m + j] = best score for needle[0..i] matching in haystack[0..j]
      */
-    double D[MAX_NEEDLE_LEN][MAX_HAYSTACK_LEN];
-    double M[MAX_NEEDLE_LEN][MAX_HAYSTACK_LEN];
+    size_t nm = (size_t)n * (size_t)m;
+    double *buf = (double *)malloc(2 * nm * sizeof(double));
+    if (!buf)
+        return SCORE_MIN;
+    double *D = buf;
+    double *M = buf + nm;
 
-    /* Precompute bonuses */
+    /* Precompute bonuses (stack-allocated at actual size) */
     double bonus[MAX_HAYSTACK_LEN];
     for (int j = 0; j < m; j++)
         bonus[j] = compute_bonus(haystack, j);
@@ -114,23 +118,25 @@ double fuzzy_score(const char *needle, const char *haystack) {
                 if (i == 0) {
                     score = j * SCORE_GAP_LEADING + bonus[j];
                 } else if (j > 0) {
-                    double consecutive = D[i - 1][j - 1] + SCORE_MATCH_CONSECUTIVE;
-                    double non_consecutive = M[i - 1][j - 1] + bonus[j];
+                    double consecutive = D[(i - 1) * m + (j - 1)] + SCORE_MATCH_CONSECUTIVE;
+                    double non_consecutive = M[(i - 1) * m + (j - 1)] + bonus[j];
                     score = (consecutive > non_consecutive) ? consecutive : non_consecutive;
                 }
 
-                D[i][j] = score;
-                M[i][j] = (score > prev_score + gap_score) ? score : prev_score + gap_score;
+                D[i * m + j] = score;
+                M[i * m + j] = (score > prev_score + gap_score) ? score : prev_score + gap_score;
             } else {
-                D[i][j] = SCORE_MIN;
-                M[i][j] = prev_score + gap_score;
+                D[i * m + j] = SCORE_MIN;
+                M[i * m + j] = prev_score + gap_score;
             }
 
-            prev_score = M[i][j];
+            prev_score = M[i * m + j];
         }
     }
 
-    return M[n - 1][m - 1];
+    double result = M[(n - 1) * m + (m - 1)];
+    free(buf);
+    return result;
 }
 
 /* Comparison for qsort: descending by score */
@@ -212,9 +218,15 @@ int fuzzy_positions(
         return -1;
     }
 
-    /* Recompute DP to trace back positions */
-    double D[MAX_NEEDLE_LEN][MAX_HAYSTACK_LEN];
-    double M[MAX_NEEDLE_LEN][MAX_HAYSTACK_LEN];
+    /* Heap-allocate DP matrices (flat layout) */
+    size_t nm = (size_t)n * (size_t)m;
+    double *buf = (double *)malloc(2 * nm * sizeof(double));
+    if (!buf) {
+        *out_count = 0;
+        return -1;
+    }
+    double *D = buf;
+    double *M = buf + nm;
 
     double bonus[MAX_HAYSTACK_LEN];
     for (int j = 0; j < m; j++)
@@ -230,17 +242,17 @@ int fuzzy_positions(
                 if (i == 0) {
                     score = j * SCORE_GAP_LEADING + bonus[j];
                 } else if (j > 0) {
-                    double consecutive = D[i - 1][j - 1] + SCORE_MATCH_CONSECUTIVE;
-                    double non_consecutive = M[i - 1][j - 1] + bonus[j];
+                    double consecutive = D[(i - 1) * m + (j - 1)] + SCORE_MATCH_CONSECUTIVE;
+                    double non_consecutive = M[(i - 1) * m + (j - 1)] + bonus[j];
                     score = (consecutive > non_consecutive) ? consecutive : non_consecutive;
                 }
-                D[i][j] = score;
-                M[i][j] = (score > prev_score + gap_score) ? score : prev_score + gap_score;
+                D[i * m + j] = score;
+                M[i * m + j] = (score > prev_score + gap_score) ? score : prev_score + gap_score;
             } else {
-                D[i][j] = SCORE_MIN;
-                M[i][j] = prev_score + gap_score;
+                D[i * m + j] = SCORE_MIN;
+                M[i * m + j] = prev_score + gap_score;
             }
-            prev_score = M[i][j];
+            prev_score = M[i * m + j];
         }
     }
 
@@ -251,7 +263,7 @@ int fuzzy_positions(
     /* Find best ending column */
     int best_j = 0;
     for (int j = 1; j < m; j++) {
-        if (M[i][j] > M[i][best_j])
+        if (M[i * m + j] > M[i * m + best_j])
             best_j = j;
     }
 
@@ -263,8 +275,8 @@ int fuzzy_positions(
         /* Find best j for needle[i] among 0..max_j */
         int found = -1;
         for (int j = max_j; j >= 0; j--) {
-            if (chars_match(needle[i], haystack[j]) && D[i][j] != SCORE_MIN) {
-                if (found == -1 || M[i][j] > M[i][found])
+            if (chars_match(needle[i], haystack[j]) && D[i * m + j] != SCORE_MIN) {
+                if (found == -1 || M[i * m + j] > M[i * m + found])
                     found = j;
             }
         }
@@ -275,5 +287,6 @@ int fuzzy_positions(
     for (int k = 0; k < n; k++)
         out_positions[k] = positions[k];
 
+    free(buf);
     return 0;
 }

@@ -1,5 +1,5 @@
 CC ?= cc
-CFLAGS = -O3 -Wall -shared -fPIC
+CFLAGS = -O3 -Wall -Wextra -pedantic -shared -fPIC -s
 TARGET = ../lua/wildest/fuzzy.so
 
 .PHONY: all clean

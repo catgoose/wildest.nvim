@@ -1,4 +1,5 @@
 *.pyc
+*.so
 
 doc/tags
 doc/html/
