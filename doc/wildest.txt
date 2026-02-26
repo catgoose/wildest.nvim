@@ -259,8 +259,6 @@ M.help_pipeline({opts?})                                 *wildest.help_pipeline*
         (wildest.PipelineStep[])  pipeline
 
 
-
-
                                                              *wildest-renderers*
 RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 
@@ -705,10 +703,17 @@ wildest.Config                                                  *wildest.Config*
 
     Fields: ~
         {modes?}             (string[])                                     Cmdline modes to enable (default: { ':', '/', '?' })
-        {next_key?}          (string)                                       Key to select next candidate (default: '<Tab>')
-        {previous_key?}      (string)                                       Key to select previous candidate (default: '<S-Tab>')
-        {accept_key?}        (string)                                       Key to accept current selection (default: '<Down>')
-        {reject_key?}        (string)                                       Key to reject and restore original (default: '<Up>')
+        {next_key?}          (string|string[])                              Key(s) to select next candidate (default: '<Tab>')
+        {previous_key?}      (string|string[])                              Key(s) to select previous candidate (default: '<S-Tab>')
+        {accept_key?}        (string|string[])                              Key(s) to accept current selection (default: '<Down>')
+        {reject_key?}        (string|string[])                              Key(s) to reject and restore original (default: '<Up>')
+        {scroll_up_key?}     (string|string[])                              Key(s) to scroll up by page (default: '<C-b>')
+        {scroll_down_key?}   (string|string[])                              Key(s) to scroll down by page (default: '<C-f>')
+        {scroll_size?}       (integer)                                      Number of items to scroll per page (default: 10)
+        {close_key?}         (string|string[])                              Key(s) to close popup but stay in cmdline (default: '<C-e>')
+        {confirm_key?}       (string|string[])                              Key(s) to accept selection and execute (default: '<C-y>')
+        {dismiss_key?}       (string|string[])                              Key(s) to dismiss popup and restore input (default: nil)
+        {jump_keys?}         (table[])                                      Custom jump bindings: { { key, count } ... } e.g. { { "<C-n>", 5 }, { "<C-p>", -10 } }
         {interval?}          (integer)                                      Debounce interval in ms (default: 100)
         {num_workers?}       (integer)                                      Number of async workers (default: 2)
         {noselect?}          (boolean)                                      No item selected initially (default: true)
@@ -839,6 +844,13 @@ M.step({n})                                                 *wildest.state.step*
         {n}  (integer)
 
 
+M.scroll({n})                                             *wildest.state.scroll*
+     Scroll selection by n positions, clamping at boundaries
+
+    Parameters: ~
+        {n}  (integer)  positive = down, negative = up
+
+
 M.feedkeys_cmdline({text})                      *wildest.state.feedkeys_cmdline*
      Replace the current cmdline with the given text
 
@@ -852,6 +864,18 @@ M.accept_completion()                          *wildest.state.accept_completion*
 
 M.reject_completion()                          *wildest.state.reject_completion*
      Reject current completion (restore original)
+
+
+M.close()                                                  *wildest.state.close*
+     Close the popup but stay in cmdline mode
+
+
+M.dismiss()                                              *wildest.state.dismiss*
+     Dismiss popup and restore original input (like close but also untriggers for tab mode)
+
+
+M.confirm()                                              *wildest.state.confirm*
+     Accept selection and execute the command
 
 
 M.enable()                                                *wildest.state.enable*
