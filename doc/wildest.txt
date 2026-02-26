@@ -1335,7 +1335,10 @@ M.create_base_state({opts}, {defaults?})    *wildest.renderer.create_base_state*
 
                                      *wildest.renderer.create_accent_highlights*
 M.create_accent_highlights({state})
-     Create accent + selected-accent highlight groups on a state table
+     Create accent + selected-accent highlight groups on a state table.
+     If a theme has already set WildestAccent/WildestSelectedAccent with explicit
+     colors, use those as-is. Otherwise derive them from the default/selected
+     groups with bold+underline added.
 
     Parameters: ~
         {state}  (table)  renderer state (mutated: sets highlights.accent, highlights.selected_accent)
@@ -1392,14 +1395,16 @@ M.hide_win({state})                                  *wildest.renderer.hide_win*
 
 
                                           *wildest.renderer.get_candidate_spans*
-M.get_candidate_spans({highlighter}, {query}, {candidate}, {accent_hl})
+M.get_candidate_spans({highlighter}, {query}, {candidate}, {accent_hl}, {selected_accent_hl?}, {is_selected?})
      Get highlight spans for a candidate
 
     Parameters: ~
-        {highlighter}  (table|nil)
-        {query}        (string)
-        {candidate}    (string)
-        {accent_hl}    (string)
+        {highlighter}          (table|nil)
+        {query}                (string)
+        {candidate}            (string)
+        {accent_hl}            (string)
+        {selected_accent_hl?}  (string)
+        {is_selected?}         (boolean)
 
     Returns: ~
         (table[])
