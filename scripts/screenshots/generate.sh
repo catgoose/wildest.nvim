@@ -10,6 +10,7 @@
 #   ./generate.sh --features       # Generate feature screenshots only
 #   ./generate.sh --pipelines      # Generate pipeline screenshots only
 #   ./generate.sh --gifs           # Also generate animated GIFs
+#   ./generate.sh -j4              # Run 4 screenshots in parallel
 #   ./generate.sh --install-deps   # Install VHS, ttyd, and Nerd Font (for CI)
 #
 # Requirements:
@@ -55,6 +56,23 @@ THEME_CONFIGS=(
   theme_kanagawa
   theme_kanagawa_dragon
   theme_kanagawa_lotus
+  theme_catppuccin_mocha
+  theme_catppuccin_frappe
+  theme_catppuccin_latte
+  theme_tokyonight_night
+  theme_tokyonight_storm
+  theme_tokyonight_moon
+  theme_rose_pine
+  theme_rose_pine_moon
+  theme_rose_pine_dawn
+  theme_gruvbox_dark
+  theme_gruvbox_light
+  theme_nord
+  theme_onedark
+  theme_nightfox
+  theme_everforest_dark
+  theme_everforest_light
+  theme_dracula
 )
 
 FEATURE_CONFIGS=(
@@ -82,6 +100,7 @@ ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@
 
 # ── Settings ───────────────────────────────────────────────────────
 
+PARALLEL_JOBS=1
 WIDTH=1200
 HEIGHT=600
 FONT_SIZE=14
@@ -164,7 +183,7 @@ get_cmd_input() {
     search)          echo "/function" ;;
     devicons)        echo ":e lua/wildest/" ;;
     fuzzy)           echo ":colo" ;;
-    gradient)        echo ":set no" ;;
+    gradient)        echo ":help help-" ;;
     renderer_mux)    echo ":set " ;;
     lua_pipeline)    echo ":lua vim.api." ;;
     help_pipeline)   echo ":help nvim_b" ;;
@@ -286,6 +305,7 @@ main() {
       --pipelines)   configs_to_run+=("${PIPELINE_CONFIGS[@]}") ;;
       --highlights)  configs_to_run+=("${HIGHLIGHT_CONFIGS[@]}") ;;
       --gifs)        GENERATE_GIFS=true ;;
+      -j*)           PARALLEL_JOBS="${1#-j}" ;;
       --install-deps) install_deps ;;
       *)
         # Single config name
@@ -304,20 +324,40 @@ main() {
   ensure_devicons
   mkdir -p "$OUTPUT_DIR"
 
-  echo "Generating ${#configs_to_run[@]} screenshot(s)..."
+  echo "Generating ${#configs_to_run[@]} screenshot(s) (jobs: $PARALLEL_JOBS)..."
   echo "Output: $OUTPUT_DIR/"
   echo ""
 
-  local failed=0
-  local succeeded=0
+  if [ "$PARALLEL_JOBS" -gt 1 ] 2>/dev/null; then
+    # Export everything the child processes need
+    export OUTPUT_DIR INIT_LUA SAMPLE_LUA GENERATE_GIFS
+    export WIDTH HEIGHT FONT_SIZE FONT_FAMILY PADDING VHS_THEME
 
-  for config in "${configs_to_run[@]}"; do
-    if run_config "$config"; then
-      succeeded=$((succeeded + 1))
-    else
-      failed=$((failed + 1))
-    fi
-  done
+    export -f generate_tape run_config get_cmd_input
+
+    printf '%s\n' "${configs_to_run[@]}" \
+      | xargs -P "$PARALLEL_JOBS" -I {} bash -c 'run_config "$@"' _ {}
+
+    local succeeded=0 failed=0
+    for config in "${configs_to_run[@]}"; do
+      if [ -f "$OUTPUT_DIR/${config}.png" ]; then
+        succeeded=$((succeeded + 1))
+      else
+        failed=$((failed + 1))
+      fi
+    done
+  else
+    local failed=0
+    local succeeded=0
+
+    for config in "${configs_to_run[@]}"; do
+      if run_config "$config"; then
+        succeeded=$((succeeded + 1))
+      else
+        failed=$((failed + 1))
+      fi
+    done
+  fi
 
   echo ""
   echo "Done: $succeeded succeeded, $failed failed"

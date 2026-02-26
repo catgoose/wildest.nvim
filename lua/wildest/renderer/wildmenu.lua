@@ -210,11 +210,18 @@ function M.new(opts)
       end
 
       if #spans > 0 then
-        -- Convert spans to chunks
+        -- Build a set of custom highlight groups from spans (e.g. gradient)
+        local custom_hls = {}
+        for _, span in ipairs(spans) do
+          if span[3] then
+            custom_hls[span[3]] = true
+          end
+        end
+        -- Convert spans to chunks — spans_to_chunks already applies span[3]
         local cand_chunks = hl_mod.spans_to_chunks(candidate, spans, base_hl)
-        -- Override accent highlights
         for _, cc in ipairs(cand_chunks) do
-          if cc[2] ~= base_hl then
+          -- Only override with accent_hl if chunk hl isn't a custom group
+          if cc[2] ~= base_hl and not custom_hls[cc[2]] then
             cc[2] = accent_hl
           end
           table.insert(chunks, cc)

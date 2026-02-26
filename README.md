@@ -41,6 +41,7 @@
     - [Highlight Utilities](#highlight-utilities)
     - [State Control](#state-control)
   - [What in Tarnation? (FAQ)](#what-in-tarnation-faq)
+  - [Test Gallery](#test-gallery)
   - [Credits](#credits)
   - [License](#license)
 <!--toc:end-->
@@ -75,7 +76,7 @@ which hasn't been updated in over four years. Drops VimScript and Python.
 - **C FFI fuzzy matching** - fzy algorithm compiled to native code, sorts 10K candidates faster than you can say "yeehaw"
 - **23 pipeline constructors** - more ways to wrangle completions than cattle at a roundup
 - **Popupmenu, wildmenu, border, and palette renderers** - dress up your cmdline like it's headed to the saloon
-- **14 themes with bytecode compilation** - every outfit from dusty trail to midnight saloon
+- **31 themes with bytecode compilation** - every outfit from dusty trail to midnight saloon
 - **Frecency scoring** - remembers what you use most and surfaces it first
 
 > _"I reckon this is the fastest cmdline completion plugin in the territory."_
@@ -743,9 +744,26 @@ w.setup({
 | `wanted`          | palette  | Parchment and ink - nailed to the post office wall |
 | `cactus`          | bordered | Green on dark soil - prickly but pretty            |
 | `tumbleweed`      | plain    | Light and minimal - blowin' through town           |
-| `kanagawa`        | bordered | Deep ink, warm autumn - the far east frontier      |
-| `kanagawa_dragon` | bordered | Dark earth tones - dragon in the canyon            |
-| `kanagawa_lotus`  | bordered | Light parchment - lotus in the desert spring       |
+| `kanagawa`          | bordered | Deep ink, warm autumn - the far east frontier      |
+| `kanagawa_dragon`   | bordered | Dark earth tones - dragon in the canyon             |
+| `kanagawa_lotus`    | bordered | Light parchment - lotus in the desert spring        |
+| `catppuccin_mocha`  | bordered | Rich dark pastels - lavender in the moonlight       |
+| `catppuccin_frappe` | bordered | Dusky blue-grey pastels - twilight in the valley    |
+| `catppuccin_latte`  | bordered | Warm light pastels - cream and ink at dawn          |
+| `tokyonight_night`  | bordered | Deep midnight blue - neon in the dark               |
+| `tokyonight_storm`  | bordered | Stormy dark blue - lightning on the horizon         |
+| `tokyonight_moon`   | bordered | Soft moonlit blue - silver glow on the plains       |
+| `rose_pine`         | bordered | Muted dark tones - wild roses at dusk               |
+| `rose_pine_moon`    | bordered | Deeper purple base - roses under moonlight          |
+| `rose_pine_dawn`    | bordered | Warm parchment light - roses at first light         |
+| `gruvbox_dark`      | bordered | Warm retro earth - campfire in the canyon            |
+| `gruvbox_light`     | bordered | Sandy retro light - parchment in the sun            |
+| `nord`              | bordered | Arctic cool - frost on the frontier                 |
+| `onedark`           | bordered | Atom-inspired grey - steel and blue                 |
+| `nightfox`          | bordered | Deep ocean blue - foxfire in the night              |
+| `everforest_dark`   | bordered | Woodland greens on dark soil - deep in the forest   |
+| `everforest_light`  | bordered | Soft cream with fresh greens - forest clearing      |
+| `dracula`           | bordered | Classic dark purple - the count rides at midnight   |
 
 <details>
 <summary><strong>Theme Gallery</strong> (click to expand)</summary>
@@ -779,7 +797,45 @@ w.setup({
 <td align="center"><strong>kanagawa_dragon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_dragon.png" width="400"></td>
 <td align="center"><strong>kanagawa_lotus</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_lotus.png" width="400"></td>
 </tr>
+<tr>
+<td align="center"><strong>catppuccin_mocha</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_mocha.png" width="400"></td>
+<td align="center"><strong>catppuccin_frappe</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_frappe.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>catppuccin_latte</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_latte.png" width="400"></td>
+<td align="center"><strong>tokyonight_night</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_night.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>tokyonight_storm</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_storm.png" width="400"></td>
+<td align="center"><strong>tokyonight_moon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_moon.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>rose_pine</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine.png" width="400"></td>
+<td align="center"><strong>rose_pine_moon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine_moon.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>rose_pine_dawn</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine_dawn.png" width="400"></td>
+<td align="center"><strong>gruvbox_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_gruvbox_dark.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>gruvbox_light</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_gruvbox_light.png" width="400"></td>
+<td align="center"><strong>nord</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_nord.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>onedark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_onedark.png" width="400"></td>
+<td align="center"><strong>nightfox</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_nightfox.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>everforest_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_everforest_dark.png" width="400"></td>
+<td align="center"><strong>everforest_light</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_everforest_light.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>dracula</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dracula.png" width="400"></td>
+<td></td>
+</tr>
 </table>
+
+Screenshot looking wrong? [Open an issue](https://github.com/catgoose/wildest.nvim/issues/new?title=Theme+screenshot+issue&labels=bug).
 
 </details>
 
@@ -1012,6 +1068,110 @@ the **cmdline** (`:`, `/`, `?`). Different frontier, partner. Use both.
 **Q: The fuzzy.so won't load!**
 A: Run `make -C csrc` from the plugin root. Make sure you have a C compiler
 installed (`gcc` or `clang`). Check that `lua/wildest/fuzzy.so` exists after.
+
+## Test Gallery
+
+<details>
+<summary>All screenshots at a glance (click to expand)</summary>
+<table>
+<tr>
+<td align="center"><strong>popupmenu</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu.png" width="400"></td>
+<td align="center"><strong>popupmenu_border</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_border.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>popupmenu_palette</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_palette.png" width="400"></td>
+<td align="center"><strong>wildmenu</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>devicons</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons.png" width="400"></td>
+<td align="center"><strong>fuzzy</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fuzzy.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>gradient</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient.png" width="400"></td>
+<td align="center"><strong>search</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>renderer_mux</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/renderer_mux.png" width="400"></td>
+<td align="center"><strong>kind_icons</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/kind_icons.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>lua_pipeline</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/lua_pipeline.png" width="400"></td>
+<td align="center"><strong>help_pipeline</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/help_pipeline.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>history_pipeline</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/history_pipeline.png" width="400"></td>
+<td align="center"><strong>hl_neon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_neon.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>hl_ember</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ember.png" width="400"></td>
+<td align="center"><strong>hl_ocean</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ocean.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_auto</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_auto.png" width="400"></td>
+<td align="center"><strong>theme_default</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_default.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_saloon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_saloon.png" width="400"></td>
+<td align="center"><strong>theme_outlaw</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_outlaw.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_sunset</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_sunset.png" width="400"></td>
+<td align="center"><strong>theme_prairie</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_prairie.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_dusty</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dusty.png" width="400"></td>
+<td align="center"><strong>theme_midnight</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_midnight.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_wanted</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_wanted.png" width="400"></td>
+<td align="center"><strong>theme_cactus</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_cactus.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_tumbleweed</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tumbleweed.png" width="400"></td>
+<td align="center"><strong>theme_kanagawa</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_kanagawa_dragon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_dragon.png" width="400"></td>
+<td align="center"><strong>theme_kanagawa_lotus</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_lotus.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_catppuccin_mocha</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_mocha.png" width="400"></td>
+<td align="center"><strong>theme_catppuccin_frappe</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_frappe.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_catppuccin_latte</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_latte.png" width="400"></td>
+<td align="center"><strong>theme_tokyonight_night</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_night.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_tokyonight_storm</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_storm.png" width="400"></td>
+<td align="center"><strong>theme_tokyonight_moon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_moon.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_rose_pine</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine.png" width="400"></td>
+<td align="center"><strong>theme_rose_pine_moon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine_moon.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_rose_pine_dawn</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine_dawn.png" width="400"></td>
+<td align="center"><strong>theme_gruvbox_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_gruvbox_dark.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_gruvbox_light</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_gruvbox_light.png" width="400"></td>
+<td align="center"><strong>theme_nord</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_nord.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_onedark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_onedark.png" width="400"></td>
+<td align="center"><strong>theme_nightfox</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_nightfox.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_everforest_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_everforest_dark.png" width="400"></td>
+<td align="center"><strong>theme_everforest_light</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_everforest_light.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>theme_dracula</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dracula.png" width="400"></td>
+<td></td>
+</tr>
+</table>
+</details>
 
 ## Credits
 

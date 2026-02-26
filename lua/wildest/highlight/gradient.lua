@@ -50,33 +50,26 @@ function M.new(base_highlighter, gradient, opts)
     for _, span in ipairs(base_spans) do
       local start = span[1] -- 0-indexed byte position
       local len = span[2] -- byte length
-      local substr = candidate:sub(start + 1, start + len)
 
-      -- Split span into individual characters
-      local byte_offset = 0
-      for pos, code in utf8.codes(substr) do
-        local char = utf8.char(code)
-        local char_byte_len = #char
-
-        -- Pick gradient color by character position in match
-        local grad_idx = math.min(char_index + 1, #gradient)
+      -- Split multi-byte spans into per-character spans so each
+      -- matched character gets its own gradient color.
+      for offset = 0, len - 1 do
+        char_index = char_index + 1
+        local grad_idx = math.min(char_index, #gradient)
         local grad_hl = gradient[grad_idx]
 
-        -- Also compute selected gradient if available
         local sel_grad_hl = nil
         if selected_gradient and #selected_gradient > 0 then
-          local sel_idx = math.min(char_index + 1, #selected_gradient)
+          local sel_idx = math.min(char_index, #selected_gradient)
           sel_grad_hl = selected_gradient[sel_idx]
         end
 
         table.insert(gradient_spans, {
-          start + pos - 1, -- 0-indexed byte position in full candidate
-          char_byte_len,
+          start + offset, -- 0-indexed byte position
+          1, -- single byte
           grad_hl,
-          sel_grad_hl, -- optional 4th element for selected state
+          sel_grad_hl,
         })
-
-        char_index = char_index + 1
       end
     end
 

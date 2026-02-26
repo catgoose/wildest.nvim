@@ -131,13 +131,32 @@ function M.create_base_state(opts, defaults)
   }
 end
 
---- Create accent + selected-accent highlight groups on a state table
+--- Create accent + selected-accent highlight groups on a state table.
+--- If a theme has already set WildestAccent/WildestSelectedAccent with explicit
+--- colors, use those as-is. Otherwise derive them from the default/selected
+--- groups with bold+underline added.
 ---@param state table renderer state (mutated: sets highlights.accent, highlights.selected_accent)
 function M.create_accent_highlights(state)
-  state.highlights.accent =
-    hl_mod.hl_with_attr("WildestAccent", state.highlights.default, "underline", "bold")
-  state.highlights.selected_accent =
-    hl_mod.hl_with_attr("WildestSelectedAccent", state.highlights.selected, "underline", "bold")
+  local accent_hl = vim.api.nvim_get_hl(0, { name = "WildestAccent" })
+  if accent_hl.link then
+    -- Still a default link — derive from base with bold+underline
+    state.highlights.accent =
+      hl_mod.hl_with_attr("WildestAccent_derived", state.highlights.default, "underline", "bold")
+  else
+    state.highlights.accent = "WildestAccent"
+  end
+
+  local sel_accent_hl = vim.api.nvim_get_hl(0, { name = "WildestSelectedAccent" })
+  if sel_accent_hl.link then
+    state.highlights.selected_accent = hl_mod.hl_with_attr(
+      "WildestSelectedAccent_derived",
+      state.highlights.selected,
+      "underline",
+      "bold"
+    )
+  else
+    state.highlights.selected_accent = "WildestSelectedAccent"
+  end
 end
 
 ---Truncate a string to fit within max_width, preserving highlight spans.
@@ -322,8 +341,11 @@ end
 function M.default_position()
   local height = vim.o.lines
   local width = vim.o.columns
-  -- Account for cmdline height and statusline
-  local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+  -- Account for statusline and cmdline area.
+  -- With cmdheight=0 the cmdline still appears temporarily during input,
+  -- so we always reserve at least 1 row for it.
+  local cmdheight = math.max(vim.o.cmdheight, 1)
+  local reserved = cmdheight + (vim.o.laststatus > 0 and 1 or 0)
   return height - reserved - 1, 0, width
 end
 
@@ -470,14 +492,34 @@ end
 ---@param query string
 ---@param candidate string
 ---@param accent_hl string
+---@param selected_accent_hl? string
+---@param is_selected? boolean
 ---@return table[]
-function M.get_candidate_spans(highlighter, query, candidate, accent_hl)
+function M.get_candidate_spans(
+  highlighter,
+  query,
+  candidate,
+  accent_hl,
+  selected_accent_hl,
+  is_selected
+)
   local spans = {}
   if highlighter and query ~= "" then
     local raw = highlighter.highlight(query, candidate)
     if raw then
       for _, span in ipairs(raw) do
-        table.insert(spans, { span[1], span[2], accent_hl })
+        -- span[3]: custom hl group (e.g. gradient), span[4]: selected variant
+        local hl
+        if is_selected and span[4] then
+          hl = span[4]
+        elseif is_selected and selected_accent_hl then
+          hl = selected_accent_hl
+        elseif span[3] then
+          hl = span[3]
+        else
+          hl = accent_hl
+        end
+        table.insert(spans, { span[1], span[2], hl })
       end
     end
   end

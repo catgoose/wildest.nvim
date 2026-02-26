@@ -149,18 +149,22 @@ end
 
 -- Gradient highlighting
 configs.gradient = function()
+  local rainbow = {
+    "#ff0000", "#ff4400", "#ff8800", "#ffcc00",
+    "#ffff00", "#88ff00", "#00ff44", "#00ffaa",
+    "#00ffff", "#00aaff", "#0044ff", "#4400ff",
+    "#8800ff", "#cc00ff", "#ff00ff", "#ff0088",
+  }
   local gradient = {}
-  for i = 0, 15 do
+  for i, color in ipairs(rainbow) do
     local name = "WildestGradient" .. i
-    vim.api.nvim_set_hl(0, name, {
-      fg = string.format("#%02x%02x%02x", 255 - i * 16, 100 + i * 8, i * 16),
-    })
+    vim.api.nvim_set_hl(0, name, { fg = color, bold = true })
     table.insert(gradient, name)
   end
   return {
     pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
     renderer = w.theme("auto").renderer({
-      highlighter = w.gradient_highlighter(w.basic_highlighter(), gradient),
+      highlighter = w.gradient_highlighter(w.fzy_highlighter(), gradient),
       left = { " " },
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -326,6 +330,23 @@ local theme_names = {
   "kanagawa",
   "kanagawa_dragon",
   "kanagawa_lotus",
+  "catppuccin_mocha",
+  "catppuccin_frappe",
+  "catppuccin_latte",
+  "tokyonight_night",
+  "tokyonight_storm",
+  "tokyonight_moon",
+  "rose_pine",
+  "rose_pine_moon",
+  "rose_pine_dawn",
+  "gruvbox_dark",
+  "gruvbox_light",
+  "nord",
+  "onedark",
+  "nightfox",
+  "everforest_dark",
+  "everforest_light",
+  "dracula",
 }
 
 -- Theme configs are lazy: store factory functions so only the selected

@@ -4,7 +4,9 @@ SHELL := /bin/bash
 DEPS_DIR := deps
 MINI_DIR := $(DEPS_DIR)/mini.nvim
 
-.PHONY: test test_file lint docs docs-vimdoc docs-html build clean deps
+.PHONY: test test_file lint docs docs-vimdoc docs-html build clean deps \
+       screenshots screenshots-themes screenshots-renderers screenshots-features \
+       screenshots-pipelines screenshots-highlights
 
 ## Run all tests via mini.test
 test: deps
@@ -36,6 +38,30 @@ docs-html:
 ## Build C library (fuzzy.so)
 build:
 	$(MAKE) -C csrc
+
+## Generate all screenshots (parallel)
+screenshots:
+	scripts/screenshots/generate.sh -j8
+
+## Generate theme screenshots only
+screenshots-themes:
+	scripts/screenshots/generate.sh -j8 --themes
+
+## Generate renderer screenshots only
+screenshots-renderers:
+	scripts/screenshots/generate.sh -j8 --renderers
+
+## Generate feature screenshots only
+screenshots-features:
+	scripts/screenshots/generate.sh -j8 --features
+
+## Generate pipeline screenshots only
+screenshots-pipelines:
+	scripts/screenshots/generate.sh -j8 --pipelines
+
+## Generate highlight screenshots only
+screenshots-highlights:
+	scripts/screenshots/generate.sh -j8 --highlights
 
 ## Clean build artifacts
 clean:
