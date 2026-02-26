@@ -1,0 +1,1395 @@
+==============================================================================
+wildest.nvim                                                           *wildest*
+
+Fast, pure-Lua cmdline completion engine for Neovim.
+
+wildest.nvim provides fuzzy completion for command-line mode (:), search (/),
+and reverse search (?) with an async pipeline architecture, C FFI fuzzy
+matching, and a composable renderer/component system.
+
+Quickstart:
+
+>lua
+require('wildest').setup({
+  modes = { ':', '/', '?' },
+  pipeline = require('wildest').cmdline_pipeline(),
+  renderer = require('wildest').popupmenu_renderer(),
+})
+<
+
+==============================================================================
+Table of Contents                                             *wildest-contents*
+
+wildest.nvim ························································· |wildest|
+Configuration ················································· |wildest.config|
+Session State ·················································· |wildest.state|
+Utilities ······················································· |wildest.util|
+Cache ·························································· |wildest.cache|
+Pipeline Engine ············································· |wildest.pipeline|
+Fuzzy Filter ·················································· |wildest.filter|
+Highlight Utilities ········································ |wildest.highlight|
+Renderer Utilities ·········································· |wildest.renderer|
+
+wildest                                                                *wildest*
+
+    Fields: ~
+        {setup}  (fun(opts:wildest.Config))
+
+
+                                                                 *wildest-setup*
+M.setup({opts})                                                  *wildest.setup*
+    Setup wildest with user config.
+    Creates autocommands for CmdlineEnter/Changed/Leave and sets up keybindings.
+
+    Parameters: ~
+        {opts}  (wildest.Config)  User configuration (merged with defaults)
+
+
+                                                             *wildest-pipelines*
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+
+M.branch({...})                                                 *wildest.branch*
+    Branch pipeline — tries each sub-pipeline until one succeeds.
+
+    Parameters: ~
+        {...}  (wildest.Pipeline[])  Sub-pipelines to try in order
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.check({predicate})                                             *wildest.check*
+    Check pipeline — predicate gate that passes input through if predicate returns true.
+
+    Parameters: ~
+        {predicate}  (fun(ctx:wildest.PipelineContext,input:any):boolean)
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.debounce({interval})                                        *wildest.debounce*
+    Debounce pipeline — delays execution by the given interval.
+
+    Parameters: ~
+        {interval}  (integer)  Delay in milliseconds
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.result({opts})                                                *wildest.result*
+    Wrap pipeline output with metadata (highlighter, output transform, etc.).
+
+    Parameters: ~
+        {opts}  (wildest.ResultOpts)  Result options
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.subpipeline({factory})                                   *wildest.subpipeline*
+    Create a dynamic sub-pipeline at runtime from a factory function.
+
+    Parameters: ~
+        {factory}  (fun(ctx:wildest.PipelineContext):wildest.PipelineStep[])
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.cmdline_pipeline({opts?})                           *wildest.cmdline_pipeline*
+    Cmdline pipeline — completes commands, files, buffers, help tags, etc.
+
+    Parameters: ~
+        {opts?}  (wildest.CmdlinePipelineOpts)
+
+    Returns: ~
+        (wildest.PipelineStep[])  pipeline
+
+
+M.search_pipeline({opts?})                             *wildest.search_pipeline*
+    Search pipeline — completes search patterns from buffer lines and history.
+
+    Parameters: ~
+        {opts?}  (wildest.SearchPipelineOpts)
+
+    Returns: ~
+        (wildest.PipelineStep[])  pipeline
+
+
+M.file_finder_pipeline({opts?})                   *wildest.file_finder_pipeline*
+    File finder pipeline — finds files using fd, rg, or find.
+
+    Parameters: ~
+        {opts?}  (wildest.FileFinderOpts)
+
+    Returns: ~
+        (wildest.PipelineStep[])  pipeline
+
+
+M.fuzzy_filter({opts?})                                   *wildest.fuzzy_filter*
+    Fuzzy filter pipeline step — filters and sorts candidates by fuzzy match score.
+
+    Parameters: ~
+        {opts?}  (wildest.FuzzyFilterOpts)
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.uniq_filter({opts?})                                     *wildest.uniq_filter*
+    Deduplication filter pipeline step.
+
+    Parameters: ~
+        {opts?}  (wildest.UniqFilterOpts)
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
+
+M.map()                                                            *wildest.map*
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.filter({fn})                                                  *wildest.filter*
+    Filter candidates with a predicate (true = keep).
+
+    Parameters: ~
+        {fn}  (fun(candidate:any,index:integer,ctx:wildest.PipelineContext):boolean)
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.sort({comparator?})                                             *wildest.sort*
+    Sort candidates lexically, or with a custom comparator.
+
+    Parameters: ~
+        {comparator?}  (fun(a:any,b:any,ctx:wildest.PipelineContext):boolean)
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.sort_by({scorer})                                            *wildest.sort_by*
+    Sort candidates by a scoring function (highest score first).
+
+    Parameters: ~
+        {scorer}  (fun(candidate:any,ctx:wildest.PipelineContext):number)
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.take({n})                                                       *wildest.take*
+    Limit the number of candidates.
+
+    Parameters: ~
+        {n}  (integer)  Maximum number of candidates
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.pipe({...})                                                     *wildest.pipe*
+    Compose multiple sync pipeline steps into one.
+
+    Parameters: ~
+        {...}  (wildest.PipelineStep)
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.async({fn})                                                    *wildest.async*
+    Wrap an async operation into a pipeline step.
+
+    Parameters: ~
+        {fn}  (fun(ctx:wildest.PipelineContext,input:any,resolve:fun(result:any),reject:fun(err:any)))
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.vim_complete({complete_type}, {opts?})                  *wildest.vim_complete*
+    Create a pipeline step from vim.fn.getcompletion().
+
+    Parameters: ~
+        {complete_type}  (string|fun(ctx:wildest.PipelineContext):string)  Completion type or dynamic selector
+        {opts?}          (table)
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD
+
+M.history_pipeline({opts?})                           *wildest.history_pipeline*
+    History completion pipeline (command and search history).
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.PipelineStep[])  pipeline
+
+
+M.lua_pipeline({opts?})                                   *wildest.lua_pipeline*
+    Lua expression completion pipeline (:lua, :=).
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.PipelineStep[])  pipeline
+
+
+M.help_pipeline({opts?})                                 *wildest.help_pipeline*
+    Help tag completion pipeline.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.PipelineStep[])  pipeline
+
+
+
+
+                                                             *wildest-renderers*
+RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
+
+wildest.PopupmenuOpts                                    *wildest.PopupmenuOpts*
+
+    Fields: ~
+        {highlighter?}   (table)        Highlighter for match accents
+        {left?}          (table)        Left components (default { " " })
+        {right?}         (table)        Right components (default { " " })
+        {max_height?}    (integer)      Maximum number of visible lines (default 16)
+        {min_height?}    (integer)      Minimum number of visible lines (default 0)
+        {max_width?}     (integer|nil)  Maximum width (nil = full editor width)
+        {min_width?}     (integer)      Minimum width (default 16)
+        {reverse?}       (boolean)      Reverse candidate order (default false)
+        {fixed_height?}  (boolean)      Pad to max_height to prevent resizing (default false)
+        {pumblend?}      (integer)      Window transparency 0-100
+        {zindex?}        (integer)      Floating window z-index (default 250)
+
+
+wildest.PopupmenuBorderOpts                        *wildest.PopupmenuBorderOpts*
+
+    Fields: ~
+        {border?}         (string|table)        Border style preset or 8-char array (default "single")
+        {title?}          (string)              Title centered in the top border
+        {highlighter?}    (table)               Highlighter for match accents
+        {left?}           (table)               Left components (default { " " })
+        {right?}          (table)               Right components (default { " " })
+        {max_height?}     (integer|string)      Max visible lines, integer or percentage (default 16)
+        {min_height?}     (integer)             Minimum visible lines (default 0)
+        {max_width?}      (integer|string|nil)  Max width, integer or percentage (nil = full width)
+        {min_width?}      (integer|string)      Minimum width, integer or percentage (default 16)
+        {reverse?}        (boolean)             Reverse candidate order (default false)
+        {fixed_height?}   (boolean)             Pad to max_height to prevent resizing (default false)
+        {position?}       (string)              Vertical placement: "top", "center", or "bottom" (default "bottom")
+        {empty_message?}  (string)              Message shown when there are no results
+        {pumblend?}       (integer)             Window transparency 0-100
+        {zindex?}         (integer)             Floating window z-index (default 250)
+
+
+wildest.PopupmenuPaletteOpts                      *wildest.PopupmenuPaletteOpts*
+
+    Fields: ~
+        {border?}           (string|table)    Border style preset or 8-char array (default "rounded")
+        {title?}            (string)          Title centered in the top border
+        {prompt_prefix?}    (string)          Prefix shown before cmdline input (default " : ")
+        {prompt_position?}  (string)          Prompt placement: "top" or "bottom" (default "top")
+        {highlighter?}      (table)           Highlighter for match accents
+        {left?}             (table)           Left components (default { " " })
+        {right?}            (table)           Right components (default { " " })
+        {max_height?}       (string|integer)  Max height, percentage or integer (default "75%")
+        {min_height?}       (integer)         Minimum height (default 0)
+        {max_width?}        (string|integer)  Max width, percentage or integer (default "75%")
+        {min_width?}        (integer|string)  Minimum width (default 30)
+        {margin?}           (string|integer)  Horizontal margin: "auto", percentage, or integer (default "auto")
+        {reverse?}          (boolean)         Reverse candidate order (default false)
+        {fixed_height?}     (boolean)         Pad to max_height to prevent resizing (default false)
+        {empty_message?}    (string)          Message shown when there are no results
+        {pumblend?}         (integer)         Window transparency 0-100
+        {zindex?}           (integer)         Floating window z-index (default 250)
+
+
+M.popupmenu_renderer({opts?})                       *wildest.popupmenu_renderer*
+    Popupmenu renderer — floating window above the cmdline.
+
+    Parameters: ~
+        {opts?}  (wildest.PopupmenuOpts)
+
+    Returns: ~
+        (wildest.Renderer)
+
+
+M.popupmenu_border_theme({opts?})               *wildest.popupmenu_border_theme*
+    Popupmenu with border theme — decorative border around the popup.
+
+    Parameters: ~
+        {opts?}  (wildest.PopupmenuBorderOpts)
+
+    Returns: ~
+        (wildest.Renderer)
+
+
+M.popupmenu_palette_theme({opts?})             *wildest.popupmenu_palette_theme*
+    Popupmenu palette theme — centered, bordered popup with prompt.
+
+    Parameters: ~
+        {opts?}  (wildest.PopupmenuPaletteOpts)
+
+    Returns: ~
+        (wildest.Renderer)
+
+
+M.wildmenu_renderer({opts?})                         *wildest.wildmenu_renderer*
+    Wildmenu renderer — horizontal completion in the statusline area.
+
+    Parameters: ~
+        {opts?}  (wildest.WildmenuOpts)
+
+    Returns: ~
+        (wildest.Renderer)
+
+
+M.renderer_mux({routes})                                  *wildest.renderer_mux*
+    Renderer mux — route to different renderers by cmdtype.
+
+    Parameters: ~
+        {routes}  (table<string,wildest.Renderer>)  Map of cmdtype to renderer
+
+    Returns: ~
+        (wildest.Renderer)
+
+
+                                                          *wildest-highlighters*
+HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+
+M.basic_highlighter({opts?})                         *wildest.basic_highlighter*
+    Basic subsequence highlighter.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Highlighter)
+
+
+M.fzy_highlighter({opts?})                             *wildest.fzy_highlighter*
+    Fzy C FFI highlighter — uses fuzzy_positions for accurate match highlighting.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Highlighter)
+
+
+M.prefix_highlighter({opts?})                       *wildest.prefix_highlighter*
+    Prefix highlighter — highlights the leading prefix that matches the query.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Highlighter)
+
+
+                                                  *wildest.gradient_highlighter*
+M.gradient_highlighter({base_highlighter}, {gradient}, {opts?})
+    Gradient highlighter — wraps another highlighter with per-character color gradient.
+
+    Parameters: ~
+        {base_highlighter}  (wildest.Highlighter)
+        {gradient}          (string[])                       Array of highlight group names for the gradient
+        {opts?}             ({selected_gradient?:string[]})
+
+    Returns: ~
+        (wildest.Highlighter)
+
+
+                                                            *wildest-components*
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+
+M.popupmenu_scrollbar({opts?})                     *wildest.popupmenu_scrollbar*
+    Scrollbar component for popupmenu renderers.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Component)
+
+
+M.popupmenu_spinner({opts?})                         *wildest.popupmenu_spinner*
+    Loading spinner component for popupmenu renderers.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Component)
+
+
+M.popupmenu_devicons({opts?})                       *wildest.popupmenu_devicons*
+    File type icon component (requires nvim-web-devicons).
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Component)
+
+
+M.popupmenu_buffer_flags({opts?})               *wildest.popupmenu_buffer_flags*
+    Buffer flags component (modified, readonly, etc.).
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Component)
+
+
+                                  *wildest.popupmenu_empty_message_with_spinner*
+M.popupmenu_empty_message_with_spinner({opts?})
+    Empty message with animated spinner.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Component)
+
+
+                                                 *wildest.popupmenu_zip_columns*
+M.popupmenu_zip_columns({merger}, {col1}, {col2})
+    Zip columns — merge two column components with a custom function.
+
+    Parameters: ~
+        {merger}  (fun(a:table,b:table):table)
+        {col1}    (wildest.Component)
+        {col2}    (wildest.Component)
+
+    Returns: ~
+        (wildest.Component)
+
+
+M.wildmenu_arrows({opts?})                             *wildest.wildmenu_arrows*
+    Previous/next arrow indicators for wildmenu.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Component)
+
+
+M.wildmenu_separator({opts?})                       *wildest.wildmenu_separator*
+    Separator component for wildmenu items.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Component)
+
+
+M.wildmenu_index({opts?})                               *wildest.wildmenu_index*
+    Position indicator (X/Y) for wildmenu.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Component)
+
+
+                                                             *wildest.condition*
+M.condition({predicate}, {if_true}, {if_false?})
+    Conditional component — shows if_true or if_false based on predicate.
+
+    Parameters: ~
+        {predicate}  (fun(ctx:table):boolean)
+        {if_true}    (wildest.Component)
+        {if_false?}  (wildest.Component)
+
+    Returns: ~
+        (wildest.Component)
+
+
+M.popupmenu_kind_icon({opts?})                     *wildest.popupmenu_kind_icon*
+    Kind/type icon component for popupmenu renderers.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Component)
+
+
+M.empty_message({msg}, {hl?})                            *wildest.empty_message*
+    Static empty message component.
+
+    Parameters: ~
+        {msg}  (string)  Message to display when there are no results
+        {hl?}  (string)  Highlight group
+
+    Returns: ~
+        (wildest.Component)
+
+
+UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU
+
+M.make_hl({name}, {base}, {overrides})                         *wildest.make_hl*
+    Create or update a highlight group by extending a base group.
+
+    Parameters: ~
+        {name}       (string)  New highlight group name
+        {base}       (string)  Base highlight group to extend
+        {overrides}  (table)   Highlight attributes to override
+
+    Returns: ~
+        (string)  The highlight group name
+
+
+M.hl_with_attr({name}, {base}, {...})                     *wildest.hl_with_attr*
+    Create a highlight group with additional boolean attributes (bold, italic, etc.).
+
+    Parameters: ~
+        {name}  (string)  New highlight group name
+        {base}  (string)  Base highlight group
+        {...}   (string)  Attribute names (e.g., 'bold', 'underline', 'italic')
+
+    Returns: ~
+        (string)  The highlight group name
+
+
+M.project_root({markers?})                                *wildest.project_root*
+    Project root detection — returns a function that finds the project root.
+
+    Parameters: ~
+        {markers?}  (string[])  Root markers (default: { '.git', '.hg' })
+
+    Returns: ~
+        (fun(path:string):string)
+
+
+M.clear_project_root_cache()                  *wildest.clear_project_root_cache*
+    Clear the project root detection cache.
+
+
+M.frecency_scorer({opts?})                             *wildest.frecency_scorer*
+    Frecency scorer — for use with sort_by to rank by frequency + recency.
+
+    Parameters: ~
+        {opts?}  (table)  { weights?: table }
+
+    Returns: ~
+        (fun(candidate:string,ctx:table):number)
+
+
+M.frecency_boost({opts?})                               *wildest.frecency_boost*
+    Frecency boost — pipeline step that re-sorts candidates by frecency.
+
+    Parameters: ~
+        {opts?}  (table)  { weights?: table, blend?: number }
+
+    Returns: ~
+        (wildest.PipelineStep)
+
+
+M.frecency_visit({key})                                 *wildest.frecency_visit*
+    Record a frecency visit for an item.
+
+    Parameters: ~
+        {key}  (string)  The item key
+
+
+                                                                *wildest-themes*
+TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT
+
+M.theme({name})                                                  *wildest.theme*
+    Get a built-in theme by name.
+    Available: 'auto', 'default', 'saloon', 'outlaw', 'sunset', 'prairie',
+    'dusty', 'midnight', 'wanted', 'cactus', 'tumbleweed',
+    'kanagawa', 'kanagawa_dragon', 'kanagawa_lotus'
+
+    Parameters: ~
+        {name}  (string)  Theme name
+
+    Returns: ~
+        (wildest.Theme)  Theme object
+
+
+M.define_theme({def})                                     *wildest.define_theme*
+    Define a custom theme.
+
+    Parameters: ~
+        {def}  (wildest.ThemeDef)  Theme definition
+
+    Returns: ~
+        (wildest.Theme)  theme
+
+
+M.extend_theme({base}, {overrides})                       *wildest.extend_theme*
+    Extend an existing theme with overrides.
+
+    Parameters: ~
+        {base}       (wildest.Theme|string)  Base theme object or name
+        {overrides}  (wildest.ThemeDef)      Partial definition to merge
+
+    Returns: ~
+        (wildest.Theme)  theme
+
+
+M.compile_theme({name})                                  *wildest.compile_theme*
+    Compile a theme to bytecode for instant loading.
+    For 'auto', this snapshots your current colorscheme's colors.
+
+    Parameters: ~
+        {name}  (string)  Theme name
+
+
+M.compile_all_themes()                              *wildest.compile_all_themes*
+    Compile all built-in themes to bytecode.
+
+
+M.load_compiled_theme({name})                      *wildest.load_compiled_theme*
+    Load a compiled theme from bytecode cache.
+
+    Parameters: ~
+        {name}  (string)  Theme name
+
+    Returns: ~
+        (boolean)  True if compiled theme was found and loaded
+
+
+M.clear_theme_cache()                                *wildest.clear_theme_cache*
+    Clear all compiled theme bytecode caches.
+
+
+SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
+
+M.enable()                                                      *wildest.enable*
+    Enable wildest completions.
+
+
+M.disable()                                                    *wildest.disable*
+    Disable wildest completions.
+
+
+M.toggle()                                                      *wildest.toggle*
+    Toggle wildest completions on/off.
+
+
+==============================================================================
+Configuration                                                   *wildest.config*
+
+Configuration management for wildest.nvim.
+
+Call `require('wildest').setup(opts)` to set configuration. The opts table is
+merged with defaults using `vim.tbl_deep_extend`.
+
+wildest.Config                                                  *wildest.Config*
+
+    Fields: ~
+        {modes?}             (string[])                                     Cmdline modes to enable (default: { ':', '/', '?' })
+        {next_key?}          (string)                                       Key to select next candidate (default: '<Tab>')
+        {previous_key?}      (string)                                       Key to select previous candidate (default: '<S-Tab>')
+        {accept_key?}        (string)                                       Key to accept current selection (default: '<Down>')
+        {reject_key?}        (string)                                       Key to reject and restore original (default: '<Up>')
+        {interval?}          (integer)                                      Debounce interval in ms (default: 100)
+        {num_workers?}       (integer)                                      Number of async workers (default: 2)
+        {noselect?}          (boolean)                                      No item selected initially (default: true)
+        {trigger?}           ("auto"|"tab")                                 When to show completions (default: 'auto')
+        {longest_prefix?}    (boolean)                                      Insert longest common prefix on first Tab (default: false)
+        {pipeline_timeout?}  (integer)                                      Timeout in ms for pipeline steps, 0 = no timeout (default: 0)
+        {skip_commands?}     (string[])                                     Commands to skip completions for (default: {})
+        {min_input?}         (integer)                                      Minimum input length before showing completions (default: 0)
+        {pipeline?}          (wildest.PipelineStep|wildest.PipelineStep[])  Pipeline steps or single pipeline step
+        {renderer?}          (wildest.Renderer)                             Renderer instance
+
+
+M.setup({opts?})                                          *wildest.config.setup*
+    Validate and merge user config with defaults.
+
+    Parameters: ~
+        {opts?}  (wildest.Config)
+
+    Returns: ~
+        (wildest.Config)
+
+
+M.get({key?})                                               *wildest.config.get*
+    Get current config value, or the full config table if key is nil.
+
+    Parameters: ~
+        {key?}  (string)  Config key to retrieve
+
+    Returns: ~
+        (any)
+
+
+==============================================================================
+Session State                                                    *wildest.state*
+
+Single source of truth for the current completion session state.
+Manages the lifecycle of CmdlineEnter -> CmdlineChanged -> CmdlineLeave,
+selection stepping, pipeline execution, and renderer drawing.
+
+wildest.State                                                    *wildest.State*
+
+    Fields: ~
+        {enabled}            (boolean)                 Whether wildest is globally enabled
+        {active}             (boolean)                 Whether a completion session is active
+        {hidden}             (boolean)                 Whether the renderer is hidden
+        {session_id}         (integer)                 Monotonic session counter
+        {run_id}             (integer)                 Monotonic pipeline run counter
+        {selected}           (integer)                 Selected candidate index (-1 = no selection)
+        {result?}            (wildest.PipelineResult)  Current pipeline result
+        {error?}             (any)                     Current pipeline error
+        {previous_cmdline}   (string)                  Last seen cmdline text
+        {replaced_cmdline?}  (string)                  Cmdline text set by completion
+        {completion_stack}   (table)                   Stack for nested completions
+        {cmdtype}            (string)                  Current cmdtype (':', '/', '?')
+        {draw_done}          (boolean)                 Whether current frame has been drawn
+        {suppress_change}    (boolean)                 Suppress next CmdlineChanged from our setcmdline
+        {triggered}          (boolean)                 For trigger='tab': has Tab been pressed?
+        {pipeline_timer?}    (uv_timer_t)              Timeout timer for pipeline
+
+
+M.get()                                                      *wildest.state.get*
+     Get the current state table (read-only — do not mutate)
+
+    Returns: ~
+        (wildest.State)
+
+
+M.is_active()                                          *wildest.state.is_active*
+     Check if wildest is currently active
+
+    Returns: ~
+        (boolean)
+
+
+M.start({cmdtype})                                         *wildest.state.start*
+     Start a new session (called on CmdlineEnter)
+
+    Parameters: ~
+        {cmdtype}  (string)  the command type (':', '/', '?')
+
+
+M.stop()                                                    *wildest.state.stop*
+     Stop the current session (called on CmdlineLeave)
+
+
+M.on_change({cmdline})                                 *wildest.state.on_change*
+     Called when cmdline input changes
+
+    Parameters: ~
+        {cmdline}  (string)  current cmdline content
+
+
+M.trigger()                                              *wildest.state.trigger*
+     Trigger completions (for trigger='tab' mode)
+
+
+M.run_pipeline({input})                             *wildest.state.run_pipeline*
+     Run the pipeline with current input
+
+    Parameters: ~
+        {input}  (string)
+
+
+M.on_finish({ctx}, {result})                           *wildest.state.on_finish*
+     Called when pipeline finishes successfully
+
+    Parameters: ~
+        {ctx}     (table)
+        {result}  (any)
+
+
+M.on_error({ctx}, {err})                                *wildest.state.on_error*
+     Called when pipeline errors
+
+    Parameters: ~
+        {ctx}  (table)
+        {err}  (any)
+
+
+M.draw()                                                    *wildest.state.draw*
+     Draw the current state using the configured renderer
+
+
+M.step({n})                                                 *wildest.state.step*
+     Step selection by n positions (positive = next, negative = previous)
+
+    Parameters: ~
+        {n}  (integer)
+
+
+M.feedkeys_cmdline({text})                      *wildest.state.feedkeys_cmdline*
+     Replace the current cmdline with the given text
+
+    Parameters: ~
+        {text}  (string)
+
+
+M.accept_completion()                          *wildest.state.accept_completion*
+     Accept current completion
+
+
+M.reject_completion()                          *wildest.state.reject_completion*
+     Reject current completion (restore original)
+
+
+M.enable()                                                *wildest.state.enable*
+     Enable wildest
+
+
+M.disable()                                              *wildest.state.disable*
+     Disable wildest
+
+
+M.toggle()                                                *wildest.state.toggle*
+     Toggle wildest
+
+
+==============================================================================
+Utilities                                                         *wildest.util*
+
+General-purpose utility functions used throughout wildest.nvim.
+Includes string manipulation, path handling, and project root detection.
+
+M.escape_pattern({str})                            *wildest.util.escape_pattern*
+    Escape special characters in a Vim pattern.
+
+    Parameters: ~
+        {str}  (string)
+
+    Returns: ~
+        (string)
+
+
+M.escape_lua_pattern({str})                    *wildest.util.escape_lua_pattern*
+     Escape special characters for use in Lua pattern
+
+    Parameters: ~
+        {str}  (string)
+
+    Returns: ~
+        (string)
+
+
+M.strdisplaywidth({str})                          *wildest.util.strdisplaywidth*
+     Get display width of a string (handles multibyte)
+
+    Parameters: ~
+        {str}  (string)
+
+    Returns: ~
+        (integer)
+
+
+                                                         *wildest.util.truncate*
+M.truncate({str}, {max_width}, {suffix?})
+     Truncate string to fit within max display width
+
+    Parameters: ~
+        {str}        (string)
+        {max_width}  (integer)
+        {suffix?}    (string)   suffix to append when truncated (default '...')
+
+    Returns: ~
+        (string)
+
+
+M.normalize_path({path})                           *wildest.util.normalize_path*
+     Normalize path separators and expand ~
+
+    Parameters: ~
+        {path}  (string)
+
+    Returns: ~
+        (string)
+
+
+M.shorten_home({path})                               *wildest.util.shorten_home*
+     Shorten path with ~ for home directory
+
+    Parameters: ~
+        {path}  (string)
+
+    Returns: ~
+        (string)
+
+
+M.is_empty({str?})                                       *wildest.util.is_empty*
+     Check if a string is empty or nil
+
+    Parameters: ~
+        {str?}  (string)
+
+    Returns: ~
+        (boolean)
+
+
+M.split_cmd_args()                                 *wildest.util.split_cmd_args*
+
+
+M.take({list}, {n})                                          *wildest.util.take*
+     Return the first n elements of a list (or the original list if #list <= n)
+
+    Parameters: ~
+        {list}  (table)
+        {n}     (integer)
+
+    Returns: ~
+        (table)
+
+
+M.project_root({markers?}, {path?})                  *wildest.util.project_root*
+     Find the project root by searching upward for marker files/directories
+     Uses findfile/finddir to search upward, stopping at home directory.
+
+
+    Parameters: ~
+        {markers?}  (string[])  root markers (default: { '.git', '.hg' })
+        {path?}     (string)    starting path (default: cwd)
+
+    Returns: ~
+        (string)  path, or '' if not found
+
+
+M.clear_project_root_cache()             *wildest.util.clear_project_root_cache*
+     Clear the project root cache
+
+
+==============================================================================
+Cache                                                            *wildest.cache*
+
+Cache implementations for wildest.nvim.
+Provides dictionary and MRU (Most Recently Used) caches.
+
+M.dict_cache()                                        *wildest.cache.dict_cache*
+    Create a simple dictionary cache.
+
+    Returns: ~
+        (table)  object with get/set/clear/has methods
+
+
+M.mru_cache({max_size})                                *wildest.cache.mru_cache*
+     Create an MRU (Most Recently Used) cache with a max size
+
+    Parameters: ~
+        {max_size}  (integer)  maximum number of entries
+
+    Returns: ~
+        (table)  object with get/set/clear/has methods
+
+
+==============================================================================
+Pipeline Engine                                               *wildest.pipeline*
+
+Async-aware pipeline execution engine.
+
+Each pipeline step is a function `(ctx, input) -> result` where result can be:
+- A value: passed to the next step
+- A function: async step, receives `(resolve, reject)` via context
+- `false`: pipeline failed (branch combinator tries next)
+- `true`: pipeline says "hide" (no results to show)
+
+wildest.PipelineStep                     *wildest.pipeline.wildest.PipelineStep*
+
+    Type: ~
+        fun(ctx:wildest.PipelineContext,input:any):any
+
+
+wildest.Pipeline                             *wildest.pipeline.wildest.Pipeline*
+
+    Type: ~
+        wildest.PipelineStep[]
+
+
+wildest.PipelineContext                                *wildest.PipelineContext*
+
+    Fields: ~
+        {run_id}       (integer)  Monotonic pipeline run counter
+        {session_id}   (integer)  Session counter
+        {input}        (string)   Current cmdline input
+        {cmdtype}      (string)   Current cmdtype (':', '/', '?')
+        {mode}         (string)   Alias for cmdtype
+        {handler_id?}  (integer)  Async handler ID (set by pipeline engine)
+        {arg?}         (string)   Extracted argument portion of input
+
+
+wildest.PipelineResult                                  *wildest.PipelineResult*
+
+    Fields: ~
+        {value}    (any[])                                 Completion candidates
+        {data?}    (table)                                 Metadata (input, arg, etc.)
+        {output?}  (fun(data:table,candidate:any):string)  Output transform
+
+
+                                             *wildest.pipeline.register_handler*
+M.register_handler({on_finish}, {on_error})
+     Register a handler for async pipeline resolution
+
+    Parameters: ~
+        {on_finish}  (fun(ctx:table,x:any))
+        {on_error}   (fun(ctx:table,err:any))
+
+    Returns: ~
+        (integer)  handler_id
+
+
+M.remove_handler({id})                         *wildest.pipeline.remove_handler*
+     Remove a handler
+
+    Parameters: ~
+        {id}  (integer)
+
+
+M.clear_handlers()                             *wildest.pipeline.clear_handlers*
+     Clear all handlers (called on CmdlineLeave)
+
+
+M.resolve({ctx}, {x})                                 *wildest.pipeline.resolve*
+     Resolve an async pipeline step
+
+    Parameters: ~
+        {ctx}  (table)  pipeline context
+        {x}    (any)    result value
+
+
+M.reject({ctx}, {err})                                 *wildest.pipeline.reject*
+     Reject an async pipeline step
+
+    Parameters: ~
+        {ctx}  (table)  pipeline context
+        {err}  (any)    error value
+
+
+                                                          *wildest.pipeline.run*
+M.run({pipeline}, {on_finish}, {on_error}, {ctx}, {x})
+     Run a pipeline (array of functions) with initial input
+
+    Parameters: ~
+        {pipeline}   (table|function)          array of pipeline functions, or single function
+        {on_finish}  (fun(ctx:table,x:any))
+        {on_error}   (fun(ctx:table,err:any))
+        {ctx}        (table)                   context with run_id, session_id, input, etc.
+        {x}          (any)                     initial input
+
+
+==============================================================================
+Fuzzy Filter                                                    *wildest.filter*
+
+C FFI fuzzy matching filter for wildest.nvim.
+Uses a compiled C library (fuzzy.so) for high-performance fuzzy matching,
+scoring, filtering, and position extraction.
+
+wildest.FuzzyFilterOpts                                *wildest.FuzzyFilterOpts*
+
+    Fields: ~
+        {key?}  (fun(candidate:any):string)  Key extraction function
+
+
+M.has_match({needle}, {haystack})                     *wildest.filter.has_match*
+     Check if needle fuzzy-matches haystack
+
+    Parameters: ~
+        {needle}    (string)
+        {haystack}  (string)
+
+    Returns: ~
+        (boolean)
+
+
+M.score({needle}, {haystack})                             *wildest.filter.score*
+     Score a single fuzzy match
+
+    Parameters: ~
+        {needle}    (string)
+        {haystack}  (string)
+
+    Returns: ~
+        (number)
+
+
+M.filter_sort({needle}, {candidates})               *wildest.filter.filter_sort*
+     Batch filter and sort candidates by fuzzy match score
+     This is the hot path — called on every keystroke
+
+    Parameters: ~
+        {needle}      (string)
+        {candidates}  (string[])
+
+    Returns: ~
+        (string[])  sorted candidates
+        (number[])  scores
+
+
+M.positions({needle}, {haystack})                     *wildest.filter.positions*
+     Get matched character positions for highlighting
+
+    Parameters: ~
+        {needle}    (string)
+        {haystack}  (string)
+
+    Returns: ~
+        (integer[]|nil)  (0-indexed byte positions)
+
+
+M.fuzzy_filter({opts?})                            *wildest.filter.fuzzy_filter*
+     Create a fuzzy filter pipeline function
+
+    Parameters: ~
+        {opts?}  (table)  { key?: fun(x):string }
+
+    Returns: ~
+        (fun(ctx:table,candidates:string[]):table)
+
+
+==============================================================================
+Highlight Utilities                                          *wildest.highlight*
+
+Highlight group creation, span conversion, and extmark application utilities.
+Used by renderers and highlighters to apply fuzzy match highlighting.
+
+wildest.Highlighter                                        *wildest.Highlighter*
+
+    Fields: ~
+        {highlight}  (fun(query:string,candidate:string):table[]|nil)
+
+
+M.make_hl({name}, {base}, {overrides})               *wildest.highlight.make_hl*
+    Create or update a highlight group by extending a base group.
+
+    Parameters: ~
+        {name}       (string)  the new highlight group name
+        {base}       (string)  the base highlight group to extend
+        {overrides}  (table)   highlight attributes to override
+
+    Returns: ~
+        (string)  highlight group name
+
+
+M.hl_with_attr({name}, {base}, {...})           *wildest.highlight.hl_with_attr*
+     Create a highlight group with additional attributes
+
+    Parameters: ~
+        {name}  (string)
+        {base}  (string)
+        {...}   (string)  attribute names (e.g., 'bold', 'underline', 'italic')
+
+    Returns: ~
+        (string)
+
+
+                                             *wildest.highlight.spans_to_chunks*
+M.spans_to_chunks({text}, {spans}, {default_hl})
+     Convert spans to extmark-compatible chunks
+     Spans: { {start_col, length, hl_group}, ... }
+     Returns chunks suitable for nvim_buf_set_extmark virt_text
+
+    Parameters: ~
+        {text}        (string)   the full text
+        {spans}       (table[])  array of {start, length, hl_group}
+        {default_hl}  (string)   default highlight group
+
+    Returns: ~
+        (table[])  array of {text, hl_group}
+
+
+                                                 *wildest.highlight.apply_spans*
+M.apply_spans({bufnr}, {ns_id}, {line}, {spans})
+     Apply highlight spans to a buffer line using extmarks
+
+    Parameters: ~
+        {bufnr}  (integer)
+        {ns_id}  (integer)
+        {line}   (integer)  0-indexed line number
+        {spans}  (table[])  array of {start_col, length, hl_group}
+
+
+==============================================================================
+Renderer Utilities                                            *wildest.renderer*
+
+Shared renderer infrastructure for wildest.nvim.
+Provides line rendering, pagination, floating window management,
+highlight application, and component composition used by all renderer types.
+
+wildest.Renderer                                              *wildest.Renderer*
+
+    Fields: ~
+        {render}  (fun(self:wildest.Renderer,ctx:table,result:wildest.PipelineResult))
+        {hide}    (fun(self:wildest.Renderer))
+
+
+wildest.Component                                            *wildest.Component*
+
+    Fields: ~
+        {render}  (fun(self:wildest.Component,ctx:table):table[]|nil)
+
+
+wildest.Theme                                                    *wildest.Theme*
+
+    Fields: ~
+        {apply}     (fun(self:wildest.Theme))
+        {renderer}  (fun(self:wildest.Theme,opts?:table):wildest.Renderer)
+
+
+wildest.ThemeDef                                              *wildest.ThemeDef*
+
+    Fields: ~
+        {highlights?}     (table<string,table>)  Highlight group definitions
+        {border?}         (string|table)         Border style
+        {renderer?}       (string)               Renderer type name
+        {renderer_opts?}  (table)                Renderer options
+
+
+wildest.ResultOpts                                          *wildest.ResultOpts*
+
+    Fields: ~
+        {highlighter?}  (wildest.Highlighter)
+        {output?}       (fun(data:table,candidate:any):string)
+
+
+M.parse_dimension({value}, {total})           *wildest.renderer.parse_dimension*
+     Parse a dimension value: integer, percentage string, or 'auto'
+
+    Parameters: ~
+        {value}  (any)
+        {total}  (integer)
+
+    Returns: ~
+        (integer)
+
+
+                                                 *wildest.renderer.parse_margin*
+M.parse_margin({margin}, {total}, {content_size})
+     Parse margin: number, percentage string, or 'auto'
+
+    Parameters: ~
+        {margin}        (any)
+        {total}         (integer)
+        {content_size}  (integer)
+
+    Returns: ~
+        (integer)
+
+
+M.create_base_state({opts}, {defaults?})    *wildest.renderer.create_base_state*
+     Create the common state table shared by all popupmenu-style renderers
+
+    Parameters: ~
+        {opts}       (table)  renderer options
+        {defaults?}  (table)  override default values (e.g. { max_height = "75%", max_width = "75%", min_width = 30 })
+
+    Returns: ~
+        (table)  state
+
+
+                                     *wildest.renderer.create_accent_highlights*
+M.create_accent_highlights({state})
+     Create accent + selected-accent highlight groups on a state table
+
+    Parameters: ~
+        {state}  (table)  renderer state (mutated: sets highlights.accent, highlights.selected_accent)
+
+
+M.truncate_with_spans()                   *wildest.renderer.truncate_with_spans*
+
+
+M.render_line()                                   *wildest.renderer.render_line*
+
+
+M.make_page()                                       *wildest.renderer.make_page*
+
+
+M.default_position()                         *wildest.renderer.default_position*
+
+
+M.ensure_buf({state}, {ns_name})                   *wildest.renderer.ensure_buf*
+     Ensure a scratch buffer and namespace exist
+
+    Parameters: ~
+        {state}    (table)   renderer state (mutated: sets .buf and .ns_id)
+        {ns_name}  (string)  namespace name
+
+
+M.render_components()                       *wildest.renderer.render_components*
+
+
+                                        *wildest.renderer.apply_line_highlights*
+M.apply_line_highlights({buf}, {ns_id}, {lines}, {line_highlights})
+     Apply line highlights (base hl + accent spans) to buffer
+
+    Parameters: ~
+        {buf}              (integer)   buffer handle
+        {ns_id}            (integer)   namespace id
+        {lines}            (string[])  line texts
+        {line_highlights}  (table[])   per-line {spans, base_hl}
+
+
+                                           *wildest.renderer.open_or_update_win*
+M.open_or_update_win({state}, {win_config})
+     Open or update a floating window
+
+    Parameters: ~
+        {state}       (table)  renderer state (mutated: sets .win)
+        {win_config}  (table)  nvim_open_win config
+
+
+M.hide_win({state})                                  *wildest.renderer.hide_win*
+     Hide a floating window
+
+    Parameters: ~
+        {state}  (table)  renderer state (mutated: sets .win, .page)
+
+
+                                          *wildest.renderer.get_candidate_spans*
+M.get_candidate_spans({highlighter}, {query}, {candidate}, {accent_hl})
+     Get highlight spans for a candidate
+
+    Parameters: ~
+        {highlighter}  (table|nil)
+        {query}        (string)
+        {candidate}    (string)
+        {accent_hl}    (string)
+
+    Returns: ~
+        (table[])
+
+
+M.get_query({result})                               *wildest.renderer.get_query*
+     Extract query string from result data
+
+    Parameters: ~
+        {result}  (table)
+
+    Returns: ~
+        (string)
+
+
+M.check_run_id({state}, {ctx})                   *wildest.renderer.check_run_id*
+     Check if run_id changed and reset caches
+
+    Parameters: ~
+        {state}  (table)  renderer state
+        {ctx}    (table)  render context
+
+
+vim:tw=78:ts=8:noet:ft=help:norl:

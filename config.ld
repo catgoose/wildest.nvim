@@ -1,0 +1,20 @@
+project = "wildest.nvim"
+title = "wildest.nvim - Fast Cmdline Completion for Neovim"
+description = "Pure Lua + C FFI command-line completion engine"
+file = "lua"
+dir = "doc/html"
+format = "markdown"
+sort = true
+all = false
+backtick_references = true
+readme = "README.md"
+style = "!fixed"
+not_luadoc = true
+no_return_or_parms = true
+custom_tags = {
+  { "mod", title = "Module" },
+  { "brief", title = "Brief" },
+  { "toc", title = "TOC" },
+  { "divider", title = "Divider" },
+  { "tag", title = "Tag" },
+}

@@ -1,0 +1,901 @@
+# wildest.nvim
+
+<!--toc:start-->
+- [wildest.nvim](#wildestnvim)
+    - [Howdy partner. Welcome to the wildest cmdline completion this side of the Mississippi.](#howdy-partner-welcome-to-the-wildest-cmdline-completion-this-side-of-the-mississippi)
+  - [Roundup (Requirements)](#roundup-requirements)
+  - [Saddlin' Up (Installation)](#saddlin-up-installation)
+    - [lazy.nvim](#lazynvim)
+    - [packer.nvim](#packernvim)
+    - [Manual](#manual)
+  - [Hitchin' Your Horse (Quick Start)](#hitchin-your-horse-quick-start)
+  - [The Full Spread (Advanced Config)](#the-full-spread-advanced-config)
+  - [Trail Guide (Pipelines)](#trail-guide-pipelines)
+    - [Built-in Pipelines](#built-in-pipelines)
+    - [Pipeline Combinators](#pipeline-combinators)
+    - [Roll Your Own (Custom Pipelines)](#roll-your-own-custom-pipelines)
+  - [Brandin' Iron (Renderers)](#brandin-iron-renderers)
+    - [Plain Popupmenu](#plain-popupmenu)
+    - [Bordered Popupmenu](#bordered-popupmenu)
+    - [Palette](#palette)
+    - [Wildmenu](#wildmenu)
+    - [Renderer Mux](#renderer-mux)
+  - [Tin Stars (Components)](#tin-stars-components)
+    - [Popupmenu Components](#popupmenu-components)
+    - [Wildmenu Components](#wildmenu-components)
+    - [Buffer Flags](#buffer-flags)
+  - [Highlighters](#highlighters)
+    - [Gradient Highlighting](#gradient-highlighting)
+  - [War Paint (Themes)](#war-paint-themes)
+    - [Auto Theme](#auto-theme)
+    - [Custom Theme](#custom-theme)
+    - [Extend Theme](#extend-theme)
+    - [Compile](#compile)
+  - [Settin' the Rules (Config Options)](#settin-the-rules-config-options)
+  - [Frecency](#frecency)
+  - [Commands](#commands)
+  - [Health Check](#health-check)
+  - [Utilities](#utilities)
+    - [Project Root](#project-root)
+    - [Highlight Utilities](#highlight-utilities)
+    - [State Control](#state-control)
+  - [What in Tarnation? (FAQ)](#what-in-tarnation-faq)
+  - [Credits](#credits)
+  - [License](#license)
+<!--toc:end-->
+
+```
+    __        ___ _     _           _
+    \ \      / (_) | __| | ___  ___| |_
+     \ \ /\ / /| | |/ _` |/ _ \/ __| __|
+      \ V  V / | | | (_| |  __/\__ \ |_
+       \_/\_/  |_|_|\__,_|\___||___/\__|
+```
+
+[Documentation](https://catgoose.github.io/wildest.nvim/)
+
+### Howdy partner. Welcome to the wildest cmdline completion this side of the Mississippi.
+
+What in tarnation happened to your `wildmenu`? It's been wrangled, broken in,
+and rebuilt from the ground up as a **pure Lua + C FFI** plugin for **Neovim**.
+No Python. No VimScript. Just raw horsepower.
+
+Lua and C rewrite of [wilder.nvim](https://github.com/gelguy/wilder.nvim),
+which hasn't been updated in over four years. Drops VimScript and Python.
+
+- Completions appear **as you type** - faster than a rattlesnake strike
+- `:` command, `/` search, and `?` reverse search - we don't leave any frontier unsettled
+- **C FFI fuzzy matching** - fzy algorithm compiled to native code, sorts 10K candidates faster than you can say "yeehaw"
+- **23 pipeline constructors** - more ways to wrangle completions than cattle at a roundup
+- **Popupmenu, wildmenu, border, and palette renderers** - dress up your cmdline like it's headed to the saloon
+- **14 themes with bytecode compilation** - every outfit from dusty trail to midnight saloon
+- **Frecency scoring** - remembers what you use most and surfaces it first
+
+> _"I reckon this is the fastest cmdline completion plugin in the territory."_
+
+## Roundup (Requirements)
+
+- **Neovim nightly** (built for the frontier, not the old world)
+- **C compiler** (gcc/clang) to build `fuzzy.so` - gotta forge your own iron out here
+
+## Saddlin' Up (Installation)
+
+### lazy.nvim
+
+```lua
+{
+  'catgoose/wildest.nvim',
+  build = 'make -C csrc',
+  config = function()
+    local w = require('wildest')
+    w.setup({
+      -- Your config here, partner
+    })
+  end,
+}
+```
+
+### packer.nvim
+
+```lua
+use({
+  "catgoose/wildest.nvim",
+  run = "make -C csrc",
+  config = function()
+    local w = require("wildest")
+    w.setup({
+      -- Saddle up
+    })
+  end,
+})
+```
+
+### Manual
+
+```sh
+git clone git@github.com:catgoose/wildest.nvim.git
+cd wildest.nvim
+make -C csrc
+```
+
+Add the repo to your `runtimepath` and call `require('wildest').setup({...})`.
+
+## Hitchin' Your Horse (Quick Start)
+
+A simple config to get you ridin':
+
+```lua
+local w = require("wildest")
+
+w.setup({
+  modes = { ":", "/", "?" },
+  next_key = "<Tab>",
+  previous_key = "<S-Tab>",
+  accept_key = "<Down>",
+  reject_key = "<Up>",
+
+  pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
+
+  renderer = w.popupmenu_renderer({
+    highlighter = w.basic_highlighter(),
+    left = { " ", w.popupmenu_devicons() },
+    right = { " ", w.popupmenu_scrollbar() },
+  }),
+})
+```
+
+## The Full Spread (Advanced Config)
+
+For the seasoned cowpoke who wants all the fixins:
+
+```lua
+local w = require("wildest")
+
+w.setup({
+  modes = { ":", "/", "?" },
+  next_key = "<Tab>",
+  previous_key = "<S-Tab>",
+  accept_key = "<Down>",
+  reject_key = "<Up>",
+  trigger = "auto", -- or 'tab' if you prefer to lasso manually
+  noselect = true, -- don't auto-select the first varmint
+  longest_prefix = false, -- set true for wildmode=list:longest behavior
+  pipeline_timeout = 5000, -- cancel slow pipelines after 5s
+  skip_commands = { "Man" }, -- skip completions for ornery commands
+
+  pipeline = w.branch(
+    -- Lua expression completion for :lua and :=
+    w.lua_pipeline(),
+    -- Fuzzy help tag completion for :help
+    w.help_pipeline({ fuzzy = true }),
+    -- Main cmdline completion with fuzzy filtering
+    w.cmdline_pipeline({ fuzzy = true }),
+    -- Search mode: buffer lines
+    w.search_pipeline()
+  ),
+
+  renderer = w.renderer_mux({
+    [":"] = w.popupmenu_border_theme({
+      border = "rounded",
+      highlighter = w.fzy_highlighter(),
+      left = { " ", w.popupmenu_devicons() },
+      right = { " ", w.popupmenu_scrollbar() },
+    }),
+    ["/"] = w.wildmenu_renderer({
+      highlighter = w.basic_highlighter(),
+      separator = " | ",
+    }),
+  }),
+})
+```
+
+## Trail Guide (Pipelines)
+
+Pipelines are the backbone of wildest. Each pipeline is a chain of functions
+that take input and produce completion candidates. Think of it like a cattle
+drive - input goes in one end, completions come out the other.
+
+### Built-in Pipelines
+
+| Pipeline                 | What it wrangles                                              |
+| ------------------------ | ------------------------------------------------------------- |
+| `cmdline_pipeline()`     | Command names, args, files, options - the whole ranch         |
+| `search_pipeline()`      | Buffer search for `/` and `?` modes                           |
+| `file_finder_pipeline()` | Async file finding via `fd`, `rg`, or `find`                  |
+| `history_pipeline()`     | Command and search history                                    |
+| `lua_pipeline()`         | Lua expression completion for `:lua` and `:=`                 |
+| `help_pipeline()`        | Help tags with fuzzy matching                                 |
+
+### Pipeline Combinators
+
+| Combinator | Signature | Description |
+|---|---|---|
+| `branch()` | `branch(...pipelines)` | Try each sub-pipeline in order until one succeeds |
+| `check()` | `check(predicate)` | Gate — pass input through only if predicate returns true |
+| `debounce()` | `debounce(ms)` | Delay execution by N milliseconds |
+| `result()` | `result(opts?)` | Wrap candidates with metadata (arg, output transform) |
+| `subpipeline()` | `subpipeline(factory)` | Create a pipeline dynamically at runtime |
+| `map()` | `map(fn)` | Transform each candidate (return nil to drop) |
+| `filter()` | `filter(fn)` | Keep candidates where predicate returns true |
+| `sort()` | `sort(comparator?)` | Sort lexically, or with a custom comparator |
+| `sort_by()` | `sort_by(scorer)` | Sort by score (highest first) |
+| `take()` | `take(n)` | Limit to first N candidates |
+| `pipe()` | `pipe(...steps)` | Compose multiple sync steps into one |
+| `async()` | `async(fn)` | Wrap an async operation into a pipeline step |
+| `fuzzy_filter()` | `fuzzy_filter(opts?)` | Filter and sort by C FFI fuzzy match score |
+| `uniq_filter()` | `uniq_filter(opts?)` | Remove duplicate candidates |
+| `vim_complete()` | `vim_complete(type, opts?)` | Pipeline step from `vim.fn.getcompletion()` |
+| `frecency_boost()` | `frecency_boost(opts?)` | Re-sort candidates by frequency + recency |
+
+#### Branch
+
+Try each sub-pipeline until one produces results. The first pipeline to
+return candidates wins — like checking every saloon until you find one open:
+
+```lua
+w.branch(
+  w.lua_pipeline(),           -- try lua completion first
+  w.help_pipeline(),          -- then help tags
+  w.cmdline_pipeline(),       -- catch-all
+  w.search_pipeline()         -- search mode
+)
+```
+
+Each branch can also be a raw table of steps:
+
+```lua
+w.branch(
+  {
+    w.check(function(ctx) return #ctx.input < 2 end),
+    require("wildest.pipeline.history").history(),
+    w.frecency_boost({ blend = 0.4 }),
+  },
+  w.cmdline_pipeline({ fuzzy = true })
+)
+```
+
+#### Check
+
+Predicate gate — if it returns false, the current branch fails and the
+next branch is tried:
+
+```lua
+w.check(function(ctx, input)
+  return ctx.cmdtype == ":"      -- only run in command mode
+end)
+
+w.check(function(ctx, input)
+  return #ctx.input >= 3         -- wait for at least 3 chars
+end)
+```
+
+#### Debounce
+
+Hold your horses. Waits N milliseconds before running the next step,
+resetting the timer on each keystroke:
+
+```lua
+w.debounce(150)
+```
+
+#### Map, Filter, Sort, Take
+
+Transform, prune, reorder, and limit candidates:
+
+```lua
+-- Uppercase every candidate
+w.map(function(candidate, i, ctx)
+  return candidate:upper()
+end)
+
+-- Drop hidden files
+w.filter(function(candidate, i, ctx)
+  return not candidate:match("^%.")
+end)
+
+-- Lexical sort
+w.sort()
+
+-- Custom sort — shortest first
+w.sort(function(a, b)
+  return #a < #b
+end)
+
+-- Score-based sort — highest score first
+w.sort_by(function(candidate, ctx)
+  return -#candidate
+end)
+
+-- First 50 candidates only
+w.take(50)
+```
+
+#### Pipe
+
+Compose multiple sync steps into a single step:
+
+```lua
+w.pipe(
+  w.fuzzy_filter(),
+  w.take(100),
+  w.sort()
+)
+```
+
+#### Async
+
+Wrap a long-running operation. Call `resolve` with candidates or `reject`
+with an error:
+
+```lua
+w.async(function(ctx, input, resolve, reject)
+  vim.system({ "grep", "-r", input, "." }, { text = true }, function(result)
+    vim.schedule(function()
+      resolve(vim.split(result.stdout, "\n", { trimempty = true }))
+    end)
+  end)
+end)
+```
+
+#### Vim Complete
+
+Use any `vim.fn.getcompletion()` type as a pipeline step:
+
+```lua
+w.vim_complete("color")       -- colorscheme names
+w.vim_complete("highlight")   -- highlight groups
+w.vim_complete("option")      -- vim options
+```
+
+#### Subpipeline
+
+Create a pipeline dynamically based on runtime context:
+
+```lua
+w.subpipeline(function(ctx)
+  if ctx.cmdtype == ":" then
+    return { w.cmdline_pipeline({ fuzzy = true }) }
+  else
+    return { w.search_pipeline() }
+  end
+end)
+```
+
+### Roll Your Own (Custom Pipelines)
+
+Any function `function(ctx, input) -> candidates|false` works as a sync
+pipeline step. Return `false` to signal failure (branch tries the next one).
+Return a function to go async:
+
+```lua
+-- Sync step: return candidates or false
+local function my_step(ctx, input)
+  if ctx.cmdtype ~= ":" then return false end
+  return { "one", "two", "three" }
+end
+
+-- Async step: return a function that calls resolve/reject
+local function my_async_step(ctx, input)
+  return function(async_ctx)
+    vim.defer_fn(function()
+      require("wildest.pipeline").resolve(async_ctx, { "delayed", "results" })
+    end, 100)
+  end
+end
+```
+
+### Custom Domain Pipelines
+
+The built-in `cmdline_pipeline()` already completes arguments for every
+command. To add **fuzzy matching** for a specific command's arguments, build
+a small pipeline with `check` + `vim_complete` + `fuzzy_filter`:
+
+```lua
+-- Fuzzy buffer names for :buffer, :bdelete, etc.
+local function buffer_pipeline()
+  return {
+    w.check(function(ctx) return ctx.cmdtype == ":" end),
+    w.vim_complete("buffer"),
+    w.fuzzy_filter(),
+    w.result(),
+  }
+end
+
+-- Fuzzy colorscheme picker for :colorscheme
+local function colorscheme_pipeline()
+  return {
+    w.check(function(ctx) return ctx.cmdtype == ":" end),
+    w.vim_complete("color"),
+    w.fuzzy_filter(),
+    w.result(),
+  }
+end
+
+-- Recently opened files (v:oldfiles)
+local function oldfiles_pipeline()
+  return {
+    w.check(function(ctx) return ctx.cmdtype == ":" end),
+    function(ctx, input)
+      local files = vim.v.oldfiles or {}
+      ctx.arg = ctx.input:match("%S+%s+(.*)$") or ""
+      return files
+    end,
+    w.fuzzy_filter(),
+    w.result(),
+  }
+end
+
+-- Wire them into your branch before the catch-all:
+w.branch(
+  buffer_pipeline(),
+  colorscheme_pipeline(),
+  w.cmdline_pipeline({ fuzzy = true }),
+  w.search_pipeline()
+)
+```
+
+The pattern is always the same: guard with `check`, produce candidates,
+optionally `fuzzy_filter`, then `result()`. The `cmdline_pipeline` catch-all
+handles everything else.
+
+## Brandin' Iron (Renderers)
+
+### Plain Popupmenu
+
+```lua
+w.popupmenu_renderer({
+  highlighter = w.basic_highlighter(),
+  fixed_height = true,
+})
+```
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `highlighter` | table | `nil` | Highlighter for match accents |
+| `left` | table | `{ " " }` | Left components |
+| `right` | table | `{ " " }` | Right components |
+| `max_height` | integer | `16` | Maximum number of visible lines |
+| `min_height` | integer | `0` | Minimum number of visible lines |
+| `max_width` | integer\|nil | `nil` | Maximum width (`nil` = full editor width) |
+| `min_width` | integer | `16` | Minimum width |
+| `reverse` | boolean | `false` | Reverse candidate order |
+| `fixed_height` | boolean | `true` | Pad to `max_height` so the window never resizes |
+| `pumblend` | integer\|nil | `nil` | Window transparency (0-100) |
+| `zindex` | integer | `250` | Floating window z-index |
+
+### Bordered Popupmenu
+
+Now we're talkin'. Put a fence around that menu:
+
+```lua
+w.popupmenu_border_theme({
+  border = "rounded", -- 'single', 'double', 'rounded', 'solid'
+  title = " Search ",
+  fixed_height = true,
+  position = "bottom",
+  highlighter = w.fzy_highlighter(),
+  left = { " ", w.popupmenu_devicons() },
+  right = { " ", w.popupmenu_scrollbar() },
+})
+```
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `border` | string\|table | `"single"` | Border style preset or 8-char array |
+| `title` | string\|nil | `nil` | Title centered in the top border |
+| `highlighter` | table | `nil` | Highlighter for match accents |
+| `left` | table | `{ " " }` | Left components |
+| `right` | table | `{ " " }` | Right components |
+| `max_height` | integer\|string | `16` | Max visible lines (or `"50%"`) |
+| `min_height` | integer | `0` | Minimum visible lines |
+| `max_width` | integer\|string\|nil | `nil` | Max width (or `"50%"`, `nil` = full width) |
+| `min_width` | integer\|string | `16` | Minimum width (or `"25%"`) |
+| `reverse` | boolean | `false` | Reverse candidate order |
+| `fixed_height` | boolean | `true` | Pad to `max_height` so the window never resizes |
+| `position` | string | `"bottom"` | Vertical placement: `"top"`, `"center"`, or `"bottom"` |
+| `empty_message` | string\|nil | `nil` | Message shown when there are no results |
+| `pumblend` | integer\|nil | `nil` | Window transparency (0-100) |
+| `zindex` | integer | `250` | Floating window z-index |
+
+### Palette
+
+A centered floating palette, like a wanted poster in the middle of town:
+
+```lua
+w.popupmenu_palette_theme({
+  border = "rounded",
+  title = " Wildest ",
+  fixed_height = true,
+  prompt_prefix = " : ",
+  prompt_position = "bottom",
+  empty_message = " No matches ",
+  max_height = "75%",
+  max_width = "75%",
+  min_width = 30,
+  margin = "auto",
+  highlighter = w.fzy_highlighter(),
+})
+```
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `border` | string\|table | `"rounded"` | Border style preset or 8-char array |
+| `title` | string\|nil | `nil` | Title centered in the top border |
+| `prompt_prefix` | string | `" : "` | Prefix shown before the cmdline input |
+| `prompt_position` | string | `"top"` | Prompt placement: `"top"` or `"bottom"` |
+| `highlighter` | table | `nil` | Highlighter for match accents |
+| `left` | table | `{ " " }` | Left components |
+| `right` | table | `{ " " }` | Right components |
+| `max_height` | string\|integer | `"75%"` | Max height (percentage or integer) |
+| `min_height` | integer | `0` | Minimum height |
+| `max_width` | string\|integer | `"75%"` | Max width (percentage or integer) |
+| `min_width` | integer\|string | `30` | Minimum width (or `"50%"`) |
+| `margin` | string\|integer | `"auto"` | Horizontal margin (`"auto"`, `"15%"`, or integer) |
+| `reverse` | boolean | `false` | Reverse candidate order |
+| `fixed_height` | boolean | `true` | Pad to `max_height` so the window never resizes |
+| `empty_message` | string\|nil | `nil` | Message shown when there are no results |
+| `pumblend` | integer\|nil | `nil` | Window transparency (0-100) |
+| `zindex` | integer | `250` | Floating window z-index |
+
+### Wildmenu
+
+Horizontal suggestions above the cmdline, like a dusty trail of options:
+
+```lua
+w.wildmenu_renderer({
+  highlighter = w.basic_highlighter(),
+  left = { w.wildmenu_arrows() },
+  right = { w.wildmenu_arrows({ right = true }) },
+})
+```
+
+### Renderer Mux
+
+Different renderers for different modes. A cowboy needs the right tool for the job:
+
+```lua
+w.renderer_mux({
+  [":"] = w.popupmenu_border_theme({ ... }),
+  ["/"] = w.wildmenu_renderer({ ... }),
+  ["?"] = w.wildmenu_renderer({ ... }),
+})
+```
+
+## Tin Stars (Components)
+
+Decorate your popupmenu and wildmenu with components:
+
+### Popupmenu Components
+
+| Component                                | What it does                                           |
+| ---------------------------------------- | ------------------------------------------------------ |
+| `popupmenu_scrollbar()`                  | Scrollbar on the right side                            |
+| `popupmenu_spinner()`                    | Loading spinner for async pipelines                    |
+| `popupmenu_devicons()`                   | File type icons (requires `nvim-web-devicons`)         |
+| `popupmenu_buffer_flags()`               | Buffer status flags (`+` modified, `-` readonly, etc.) |
+| `popupmenu_kind_icon()`                  | LSP-style kind/type icons next to candidates           |
+| `popupmenu_empty_message_with_spinner()` | "Searching..." with animated spinner                   |
+| `popupmenu_zip_columns()`                | Merge two components side-by-side                      |
+| `empty_message()`                        | Custom message when no results                         |
+| `condition()`                            | Conditionally show/hide components                     |
+
+### Wildmenu Components
+
+| Component              | What it does                        |
+| ---------------------- | ----------------------------------- |
+| `wildmenu_arrows()`    | `<`/`>` navigation arrows           |
+| `wildmenu_separator()` | Custom separator between candidates |
+| `wildmenu_index()`     | Show `[3/42]` position index        |
+
+### Buffer Flags
+
+```lua
+w.popupmenu_buffer_flags({
+  flags = "%+-",
+  icons = {
+    ["%"] = "",
+    ["+"] = "●",
+    ["-"] = "",
+  },
+})
+```
+
+Flag characters: `1` (bufnr), `%` (current), `#` (alternate), `+` (modified),
+`-` (readonly), `a` (active/hidden), `u` (unlisted)
+
+## Highlighters
+
+Make them matched characters glow like campfire embers:
+
+| Highlighter              | Description                                              |
+| ------------------------ | -------------------------------------------------------- |
+| `basic_highlighter()`    | Subsequence matching (pure Lua)                          |
+| `fzy_highlighter()`      | Fzy algorithm positions (C FFI, fastest gun in the west) |
+| `prefix_highlighter()`   | Highlights the leading prefix match                      |
+| `gradient_highlighter()` | Per-character color gradient over matches                |
+
+### Gradient Highlighting
+
+```lua
+local gradient = {}
+for i = 0, 15 do
+  local name = "WildestGradient" .. i
+  vim.api.nvim_set_hl(0, name, {
+    fg = string.format("#%02x%02x%02x", 255 - i * 16, 100 + i * 8, i * 16),
+  })
+  table.insert(gradient, name)
+end
+w.gradient_highlighter(w.basic_highlighter(), gradient)
+```
+
+## War Paint (Themes)
+
+Themes bundle highlights, border style, and renderer type. Pick your outfit
+before headin' to the saloon:
+
+```lua
+local theme = w.theme("saloon")
+w.setup({
+  pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
+  renderer = theme.renderer({
+    highlighter = w.fzy_highlighter(),
+    left = { " ", w.popupmenu_devicons() },
+    right = { " ", w.popupmenu_scrollbar() },
+  }),
+})
+```
+
+| Theme             | Renderer | Description                                        |
+| ----------------- | -------- | -------------------------------------------------- |
+| `auto`            | bordered | Derives colors from your colorscheme - a chameleon |
+| `default`         | plain    | Standard Pmenu links, no frills                    |
+| `saloon`          | bordered | Amber and whiskey - belly up to the bar            |
+| `outlaw`          | bordered | Dark with crimson - wanted dead or alive           |
+| `sunset`          | bordered | Orange to purple - end of the trail                |
+| `prairie`         | bordered | Soft greens and earth - wide open spaces           |
+| `dusty`           | bordered | Sandstone and sage - desert wanderer               |
+| `midnight`        | bordered | Deep blue and silver - stars over the range        |
+| `wanted`          | palette  | Parchment and ink - nailed to the post office wall |
+| `cactus`          | bordered | Green on dark soil - prickly but pretty            |
+| `tumbleweed`      | plain    | Light and minimal - blowin' through town           |
+| `kanagawa`        | bordered | Deep ink, warm autumn - the far east frontier      |
+| `kanagawa_dragon` | bordered | Dark earth tones - dragon in the canyon            |
+| `kanagawa_lotus`  | bordered | Light parchment - lotus in the desert spring       |
+
+### Auto Theme
+
+Reads `Pmenu`, `PmenuSel`, `FloatBorder`, `Search`, `PmenuMatch` from your
+colorscheme. Updates when you change colorscheme - adapts like a tumbleweed.
+
+```lua
+renderer = w.theme("auto").renderer({ highlighter = w.fzy_highlighter() })
+```
+
+### Custom Theme
+
+Brand your own from scratch:
+
+```lua
+local my_theme = w.define_theme({
+  renderer = "border",
+  highlights = {
+    WildestDefault = { bg = "#1a1a2e", fg = "#e0e0e0" },
+    WildestSelected = { bg = "#2d2d4e", fg = "#ffffff", bold = true },
+    WildestAccent = { bg = "#1a1a2e", fg = "#00ff88", bold = true },
+    WildestSelectedAccent = { bg = "#2d2d4e", fg = "#44ffaa", bold = true, underline = true },
+    WildestBorder = { bg = "#101020", fg = "#4488cc" },
+  },
+  renderer_opts = { border = "rounded" },
+})
+```
+
+### Extend Theme
+
+Take an existing theme and put your own spin on it:
+
+```lua
+local my_saloon = w.extend_theme("saloon", {
+  highlights = { WildestAccent = { fg = "#ff0000", bold = true } },
+  renderer_opts = { border = "double" },
+})
+```
+
+### Compile
+
+Compile themes to bytecode for faster startup. Quicker than drawin' your six-shooter.
+The `auto` theme snapshots your current colorscheme so it doesn't re-read highlights on load.
+
+```vim
+:WildestCompile auto
+:WildestCompile
+```
+
+```lua
+w.compile_theme("auto")
+w.compile_all_themes()
+w.clear_theme_cache()
+```
+
+Stored in `~/.local/state/nvim/wildest/`.
+
+## Kind Icons
+
+Show LSP-style icons next to your candidates. Knows about functions, classes,
+variables, files, and more:
+
+```lua
+w.popupmenu_renderer({
+  left = { " ", w.popupmenu_kind_icon() },
+  right = { " ", w.popupmenu_scrollbar() },
+})
+
+-- Custom icons and a function to determine the kind
+w.popupmenu_kind_icon({
+  icons = { Function = "󰊕 ", Variable = "󰀫 ", File = " " },
+  default = "  ",
+  kind_fn = function(candidate, ctx)
+    if candidate:match("%(%)$") then return "Function" end
+    return "File"
+  end,
+})
+```
+
+## Frecency
+
+Frecency combines **frequency** (how often) and **recency** (how recently)
+to rank your completions. The more you use something, the higher it rides.
+Data persists across sessions in `~/.local/share/nvim/wildest_frecency.json`.
+
+```lua
+-- Boost history results by frecency
+w.setup({
+  pipeline = w.branch(
+    {
+      w.history_pipeline().pipeline[1],
+      w.frecency_boost({ blend = 0.6 }),
+      w.result(),
+    },
+    w.cmdline_pipeline({ fuzzy = true })
+  ),
+})
+
+-- Use frecency as a sort_by scorer
+w.sort_by(w.frecency_scorer())
+
+-- Record a visit manually (useful in accept hooks)
+w.frecency_visit(":edit foo.lua")
+```
+
+| Function             | Description                                           |
+| -------------------- | ----------------------------------------------------- |
+| `frecency_scorer()`  | Returns a scorer function for use with `sort_by`      |
+| `frecency_boost()`   | Pipeline step that re-sorts candidates by frecency    |
+| `frecency_visit()`   | Record that an item was used (persists to disk)       |
+
+The `blend` option in `frecency_boost` controls the mix: `0` = original order
+only, `1` = pure frecency, `0.5` = equal blend.
+
+## Commands
+
+| Command | Description |
+| --- | --- |
+| `:WildestCompile [name]` | Compile theme(s) to bytecode. No args = compile all |
+| `:WildestClearCache` | Clear compiled theme cache |
+| `:WildestLog` | Open the log file in a split |
+| `:WildestLog clear` | Clear the log file |
+| `:WildestLog path` | Print the log file path |
+| `:WildestProfile` | Show pipeline profiling results |
+| `:WildestProfile start` | Enable pipeline profiling |
+| `:WildestProfile stop` | Disable pipeline profiling |
+| `:WildestProfile clear` | Clear profile data |
+
+The profiler measures how long each pipeline step takes, so you can find the
+slow varmints:
+
+```vim
+:WildestProfile start
+" ... use completions ...
+:WildestProfile
+" Pipeline Profile:
+"   cmdline_complete              2.14 ms  (0 → 42)
+"   fuzzy_filter                  0.87 ms  (42 → 42)
+"   TOTAL                         3.01 ms
+```
+
+## Health Check
+
+Run `:checkhealth wildest` to make sure everything's saddled up proper:
+
+```vim
+:checkhealth wildest
+```
+
+Checks for:
+- Neovim version (>= 0.10)
+- C FFI fuzzy module (`fuzzy.so`)
+- Whether `setup()` has been called
+- Optional dependencies (`nvim-web-devicons`)
+- Log file location
+
+## Settin' the Rules (Config Options)
+
+| Option             | Default             | Description                                |
+| ------------------ | ------------------- | ------------------------------------------ |
+| `modes`            | `{ ':', '/', '?' }` | Which cmdline modes to lasso               |
+| `next_key`         | `'<Tab>'`           | Mosey to the next candidate                |
+| `previous_key`     | `'<S-Tab>'`         | Back up to the previous one                |
+| `accept_key`       | `'<Down>'`          | Accept and keep completin'                 |
+| `reject_key`       | `'<Up>'`            | Reject and restore original                |
+| `trigger`          | `'auto'`            | `'auto'` or `'tab'` (manual trigger)       |
+| `noselect`         | `true`              | Don't auto-select first candidate          |
+| `longest_prefix`   | `false`             | Insert longest common prefix on first Tab  |
+| `interval`         | `100`               | Debounce interval (ms)                     |
+| `pipeline_timeout` | `0`                 | Cancel slow pipelines (ms, 0 = no timeout) |
+| `skip_commands`    | `{}`                | Commands to skip completions for           |
+| `min_input`        | `0`                 | Min chars before showing (0 = on enter)    |
+| `pipeline`         | `nil`               | Your pipeline (required)                   |
+| `renderer`         | `nil`               | Your renderer (required)                   |
+
+## Utilities
+
+### Project Root
+
+Find the project root like a bloodhound:
+
+```lua
+local find_root = w.project_root({ ".git", "package.json" })
+local root = find_root()
+```
+
+### Highlight Utilities
+
+```lua
+w.make_hl("WildestCustom", "Pmenu", { fg = "#ff6600", bold = true })
+w.hl_with_attr("WildestBold", "Pmenu", "bold", "italic")
+```
+
+### State Control
+
+```lua
+w.enable() -- mount up
+w.disable() -- dismount
+w.toggle() -- if you can't decide
+```
+
+## What in Tarnation? (FAQ)
+
+**Q: Why not just use wilder.nvim?**
+A: Wilder rode off into the sunset (unmaintained for over four years). Wildest
+is a ground-up Lua rewrite - no Python, no VimScript, no `UpdateRemotePlugins`.
+Just pure Lua and C, the way the good Lord intended.
+
+**Q: Do I need Python?**
+A: No sir. We don't take kindly to snakes 'round these parts. Everything runs
+on Lua and a compiled C shared library.
+
+**Q: How fast is the fuzzy matching?**
+A: The C FFI fzy algorithm filters and sorts 10,000 candidates in under 5ms.
+Faster than a tumbleweed in a tornado.
+
+**Q: Can I use my own pipeline steps?**
+A: You bet your boots. Any function `function(ctx, input) -> candidates` works
+as a sync pipeline step. For async, use `w.async()`. This is Lua country -
+compose functions to your heart's content.
+
+**Q: What about telescope/fzf-lua?**
+A: Those are fine plugins for file pickers and such. Wildest is specifically for
+the **cmdline** (`:`, `/`, `?`). Different frontier, partner. Use both.
+
+**Q: The fuzzy.so won't load!**
+A: Run `make -C csrc` from the plugin root. Make sure you have a C compiler
+installed (`gcc` or `clang`). Check that `lua/wildest/fuzzy.so` exists after.
+
+## Credits
+
+Wildest is a from-scratch rewrite inspired by
+[wilder.nvim](https://github.com/gelguy/wilder.nvim) by gelguy. The original
+blazed the trail; we're just settlin' the land.
+
+## License
+
+MIT - Free as the open range.
