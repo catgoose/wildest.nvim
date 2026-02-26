@@ -8,24 +8,12 @@ local M = {}
 --- Create a scrollbar component for the popupmenu
 ---@param opts? table { thumb?: string, bar?: string, hl?: string, thumb_hl?: string }
 ---@return table component
---- Resolve scrollbar highlight: prefer theme group if it exists, then user opt, then fallback
----@param group string theme highlight group name
----@param fallback string default highlight group
----@return string
-local function resolve_hl(group, fallback)
-  local existing = vim.api.nvim_get_hl(0, { name = group, link = false })
-  if not vim.tbl_isempty(existing) then
-    return group
-  end
-  return fallback
-end
-
 function M.new(opts)
   opts = opts or {}
   local thumb_char = opts.thumb or "█"
   local bar_char = opts.bar or " "
-  local bar_hl = opts.hl or resolve_hl("WildestScrollbar", "PmenuSbar")
-  local thumb_hl = opts.thumb_hl or resolve_hl("WildestScrollbarThumb", "PmenuThumb")
+  local bar_hl = opts.hl or "WildestScrollbar"
+  local thumb_hl = opts.thumb_hl or "WildestScrollbarThumb"
 
   local component = {}
 

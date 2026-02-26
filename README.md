@@ -26,6 +26,7 @@
     - [Buffer Flags](#buffer-flags)
   - [Highlighters](#highlighters)
     - [Gradient Highlighting](#gradient-highlighting)
+  - [Highlight Groups](#highlight-groups)
   - [War Paint (Themes)](#war-paint-themes)
     - [Auto Theme](#auto-theme)
     - [Custom Theme](#custom-theme)
@@ -644,6 +645,49 @@ for i = 0, 15 do
 end
 w.gradient_highlighter(w.basic_highlighter(), gradient)
 ```
+
+## Highlight Groups
+
+Wildest defines its own highlight groups linked to standard Neovim groups by
+default. If no theme is active, your colorscheme's popup colors shine through.
+When a theme is applied, it overrides these with explicit colors.
+
+| Group | Default Link | Used For |
+| --- | --- | --- |
+| `WildestDefault` | `Pmenu` | Popup background and text |
+| `WildestSelected` | `PmenuSel` | Selected candidate |
+| `WildestAccent` | `PmenuMatch` | Matched characters |
+| `WildestSelectedAccent` | `PmenuMatchSel` | Matched characters (selected) |
+| `WildestBorder` | `FloatBorder` | Border decoration |
+| `WildestPrompt` | `Pmenu` | Palette prompt area |
+| `WildestPromptCursor` | `Cursor` | Palette prompt cursor |
+| `WildestScrollbar` | `PmenuSbar` | Scrollbar track |
+| `WildestScrollbarThumb` | `PmenuThumb` | Scrollbar thumb |
+| `WildestSpinner` | `Special` | Loading spinner |
+| `WildestError` | `ErrorMsg` | Error messages |
+
+Override any group in your config to customize without a theme:
+
+```lua
+vim.api.nvim_set_hl(0, "WildestBorder", { bg = "#1a1a2e", fg = "#4488cc" })
+vim.api.nvim_set_hl(0, "WildestAccent", { fg = "#ff6600", bold = true })
+```
+
+<details>
+<summary><strong>Custom Highlight Examples</strong> (click to expand)</summary>
+
+<table>
+<tr>
+<td align="center"><strong>Neon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_neon.png" width="400"></td>
+<td align="center"><strong>Ember</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ember.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>Ocean</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ocean.png" width="400"></td>
+<td></td>
+</tr>
+</table>
+
+</details>
 
 ## War Paint (Themes)
 

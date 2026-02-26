@@ -64,7 +64,13 @@ FEATURE_CONFIGS=(
   renderer_mux
 )
 
-ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@]}")
+HIGHLIGHT_CONFIGS=(
+  hl_neon
+  hl_ember
+  hl_ocean
+)
+
+ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@]}" "${HIGHLIGHT_CONFIGS[@]}")
 
 # ── Settings ───────────────────────────────────────────────────────
 
@@ -254,11 +260,15 @@ main() {
         echo ""
         echo "Features:"
         printf "  %s\n" "${FEATURE_CONFIGS[@]}"
+        echo ""
+        echo "Highlights:"
+        printf "  %s\n" "${HIGHLIGHT_CONFIGS[@]}"
         exit 0
         ;;
       --themes)      configs_to_run+=("${THEME_CONFIGS[@]}") ;;
       --renderers)   configs_to_run+=("${RENDERER_CONFIGS[@]}") ;;
       --features)    configs_to_run+=("${FEATURE_CONFIGS[@]}") ;;
+      --highlights)  configs_to_run+=("${HIGHLIGHT_CONFIGS[@]}") ;;
       --gifs)        GENERATE_GIFS=true ;;
       --install-deps) install_deps ;;
       *)

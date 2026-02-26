@@ -14,10 +14,16 @@ if vim.fn.isdirectory(devicons_path) == 1 then
   vim.opt.rtp:prepend(devicons_path)
 end
 
--- Add kanagawa colorscheme if available (check lazy.nvim install path)
-local kanagawa_path = vim.fn.expand("~/.local/share/nvim/lazy/kanagawa.nvim")
-if vim.fn.isdirectory(kanagawa_path) == 1 then
-  vim.opt.rtp:prepend(kanagawa_path)
+-- Add kanagawa colorscheme if available
+local kanagawa_paths = {
+  root .. "/deps/kanagawa.nvim",
+  vim.fn.expand("~/.local/share/nvim/lazy/kanagawa.nvim"),
+}
+for _, kanagawa_path in ipairs(kanagawa_paths) do
+  if vim.fn.isdirectory(kanagawa_path) == 1 then
+    vim.opt.rtp:prepend(kanagawa_path)
+    break
+  end
 end
 
 -- Clean environment for screenshots
@@ -29,7 +35,7 @@ vim.o.signcolumn = "yes"
 vim.o.termguicolors = true
 vim.o.showmode = false
 vim.o.ruler = false
-vim.o.laststatus = 0
+vim.o.laststatus = 2
 vim.o.cmdheight = 1
 vim.o.cursorline = true
 vim.o.scrolloff = 8
@@ -187,6 +193,68 @@ configs.renderer_mux = function()
         highlighter = w.basic_highlighter(),
         separator = " | ",
       }),
+    }),
+  }
+end
+
+-- ── Custom highlight configs ──────────────────────────────────────
+
+-- Neon: bright cyberpunk-inspired highlights
+configs.hl_neon = function()
+  vim.api.nvim_set_hl(0, "WildestDefault", { bg = "#0d0d1a", fg = "#e0e0ff" })
+  vim.api.nvim_set_hl(0, "WildestSelected", { bg = "#1a0a2e", fg = "#ffffff", bold = true })
+  vim.api.nvim_set_hl(0, "WildestAccent", { bg = "#0d0d1a", fg = "#00ffcc", bold = true })
+  vim.api.nvim_set_hl(0, "WildestSelectedAccent", { bg = "#1a0a2e", fg = "#ff00ff", bold = true })
+  vim.api.nvim_set_hl(0, "WildestBorder", { bg = "#0d0d1a", fg = "#6644ff" })
+  vim.api.nvim_set_hl(0, "WildestScrollbar", { bg = "#0d0d1a" })
+  vim.api.nvim_set_hl(0, "WildestScrollbarThumb", { bg = "#6644ff" })
+  return {
+    pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
+    renderer = w.popupmenu_border_theme({
+      border = "rounded",
+      highlighter = w.fzy_highlighter(),
+      left = left_with_devicons(),
+      right = { " ", w.popupmenu_scrollbar() },
+    }),
+  }
+end
+
+-- Ember: warm orange and red tones
+configs.hl_ember = function()
+  vim.api.nvim_set_hl(0, "WildestDefault", { bg = "#1a0f0a", fg = "#e8c8a0" })
+  vim.api.nvim_set_hl(0, "WildestSelected", { bg = "#2d1810", fg = "#ffe0b0", bold = true })
+  vim.api.nvim_set_hl(0, "WildestAccent", { bg = "#1a0f0a", fg = "#ff6622", bold = true })
+  vim.api.nvim_set_hl(0, "WildestSelectedAccent", { bg = "#2d1810", fg = "#ffaa44", bold = true })
+  vim.api.nvim_set_hl(0, "WildestBorder", { bg = "#120a06", fg = "#884422" })
+  vim.api.nvim_set_hl(0, "WildestScrollbar", { bg = "#1a0f0a" })
+  vim.api.nvim_set_hl(0, "WildestScrollbarThumb", { bg = "#884422" })
+  return {
+    pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
+    renderer = w.popupmenu_border_theme({
+      border = "rounded",
+      highlighter = w.fzy_highlighter(),
+      left = left_with_devicons(),
+      right = { " ", w.popupmenu_scrollbar() },
+    }),
+  }
+end
+
+-- Ocean: cool blue and teal tones
+configs.hl_ocean = function()
+  vim.api.nvim_set_hl(0, "WildestDefault", { bg = "#0a1520", fg = "#b0d0e8" })
+  vim.api.nvim_set_hl(0, "WildestSelected", { bg = "#102030", fg = "#d0e8ff", bold = true })
+  vim.api.nvim_set_hl(0, "WildestAccent", { bg = "#0a1520", fg = "#00bbdd", bold = true })
+  vim.api.nvim_set_hl(0, "WildestSelectedAccent", { bg = "#102030", fg = "#44ddff", bold = true })
+  vim.api.nvim_set_hl(0, "WildestBorder", { bg = "#061018", fg = "#226688" })
+  vim.api.nvim_set_hl(0, "WildestScrollbar", { bg = "#0a1520" })
+  vim.api.nvim_set_hl(0, "WildestScrollbarThumb", { bg = "#226688" })
+  return {
+    pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
+    renderer = w.popupmenu_border_theme({
+      border = "rounded",
+      highlighter = w.fzy_highlighter(),
+      left = left_with_devicons(),
+      right = { " ", w.popupmenu_scrollbar() },
     }),
   }
 end

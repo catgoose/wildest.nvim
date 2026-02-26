@@ -43,6 +43,10 @@ function M.setup(opts)
   log.clear()
   log.log("setup", "start")
 
+  -- Set up default Wildest* highlight groups linked to standard Neovim groups.
+  -- Uses default=true so themes that set explicit colors take priority.
+  require("wildest.renderer").setup_default_highlights()
+
   local cfg = config.setup(opts)
   log.log("setup", "config_done")
 

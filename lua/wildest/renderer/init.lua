@@ -32,6 +32,28 @@ local util = require("wildest.util")
 
 local M = {}
 
+--- Define all Wildest* highlight groups with default links to standard Neovim
+--- groups. Uses `default = true` so these are no-ops when a theme has already
+--- set explicit colors for these groups.
+function M.setup_default_highlights()
+  local defaults = {
+    WildestDefault = "Pmenu",
+    WildestSelected = "PmenuSel",
+    WildestAccent = "PmenuMatch",
+    WildestSelectedAccent = "PmenuMatchSel",
+    WildestBorder = "FloatBorder",
+    WildestPrompt = "Pmenu",
+    WildestPromptCursor = "Cursor",
+    WildestScrollbar = "PmenuSbar",
+    WildestScrollbarThumb = "PmenuThumb",
+    WildestSpinner = "Special",
+    WildestError = "ErrorMsg",
+  }
+  for group, link_to in pairs(defaults) do
+    vim.api.nvim_set_hl(0, group, { default = true, link = link_to })
+  end
+end
+
 --- Parse a dimension value: integer, percentage string, or 'auto'
 ---@param value any
 ---@param total integer
@@ -80,9 +102,9 @@ function M.create_base_state(opts, defaults)
   defaults = defaults or {}
   return {
     highlights = {
-      default = opts.hl or "Pmenu",
-      selected = opts.selected_hl or "PmenuSel",
-      error = opts.error_hl or "ErrorMsg",
+      default = opts.hl or "WildestDefault",
+      selected = opts.selected_hl or "WildestSelected",
+      error = opts.error_hl or "WildestError",
       accent = nil,
       selected_accent = nil,
     },
@@ -300,7 +322,9 @@ end
 function M.default_position()
   local height = vim.o.lines
   local width = vim.o.columns
-  return height - 2, 0, width
+  -- Account for cmdline height and statusline
+  local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+  return height - reserved - 1, 0, width
 end
 
 --- Ensure a scratch buffer and namespace exist
@@ -422,7 +446,7 @@ function M.open_or_update_win(state, win_config)
     if state.pumblend and state.pumblend >= 0 then
       vim.wo[state.win].winblend = state.pumblend
     end
-    local default_hl = state.highlights.default or "Pmenu"
+    local default_hl = state.highlights.default or "WildestDefault"
     vim.wo[state.win].winhighlight = "Normal:" .. default_hl .. ",NormalFloat:" .. default_hl
     vim.wo[state.win].foldenable = false
     vim.wo[state.win].wrap = false
