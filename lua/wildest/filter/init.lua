@@ -96,7 +96,10 @@ function M.filter_sort(needle, candidates)
 
   local ret = C.fuzzy_filter_sort(needle, c_candidates, n, out_indices, out_scores, out_count)
   if ret ~= 0 then
-    vim.notify_once("[wildest] fuzzy_filter_sort failed (input may exceed limits)", vim.log.levels.WARN)
+    vim.notify_once(
+      "[wildest] fuzzy_filter_sort failed (input may exceed limits)",
+      vim.log.levels.WARN
+    )
     return {}, {}
   end
 
@@ -126,7 +129,10 @@ function M.positions(needle, haystack)
 
   local ret = C.fuzzy_positions(needle, haystack, out_positions, out_count)
   if ret ~= 0 then
-    vim.notify_once("[wildest] fuzzy_positions failed (input may exceed limits)", vim.log.levels.WARN)
+    vim.notify_once(
+      "[wildest] fuzzy_positions failed (input may exceed limits)",
+      vim.log.levels.WARN
+    )
     return nil
   end
 
