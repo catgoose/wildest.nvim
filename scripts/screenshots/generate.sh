@@ -55,6 +55,23 @@ THEME_CONFIGS=(
   theme_kanagawa
   theme_kanagawa_dragon
   theme_kanagawa_lotus
+  theme_catppuccin_mocha
+  theme_catppuccin_frappe
+  theme_catppuccin_latte
+  theme_tokyonight_night
+  theme_tokyonight_storm
+  theme_tokyonight_moon
+  theme_rose_pine
+  theme_rose_pine_moon
+  theme_rose_pine_dawn
+  theme_gruvbox_dark
+  theme_gruvbox_light
+  theme_nord
+  theme_onedark
+  theme_nightfox
+  theme_everforest_dark
+  theme_everforest_light
+  theme_dracula
 )
 
 FEATURE_CONFIGS=(

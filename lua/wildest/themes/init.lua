@@ -23,6 +23,23 @@ M.theme_names = {
   "kanagawa",
   "kanagawa_dragon",
   "kanagawa_lotus",
+  "catppuccin_mocha",
+  "catppuccin_frappe",
+  "catppuccin_latte",
+  "tokyonight_night",
+  "tokyonight_storm",
+  "tokyonight_moon",
+  "rose_pine",
+  "rose_pine_moon",
+  "rose_pine_dawn",
+  "gruvbox_dark",
+  "gruvbox_light",
+  "nord",
+  "onedark",
+  "nightfox",
+  "everforest_dark",
+  "everforest_light",
+  "dracula",
 }
 
 --- Get the compile cache directory
