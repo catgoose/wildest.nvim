@@ -40,6 +40,7 @@ M.theme_names = {
   "everforest_dark",
   "everforest_light",
   "dracula",
+  "solarized_dark",
 }
 
 --- Get the compile cache directory

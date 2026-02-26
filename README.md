@@ -158,7 +158,7 @@
 </tr>
 <tr>
 <td align="center"><strong>theme_dracula</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dracula.png" width="400"></td>
-<td></td>
+<td align="center"><strong>theme_solarized_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_solarized_dark.png" width="400"></td>
 </tr>
 </table>
 </details>
@@ -177,7 +177,7 @@ which hasn't been updated in over four years. Drops VimScript and Python.
 - **C FFI fuzzy matching** - fzy algorithm compiled to native code, sorts 10K candidates faster than you can say "yeehaw"
 - **23 pipeline constructors** - more ways to wrangle completions than cattle at a roundup
 - **Popupmenu, wildmenu, border, and palette renderers** - dress up your cmdline like it's headed to the saloon
-- **31 themes with bytecode compilation** - every outfit from dusty trail to midnight saloon
+- **32 themes with bytecode compilation** - every outfit from dusty trail to midnight saloon
 - **Frecency scoring** - remembers what you use most and surfaces it first
 
 > _"I reckon this is the fastest cmdline completion plugin in the territory."_
@@ -865,6 +865,7 @@ w.setup({
 | `everforest_dark`   | bordered | Woodland greens on dark soil - deep in the forest   |
 | `everforest_light`  | bordered | Soft cream with fresh greens - forest clearing      |
 | `dracula`           | bordered | Classic dark purple - the count rides at midnight   |
+| `solarized_dark`    | bordered | Precision teal and cyan - the original classic      |
 
 <details>
 <summary><strong>Theme Gallery</strong> (click to expand)</summary>
@@ -932,7 +933,7 @@ w.setup({
 </tr>
 <tr>
 <td align="center"><strong>dracula</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dracula.png" width="400"></td>
-<td></td>
+<td align="center"><strong>solarized_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_solarized_dark.png" width="400"></td>
 </tr>
 </table>
 
