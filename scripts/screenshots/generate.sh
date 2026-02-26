@@ -8,6 +8,7 @@
 #   ./generate.sh --themes         # Generate theme screenshots only
 #   ./generate.sh --renderers      # Generate renderer screenshots only
 #   ./generate.sh --features       # Generate feature screenshots only
+#   ./generate.sh --pipelines      # Generate pipeline screenshots only
 #   ./generate.sh --gifs           # Also generate animated GIFs
 #   ./generate.sh --install-deps   # Install VHS, ttyd, and Nerd Font (for CI)
 #
@@ -62,6 +63,13 @@ FEATURE_CONFIGS=(
   gradient
   search
   renderer_mux
+  kind_icons
+)
+
+PIPELINE_CONFIGS=(
+  lua_pipeline
+  help_pipeline
+  history_pipeline
 )
 
 HIGHLIGHT_CONFIGS=(
@@ -70,7 +78,7 @@ HIGHLIGHT_CONFIGS=(
   hl_ocean
 )
 
-ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@]}" "${HIGHLIGHT_CONFIGS[@]}")
+ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@]}" "${PIPELINE_CONFIGS[@]}" "${HIGHLIGHT_CONFIGS[@]}")
 
 # ── Settings ───────────────────────────────────────────────────────
 
@@ -158,6 +166,10 @@ get_cmd_input() {
     fuzzy)           echo ":colo" ;;
     gradient)        echo ":set no" ;;
     renderer_mux)    echo ":set " ;;
+    lua_pipeline)    echo ":lua vim.api." ;;
+    help_pipeline)   echo ":help nvim_b" ;;
+    history_pipeline) echo ":set " ;;
+    kind_icons)      echo ":set " ;;
     *)               echo ":set " ;;
   esac
 }
@@ -261,6 +273,9 @@ main() {
         echo "Features:"
         printf "  %s\n" "${FEATURE_CONFIGS[@]}"
         echo ""
+        echo "Pipelines:"
+        printf "  %s\n" "${PIPELINE_CONFIGS[@]}"
+        echo ""
         echo "Highlights:"
         printf "  %s\n" "${HIGHLIGHT_CONFIGS[@]}"
         exit 0
@@ -268,6 +283,7 @@ main() {
       --themes)      configs_to_run+=("${THEME_CONFIGS[@]}") ;;
       --renderers)   configs_to_run+=("${RENDERER_CONFIGS[@]}") ;;
       --features)    configs_to_run+=("${FEATURE_CONFIGS[@]}") ;;
+      --pipelines)   configs_to_run+=("${PIPELINE_CONFIGS[@]}") ;;
       --highlights)  configs_to_run+=("${HIGHLIGHT_CONFIGS[@]}") ;;
       --gifs)        GENERATE_GIFS=true ;;
       --install-deps) install_deps ;;
