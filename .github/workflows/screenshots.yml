@@ -12,7 +12,7 @@ permissions:
   contents: write
 
 jobs:
-  generate:
+  screenshots:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -53,9 +53,74 @@ jobs:
       - name: Generate screenshots
         run: scripts/screenshots/generate.sh
 
+      - uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: scripts/screenshots/output/*.png
+
+  demo:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: nightly
+
+      - name: Install VHS and ttyd
+        run: |
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+          sudo apt-get update
+          sudo apt-get install -y vhs ttyd
+
+      - name: Install JetBrainsMono Nerd Font
+        run: |
+          mkdir -p ~/.local/share/fonts
+          curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz \
+            | tar -xJf - -C ~/.local/share/fonts
+          fc-cache -fv
+
+      - name: Build fuzzy.so
+        run: make build
+
+      - name: Clone nvim-web-devicons
+        run: |
+          mkdir -p deps
+          git clone --depth 1 https://github.com/nvim-tree/nvim-web-devicons deps/nvim-web-devicons
+
+      - name: Clone kanagawa colorscheme
+        run: |
+          mkdir -p deps
+          git clone --depth 1 https://github.com/rebelot/kanagawa.nvim deps/kanagawa.nvim
+
+      - name: Generate demo GIF
+        run: scripts/screenshots/generate.sh --demo
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: demo
+          path: scripts/screenshots/output/demo.gif
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: [screenshots, demo]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: screenshots
+          path: output
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: demo
+          path: output
+
       - name: Push to screenshots branch
         run: |
-          cd scripts/screenshots/output
+          cd output
           git init
           git checkout -b screenshots
           git add *.png *.gif
