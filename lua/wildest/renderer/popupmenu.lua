@@ -46,7 +46,7 @@ function M.new(opts)
       return
     end
 
-    local row, col, editor_width = renderer_util.default_position()
+    local row, col, editor_width = renderer_util.default_position(state.offset)
     local width = state.max_width or editor_width
     width = math.max(width, state.min_width)
 
@@ -107,12 +107,11 @@ function M.new(opts)
     vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
     renderer_util.apply_line_highlights(state.buf, state.ns_id, lines, line_highlights)
 
-    -- +2 compensates for the top+bottom border rows that bordered renderers
-    -- get from nvim_open_win's native border decoration.  Without this offset
-    -- the borderless popup overlaps the last buffer line above the statusline.
+    -- +1 aligns the borderless popup's bottom with the bordered renderer's
+    -- bottom border, sitting directly above the statusline.
     renderer_util.open_or_update_win(state, {
       relative = "editor",
-      row = math.max(0, row - height + 2),
+      row = math.max(0, row - height + 1),
       col = col,
       width = width,
       height = height,

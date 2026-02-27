@@ -58,7 +58,7 @@ jobs:
           name: screenshots
           path: scripts/screenshots/output/*.png
 
-  demo:
+  showdown:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -96,17 +96,17 @@ jobs:
           mkdir -p deps
           git clone --depth 1 https://github.com/rebelot/kanagawa.nvim deps/kanagawa.nvim
 
-      - name: Generate demo GIF
-        run: scripts/screenshots/generate.sh --demo
+      - name: Generate showdown GIF
+        run: scripts/screenshots/generate.sh --showdown
 
       - uses: actions/upload-artifact@v4
         with:
-          name: demo
-          path: scripts/screenshots/output/demo.gif
+          name: showdown
+          path: scripts/screenshots/output/showdown.gif
 
   publish:
     runs-on: ubuntu-latest
-    needs: [screenshots, demo]
+    needs: [screenshots, showdown]
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -115,7 +115,7 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: demo
+          name: showdown
           path: output
 
       - name: Push to screenshots branch

@@ -236,9 +236,25 @@ function M.new(opts)
 
     local height = #lines
 
-    -- Position: centered
+    -- Account for border rows and reserved lines (statusline + cmdline) so
+    -- the bottom border never overlaps the statusline.
+    local border_rows = 2 -- top + bottom border
+    local reserved = math.max(vim.o.cmdheight, 1) + (vim.o.laststatus > 0 and 1 or 0)
+    local usable_lines = editor_lines - reserved
+    local max_content_height = usable_lines - border_rows
+    if height > max_content_height then
+      height = math.max(1, max_content_height)
+      while #lines > height do
+        table.remove(lines, #lines)
+        table.remove(line_highlights, #line_highlights)
+      end
+    end
+
+    -- Position: centered within usable area
     local margin_left = renderer_util.parse_margin(state.margin, editor_cols, outer_width)
-    local margin_top = math.max(0, math.floor((editor_lines - height) / 2))
+    local total_with_border = height + border_rows
+    local margin_top =
+      math.max(0, math.floor((usable_lines - total_with_border) / 2) - (state.offset or 0))
 
     vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
     renderer_util.apply_line_highlights(state.buf, state.ns_id, lines, line_highlights)
