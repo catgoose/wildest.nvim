@@ -121,6 +121,7 @@ function M.create_base_state(opts, defaults)
     ellipsis = opts.ellipsis or "...",
     zindex = opts.zindex or 250,
     fixed_height = opts.fixed_height ~= false,
+    offset = opts.offset or 0,
 
     buf = -1,
     win = -1,
@@ -342,17 +343,21 @@ function M.make_page(selected, total, max_height, current_page)
   return start, math.min(total - 1, finish)
 end
 
---- Default position: above the cmdline, left-aligned, full width
+--- Default position: above the cmdline, left-aligned, full width.
+--- An optional `offset` reserves extra rows above the cmdline.
+--- Positive values move the panel up; negative values are clamped so
+--- the panel never extends past the statusline.
+---@param offset? integer extra rows to reserve (default 0)
 ---@return integer row, integer col, integer width
-function M.default_position()
+function M.default_position(offset)
   local height = vim.o.lines
   local width = vim.o.columns
   -- Account for statusline and cmdline area.
-  -- With cmdheight=0 the cmdline still appears temporarily during input,
-  -- so we always reserve at least 1 row for it.
-  local cmdheight = math.max(vim.o.cmdheight, 1)
+  local cmdheight = vim.o.cmdheight
   local reserved = cmdheight + (vim.o.laststatus > 0 and 1 or 0)
-  return height - reserved - 1, 0, width
+  local max_row = height - reserved - 1
+  local row = math.max(1, math.min(max_row, max_row - (offset or 0)))
+  return row, 0, width
 end
 
 --- Ensure a scratch buffer and namespace exist
@@ -545,7 +550,7 @@ end
 ---@return string
 function M.get_query(result)
   if result.data then
-    return result.data.arg or result.data.input or ""
+    return result.data.query or result.data.arg or result.data.input or ""
   end
   return ""
 end

@@ -89,6 +89,7 @@ function M.new(opts)
     right = opts.right or {},
     highlighter = opts.highlighter,
     zindex = opts.zindex or 250,
+    offset = opts.offset or 0,
 
     -- Runtime state
     buf = -1,
@@ -158,7 +159,7 @@ function M.new(opts)
     -- Get query for highlighting
     local query = ""
     if result.data then
-      query = result.data.arg or result.data.input or ""
+      query = result.data.query or result.data.arg or result.data.input or ""
     end
 
     -- Build the line as chunks
@@ -290,7 +291,7 @@ function M.new(opts)
     end
 
     -- Position: single line above cmdline
-    local row = vim.o.lines - 2
+    local row = renderer_util.default_position(state.offset)
     local win_config = {
       relative = "editor",
       row = row,

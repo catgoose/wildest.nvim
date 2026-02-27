@@ -98,6 +98,10 @@ function M.lua_pipeline(opts)
     end
 
     ctx.arg = expr
+    -- Set query to just the partial after the last dot so highlighting
+    -- matches the distinguishing suffix, not the common prefix.
+    local last_dot = expr:find("%.[^.]*$")
+    ctx.query = last_dot and expr:sub(last_dot + 1) or expr
     return completions
   end
 

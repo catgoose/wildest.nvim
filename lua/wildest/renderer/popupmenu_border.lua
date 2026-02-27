@@ -54,7 +54,7 @@ function M.new(opts)
 
     renderer_util.check_run_id(state, ctx)
 
-    local row, col, editor_width = renderer_util.default_position()
+    local row, col, editor_width = renderer_util.default_position(state.offset)
     local editor_lines = vim.o.lines
 
     local max_h = renderer_util.parse_dimension(state.max_height, editor_lines)
@@ -120,9 +120,12 @@ function M.new(opts)
 
     local height = #lines
 
-    -- Clamp height
-    if height > row then
-      height = math.max(1, row)
+    -- Neovim 0.10+ positions the border at (row, col), not the content.
+    -- The bottom border lands at win_row + height + 1, so we must reserve
+    -- 2 extra rows (top + bottom border) when sizing and positioning.
+    local max_content = row - 2
+    if height > max_content then
+      height = math.max(1, max_content)
       while #lines > height do
         table.remove(lines, #lines)
         table.remove(line_highlights, #line_highlights)
@@ -138,7 +141,10 @@ function M.new(opts)
     elseif state.position == "center" then
       win_row = math.max(0, math.floor((row - height) / 2))
     else
-      win_row = math.max(0, row - height)
+      -- -1 so the top border sits above the content and the bottom border
+      -- stays above the statusline (border is drawn outside the content area
+      -- but positioned at win_row in Neovim 0.10+).
+      win_row = math.max(0, row - height - 1)
     end
 
     local win_config = {

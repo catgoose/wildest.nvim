@@ -9,8 +9,9 @@
 #   ./generate.sh --renderers      # Generate renderer screenshots only
 #   ./generate.sh --features       # Generate feature screenshots only
 #   ./generate.sh --pipelines      # Generate pipeline screenshots only
+#   ./generate.sh --layouts        # Generate layout screenshots only
 #   ./generate.sh --gifs           # Also generate animated GIFs
-#   ./generate.sh --demo           # Generate the animated demo GIF only
+#   ./generate.sh --showdown        # Generate the animated showdown GIF only
 #   ./generate.sh -j4              # Run 4 screenshots in parallel
 #   ./generate.sh --install-deps   # Install VHS, ttyd, and Nerd Font (for CI)
 #
@@ -98,7 +99,18 @@ HIGHLIGHT_CONFIGS=(
   hl_ocean
 )
 
-ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@]}" "${PIPELINE_CONFIGS[@]}" "${HIGHLIGHT_CONFIGS[@]}")
+LAYOUT_CONFIGS=(
+  laststatus_0
+  laststatus_2
+  laststatus_3
+  cmdheight_0
+  cmdheight_0_offset_1
+  cmdheight_0_offset_2
+  offset_1
+  offset_2
+)
+
+ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@]}" "${PIPELINE_CONFIGS[@]}" "${HIGHLIGHT_CONFIGS[@]}" "${LAYOUT_CONFIGS[@]}")
 
 # ── Settings ───────────────────────────────────────────────────────
 
@@ -110,24 +122,11 @@ FONT_FAMILY="JetBrainsMono Nerd Font"
 PADDING=20
 VHS_THEME="Catppuccin Mocha"
 GENERATE_GIFS=false
-GENERATE_DEMO=false
+GENERATE_SHOWDOWN=false
 
-# ── Demo configs (scenes for the animated demo GIF) ──────────────
-
-DEMO_CONFIGS=(
-  devicons
-  fuzzy
-  search
-  lua_pipeline
-  help_pipeline
-  gradient
-  popupmenu_palette
-  wildmenu
-  history_pipeline
-  renderer_mux
-  kind_icons
-  hl_neon
-)
+# ── Showdown scenes ──────────────────────────────────────────────
+# The showdown GIF uses a hard-coded tape (see generate_showdown) so
+# there is no SHOWDOWN_CONFIGS array — scene commands live in the tape.
 
 # ── CI dependency installer ───────────────────────────────────────
 
@@ -204,13 +203,13 @@ get_cmd_input() {
     devicons)        echo ":e lua/wildest/" ;;
     fuzzy)           echo ":help win" ;;
     gradient)        echo ":help help-" ;;
-    renderer_mux)    echo ":set cur" ;;
-    lua_pipeline)    echo ":lua vim.api." ;;
+    renderer_mux)    echo ":set fold" ;;
+    lua_pipeline)    echo ":lua vim.api.nvim" ;;
     help_pipeline)   echo ":help nvim_b" ;;
-    history_pipeline) echo ":set cur" ;;
-    kind_icons)      echo ":set cur" ;;
-    hl_neon)         echo ":set cur" ;;
-    *)               echo ":set cur" ;;
+    history_pipeline) echo ":set fold" ;;
+    kind_icons)      echo ":set fold" ;;
+    hl_neon)         echo ":set fold" ;;
+    *)               echo ":set fold" ;;
   esac
 }
 
@@ -292,17 +291,16 @@ run_config() {
   fi
 }
 
-# Generate the animated demo GIF (single nvim session, cycles via <Ctrl+n>)
-generate_demo() {
-  echo "Generating animated demo GIF..."
+# Generate the animated showdown GIF (single nvim session, 4 packed scenes)
+generate_showdown() {
+  echo "Generating animated showdown GIF..."
 
-  local demo_init="$SCRIPT_DIR/demo_init.lua"
+  local showdown_init="$SCRIPT_DIR/showdown_init.lua"
   local tape_file
-  tape_file="$(mktemp /tmp/wildest_demo_XXXXXX.tape)"
+  tape_file="$(mktemp /tmp/wildest_showdown_XXXXXX.tape)"
 
-  {
-    cat <<TAPE
-Output "${OUTPUT_DIR}/demo.gif"
+  cat >"$tape_file" <<TAPE
+Output "${OUTPUT_DIR}/showdown.gif"
 
 Require nvim
 
@@ -316,72 +314,99 @@ Set Theme "$VHS_THEME"
 Set TypingSpeed 60ms
 
 Hide
-Type "nvim -u ${demo_init} -i NONE ${SAMPLE_LUA}"
+Type "nvim -u ${showdown_init} -i NONE ${SAMPLE_LUA}"
 Enter
 Sleep 2s
 Show
-TAPE
 
-    local is_first=true
-    for config in "${DEMO_CONFIGS[@]}"; do
-      local cmd_input
-      cmd_input="$(get_cmd_input "$config")"
-      local mode="${cmd_input:0:1}"
-      local typed="${cmd_input:1}"
-
-      if [ "$is_first" = true ]; then
-        is_first=false
-      else
-        # Switch to next scene config via <Ctrl+n>
-        cat <<TAPE
-
-Ctrl+n
-Sleep 500ms
-TAPE
-      fi
-
-      cat <<TAPE
-
-Type "${mode}"
-Sleep 400ms
-Type@80ms "${typed}"
-Sleep 3s
-
+# ── Scene 1: Popupmenu + Devicons + Kind Icons + Fzy ──
+Type ":"
+Sleep 300ms
+Type@80ms "e lua/wildest/"
+Sleep 2s
 Escape
-Sleep 500ms
-TAPE
+Sleep 300ms
 
-      # renderer_mux: show both modes (bordered popup for :, wildmenu for /)
-      if [ "$config" = "renderer_mux" ]; then
-        cat <<TAPE
+Type ":"
+Sleep 300ms
+Type@80ms "help nvim_b"
+Sleep 2s
+Escape
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@80ms "lua vim.api.nvim"
+Sleep 2s
+Escape
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@80ms "set fold"
+Sleep 2s
+Escape
+Sleep 300ms
+
+# ── Scene 2: Palette + Gradient Rainbow ──
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@80ms "help help-"
+Sleep 2s
+Escape
+Sleep 300ms
+
+# ── Scene 3: Wildmenu + Search ──
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@80ms "set fold"
+Sleep 2s
+Escape
+Sleep 300ms
 
 Type "/"
-Sleep 400ms
+Sleep 300ms
 Type@80ms "function"
-Sleep 3s
-
+Sleep 2s
 Escape
-Sleep 500ms
-TAPE
-      fi
-    done
+Sleep 300ms
 
-    # Clean exit
-    cat <<TAPE
+# ── Scene 4: Neon Theme ──
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@80ms "e lua/wildest/"
+Sleep 2s
+Escape
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@80ms "set fold"
+Sleep 2s
+Escape
+Sleep 300ms
 
 Hide
 Type ":q!"
 Enter
 Sleep 500ms
 TAPE
-  } >"$tape_file"
 
   if vhs "$tape_file" 2>&1; then
     local size
-    size="$(du -h "$OUTPUT_DIR/demo.gif" | cut -f1)"
-    echo "  OK: demo.gif ($size)"
+    size="$(du -h "$OUTPUT_DIR/showdown.gif" | cut -f1)"
+    echo "  OK: showdown.gif ($size)"
   else
-    echo "  FAILED: demo.gif"
+    echo "  FAILED: showdown.gif"
     rm -f "$tape_file"
     return 1
   fi
@@ -415,6 +440,9 @@ main() {
         echo ""
         echo "Highlights:"
         printf "  %s\n" "${HIGHLIGHT_CONFIGS[@]}"
+        echo ""
+        echo "Layouts:"
+        printf "  %s\n" "${LAYOUT_CONFIGS[@]}"
         exit 0
         ;;
       --themes)      configs_to_run+=("${THEME_CONFIGS[@]}") ;;
@@ -422,8 +450,9 @@ main() {
       --features)    configs_to_run+=("${FEATURE_CONFIGS[@]}") ;;
       --pipelines)   configs_to_run+=("${PIPELINE_CONFIGS[@]}") ;;
       --highlights)  configs_to_run+=("${HIGHLIGHT_CONFIGS[@]}") ;;
+      --layouts)     configs_to_run+=("${LAYOUT_CONFIGS[@]}") ;;
       --gifs)        GENERATE_GIFS=true ;;
-      --demo)        GENERATE_DEMO=true ;;
+      --showdown)    GENERATE_SHOWDOWN=true ;;
       -j*)           PARALLEL_JOBS="${1#-j}" ;;
       --install-deps) install_deps ;;
       *)
@@ -435,7 +464,7 @@ main() {
   done
 
   # Default: all configs
-  if [ ${#configs_to_run[@]} -eq 0 ] && [ "$GENERATE_DEMO" = false ]; then
+  if [ ${#configs_to_run[@]} -eq 0 ] && [ "$GENERATE_SHOWDOWN" = false ]; then
     configs_to_run=("${ALL_CONFIGS[@]}")
   fi
 
@@ -443,9 +472,9 @@ main() {
   ensure_devicons
   mkdir -p "$OUTPUT_DIR"
 
-  # Demo-only mode: just generate the demo GIF and exit
-  if [ "$GENERATE_DEMO" = true ] && [ ${#configs_to_run[@]} -eq 0 ]; then
-    generate_demo
+  # Showdown-only mode: just generate the showdown GIF and exit
+  if [ "$GENERATE_SHOWDOWN" = true ] && [ ${#configs_to_run[@]} -eq 0 ]; then
+    generate_showdown
     echo ""
     echo "Output: $OUTPUT_DIR/"
     exit 0
@@ -490,9 +519,9 @@ main() {
   echo "Done: $succeeded succeeded, $failed failed"
   echo "Screenshots: $OUTPUT_DIR/"
 
-  # Generate demo GIF if requested alongside screenshots
-  if [ "$GENERATE_DEMO" = true ]; then
-    generate_demo
+  # Generate showdown GIF if requested alongside screenshots
+  if [ "$GENERATE_SHOWDOWN" = true ]; then
+    generate_showdown
   fi
 }
 

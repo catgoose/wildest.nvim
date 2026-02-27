@@ -4,9 +4,15 @@ SHELL := /bin/bash
 DEPS_DIR := deps
 MINI_DIR := $(DEPS_DIR)/mini.nvim
 
-.PHONY: test test_file lint docs docs-vimdoc docs-html build clean deps \
+.DEFAULT_GOAL := help
+
+.PHONY: help test test_file lint docs docs-vimdoc docs-html build clean deps \
        screenshots screenshots-themes screenshots-renderers screenshots-features \
-       screenshots-pipelines screenshots-highlights
+       screenshots-pipelines screenshots-highlights showdown screenshots-all
+
+## Show this help
+help:
+	@awk '/^## /{desc=substr($$0,4)} /^[a-zA-Z_-]+:/{if(desc){t=$$1;sub(/:$$/,"",t);printf "  \033[36m%-25s\033[0m %s\n",t,desc;desc=""}}' $(MAKEFILE_LIST)
 
 ## Run all tests via mini.test
 test: deps
@@ -62,6 +68,15 @@ screenshots-pipelines:
 ## Generate highlight screenshots only
 screenshots-highlights:
 	scripts/screenshots/generate.sh -j8 --highlights
+
+## Generate animated showdown GIF
+showdown:
+	scripts/screenshots/generate.sh --showdown
+
+## Generate all screenshots + showdown GIF (clean first)
+screenshots-all:
+	rm -rf scripts/screenshots/output
+	$(MAKE) screenshots showdown
 
 ## Clean build artifacts
 clean:
