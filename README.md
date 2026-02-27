@@ -1,5 +1,8 @@
 # wildest.nvim
 
+[![CI](https://github.com/catgoose/wildest.nvim/actions/workflows/ci.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/ci.yml)
+[![Screenshots](https://github.com/catgoose/wildest.nvim/actions/workflows/screenshots.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/screenshots.yml)
+
 <!--toc:start-->
 - [wildest.nvim](#wildestnvim)
     - [Howdy partner. Welcome to the wildest cmdline completion this side of the Mississippi.](#howdy-partner-welcome-to-the-wildest-cmdline-completion-this-side-of-the-mississippi)

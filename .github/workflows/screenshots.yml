@@ -51,7 +51,7 @@ jobs:
           git clone --depth 1 https://github.com/rebelot/kanagawa.nvim deps/kanagawa.nvim
 
       - name: Generate screenshots
-        run: scripts/screenshots/generate.sh --demo
+        run: scripts/screenshots/generate.sh
 
       - name: Push to screenshots branch
         run: |
