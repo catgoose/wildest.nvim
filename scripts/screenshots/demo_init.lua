@@ -33,6 +33,8 @@ vim.o.laststatus = 2
 vim.o.cmdheight = 1
 vim.o.cursorline = true
 vim.o.scrolloff = 8
+vim.o.incsearch = true
+vim.o.hlsearch = true
 
 local ok = pcall(vim.cmd, "colorscheme kanagawa")
 if not ok then
@@ -50,8 +52,8 @@ local function left_with_devicons()
   return { " " }
 end
 
--- Shared accent highlights for all demo scenes
-local demo_highlights = {
+-- Accent highlights for demo scenes
+local accent_highlights = {
   accent = "IncSearch",
   selected_accent = "IncSearch",
 }
@@ -68,7 +70,7 @@ scenes[#scenes + 1] = {
       pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
       renderer = w.theme("auto").renderer({
         highlighter = w.fzy_highlighter(),
-        highlights = demo_highlights,
+        highlights = accent_highlights,
         left = { " ", has_devicons and w.popupmenu_devicons() or nil },
         right = { " ", w.popupmenu_scrollbar() },
       }),
@@ -81,10 +83,10 @@ scenes[#scenes + 1] = {
   name = "fuzzy",
   config = function()
     return {
-      pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
+      pipeline = w.branch(w.help_pipeline({ fuzzy = true }), w.cmdline_pipeline({ fuzzy = true })),
       renderer = w.theme("auto").renderer({
         highlighter = w.fzy_highlighter(),
-        highlights = demo_highlights,
+        highlights = accent_highlights,
         left = { " " },
         right = { " ", w.popupmenu_scrollbar() },
       }),
@@ -100,7 +102,7 @@ scenes[#scenes + 1] = {
       pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
       renderer = w.theme("auto").renderer({
         highlighter = w.basic_highlighter(),
-        highlights = demo_highlights,
+        highlights = accent_highlights,
         left = { " " },
         right = { " ", w.popupmenu_scrollbar() },
       }),
@@ -116,7 +118,7 @@ scenes[#scenes + 1] = {
       pipeline = w.branch(w.lua_pipeline(), w.cmdline_pipeline({ fuzzy = true })),
       renderer = w.theme("auto").renderer({
         highlighter = w.fzy_highlighter(),
-        highlights = demo_highlights,
+        highlights = accent_highlights,
         left = left_with_devicons(),
         right = { " ", w.popupmenu_scrollbar() },
       }),
@@ -132,7 +134,7 @@ scenes[#scenes + 1] = {
       pipeline = w.branch(w.help_pipeline({ fuzzy = true }), w.cmdline_pipeline({ fuzzy = true })),
       renderer = w.theme("auto").renderer({
         highlighter = w.fzy_highlighter(),
-        highlights = demo_highlights,
+        highlights = accent_highlights,
         left = left_with_devicons(),
         right = { " ", w.popupmenu_scrollbar() },
       }),
@@ -186,7 +188,7 @@ scenes[#scenes + 1] = {
         },
       }).renderer({
         highlighter = w.fzy_highlighter(),
-        highlights = demo_highlights,
+        highlights = accent_highlights,
         left = { " " },
         right = { " ", w.popupmenu_scrollbar() },
       }),
@@ -202,7 +204,7 @@ scenes[#scenes + 1] = {
       pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
       renderer = w.wildmenu_renderer({
         highlighter = w.basic_highlighter(),
-        highlights = demo_highlights,
+        highlights = accent_highlights,
         separator = " | ",
         left = { w.wildmenu_arrows() },
         right = { w.wildmenu_arrows({ right = true }), " ", w.wildmenu_index() },
@@ -219,7 +221,7 @@ scenes[#scenes + 1] = {
       pipeline = w.branch(w.history_pipeline(), w.cmdline_pipeline({ fuzzy = true })),
       renderer = w.theme("auto").renderer({
         highlighter = w.fzy_highlighter(),
-        highlights = demo_highlights,
+        highlights = accent_highlights,
         left = { " " },
         right = { " ", w.popupmenu_scrollbar() },
       }),
@@ -236,13 +238,13 @@ scenes[#scenes + 1] = {
       renderer = w.renderer_mux({
         [":"] = w.theme("auto").renderer({
           highlighter = w.fzy_highlighter(),
-          highlights = demo_highlights,
+          highlights = accent_highlights,
           left = left_with_devicons(),
           right = { " ", w.popupmenu_scrollbar() },
         }),
         ["/"] = w.wildmenu_renderer({
           highlighter = w.basic_highlighter(),
-          highlights = demo_highlights,
+          highlights = accent_highlights,
           separator = " | ",
         }),
       }),
@@ -258,7 +260,7 @@ scenes[#scenes + 1] = {
       pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
       renderer = w.theme("auto").renderer({
         highlighter = w.fzy_highlighter(),
-        highlights = demo_highlights,
+        highlights = accent_highlights,
         left = { " ", w.popupmenu_kind_icon() },
         right = { " ", w.popupmenu_scrollbar() },
       }),

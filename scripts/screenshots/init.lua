@@ -39,6 +39,8 @@ vim.o.laststatus = 2
 vim.o.cmdheight = 1
 vim.o.cursorline = true
 vim.o.scrolloff = 8
+vim.o.incsearch = true
+vim.o.hlsearch = true
 
 -- Use kanagawa as the background colorscheme
 local ok = pcall(vim.cmd, "colorscheme kanagawa")
@@ -61,7 +63,7 @@ local function left_with_devicons()
   return { " " }
 end
 
--- Shared accent highlights for screenshots
+-- Accent highlights for non-theme screenshots (themes define their own)
 local accent_highlights = {
   accent = "IncSearch",
   selected_accent = "IncSearch",
@@ -377,7 +379,7 @@ for _, name in ipairs(theme_names) do
       pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
       renderer = w.theme(name).renderer({
         highlighter = w.fzy_highlighter(),
-        highlights = accent_highlights,
+  
         left = left_with_devicons(),
         right = { " ", w.popupmenu_scrollbar() },
       }),

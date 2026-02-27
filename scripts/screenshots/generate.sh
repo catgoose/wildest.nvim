@@ -202,15 +202,15 @@ get_cmd_input() {
   case "$config" in
     search)          echo "/function" ;;
     devicons)        echo ":e lua/wildest/" ;;
-    fuzzy)           echo ":colo" ;;
+    fuzzy)           echo ":help win" ;;
     gradient)        echo ":help help-" ;;
-    renderer_mux)    echo ":set " ;;
+    renderer_mux)    echo ":set cur" ;;
     lua_pipeline)    echo ":lua vim.api." ;;
     help_pipeline)   echo ":help nvim_b" ;;
-    history_pipeline) echo ":set " ;;
-    kind_icons)      echo ":set " ;;
-    hl_neon)         echo ":set " ;;
-    *)               echo ":set " ;;
+    history_pipeline) echo ":set cur" ;;
+    kind_icons)      echo ":set cur" ;;
+    hl_neon)         echo ":set cur" ;;
+    *)               echo ":set cur" ;;
   esac
 }
 
@@ -225,7 +225,7 @@ generate_tape() {
   local mode="${cmd_input:0:1}"
   local typed="${cmd_input:1}"
 
-  local nvim_cmd="WILDEST_CONFIG=${config} nvim -u ${INIT_LUA} ${SAMPLE_LUA}"
+  local nvim_cmd="WILDEST_CONFIG=${config} nvim -u ${INIT_LUA} -i NONE ${SAMPLE_LUA}"
 
   {
     # Optionally add GIF output
@@ -316,7 +316,7 @@ Set Theme "$VHS_THEME"
 Set TypingSpeed 60ms
 
 Hide
-Type "nvim -u ${demo_init} ${SAMPLE_LUA}"
+Type "nvim -u ${demo_init} -i NONE ${SAMPLE_LUA}"
 Enter
 Sleep 2s
 Show
