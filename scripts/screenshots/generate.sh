@@ -10,6 +10,7 @@
 #   ./generate.sh --features       # Generate feature screenshots only
 #   ./generate.sh --pipelines      # Generate pipeline screenshots only
 #   ./generate.sh --gifs           # Also generate animated GIFs
+#   ./generate.sh --demo           # Generate the animated demo GIF only
 #   ./generate.sh -j4              # Run 4 screenshots in parallel
 #   ./generate.sh --install-deps   # Install VHS, ttyd, and Nerd Font (for CI)
 #
@@ -109,6 +110,24 @@ FONT_FAMILY="JetBrainsMono Nerd Font"
 PADDING=20
 VHS_THEME="Catppuccin Mocha"
 GENERATE_GIFS=false
+GENERATE_DEMO=false
+
+# ── Demo configs (scenes for the animated demo GIF) ──────────────
+
+DEMO_CONFIGS=(
+  devicons
+  fuzzy
+  search
+  lua_pipeline
+  help_pipeline
+  gradient
+  popupmenu_palette
+  wildmenu
+  history_pipeline
+  renderer_mux
+  kind_icons
+  hl_neon
+)
 
 # ── CI dependency installer ───────────────────────────────────────
 
@@ -190,6 +209,7 @@ get_cmd_input() {
     help_pipeline)   echo ":help nvim_b" ;;
     history_pipeline) echo ":set " ;;
     kind_icons)      echo ":set " ;;
+    hl_neon)         echo ":set " ;;
     *)               echo ":set " ;;
   esac
 }
@@ -272,6 +292,103 @@ run_config() {
   fi
 }
 
+# Generate the animated demo GIF (single nvim session, cycles via <Ctrl+n>)
+generate_demo() {
+  echo "Generating animated demo GIF..."
+
+  local demo_init="$SCRIPT_DIR/demo_init.lua"
+  local tape_file
+  tape_file="$(mktemp /tmp/wildest_demo_XXXXXX.tape)"
+
+  {
+    cat <<TAPE
+Output "${OUTPUT_DIR}/demo.gif"
+
+Require nvim
+
+Set Shell "bash"
+Set FontSize $FONT_SIZE
+Set FontFamily "$FONT_FAMILY"
+Set Width $WIDTH
+Set Height $HEIGHT
+Set Padding $PADDING
+Set Theme "$VHS_THEME"
+Set TypingSpeed 60ms
+
+Hide
+Type "nvim -u ${demo_init} ${SAMPLE_LUA}"
+Enter
+Sleep 2s
+Show
+TAPE
+
+    local is_first=true
+    for config in "${DEMO_CONFIGS[@]}"; do
+      local cmd_input
+      cmd_input="$(get_cmd_input "$config")"
+      local mode="${cmd_input:0:1}"
+      local typed="${cmd_input:1}"
+
+      if [ "$is_first" = true ]; then
+        is_first=false
+      else
+        # Switch to next scene config via <Ctrl+n>
+        cat <<TAPE
+
+Ctrl+n
+Sleep 500ms
+TAPE
+      fi
+
+      cat <<TAPE
+
+Type "${mode}"
+Sleep 400ms
+Type@80ms "${typed}"
+Sleep 3s
+
+Escape
+Sleep 500ms
+TAPE
+
+      # renderer_mux: show both modes (bordered popup for :, wildmenu for /)
+      if [ "$config" = "renderer_mux" ]; then
+        cat <<TAPE
+
+Type "/"
+Sleep 400ms
+Type@80ms "function"
+Sleep 3s
+
+Escape
+Sleep 500ms
+TAPE
+      fi
+    done
+
+    # Clean exit
+    cat <<TAPE
+
+Hide
+Type ":q!"
+Enter
+Sleep 500ms
+TAPE
+  } >"$tape_file"
+
+  if vhs "$tape_file" 2>&1; then
+    local size
+    size="$(du -h "$OUTPUT_DIR/demo.gif" | cut -f1)"
+    echo "  OK: demo.gif ($size)"
+  else
+    echo "  FAILED: demo.gif"
+    rm -f "$tape_file"
+    return 1
+  fi
+
+  rm -f "$tape_file"
+}
+
 # ── Main ───────────────────────────────────────────────────────────
 
 main() {
@@ -306,6 +423,7 @@ main() {
       --pipelines)   configs_to_run+=("${PIPELINE_CONFIGS[@]}") ;;
       --highlights)  configs_to_run+=("${HIGHLIGHT_CONFIGS[@]}") ;;
       --gifs)        GENERATE_GIFS=true ;;
+      --demo)        GENERATE_DEMO=true ;;
       -j*)           PARALLEL_JOBS="${1#-j}" ;;
       --install-deps) install_deps ;;
       *)
@@ -317,13 +435,21 @@ main() {
   done
 
   # Default: all configs
-  if [ ${#configs_to_run[@]} -eq 0 ]; then
+  if [ ${#configs_to_run[@]} -eq 0 ] && [ "$GENERATE_DEMO" = false ]; then
     configs_to_run=("${ALL_CONFIGS[@]}")
   fi
 
   check_deps
   ensure_devicons
   mkdir -p "$OUTPUT_DIR"
+
+  # Demo-only mode: just generate the demo GIF and exit
+  if [ "$GENERATE_DEMO" = true ] && [ ${#configs_to_run[@]} -eq 0 ]; then
+    generate_demo
+    echo ""
+    echo "Output: $OUTPUT_DIR/"
+    exit 0
+  fi
 
   echo "Generating ${#configs_to_run[@]} screenshot(s) (jobs: $PARALLEL_JOBS)..."
   echo "Output: $OUTPUT_DIR/"
@@ -363,6 +489,11 @@ main() {
   echo ""
   echo "Done: $succeeded succeeded, $failed failed"
   echo "Screenshots: $OUTPUT_DIR/"
+
+  # Generate demo GIF if requested alongside screenshots
+  if [ "$GENERATE_DEMO" = true ]; then
+    generate_demo
+  fi
 }
 
 main "$@"

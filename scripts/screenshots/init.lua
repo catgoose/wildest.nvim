@@ -61,6 +61,12 @@ local function left_with_devicons()
   return { " " }
 end
 
+-- Shared accent highlights for screenshots
+local accent_highlights = {
+  accent = "IncSearch",
+  selected_accent = "IncSearch",
+}
+
 -- ── Renderer configs ──────────────────────────────────────────────
 
 local configs = {}
@@ -70,6 +76,7 @@ configs.popupmenu = {
   pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
   renderer = w.popupmenu_renderer({
     highlighter = w.basic_highlighter(),
+    highlights = accent_highlights,
     left = { " " },
     right = { " ", w.popupmenu_scrollbar() },
   }),
@@ -81,6 +88,7 @@ configs.popupmenu_border = function()
     pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
     renderer = w.theme("auto").renderer({
       highlighter = w.fzy_highlighter(),
+      highlights = accent_highlights,
       left = left_with_devicons(),
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -104,6 +112,7 @@ configs.popupmenu_palette = function()
       },
     }).renderer({
       highlighter = w.fzy_highlighter(),
+      highlights = accent_highlights,
       left = { " " },
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -115,6 +124,7 @@ configs.wildmenu = {
   pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
   renderer = w.wildmenu_renderer({
     highlighter = w.basic_highlighter(),
+    highlights = accent_highlights,
     separator = " | ",
     left = { w.wildmenu_arrows() },
     right = { w.wildmenu_arrows({ right = true }), " ", w.wildmenu_index() },
@@ -129,6 +139,7 @@ configs.devicons = function()
     pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
     renderer = w.theme("auto").renderer({
       highlighter = w.fzy_highlighter(),
+      highlights = accent_highlights,
       left = { " ", w.popupmenu_devicons() },
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -141,6 +152,7 @@ configs.fuzzy = function()
     pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
     renderer = w.theme("auto").renderer({
       highlighter = w.fzy_highlighter(),
+      highlights = accent_highlights,
       left = { " " },
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -177,6 +189,7 @@ configs.search = function()
     pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
     renderer = w.theme("auto").renderer({
       highlighter = w.basic_highlighter(),
+      highlights = accent_highlights,
       left = { " " },
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -190,11 +203,13 @@ configs.renderer_mux = function()
     renderer = w.renderer_mux({
       [":"] = w.theme("auto").renderer({
         highlighter = w.fzy_highlighter(),
+        highlights = accent_highlights,
         left = left_with_devicons(),
         right = { " ", w.popupmenu_scrollbar() },
       }),
       ["/"] = w.wildmenu_renderer({
         highlighter = w.basic_highlighter(),
+        highlights = accent_highlights,
         separator = " | ",
       }),
     }),
@@ -209,6 +224,7 @@ configs.lua_pipeline = function()
     pipeline = w.branch(w.lua_pipeline(), w.cmdline_pipeline({ fuzzy = true })),
     renderer = w.theme("auto").renderer({
       highlighter = w.fzy_highlighter(),
+      highlights = accent_highlights,
       left = left_with_devicons(),
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -221,6 +237,7 @@ configs.help_pipeline = function()
     pipeline = w.branch(w.help_pipeline({ fuzzy = true }), w.cmdline_pipeline({ fuzzy = true })),
     renderer = w.theme("auto").renderer({
       highlighter = w.fzy_highlighter(),
+      highlights = accent_highlights,
       left = left_with_devicons(),
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -233,6 +250,7 @@ configs.history_pipeline = function()
     pipeline = w.branch(w.history_pipeline(), w.cmdline_pipeline({ fuzzy = true })),
     renderer = w.theme("auto").renderer({
       highlighter = w.fzy_highlighter(),
+      highlights = accent_highlights,
       left = { " " },
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -245,6 +263,7 @@ configs.kind_icons = function()
     pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
     renderer = w.theme("auto").renderer({
       highlighter = w.fzy_highlighter(),
+      highlights = accent_highlights,
       left = { " ", w.popupmenu_kind_icon() },
       right = { " ", w.popupmenu_scrollbar() },
     }),
@@ -358,6 +377,7 @@ for _, name in ipairs(theme_names) do
       pipeline = w.branch(w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline()),
       renderer = w.theme(name).renderer({
         highlighter = w.fzy_highlighter(),
+        highlights = accent_highlights,
         left = left_with_devicons(),
         right = { " ", w.popupmenu_scrollbar() },
       }),
