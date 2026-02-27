@@ -100,13 +100,14 @@ local cache_mod = require("wildest.cache")
 ---@return table state
 function M.create_base_state(opts, defaults)
   defaults = defaults or {}
+  local user_hl = opts.highlights or {}
   return {
     highlights = {
-      default = opts.hl or "WildestDefault",
-      selected = opts.selected_hl or "WildestSelected",
+      default = user_hl.default or opts.hl or "WildestDefault",
+      selected = user_hl.selected or opts.selected_hl or "WildestSelected",
       error = opts.error_hl or "WildestError",
-      accent = nil,
-      selected_accent = nil,
+      accent = user_hl.accent or nil,
+      selected_accent = user_hl.selected_accent or nil,
     },
     max_height = opts.max_height or defaults.max_height or 16,
     min_height = opts.min_height or defaults.min_height or 0,
@@ -137,25 +138,30 @@ end
 --- groups with bold+underline added.
 ---@param state table renderer state (mutated: sets highlights.accent, highlights.selected_accent)
 function M.create_accent_highlights(state)
-  local accent_hl = vim.api.nvim_get_hl(0, { name = "WildestAccent" })
-  if accent_hl.link then
-    -- Still a default link — derive from base with bold+underline
-    state.highlights.accent =
-      hl_mod.hl_with_attr("WildestAccent_derived", state.highlights.default, "underline", "bold")
-  else
-    state.highlights.accent = "WildestAccent"
+  -- If the user provided an explicit accent highlight, use it directly
+  if not state.highlights.accent then
+    local accent_hl = vim.api.nvim_get_hl(0, { name = "WildestAccent" })
+    if accent_hl.link then
+      -- Still a default link — derive from base with bold+underline
+      state.highlights.accent =
+        hl_mod.hl_with_attr("WildestAccent_derived", state.highlights.default, "underline", "bold")
+    else
+      state.highlights.accent = "WildestAccent"
+    end
   end
 
-  local sel_accent_hl = vim.api.nvim_get_hl(0, { name = "WildestSelectedAccent" })
-  if sel_accent_hl.link then
-    state.highlights.selected_accent = hl_mod.hl_with_attr(
-      "WildestSelectedAccent_derived",
-      state.highlights.selected,
-      "underline",
-      "bold"
-    )
-  else
-    state.highlights.selected_accent = "WildestSelectedAccent"
+  if not state.highlights.selected_accent then
+    local sel_accent_hl = vim.api.nvim_get_hl(0, { name = "WildestSelectedAccent" })
+    if sel_accent_hl.link then
+      state.highlights.selected_accent = hl_mod.hl_with_attr(
+        "WildestSelectedAccent_derived",
+        state.highlights.selected,
+        "underline",
+        "bold"
+      )
+    else
+      state.highlights.selected_accent = "WildestSelectedAccent"
+    end
   end
 end
 
@@ -508,16 +514,24 @@ function M.get_candidate_spans(
     local raw = highlighter.highlight(query, candidate)
     if raw then
       for _, span in ipairs(raw) do
-        -- span[3]: custom hl group (e.g. gradient), span[4]: selected variant
+        -- span[3]: hl group from highlighter (default "WildestAccent", or custom e.g. gradient)
+        -- span[4]: selected variant from highlighter (e.g. gradient selected)
+        -- accent_hl / selected_accent_hl: user-configured overrides
+        local span_hl = span[3]
+        local is_default_accent = not span_hl
+          or span_hl == "WildestAccent"
+          or span_hl == "WildestSelectedAccent"
         local hl
-        if is_selected and span[4] then
+        if is_selected and not is_default_accent and span[4] then
           hl = span[4]
         elseif is_selected and selected_accent_hl then
           hl = selected_accent_hl
-        elseif span[3] then
-          hl = span[3]
-        else
+        elseif not is_default_accent and span_hl then
+          hl = span_hl
+        elseif accent_hl then
           hl = accent_hl
+        else
+          hl = span_hl or "WildestAccent"
         end
         table.insert(spans, { span[1], span[2], hl })
       end
