@@ -51,14 +51,14 @@ jobs:
           git clone --depth 1 https://github.com/rebelot/kanagawa.nvim deps/kanagawa.nvim
 
       - name: Generate screenshots
-        run: scripts/screenshots/generate.sh
+        run: scripts/screenshots/generate.sh --demo
 
       - name: Push to screenshots branch
         run: |
           cd scripts/screenshots/output
           git init
           git checkout -b screenshots
-          git add *.png
+          git add *.png *.gif
           git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" \
             commit -m "Update screenshots [skip ci]"
           git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
