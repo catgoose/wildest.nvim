@@ -104,6 +104,30 @@
 <td align="center"><strong>hl_ocean</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ocean.png" width="400"></td>
 </tr>
 <tr>
+<td align="center"><strong>laststatus_0</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_0.png" width="400"></td>
+<td align="center"><strong>laststatus_2</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_2.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>laststatus_3</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_3.png" width="400"></td>
+<td align="center"><strong>cmdheight_0</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>cmdheight_0_offset_1</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0_offset_1.png" width="400"></td>
+<td align="center"><strong>cmdheight_0_offset_2</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0_offset_2.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>offset_1</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/offset_1.png" width="400"></td>
+<td align="center"><strong>offset_2</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/offset_2.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>noselect_false</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_false.png" width="400"></td>
+<td align="center"><strong>reverse</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/reverse.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>empty_message</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message.png" width="400"></td>
+<td align="center"><strong>buffer_flags</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/buffer_flags.png" width="400"></td>
+</tr>
+<tr>
 <td align="center"><strong>theme_auto</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_auto.png" width="400"></td>
 <td align="center"><strong>theme_default</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_default.png" width="400"></td>
 </tr>
@@ -585,6 +609,8 @@ handles everything else.
 
 ### Plain Popupmenu
 
+![Plain Popupmenu](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu.png)
+
 ```lua
 w.popupmenu_renderer({
   highlighter = w.basic_highlighter(),
@@ -607,6 +633,8 @@ w.popupmenu_renderer({
 | `zindex` | integer | `250` | Floating window z-index |
 
 ### Bordered Popupmenu
+
+![Bordered Popupmenu](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_border.png)
 
 Now we're talkin'. Put a fence around that menu:
 
@@ -641,6 +669,8 @@ w.popupmenu_border_theme({
 | `zindex` | integer | `250` | Floating window z-index |
 
 ### Palette
+
+![Palette](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_palette.png)
 
 A centered floating palette, like a wanted poster in the middle of town:
 
@@ -681,6 +711,8 @@ w.popupmenu_palette_theme({
 | `zindex` | integer | `250` | Floating window z-index |
 
 ### Wildmenu
+
+![Wildmenu](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu.png)
 
 Horizontal suggestions above the cmdline, like a dusty trail of options:
 
@@ -1121,6 +1153,48 @@ Checks for:
 | `min_input`        | `0`                 | Min chars before showing (0 = on enter)    |
 | `pipeline`         | `nil`               | Your pipeline (required)                   |
 | `renderer`         | `nil`               | Your renderer (required)                   |
+
+<details>
+<summary><strong>Layout Variations</strong> (click to expand)</summary>
+
+The popup adapts to your `laststatus`, `cmdheight`, and renderer `offset` settings:
+
+<table>
+<tr>
+<td align="center"><strong>laststatus=0</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_0.png" width="400"></td>
+<td align="center"><strong>laststatus=2</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_2.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>laststatus=3</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_3.png" width="400"></td>
+<td align="center"><strong>cmdheight=0</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>cmdheight=0 offset=1</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0_offset_1.png" width="400"></td>
+<td align="center"><strong>cmdheight=0 offset=2</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0_offset_2.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>offset=1</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/offset_1.png" width="400"></td>
+<td align="center"><strong>offset=2</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/offset_2.png" width="400"></td>
+</tr>
+</table>
+
+</details>
+
+<details>
+<summary><strong>Renderer Options</strong> (click to expand)</summary>
+
+<table>
+<tr>
+<td align="center"><strong>noselect=false</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_false.png" width="400"></td>
+<td align="center"><strong>reverse=true</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/reverse.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>empty_message</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message.png" width="400"></td>
+<td align="center"><strong>buffer_flags</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/buffer_flags.png" width="400"></td>
+</tr>
+</table>
+
+</details>
 
 ## Utilities
 

@@ -228,6 +228,30 @@ M.configs = {
     offset = 2,
   },
 
+  -- Renderer option configs
+  noselect_false = {
+    category = "option",
+    noselect = false,
+  },
+
+  reverse = {
+    category = "option",
+    reverse = true,
+  },
+
+  empty_message = {
+    category = "option",
+    renderer = "border_theme",
+    border = "rounded",
+    empty_message = " No matches, partner ",
+  },
+
+  buffer_flags = {
+    category = "option",
+    pipeline = { "cmdline_fuzzy" },
+    left = { " ", "buffer_flags" },
+  },
+
   -- Custom highlight configs
   hl_neon = {
     category = "highlight",
@@ -361,6 +385,8 @@ local function resolve_component(name, w)
     return w.wildmenu_index()
   elseif name == "kind_icon" then
     return w.popupmenu_kind_icon()
+  elseif name == "buffer_flags" then
+    return w.popupmenu_buffer_flags()
   else
     return name
   end
@@ -427,6 +453,12 @@ local function build_renderer_opts(cfg, w)
   end
   if cfg.offset then
     opts.offset = cfg.offset
+  end
+  if cfg.reverse then
+    opts.reverse = cfg.reverse
+  end
+  if cfg.empty_message then
+    opts.empty_message = cfg.empty_message
   end
   return opts
 end
@@ -501,6 +533,12 @@ function M.build(name_or_cfg, w)
     renderer = build_single_renderer(merged, w)
   end
 
+  -- Collect setup-level option overrides.
+  local setup_opts = { pipeline = pipeline, renderer = renderer }
+  if merged.noselect ~= nil then
+    setup_opts.noselect = merged.noselect
+  end
+
   -- Collect vim option overrides to return to the caller.
   -- The caller should apply these AFTER w.setup() so that nothing
   -- (theme.apply, setup_default_highlights, etc.) can reset them.
@@ -512,7 +550,7 @@ function M.build(name_or_cfg, w)
     vim_opts.cmdheight = merged.cmdheight
   end
 
-  return { pipeline = pipeline, renderer = renderer }, vim_opts
+  return setup_opts, vim_opts
 end
 
 --- Apply vim option overrides returned by M.build().

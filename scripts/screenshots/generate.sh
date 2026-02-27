@@ -10,6 +10,7 @@
 #   ./generate.sh --features       # Generate feature screenshots only
 #   ./generate.sh --pipelines      # Generate pipeline screenshots only
 #   ./generate.sh --layouts        # Generate layout screenshots only
+#   ./generate.sh --options        # Generate renderer option screenshots only
 #   ./generate.sh --gifs           # Also generate animated GIFs
 #   ./generate.sh --showdown        # Generate the animated showdown GIF only
 #   ./generate.sh -j4              # Run 4 screenshots in parallel
@@ -110,7 +111,14 @@ LAYOUT_CONFIGS=(
   offset_2
 )
 
-ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@]}" "${PIPELINE_CONFIGS[@]}" "${HIGHLIGHT_CONFIGS[@]}" "${LAYOUT_CONFIGS[@]}")
+OPTION_CONFIGS=(
+  noselect_false
+  reverse
+  empty_message
+  buffer_flags
+)
+
+ALL_CONFIGS=("${RENDERER_CONFIGS[@]}" "${THEME_CONFIGS[@]}" "${FEATURE_CONFIGS[@]}" "${PIPELINE_CONFIGS[@]}" "${HIGHLIGHT_CONFIGS[@]}" "${LAYOUT_CONFIGS[@]}" "${OPTION_CONFIGS[@]}")
 
 # ── Settings ───────────────────────────────────────────────────────
 
@@ -209,6 +217,8 @@ get_cmd_input() {
     history_pipeline) echo ":set fold" ;;
     kind_icons)      echo ":set fold" ;;
     hl_neon)         echo ":set fold" ;;
+    empty_message)   echo ":zzzznotacommand" ;;
+    buffer_flags)    echo ":b " ;;
     *)               echo ":set fold" ;;
   esac
 }
@@ -443,6 +453,9 @@ main() {
         echo ""
         echo "Layouts:"
         printf "  %s\n" "${LAYOUT_CONFIGS[@]}"
+        echo ""
+        echo "Options:"
+        printf "  %s\n" "${OPTION_CONFIGS[@]}"
         exit 0
         ;;
       --themes)      configs_to_run+=("${THEME_CONFIGS[@]}") ;;
@@ -451,6 +464,7 @@ main() {
       --pipelines)   configs_to_run+=("${PIPELINE_CONFIGS[@]}") ;;
       --highlights)  configs_to_run+=("${HIGHLIGHT_CONFIGS[@]}") ;;
       --layouts)     configs_to_run+=("${LAYOUT_CONFIGS[@]}") ;;
+      --options)     configs_to_run+=("${OPTION_CONFIGS[@]}") ;;
       --gifs)        GENERATE_GIFS=true ;;
       --showdown)    GENERATE_SHOWDOWN=true ;;
       -j*)           PARALLEL_JOBS="${1#-j}" ;;
