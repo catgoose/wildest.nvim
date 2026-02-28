@@ -98,6 +98,12 @@ function M.start(cmdtype)
   state.run_id = state.run_id + 1
   state.cmdtype = cmdtype
   reset_session_fields()
+
+  -- Suppress native wildmenu/pum so it doesn't appear behind wildest
+  state._saved_wildmenu = vim.o.wildmenu
+  state._saved_wildoptions = vim.o.wildoptions
+  vim.o.wildmenu = false
+  vim.o.wildoptions = ""
   state.triggered = (cfg.trigger ~= "tab")
   log.log("state", "start_done", { session_id = state.session_id, triggered = state.triggered })
 
@@ -116,6 +122,14 @@ function M.stop()
   state.active = false
   reset_session_fields()
   state.triggered = false
+
+  -- Restore native wildmenu options
+  if state._saved_wildmenu ~= nil then
+    vim.o.wildmenu = state._saved_wildmenu
+    vim.o.wildoptions = state._saved_wildoptions
+    state._saved_wildmenu = nil
+    state._saved_wildoptions = nil
+  end
 
   if state.pipeline_timer then
     if not state.pipeline_timer:is_closing() then

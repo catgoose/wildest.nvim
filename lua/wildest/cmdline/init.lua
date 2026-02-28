@@ -121,7 +121,7 @@ function M.cmdline_pipeline(opts)
     return result
   end
 
-  local pipeline = { parse_and_complete }
+  local pipeline = { parse_and_complete, require("wildest.filter.uniq").uniq_filter() }
 
   -- Add fuzzy filter if requested
   if opts.fuzzy then

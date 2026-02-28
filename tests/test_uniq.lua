@@ -58,4 +58,16 @@ T["uniq_filter()"]["ignores ctx parameter"] = function()
   expect.equality(result, { "a", "b" })
 end
 
+T["uniq_filter()"]["works as pipeline step"] = function()
+  local filter = uniq.uniq_filter()
+  -- Simulate pipeline: first stage returns candidates, then uniq_filter deduplicates
+  local stage1 = function(_ctx, _input)
+    return { "edit", "edit", "echo", "exit", "echo" }
+  end
+  local ctx = { input = "e", cmdtype = ":" }
+  local candidates = stage1(ctx, "e")
+  local deduped = filter(ctx, candidates)
+  expect.equality(deduped, { "edit", "echo", "exit" })
+end
+
 return T
