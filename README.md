@@ -1,9 +1,8 @@
 # wildest.nvim
 
 [![CI](https://github.com/catgoose/wildest.nvim/actions/workflows/ci.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/ci.yml)
-[![Screenshots](https://github.com/catgoose/wildest.nvim/actions/workflows/screenshots.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/screenshots.yml)
 [![README](https://github.com/catgoose/wildest.nvim/actions/workflows/readme.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/readme.yml)
-[![GIFs](https://github.com/catgoose/wildest.nvim/actions/workflows/gifs.yml/badge.svg?branch=main)](https://github.com/catgoose/wildest.nvim/actions/workflows/gifs.yml)
+[![Screenshots](https://github.com/catgoose/wildest.nvim/actions/workflows/screenshots.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/screenshots.yml)
 [![GIFs](https://github.com/catgoose/wildest.nvim/actions/workflows/gifs.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/gifs.yml)
 
 <!--toc:start-->
@@ -254,18 +253,20 @@ which hasn't been updated in over four years. Drops VimScript and Python.
 }
 ```
 
-### packer.nvim
+### mini.deps
 
 ```lua
-use({
-  "catgoose/wildest.nvim",
-  run = "make -C csrc",
-  config = function()
-    local w = require("wildest")
-    w.setup({
-      -- Saddle up
-    })
-  end,
+add({
+  source = "catgoose/wildest.nvim",
+  hooks = {
+    post_install = function() vim.fn.system("make -C csrc") end,
+    post_checkout = function() vim.fn.system("make -C csrc") end,
+  },
+})
+
+local w = require("wildest")
+w.setup({
+  -- Your config here, partner
 })
 ```
 
