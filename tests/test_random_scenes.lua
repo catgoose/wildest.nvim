@@ -67,16 +67,16 @@ T["random_scene()"]["always includes a renderer"] = function()
 end
 
 T["random_scene()"]["wildmenu recipe has correct fields"] = function()
-  -- Generate many scenes and find a wildmenu one
   local found = false
+  local valid_highlighters = { fzy = true, basic = true, prefix = true }
   for _ = 1, 200 do
     local scene = configs.random_scene("S")
     if scene.renderer == "wildmenu" then
       found = true
-      expect.equality(scene.highlighter, "basic")
-      expect.equality(scene.separator, " | ")
-      expect.equality(scene.left, { "arrows" })
-      expect.equality(scene.right, { "arrows_right", " ", "index" })
+      expect.equality(valid_highlighters[scene.highlighter], true)
+      expect.equality(type(scene.separator), "string")
+      expect.equality(type(scene.left), "table")
+      expect.equality(type(scene.right), "table")
       break
     end
   end
@@ -85,15 +85,17 @@ end
 
 T["random_scene()"]["palette recipe has palette config"] = function()
   local found = false
+  local valid_positions = { top = true, bottom = true }
+  local valid_highlighters = { fzy = true, basic = true, prefix = true }
   for _ = 1, 200 do
     local scene = configs.random_scene("S")
     if scene.renderer == "palette" then
       found = true
       expect.equality(type(scene.palette), "table")
-      expect.equality(scene.palette.title, " Wildest ")
       expect.equality(scene.palette.prompt_prefix, nil)
-      expect.equality(scene.palette.prompt_position, "top")
-      expect.equality(scene.left, { " " })
+      expect.equality(valid_positions[scene.palette.prompt_position], true)
+      expect.equality(valid_highlighters[scene.highlighter], true)
+      expect.equality(type(scene.left), "table")
       break
     end
   end
@@ -109,7 +111,8 @@ T["random_scene()"]["mux recipe has mode entries"] = function()
       expect.equality(type(scene.mux), "table")
       expect.equality(type(scene.mux[":"]), "table")
       expect.equality(type(scene.mux["/"]), "table")
-      expect.equality(scene.mux["/"].renderer, "wildmenu")
+      expect.equality(type(scene.mux[":"].renderer), "string")
+      expect.equality(type(scene.mux["/"].renderer), "string")
       -- colon renderer should be a theme
       expect.equality(scene.mux[":"].renderer:sub(1, 6), "theme:")
       break
@@ -127,7 +130,7 @@ T["random_scene()"]["gradient recipe has gradient fields"] = function()
       expect.equality(scene.highlights, false)
       expect.equality(type(scene.gradient_colors), "table")
       expect.equality(#scene.gradient_colors > 0, true)
-      expect.equality(scene.left, { " " })
+      expect.equality(type(scene.left), "table")
       break
     end
   end
@@ -136,11 +139,12 @@ end
 
 T["random_scene()"]["border_custom recipe has custom_highlights"] = function()
   local found = false
+  local valid_borders = { rounded = true, single = true, double = true, solid = true }
   for _ = 1, 200 do
     local scene = configs.random_scene("S")
     if scene.renderer == "border_theme" then
       found = true
-      expect.equality(scene.border, "rounded")
+      expect.equality(valid_borders[scene.border], true)
       expect.equality(type(scene.custom_highlights), "table")
       -- Should have WildestDefault at minimum
       expect.equality(type(scene.custom_highlights.WildestDefault), "table")

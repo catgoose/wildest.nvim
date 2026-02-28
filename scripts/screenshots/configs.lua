@@ -424,6 +424,7 @@ function M.random_scene(label)
     { "cmdline_fuzzy", "search" },
     { "lua", "cmdline_fuzzy", "search" },
     { "help_fuzzy", "cmdline_fuzzy", "search" },
+    { "history", "cmdline_fuzzy", "search" },
   }
   local lefts = {
     { " " },
@@ -435,16 +436,23 @@ function M.random_scene(label)
     { " ", "scrollbar" },
     { " " },
   }
-  local highlighters = { "fzy", "basic" }
+  local highlighters = { "fzy", "basic", "prefix" }
+  local borders = { "rounded", "single", "double", "solid" }
   local custom_hl_sets = { neon_highlights, ember_highlights, ocean_highlights }
+
+  local gradient_palettes = {
+    rainbow_colors,
+    { "#ff6600", "#ff9900", "#ffcc00", "#ffff00", "#ccff00", "#66ff00" },
+    { "#00ffff", "#00ccff", "#0099ff", "#0066ff", "#6600ff", "#cc00ff" },
+  }
 
   -- Weighted recipe selection
   local recipe_weights = {
-    { "theme", 40 },
+    { "theme", 35 },
     { "wildmenu", 15 },
     { "palette", 15 },
-    { "border_custom", 10 },
-    { "mux", 10 },
+    { "border_custom", 12 },
+    { "mux", 13 },
     { "gradient", 10 },
   }
   local total = 0
@@ -464,6 +472,14 @@ function M.random_scene(label)
 
   local scene = { label = label, pipeline = pick(pipelines) }
 
+  -- Sprinkle renderer options randomly across all recipes
+  if math.random(6) == 1 then
+    scene.noselect = true
+  end
+  if math.random(8) == 1 then
+    scene.reverse = true
+  end
+
   if recipe == "theme" then
     scene.renderer = "theme:" .. pick(M._random_themes)
     scene.left = pick(lefts)
@@ -472,45 +488,48 @@ function M.random_scene(label)
 
   elseif recipe == "wildmenu" then
     scene.renderer = "wildmenu"
-    scene.highlighter = "basic"
-    scene.separator = " | "
-    scene.left = { "arrows" }
-    scene.right = { "arrows_right", " ", "index" }
+    scene.highlighter = pick(highlighters)
+    scene.separator = pick({ " | ", "  ", " · " })
+    scene.left = pick({ { "arrows" }, { " " } })
+    scene.right = pick({ { "arrows_right", " ", "index" }, { " ", "index" }, { " " } })
 
   elseif recipe == "palette" then
     scene.renderer = "palette"
     scene.palette = {
-      title = " Wildest ",
-      prompt_position = "top",
-      max_height = "60%",
-      max_width = "60%",
-      min_width = 40,
+      title = pick({ " Wildest ", " Command ", nil }),
+      prompt_position = pick({ "top", "bottom" }),
+      max_height = pick({ "60%", "75%", "50%" }),
+      max_width = pick({ "60%", "75%", "50%" }),
+      min_width = pick({ 30, 40, 50 }),
       margin = "auto",
     }
-    scene.left = { " " }
+    scene.highlighter = pick(highlighters)
+    scene.left = pick(lefts)
     if math.random(2) == 1 then
       scene.custom_highlights = pick(custom_hl_sets)
     end
 
   elseif recipe == "border_custom" then
     scene.renderer = "border_theme"
-    scene.border = "rounded"
+    scene.border = pick(borders)
+    scene.highlighter = pick(highlighters)
     scene.custom_highlights = pick(custom_hl_sets)
     scene.left = pick(lefts)
+    scene.right = pick(rights)
 
   elseif recipe == "mux" then
     scene.renderer = "mux"
     scene.mux = {
       [":"] = {
         renderer = "theme:" .. pick(M._random_themes),
-        highlighter = "fzy",
+        highlighter = pick(highlighters),
         highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
-        left = "devicons",
-        right = { " ", "scrollbar" },
+        left = pick({ "devicons", { " " }, { " ", "kind_icon" } }),
+        right = pick(rights),
       },
       ["/"] = {
-        renderer = "wildmenu",
-        highlighter = "basic",
+        renderer = pick({ "wildmenu", "theme:" .. pick(M._random_themes) }),
+        highlighter = pick(highlighters),
         highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
         separator = " | ",
       },
@@ -520,8 +539,9 @@ function M.random_scene(label)
     scene.renderer = "theme:" .. pick(M._random_themes)
     scene.highlights = false
     scene.highlighter = "gradient"
-    scene.gradient_colors = rainbow_colors
-    scene.left = { " " }
+    scene.gradient_colors = pick(gradient_palettes)
+    scene.left = pick(lefts)
+    scene.right = pick(rights)
   end
 
   return scene
@@ -615,6 +635,8 @@ local function resolve_highlighter(cfg, w)
   local name = cfg.highlighter or "fzy"
   if name == "basic" then
     return w.basic_highlighter()
+  elseif name == "prefix" then
+    return w.prefix_highlighter()
   elseif name == "gradient" then
     local gradient = {}
     for i, color in ipairs(cfg.gradient_colors) do
