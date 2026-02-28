@@ -9,6 +9,16 @@ configs.setup(root)
 
 local w = require("wildest")
 local scenes = configs.random_scenes(10)
+
+-- Dump scene configs for debugging
+local output_dir = script_dir .. "/output"
+vim.fn.mkdir(output_dir, "p")
+local f = io.open(output_dir .. "/showdown_scenes.json", "w")
+if f then
+  f:write(vim.json.encode(scenes))
+  f:close()
+end
+
 local current_scene = 1
 
 local function apply_scene(index)

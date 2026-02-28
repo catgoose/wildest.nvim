@@ -56,7 +56,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: showdown
-          path: scripts/screenshots/output/showdown.gif
+          path: |
+            scripts/screenshots/output/showdown.gif
+            scripts/screenshots/output/showdown_scenes.json
 
   gunsmoke:
     runs-on: ubuntu-latest
@@ -102,7 +104,9 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: gunsmoke
-          path: scripts/screenshots/output/gunsmoke.gif
+          path: |
+            scripts/screenshots/output/gunsmoke.gif
+            scripts/screenshots/output/gunsmoke_scenes.json
 
   publish:
     runs-on: ubuntu-latest
@@ -123,7 +127,7 @@ jobs:
           cd output
           git init
           git checkout -b gifs
-          git add *.gif
+          git add *.gif *.json
           git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" \
             commit -m "Update GIFs [skip ci]"
           git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
