@@ -122,7 +122,9 @@ function M.new(opts)
       return
     end
 
-    local editor_width = vim.o.columns - require("wildest.preview").reserved_width()
+    local preview = require("wildest.preview")
+    local space = preview.reserved_space()
+    local editor_width = vim.o.columns - space.left - space.right
     local sep_width = util.strdisplaywidth(state.separator)
 
     -- Calculate space used by left/right components
@@ -291,11 +293,11 @@ function M.new(opts)
     end
 
     -- Position: single line above cmdline
-    local row = renderer_util.default_position(state.offset)
+    local row, col = renderer_util.default_position(state.offset)
     local win_config = {
       relative = "editor",
       row = row,
-      col = 0,
+      col = col,
       width = editor_width,
       height = 1,
       style = "minimal",

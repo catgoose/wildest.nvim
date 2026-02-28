@@ -781,6 +781,71 @@ M.configs = {
     border = "rounded",
     custom_highlights = ocean_highlights,
   },
+
+  -- Preview configs
+  preview_right_screen = {
+    category = "preview",
+    label = "Preview Right (Screen)",
+    cmd = ":e conf",
+    noselect = false,
+    preview = { position = "right", anchor = "screen", width = "40%", border = "rounded" },
+  },
+
+  preview_left_screen = {
+    category = "preview",
+    label = "Preview Left (Screen)",
+    cmd = ":e conf",
+    noselect = false,
+    preview = { position = "left", anchor = "screen", width = "40%", border = "rounded" },
+  },
+
+  preview_top_screen = {
+    category = "preview",
+    label = "Preview Top (Screen)",
+    cmd = ":e conf",
+    noselect = false,
+    preview = { position = "top", anchor = "screen", height = "40%", border = "rounded" },
+  },
+
+  preview_bottom_screen = {
+    category = "preview",
+    label = "Preview Bottom (Screen)",
+    cmd = ":e conf",
+    noselect = false,
+    preview = { position = "bottom", anchor = "screen", height = "40%", border = "rounded" },
+  },
+
+  preview_right_popup = {
+    category = "preview",
+    label = "Preview Right (Popup)",
+    cmd = ":e conf",
+    noselect = false,
+    preview = { position = "right", anchor = "popup", width = "40%", border = "rounded" },
+  },
+
+  preview_left_popup = {
+    category = "preview",
+    label = "Preview Left (Popup)",
+    cmd = ":e conf",
+    noselect = false,
+    preview = { position = "left", anchor = "popup", width = "40%", border = "rounded" },
+  },
+
+  preview_top_popup = {
+    category = "preview",
+    label = "Preview Top (Popup)",
+    cmd = ":e conf",
+    noselect = false,
+    preview = { position = "top", anchor = "popup", height = "40%", border = "rounded" },
+  },
+
+  preview_bottom_popup = {
+    category = "preview",
+    label = "Preview Bottom (Popup)",
+    cmd = ":e conf",
+    noselect = false,
+    preview = { position = "bottom", anchor = "popup", height = "40%", border = "rounded" },
+  },
 }
 
 -- Default VHS command for configs that don't specify one
@@ -809,6 +874,10 @@ M.option_names = {
   "noselect_false", "reverse", "empty_message", "empty_message_popupmenu",
   "buffer_flags", "position_top", "position_center", "ellipsis",
   "position_top_bordered", "noselect_bordered", "fixed_height_true",
+}
+M.preview_names = {
+  "preview_right_screen", "preview_left_screen", "preview_top_screen", "preview_bottom_screen",
+  "preview_right_popup", "preview_left_popup", "preview_top_popup", "preview_bottom_popup",
 }
 
 -- Theme configs (generated)
@@ -1107,6 +1176,15 @@ local function setup_block_lines(cfg, lines, add)
     if val ~= nil then
       add("  " .. key .. " = " .. fmt_val(val) .. ",")
     end
+  end
+
+  -- Preview sub-table
+  if cfg.preview then
+    add("  preview = {")
+    for k, v in pairs(cfg.preview) do
+      add("    " .. k .. " = " .. fmt_val(v) .. ",")
+    end
+    add("  },")
   end
 
   -- Palette sub-table
@@ -1420,6 +1498,9 @@ function M.build(name_or_cfg, w)
   local setup_opts = { pipeline = pipeline, renderer = renderer }
   if merged.noselect ~= nil then
     setup_opts.noselect = merged.noselect
+  end
+  if merged.preview then
+    setup_opts.preview = merged.preview
   end
 
   -- Collect vim option overrides to return to the caller.

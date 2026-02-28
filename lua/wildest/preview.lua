@@ -10,7 +10,10 @@ local M = {}
 
 ---@class wildest.PreviewConfig
 ---@field enabled? boolean Show preview (default: true)
----@field width? integer|string Preview width (default: '50%')
+---@field position? string Position: "left"|"right"|"top"|"bottom" (default: "right")
+---@field anchor? string Anchor: "screen"|"popup" (default: "screen")
+---@field width? integer|string Panel width for left/right (default: '50%')
+---@field height? integer|string Panel height for top/bottom (default: '50%')
 ---@field border? string|table Border style (default: 'single')
 ---@field max_lines? integer Max lines to read (default: 500)
 ---@field title? boolean Show filename in title (default: true)
@@ -24,16 +27,16 @@ local preview_state = {
   last_candidate = nil,
 }
 
---- Parse width config into an integer column count.
----@param width integer|string
+--- Parse a dimension config (width or height) into an integer.
+---@param dim integer|string
 ---@param total integer
 ---@return integer
-local function parse_width(width, total)
-  if type(width) == "number" then
-    return math.max(1, math.min(width, total))
+local function parse_dim(dim, total)
+  if type(dim) == "number" then
+    return math.max(1, math.min(dim, total))
   end
-  if type(width) == "string" then
-    local pct = width:match("^(%d+)%%$")
+  if type(dim) == "string" then
+    local pct = dim:match("^(%d+)%%$")
     if pct then
       return math.max(1, math.floor(tonumber(pct) / 100 * total))
     end
@@ -180,7 +183,10 @@ function M.setup(opts)
   opts = opts or {}
   preview_state.config = {
     enabled = opts.enabled ~= false, -- default true
+    position = opts.position or "right",
+    anchor = opts.anchor or "screen",
     width = opts.width or "50%",
+    height = opts.height or "50%",
     border = opts.border or "single",
     max_lines = opts.max_lines or 500,
     title = opts.title ~= false, -- default true
@@ -188,19 +194,56 @@ function M.setup(opts)
   preview_state.enabled = preview_state.config.enabled
 end
 
---- Returns the column width reserved for the preview window (including border).
---- Returns 0 if preview is not configured, disabled, or the window is not visible.
----@return integer
-function M.reserved_width()
+--- Returns space reserved on each edge `{top, right, bottom, left}`.
+--- Only non-zero for screen anchor when the preview window is visible.
+---@return {top: integer, right: integer, bottom: integer, left: integer}
+function M.reserved_space()
+  local zero = { top = 0, right = 0, bottom = 0, left = 0 }
   if not preview_state.config or not preview_state.enabled then
-    return 0
+    return zero
+  end
+  if preview_state.config.anchor ~= "screen" then
+    return zero
   end
   if not vim.api.nvim_win_is_valid(preview_state.win) then
-    return 0
+    return zero
   end
-  local editor_cols = vim.o.columns
-  local width = parse_width(preview_state.config.width, editor_cols)
-  return width
+
+  local cfg = preview_state.config
+  local pos = cfg.position
+  if pos == "right" then
+    return { top = 0, right = parse_dim(cfg.width, vim.o.columns), bottom = 0, left = 0 }
+  elseif pos == "left" then
+    return { top = 0, right = 0, bottom = 0, left = parse_dim(cfg.width, vim.o.columns) }
+  elseif pos == "top" then
+    local height = vim.o.lines
+    local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+    local available_rows = height - reserved - 1
+    return { top = parse_dim(cfg.height, available_rows), right = 0, bottom = 0, left = 0 }
+  elseif pos == "bottom" then
+    local height = vim.o.lines
+    local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+    local available_rows = height - reserved - 1
+    return { top = 0, right = 0, bottom = parse_dim(cfg.height, available_rows), left = 0 }
+  end
+  return zero
+end
+
+--- Returns the column width reserved for the preview window (including border).
+--- Backward-compatible wrapper around reserved_space().
+---@return integer
+function M.reserved_width()
+  local s = M.reserved_space()
+  return s.left + s.right
+end
+
+--- Returns true when anchor mode is "screen".
+---@return boolean
+function M.is_screen_anchor()
+  if not preview_state.config then
+    return false
+  end
+  return preview_state.config.anchor == "screen"
 end
 
 --- Returns true if preview is configured and enabled.
@@ -261,25 +304,88 @@ function M.update(ctx, result)
 
   -- Position and show the preview window
   local editor_cols = vim.o.columns
-  local preview_width = parse_width(cfg.width, editor_cols)
-  local row, _, _ = renderer_util.default_position(0)
-
-  -- Account for border
-  local content_width = math.max(1, preview_width - 2)
-  local height = math.max(1, row)
+  local editor_lines = vim.o.lines
+  local cmdheight = vim.o.cmdheight
+  local reserved_rows = cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+  local available_rows = math.max(1, editor_lines - reserved_rows - 1)
+  local position = cfg.position
+  local content_lines = vim.api.nvim_buf_line_count(preview_state.buf)
 
   local win_config = {
     relative = "editor",
-    row = 0,
-    col = editor_cols - preview_width,
-    width = content_width,
-    height = height,
     style = "minimal",
     border = cfg.border,
     zindex = 251,
     focusable = false,
     noautocmd = true,
   }
+
+  if cfg.anchor == "popup" then
+    -- Popup anchor: position adjacent to popup, content-aware sizing
+    local geom = renderer_util._last_popup_geometry
+    if not geom then
+      return
+    end
+    local has_border = geom.border and geom.border ~= "none"
+    local border_size = has_border and 1 or 0
+
+    if position == "right" then
+      local w = parse_dim(cfg.width, editor_cols)
+      local h = math.max(1, math.min(geom.height, content_lines))
+      win_config.col = geom.col + geom.width + border_size
+      win_config.row = geom.row
+      win_config.width = math.max(1, w - 2)
+      win_config.height = h
+    elseif position == "left" then
+      local w = parse_dim(cfg.width, editor_cols)
+      local h = math.max(1, math.min(geom.height, content_lines))
+      win_config.col = geom.col - w - border_size
+      win_config.row = geom.row
+      win_config.width = math.max(1, w - 2)
+      win_config.height = h
+    elseif position == "top" then
+      local h = parse_dim(cfg.height, available_rows)
+      h = math.max(1, math.min(h, content_lines))
+      win_config.col = geom.col
+      win_config.row = geom.row - h - border_size - 1
+      win_config.width = math.max(1, geom.width)
+      win_config.height = h
+    elseif position == "bottom" then
+      local h = parse_dim(cfg.height, available_rows)
+      h = math.max(1, math.min(h, content_lines))
+      win_config.col = geom.col
+      win_config.row = geom.row + geom.height + border_size + 1
+      win_config.width = math.max(1, geom.width)
+      win_config.height = h
+    end
+  else
+    -- Screen anchor: fill entire edge of screen
+    if position == "right" then
+      local w = parse_dim(cfg.width, editor_cols)
+      win_config.row = 0
+      win_config.col = editor_cols - w
+      win_config.width = math.max(1, w - 2)
+      win_config.height = available_rows
+    elseif position == "left" then
+      local w = parse_dim(cfg.width, editor_cols)
+      win_config.row = 0
+      win_config.col = 0
+      win_config.width = math.max(1, w - 2)
+      win_config.height = available_rows
+    elseif position == "top" then
+      local h = parse_dim(cfg.height, available_rows)
+      win_config.row = 0
+      win_config.col = 0
+      win_config.width = math.max(1, editor_cols - 2)
+      win_config.height = h
+    elseif position == "bottom" then
+      local h = parse_dim(cfg.height, available_rows)
+      win_config.row = available_rows - h
+      win_config.col = 0
+      win_config.width = math.max(1, editor_cols - 2)
+      win_config.height = h
+    end
+  end
 
   if cfg.title and title then
     win_config.title = { { " " .. title .. " ", "FloatTitle" } }

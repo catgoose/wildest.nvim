@@ -70,6 +70,7 @@
   - [Highlight Groups](#highlight-groups)
   - [War Paint (Themes)](#war-paint-themes)
     - [Auto Theme](#auto-theme)
+      - [Colorscheme Sync](#colorscheme-sync)
     - [Custom Theme](#custom-theme)
     - [Extend Theme](#extend-theme)
     - [Compile](#compile)
@@ -923,24 +924,24 @@ Checks for:
 
 ## Settin' the Rules (Config Options)
 
-| Option              | Default             | Description                                      |
-| ------------------- | ------------------- | ------------------------------------------------ |
-| `modes`             | `{ ':', '/', '?' }` | Which cmdline modes to lasso                     |
-| `next_key`          | `'<Tab>'`           | Mosey to the next candidate                      |
-| `previous_key`      | `'<S-Tab>'`         | Back up to the previous one                      |
-| `accept_key`        | `'<Down>'`          | Accept and keep completin'                       |
-| `reject_key`        | `'<Up>'`            | Reject and restore original                      |
-| `trigger`           | `'auto'`            | `'auto'` or `'tab'` (manual trigger)             |
-| `noselect`          | `true`              | Don't auto-select first candidate                |
-| `longest_prefix`    | `false`             | Insert longest common prefix on first Tab        |
-| `interval`          | `100`               | Debounce interval (ms)                           |
-| `pipeline_timeout`  | `0`                 | Cancel slow pipelines (ms, 0 = no timeout)       |
-| `skip_commands`     | `{}`                | Commands to skip completions for                 |
-| `min_input`         | `0`                 | Min chars before showing (0 = on enter)          |
-| `auto_colorscheme`  | `true`              | Re-apply highlights on `:colorscheme` change     |
-| `preview`           | `nil`               | Preview window config (see Preview section)      |
-| `pipeline`          | `nil`               | Your pipeline (required)                         |
-| `renderer`          | `nil`               | Your renderer (required)                         |
+| Option             | Default             | Description                                  |
+| ------------------ | ------------------- | -------------------------------------------- |
+| `modes`            | `{ ':', '/', '?' }` | Which cmdline modes to lasso                 |
+| `next_key`         | `'<Tab>'`           | Mosey to the next candidate                  |
+| `previous_key`     | `'<S-Tab>'`         | Back up to the previous one                  |
+| `accept_key`       | `'<Down>'`          | Accept and keep completin'                   |
+| `reject_key`       | `'<Up>'`            | Reject and restore original                  |
+| `trigger`          | `'auto'`            | `'auto'` or `'tab'` (manual trigger)         |
+| `noselect`         | `true`              | Don't auto-select first candidate            |
+| `longest_prefix`   | `false`             | Insert longest common prefix on first Tab    |
+| `interval`         | `100`               | Debounce interval (ms)                       |
+| `pipeline_timeout` | `0`                 | Cancel slow pipelines (ms, 0 = no timeout)   |
+| `skip_commands`    | `{}`                | Commands to skip completions for             |
+| `min_input`        | `0`                 | Min chars before showing (0 = on enter)      |
+| `auto_colorscheme` | `true`              | Re-apply highlights on `:colorscheme` change |
+| `preview`          | `nil`               | Preview window config (see Preview section)  |
+| `pipeline`         | `nil`               | Your pipeline (required)                     |
+| `renderer`         | `nil`               | Your renderer (required)                     |
 
 <details>
 <summary><strong>Layout Variations</strong> (click to expand)</summary>
@@ -968,25 +969,31 @@ buffer contents, or help text for the selected candidate.
 ```lua
 w.setup({
   preview = {
-    enabled = true,       -- show preview (can be toggled at runtime)
-    width = '50%',        -- preview width: integer or percentage string
-    border = 'single',    -- border style for preview window
-    max_lines = 500,      -- max lines to read from files
-    title = true,         -- show filename in border title
+    enabled = true, -- show preview (can be toggled at runtime)
+    position = "right", -- "left", "right", "top", or "bottom"
+    anchor = "screen", -- "screen" (fills edge) or "popup" (floats next to popup)
+    width = "50%", -- panel width for left/right positions
+    height = "50%", -- panel height for top/bottom positions
+    border = "single", -- border style for preview window
+    max_lines = 500, -- max lines to read from files
+    title = true, -- show filename in border title
   },
   actions = {
-    ['<C-p>'] = 'toggle_preview',
+    ["<C-p>"] = "toggle_preview",
   },
 })
 ```
 
-| Option      | Type            | Default    | Description                         |
-| ----------- | --------------- | ---------- | ----------------------------------- |
-| `enabled`   | boolean         | `true`     | Show preview window                 |
-| `width`     | integer\|string | `"50%"`    | Preview width (or percentage)       |
-| `border`    | string\|table   | `"single"` | Border style                        |
-| `max_lines` | integer         | `500`      | Max lines to read from files        |
-| `title`     | boolean         | `true`     | Show filename in border title       |
+| Option      | Type            | Default    | Description                                              |
+| ----------- | --------------- | ---------- | -------------------------------------------------------- |
+| `enabled`   | boolean         | `true`     | Show preview window                                      |
+| `position`  | string          | `"right"`  | Side: `"left"`, `"right"`, `"top"`, `"bottom"`           |
+| `anchor`    | string          | `"screen"` | `"screen"` (fills edge) or `"popup"` (adjacent to popup) |
+| `width`     | integer\|string | `"50%"`    | Panel width for left/right positions                     |
+| `height`    | integer\|string | `"50%"`    | Panel height for top/bottom positions                    |
+| `border`    | string\|table   | `"single"` | Border style                                             |
+| `max_lines` | integer         | `500`      | Max lines to read from files                             |
+| `title`     | boolean         | `true`     | Show filename in border title                            |
 
 The preview auto-detects content type from the pipeline's `expand` metadata:
 files get syntax highlighting, buffers show their contents, and help tags
@@ -1001,26 +1008,26 @@ Bind keys to named operations on the selected candidate:
 ```lua
 w.setup({
   actions = {
-    ['<C-s>'] = 'open_split',
-    ['<C-v>'] = 'open_vsplit',
-    ['<C-t>'] = 'open_tab',
-    ['<C-q>'] = 'send_to_quickfix',
-    ['<C-l>'] = 'send_to_loclist',
-    ['<C-y>'] = 'yank',
-    ['<C-p>'] = 'toggle_preview',
+    ["<C-s>"] = "open_split",
+    ["<C-v>"] = "open_vsplit",
+    ["<C-t>"] = "open_tab",
+    ["<C-q>"] = "send_to_quickfix",
+    ["<C-l>"] = "send_to_loclist",
+    ["<C-y>"] = "yank",
+    ["<C-p>"] = "toggle_preview",
   },
 })
 ```
 
-| Action             | Description                                 |
-| ------------------ | ------------------------------------------- |
-| `open_split`       | Open candidate in a horizontal split        |
-| `open_vsplit`      | Open candidate in a vertical split          |
-| `open_tab`         | Open candidate in a new tab                 |
-| `send_to_quickfix` | Send all candidates to the quickfix list    |
-| `send_to_loclist`  | Send all candidates to the location list    |
-| `yank`             | Yank the selected candidate to `"` and `+`  |
-| `toggle_preview`   | Toggle the preview window on/off            |
+| Action             | Description                                |
+| ------------------ | ------------------------------------------ |
+| `open_split`       | Open candidate in a horizontal split       |
+| `open_vsplit`      | Open candidate in a vertical split         |
+| `open_tab`         | Open candidate in a new tab                |
+| `send_to_quickfix` | Send all candidates to the quickfix list   |
+| `send_to_loclist`  | Send all candidates to the location list   |
+| `yank`             | Yank the selected candidate to `"` and `+` |
+| `toggle_preview`   | Toggle the preview window on/off           |
 
 Register custom actions:
 

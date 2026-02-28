@@ -1504,6 +1504,19 @@ empty_message = " No matches, partner ",
 </tr>
 <tr>
 <td align="center">
+<strong>empty_message (popupmenu)</strong><br>
+<em>plain popupmenu, empty_message, basic, devicons, scrollbar, :zzzznotacommand</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message_popupmenu.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":zzzznotacommand",
+renderer = "popupmenu",
+highlighter = "basic",
+empty_message = " No matches, partner ",
+</code></pre>
+</details>
+</td>
+<td align="center">
 <strong>buffer_flags</strong><br>
 <em>auto theme, bordered, fzy, buffer flags, no devicons, scrollbar, :b</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/buffer_flags.png" width="400"><br>
@@ -1527,6 +1540,8 @@ position = "top",
 </code></pre>
 </details>
 </td>
+</tr>
+<tr>
 <td align="center">
 <strong>position=center</strong><br>
 <em>bordered, rounded, position=center, fzy, devicons, scrollbar, :set fold</em><br>
@@ -1539,8 +1554,6 @@ position = "center",
 </code></pre>
 </details>
 </td>
-</tr>
-<tr>
 <td align="center">
 <strong>ellipsis</strong><br>
 <em>wildmenu, ellipsis, basic, arrows, index, separator=" | ", :set fold</em><br>
@@ -1569,6 +1582,8 @@ position = "top",
 </code></pre>
 </details>
 </td>
+</tr>
+<tr>
 <td align="center">
 <strong>noselect (bordered)</strong><br>
 <em>bordered, rounded, noselect, fzy, devicons, scrollbar, :set fold</em><br>
@@ -1581,8 +1596,6 @@ noselect = true,
 </code></pre>
 </details>
 </td>
-</tr>
-<tr>
 <td align="center">
 <strong>fixed_height=true</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set wra</em><br>
@@ -1597,7 +1610,156 @@ fixed_height = true,
 </details>
 </td>
 <td></td>
-<td></td>
 </tr>
 </table>
 <!-- gen:option_gallery_test:end -->
+
+## Preview
+
+<!-- gen:preview_gallery_test:start -->
+<table>
+<tr>
+<td align="center">
+<strong>Preview Right (Screen)</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right screen, :e conf</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_right_screen.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e conf",
+noselect = false,
+preview = {
+  anchor = "screen",
+  border = "rounded",
+  position = "right",
+  width = "40%",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Preview Left (Screen)</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left screen, :e conf</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_left_screen.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e conf",
+noselect = false,
+preview = {
+  anchor = "screen",
+  border = "rounded",
+  position = "left",
+  width = "40%",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Preview Top (Screen)</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top screen, :e conf</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_top_screen.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e conf",
+noselect = false,
+preview = {
+  anchor = "screen",
+  border = "rounded",
+  height = "40%",
+  position = "top",
+},
+</code></pre>
+</details>
+</td>
+</tr>
+<tr>
+<td align="center">
+<strong>Preview Bottom (Screen)</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom screen, :e conf</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_bottom_screen.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e conf",
+noselect = false,
+preview = {
+  anchor = "screen",
+  border = "rounded",
+  height = "40%",
+  position = "bottom",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Preview Right (Popup)</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right popup, :e conf</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_right_popup.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e conf",
+noselect = false,
+preview = {
+  anchor = "popup",
+  border = "rounded",
+  position = "right",
+  width = "40%",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Preview Left (Popup)</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left popup, :e conf</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_left_popup.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e conf",
+noselect = false,
+preview = {
+  anchor = "popup",
+  border = "rounded",
+  position = "left",
+  width = "40%",
+},
+</code></pre>
+</details>
+</td>
+</tr>
+<tr>
+<td align="center">
+<strong>Preview Top (Popup)</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top popup, :e conf</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_top_popup.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e conf",
+noselect = false,
+preview = {
+  anchor = "popup",
+  border = "rounded",
+  height = "40%",
+  position = "top",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Preview Bottom (Popup)</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom popup, :e conf</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_bottom_popup.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e conf",
+noselect = false,
+preview = {
+  anchor = "popup",
+  border = "rounded",
+  height = "40%",
+  position = "bottom",
+},
+</code></pre>
+</details>
+</td>
+<td></td>
+</tr>
+</table>
+<!-- gen:preview_gallery_test:end -->

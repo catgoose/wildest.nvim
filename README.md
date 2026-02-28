@@ -70,6 +70,7 @@
   - [Highlight Groups](#highlight-groups)
   - [War Paint (Themes)](#war-paint-themes)
     - [Auto Theme](#auto-theme)
+      - [Colorscheme Sync](#colorscheme-sync)
     - [Custom Theme](#custom-theme)
     - [Extend Theme](#extend-theme)
     - [Compile](#compile)
@@ -78,6 +79,8 @@
   - [Commands](#commands)
   - [Health Check](#health-check)
   - [Settin' the Rules (Config Options)](#settin-the-rules-config-options)
+  - [Preview](#preview)
+  - [Actions](#actions)
   - [Utilities](#utilities)
     - [Project Root](#project-root)
     - [Highlight Utilities](#highlight-utilities)
@@ -528,19 +531,20 @@ w.popupmenu_renderer({
 })
 ```
 
-| Option         | Type         | Default   | Description                                     |
-| -------------- | ------------ | --------- | ----------------------------------------------- |
-| `highlighter`  | table        | `nil`     | Highlighter for match accents                   |
-| `left`         | table        | `{ " " }` | Left components                                 |
-| `right`        | table        | `{ " " }` | Right components                                |
-| `max_height`   | integer      | `16`      | Maximum number of visible lines                 |
-| `min_height`   | integer      | `0`       | Minimum number of visible lines                 |
-| `max_width`    | integer\|nil | `nil`     | Maximum width (`nil` = full editor width)       |
-| `min_width`    | integer      | `16`      | Minimum width                                   |
-| `reverse`      | boolean      | `false`   | Reverse candidate order                         |
-| `fixed_height` | boolean      | `true`    | Pad to `max_height` so the window never resizes |
-| `pumblend`     | integer\|nil | `nil`     | Window transparency (0-100)                     |
-| `zindex`       | integer      | `250`     | Floating window z-index                         |
+| Option          | Type                 | Default   | Description                                     |
+| --------------- | -------------------- | --------- | ----------------------------------------------- |
+| `highlighter`   | table                | `nil`     | Highlighter for match accents                   |
+| `left`          | table                | `{ " " }` | Left components                                 |
+| `right`         | table                | `{ " " }` | Right components                                |
+| `max_height`    | integer              | `16`      | Maximum number of visible lines                 |
+| `min_height`    | integer              | `0`       | Minimum number of visible lines                 |
+| `max_width`     | integer\|string\|nil | `nil`     | Maximum width (or `"50%"`, `nil` = full width)  |
+| `min_width`     | integer\|string      | `16`      | Minimum width (or `"25%"`)                      |
+| `reverse`       | boolean              | `false`   | Reverse candidate order                         |
+| `fixed_height`  | boolean              | `true`    | Pad to `max_height` so the window never resizes |
+| `empty_message` | string\|nil          | `nil`     | Message shown when there are no results         |
+| `pumblend`      | integer\|nil         | `nil`     | Window transparency (0-100)                     |
+| `zindex`        | integer              | `250`     | Floating window z-index                         |
 
 ### Bordered Popupmenu
 
@@ -728,19 +732,21 @@ default. If no theme is active, your colorscheme's popup colors shine through.
 When a theme is applied, it overrides these with explicit colors.
 
 <!-- gen:highlight_groups:start -->
-| Group | Default Link | Used For |
-| --- | --- | --- |
-| `WildestDefault` | `Pmenu` | Popup background and text |
-| `WildestSelected` | `PmenuSel` | Selected candidate |
-| `WildestAccent` | `PmenuMatch` | Matched characters |
+
+| Group                   | Default Link    | Used For                      |
+| ----------------------- | --------------- | ----------------------------- |
+| `WildestDefault`        | `Pmenu`         | Popup background and text     |
+| `WildestSelected`       | `PmenuSel`      | Selected candidate            |
+| `WildestAccent`         | `PmenuMatch`    | Matched characters            |
 | `WildestSelectedAccent` | `PmenuMatchSel` | Matched characters (selected) |
-| `WildestBorder` | `FloatBorder` | Border decoration |
-| `WildestPrompt` | `Pmenu` | Palette prompt area |
-| `WildestPromptCursor` | `Cursor` | Palette prompt cursor |
-| `WildestScrollbar` | `PmenuSbar` | Scrollbar track |
-| `WildestScrollbarThumb` | `PmenuThumb` | Scrollbar thumb |
-| `WildestSpinner` | `Special` | Loading spinner |
-| `WildestError` | `ErrorMsg` | Error messages |
+| `WildestBorder`         | `FloatBorder`   | Border decoration             |
+| `WildestPrompt`         | `Pmenu`         | Palette prompt area           |
+| `WildestPromptCursor`   | `Cursor`        | Palette prompt cursor         |
+| `WildestScrollbar`      | `PmenuSbar`     | Scrollbar track               |
+| `WildestScrollbarThumb` | `PmenuThumb`    | Scrollbar thumb               |
+| `WildestSpinner`        | `Special`       | Loading spinner               |
+| `WildestError`          | `ErrorMsg`      | Error messages                |
+
 <!-- gen:highlight_groups:end -->
 
 Override any group in your config to customize without a theme:
@@ -783,6 +789,7 @@ w.setup({
 ```
 
 <!-- gen:theme_table:start -->
+
 | Theme               | Renderer | Description                                        |
 | ------------------- | -------- | -------------------------------------------------- |
 | `auto`              | bordered | Derives colors from your colorscheme - a chameleon |
@@ -817,6 +824,7 @@ w.setup({
 | `everforest_light`  | bordered | Soft cream with fresh greens - forest clearing     |
 | `dracula`           | bordered | Classic dark purple - the count rides at midnight  |
 | `solarized_dark`    | bordered | Precision teal and cyan - the original classic     |
+
 <!-- gen:theme_table:end -->
 
 <details>
@@ -887,10 +895,22 @@ w.setup({
 ### Auto Theme
 
 Reads `Pmenu`, `PmenuSel`, `FloatBorder`, `Search`, `PmenuMatch` from your
-colorscheme. Updates when you change colorscheme - adapts like a tumbleweed.
+colorscheme. Adapts like a tumbleweed.
 
 ```lua
 renderer = w.theme("auto").renderer({ highlighter = w.fzy_highlighter() })
+```
+
+#### Colorscheme Sync
+
+Wildest automatically re-applies its default highlight group links when you
+change colorscheme (`:colorscheme gruvbox`, etc.). This means the popup
+colors stay in sync without calling `setup()` again.
+
+Enabled by default. To disable:
+
+```lua
+w.setup({ auto_colorscheme = false })
 ```
 
 ### Custom Theme
@@ -1043,22 +1063,24 @@ Checks for:
 
 ## Settin' the Rules (Config Options)
 
-| Option             | Default             | Description                                |
-| ------------------ | ------------------- | ------------------------------------------ |
-| `modes`            | `{ ':', '/', '?' }` | Which cmdline modes to lasso               |
-| `next_key`         | `'<Tab>'`           | Mosey to the next candidate                |
-| `previous_key`     | `'<S-Tab>'`         | Back up to the previous one                |
-| `accept_key`       | `'<Down>'`          | Accept and keep completin'                 |
-| `reject_key`       | `'<Up>'`            | Reject and restore original                |
-| `trigger`          | `'auto'`            | `'auto'` or `'tab'` (manual trigger)       |
-| `noselect`         | `true`              | Don't auto-select first candidate          |
-| `longest_prefix`   | `false`             | Insert longest common prefix on first Tab  |
-| `interval`         | `100`               | Debounce interval (ms)                     |
-| `pipeline_timeout` | `0`                 | Cancel slow pipelines (ms, 0 = no timeout) |
-| `skip_commands`    | `{}`                | Commands to skip completions for           |
-| `min_input`        | `0`                 | Min chars before showing (0 = on enter)    |
-| `pipeline`         | `nil`               | Your pipeline (required)                   |
-| `renderer`         | `nil`               | Your renderer (required)                   |
+| Option             | Default             | Description                                  |
+| ------------------ | ------------------- | -------------------------------------------- |
+| `modes`            | `{ ':', '/', '?' }` | Which cmdline modes to lasso                 |
+| `next_key`         | `'<Tab>'`           | Mosey to the next candidate                  |
+| `previous_key`     | `'<S-Tab>'`         | Back up to the previous one                  |
+| `accept_key`       | `'<Down>'`          | Accept and keep completin'                   |
+| `reject_key`       | `'<Up>'`            | Reject and restore original                  |
+| `trigger`          | `'auto'`            | `'auto'` or `'tab'` (manual trigger)         |
+| `noselect`         | `true`              | Don't auto-select first candidate            |
+| `longest_prefix`   | `false`             | Insert longest common prefix on first Tab    |
+| `interval`         | `100`               | Debounce interval (ms)                       |
+| `pipeline_timeout` | `0`                 | Cancel slow pipelines (ms, 0 = no timeout)   |
+| `skip_commands`    | `{}`                | Commands to skip completions for             |
+| `min_input`        | `0`                 | Min chars before showing (0 = on enter)      |
+| `auto_colorscheme` | `true`              | Re-apply highlights on `:colorscheme` change |
+| `preview`          | `nil`               | Preview window config (see Preview section)  |
+| `pipeline`         | `nil`               | Your pipeline (required)                     |
+| `renderer`         | `nil`               | Your renderer (required)                     |
 
 <details>
 <summary><strong>Layout Variations</strong> (click to expand)</summary>
@@ -1098,24 +1120,101 @@ The popup adapts to your `laststatus`, `cmdheight`, and renderer `offset` settin
 <td align="center"><strong>empty_message</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message.png" width="400"></td>
 </tr>
 <tr>
+<td align="center"><strong>empty_message (popupmenu)</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message_popupmenu.png" width="400"></td>
 <td align="center"><strong>buffer_flags</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/buffer_flags.png" width="400"></td>
 <td align="center"><strong>position=top</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_top.png" width="400"></td>
-<td align="center"><strong>position=center</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_center.png" width="400"></td>
 </tr>
 <tr>
+<td align="center"><strong>position=center</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_center.png" width="400"></td>
 <td align="center"><strong>ellipsis</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/ellipsis.png" width="400"></td>
 <td align="center"><strong>position=top (bordered)</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_top_bordered.png" width="400"></td>
-<td align="center"><strong>noselect (bordered)</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_bordered.png" width="400"></td>
 </tr>
 <tr>
+<td align="center"><strong>noselect (bordered)</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_bordered.png" width="400"></td>
 <td align="center"><strong>fixed_height=true</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fixed_height_true.png" width="400"></td>
-<td></td>
 <td></td>
 </tr>
 </table>
 <!-- gen:option_gallery:end -->
 
 </details>
+
+## Preview
+
+Show a floating preview window beside the completion popup with file contents,
+buffer contents, or help text for the selected candidate.
+
+```lua
+w.setup({
+  preview = {
+    enabled = true, -- show preview (can be toggled at runtime)
+    position = "right", -- "left", "right", "top", or "bottom"
+    anchor = "screen", -- "screen" (fills edge) or "popup" (floats next to popup)
+    width = "50%", -- panel width for left/right positions
+    height = "50%", -- panel height for top/bottom positions
+    border = "single", -- border style for preview window
+    max_lines = 500, -- max lines to read from files
+    title = true, -- show filename in border title
+  },
+  actions = {
+    ["<C-p>"] = "toggle_preview",
+  },
+})
+```
+
+| Option      | Type            | Default    | Description                                              |
+| ----------- | --------------- | ---------- | -------------------------------------------------------- |
+| `enabled`   | boolean         | `true`     | Show preview window                                      |
+| `position`  | string          | `"right"`  | Side: `"left"`, `"right"`, `"top"`, `"bottom"`           |
+| `anchor`    | string          | `"screen"` | `"screen"` (fills edge) or `"popup"` (adjacent to popup) |
+| `width`     | integer\|string | `"50%"`    | Panel width for left/right positions                     |
+| `height`    | integer\|string | `"50%"`    | Panel height for top/bottom positions                    |
+| `border`    | string\|table   | `"single"` | Border style                                             |
+| `max_lines` | integer         | `500`      | Max lines to read from files                             |
+| `title`     | boolean         | `true`     | Show filename in border title                            |
+
+The preview auto-detects content type from the pipeline's `expand` metadata:
+files get syntax highlighting, buffers show their contents, and help tags
+display the relevant help page.
+
+Default: `preview = nil` (disabled unless configured).
+
+## Actions
+
+Bind keys to named operations on the selected candidate:
+
+```lua
+w.setup({
+  actions = {
+    ["<C-s>"] = "open_split",
+    ["<C-v>"] = "open_vsplit",
+    ["<C-t>"] = "open_tab",
+    ["<C-q>"] = "send_to_quickfix",
+    ["<C-l>"] = "send_to_loclist",
+    ["<C-y>"] = "yank",
+    ["<C-p>"] = "toggle_preview",
+  },
+})
+```
+
+| Action             | Description                                |
+| ------------------ | ------------------------------------------ |
+| `open_split`       | Open candidate in a horizontal split       |
+| `open_vsplit`      | Open candidate in a vertical split         |
+| `open_tab`         | Open candidate in a new tab                |
+| `send_to_quickfix` | Send all candidates to the quickfix list   |
+| `send_to_loclist`  | Send all candidates to the location list   |
+| `yank`             | Yank the selected candidate to `"` and `+` |
+| `toggle_preview`   | Toggle the preview window on/off           |
+
+Register custom actions:
+
+```lua
+w.register_action("my_action", function(ctx)
+  -- ctx.candidate, ctx.candidates, ctx.selected, ctx.data, ctx.cmdtype
+  vim.notify("Selected: " .. (ctx.candidate or "none"))
+end)
+```
 
 ## Utilities
 

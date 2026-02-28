@@ -97,6 +97,68 @@ T["hide()"]["safe to call when not configured"] = function()
   expect.equality(preview.reserved_width(), 0)
 end
 
+T["setup()"]["stores position and anchor correctly"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "left", anchor = "popup" })
+  expect.equality(preview.is_active(), true)
+  expect.equality(preview.is_screen_anchor(), false)
+end
+
+T["setup()"]["defaults position to right and anchor to screen"] = function()
+  local preview = get_preview()
+  preview.setup({})
+  expect.equality(preview.is_screen_anchor(), true)
+end
+
+T["reserved_space()"] = new_set()
+
+T["reserved_space()"]["returns all zeros when not configured"] = function()
+  local preview = get_preview()
+  local s = preview.reserved_space()
+  expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
+end
+
+T["reserved_space()"]["returns all zeros when window not visible"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "right", anchor = "screen" })
+  local s = preview.reserved_space()
+  expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
+end
+
+T["reserved_space()"]["returns all zeros for popup anchor"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "right", anchor = "popup" })
+  local s = preview.reserved_space()
+  expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
+end
+
+T["reserved_space()"]["returns all zeros when toggled off"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "right", anchor = "screen" })
+  preview.toggle()
+  local s = preview.reserved_space()
+  expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
+end
+
+T["is_screen_anchor()"] = new_set()
+
+T["is_screen_anchor()"]["returns false when not configured"] = function()
+  local preview = get_preview()
+  expect.equality(preview.is_screen_anchor(), false)
+end
+
+T["is_screen_anchor()"]["returns true for screen anchor"] = function()
+  local preview = get_preview()
+  preview.setup({ anchor = "screen" })
+  expect.equality(preview.is_screen_anchor(), true)
+end
+
+T["is_screen_anchor()"]["returns false for popup anchor"] = function()
+  local preview = get_preview()
+  preview.setup({ anchor = "popup" })
+  expect.equality(preview.is_screen_anchor(), false)
+end
+
 T["_detect_expand()"] = new_set()
 
 T["_detect_expand()"]["detects file from expand field"] = function()

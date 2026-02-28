@@ -460,6 +460,7 @@ local function list_configs()
     { name = "Combinations", list = configs_mod.combination_names },
     { name = "Layouts", list = configs_mod.layout_names },
     { name = "Options", list = configs_mod.option_names },
+    { name = "Previews", list = configs_mod.preview_names },
   }
 
   for _, cat in ipairs(categories) do
@@ -493,6 +494,7 @@ local function all_config_names()
   add(configs_mod.combination_names)
   add(configs_mod.layout_names)
   add(configs_mod.option_names)
+  add(configs_mod.preview_names)
   return names
 end
 
@@ -589,6 +591,10 @@ local function main()
       end
     elseif a == "--options" then
       for _, n in ipairs(configs_mod.option_names) do
+        table.insert(configs_to_run, n)
+      end
+    elseif a == "--previews" then
+      for _, n in ipairs(configs_mod.preview_names) do
         table.insert(configs_to_run, n)
       end
     elseif a == "--gifs" then

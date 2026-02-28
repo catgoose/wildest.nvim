@@ -451,11 +451,12 @@ function M.draw()
       return
     end
 
-    -- Update preview BEFORE the renderer so reserved_width() reflects the
-    -- preview window state and the popup positions correctly on the first
-    -- candidate selection.
     local preview = require("wildest.preview")
-    if preview.is_active() then
+    local preview_active = preview.is_active()
+
+    -- Screen anchor: update preview BEFORE the renderer so reserved_space()
+    -- reflects the preview window state and the popup positions correctly.
+    if preview_active and preview.is_screen_anchor() then
       preview.update(ctx, result)
     end
 
@@ -464,6 +465,11 @@ function M.draw()
     if not ok then
       log.log("state", "draw_render_error", { err = tostring(err) })
     else
+      -- Popup anchor: update preview AFTER the renderer so it can use
+      -- the stored popup geometry for positioning.
+      if preview_active and not preview.is_screen_anchor() then
+        preview.update(ctx, result)
+      end
       log.log("state", "draw_render_ok")
       vim.cmd("redraw")
     end

@@ -366,21 +366,24 @@ function M.make_page(selected, total, max_height, current_page)
   return start, math.min(total - 1, finish)
 end
 
---- Default position: above the cmdline, left-aligned, full width.
+--- Default position: above the cmdline, accounting for preview reserved space.
 --- An optional `offset` reserves extra rows above the cmdline.
 --- Positive values move the panel up; negative values are clamped so
 --- the panel never extends past the statusline.
 ---@param offset? integer extra rows to reserve (default 0)
----@return integer row, integer col, integer width
+---@return integer row, integer col, integer width, integer avail
 function M.default_position(offset)
+  local preview = require("wildest.preview")
+  local space = preview.reserved_space()
   local height = vim.o.lines
-  local width = vim.o.columns - require("wildest.preview").reserved_width()
+  local width = vim.o.columns - space.left - space.right
   -- Account for statusline and cmdline area.
   local cmdheight = vim.o.cmdheight
   local reserved = cmdheight + (vim.o.laststatus > 0 and 1 or 0)
-  local max_row = height - reserved - 1
+  local max_row = height - reserved - 1 - space.bottom
   local row = math.max(1, math.min(max_row, max_row - (offset or 0)))
-  return row, 0, width
+  local avail = math.max(1, row - space.top)
+  return row, space.left, width, avail
 end
 
 --- Ensure a scratch buffer and namespace exist
@@ -516,6 +519,15 @@ function M.open_or_update_win(state, win_config)
     vim.wo[state.win].wrap = false
     vim.wo[state.win].cursorline = false
   end
+
+  -- Store popup geometry for popup-anchor preview positioning
+  M._last_popup_geometry = {
+    row = win_config.row,
+    col = win_config.col,
+    width = win_config.width,
+    height = win_config.height,
+    border = win_config.border,
+  }
 end
 
 --- Hide a floating window
@@ -527,6 +539,7 @@ function M.hide_win(state)
     state.win = -1
   end
   state.page = { -1, -1 }
+  M._last_popup_geometry = nil
 end
 
 --- Get highlight spans for a candidate

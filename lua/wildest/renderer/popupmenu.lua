@@ -49,7 +49,7 @@ function M.new(opts)
       return
     end
 
-    local row, col, editor_width = renderer_util.default_position(state.offset)
+    local row, col, editor_width, avail = renderer_util.default_position(state.offset)
     local max_w = state.max_width and renderer_util.parse_dimension(state.max_width, editor_width)
       or editor_width
     local min_w = renderer_util.parse_dimension(state.min_width, editor_width)
@@ -112,9 +112,9 @@ function M.new(opts)
       height = target_height
     end
 
-    -- Clamp height
-    if height > row then
-      height = math.max(1, row)
+    -- Clamp height to available space (accounts for preview reserved space)
+    if height > avail then
+      height = math.max(1, avail)
       while #lines > height do
         table.remove(lines)
         table.remove(line_highlights)

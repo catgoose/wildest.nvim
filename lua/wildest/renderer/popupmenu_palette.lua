@@ -123,8 +123,10 @@ function M.new(opts)
 
     renderer_util.check_run_id(state, ctx)
 
+    local preview = require("wildest.preview")
+    local space = preview.reserved_space()
     local editor_lines = vim.o.lines
-    local editor_cols = vim.o.columns - require("wildest.preview").reserved_width()
+    local editor_cols = vim.o.columns - space.left - space.right
 
     local max_w = renderer_util.parse_dimension(state.max_width, editor_cols)
     local min_w = renderer_util.parse_dimension(state.min_width, editor_cols)
@@ -240,7 +242,7 @@ function M.new(opts)
     -- the bottom border never overlaps the statusline.
     local border_rows = 2 -- top + bottom border
     local reserved = math.max(vim.o.cmdheight, 1) + (vim.o.laststatus > 0 and 1 or 0)
-    local usable_lines = editor_lines - reserved
+    local usable_lines = editor_lines - reserved - space.top - space.bottom
     local max_content_height = usable_lines - border_rows
     if height > max_content_height then
       height = math.max(1, max_content_height)
@@ -251,10 +253,10 @@ function M.new(opts)
     end
 
     -- Position: centered within usable area
-    local margin_left = renderer_util.parse_margin(state.margin, editor_cols, outer_width)
+    local margin_left = renderer_util.parse_margin(state.margin, editor_cols, outer_width) + space.left
     local total_with_border = height + border_rows
     local margin_top =
-      math.max(0, math.floor((usable_lines - total_with_border) / 2) - (state.offset or 0))
+      math.max(0, math.floor((usable_lines - total_with_border) / 2) - (state.offset or 0)) + space.top
 
     vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
     renderer_util.apply_line_highlights(state.buf, state.ns_id, lines, line_highlights)
