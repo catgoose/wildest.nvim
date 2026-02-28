@@ -202,52 +202,112 @@ local function run_parallel(jobs, max_concurrent)
   return results
 end
 
--- ── GIF scene definitions ────────────────────────────────────────
+-- ── Random GIF scene generation ──────────────────────────────────
 --
--- Each entry is one scene typed by VHS.  Fields:
---   mode   – ":" or "/" (which key opens cmdline)
---   typed  – the text typed after the mode key
---   speed  – per-char delay in ms (VHS Type@<speed>ms)
---   wait   – how long to linger on the result (e.g. "2s")
---
--- The list is cycled when a GIF needs more scenes than entries.
--- Varying speed and wait keeps the GIF rhythm from feeling robotic.
+-- Each completion type has a pool of commands to exercise.  Scenes are
+-- composed at tape-generation time by randomly picking a type, then a
+-- command from that type's pool, with randomised typing speed and
+-- linger duration.  This means every GIF generation covers a different
+-- combination while still guaranteeing good coverage of all types.
 
-local gif_scenes = {
-  { mode = "/", typed = "function",          speed = 120, wait = "3s" },
-  { mode = ":", typed = "e lua/wildest/",    speed = 100, wait = "2.5s" },
-  { mode = ":", typed = "set fold",          speed =  80, wait = "2s" },
-  { mode = ":", typed = "lua vim.api.nvim",  speed =  40, wait = "1.5s" },
-  { mode = ":", typed = "help help-",        speed =  80, wait = "2.5s" },
-  { mode = "/", typed = "return",            speed =  60, wait = "2s" },
-  { mode = ":", typed = "e tests/",          speed =  50, wait = "2s" },
-  { mode = ":", typed = "set mouse",         speed =  70, wait = "2s" },
-  { mode = ":", typed = "help nvim_b",       speed = 100, wait = "2.5s" },
-  { mode = ":", typed = "lua vim.fn.get",    speed =  50, wait = "1.5s" },
-  { mode = "/", typed = "local",             speed =  90, wait = "2s" },
-  { mode = ":", typed = "e lua/wildest/cmdline/", speed = 30, wait = "1.5s" },
-  { mode = ":", typed = "set tab",           speed =  80, wait = "2s" },
-  { mode = ":", typed = "help api-",         speed =  60, wait = "2s" },
-  { mode = ":", typed = "lua vim.api.nvim_buf", speed = 40, wait = "2s" },
-  { mode = "/", typed = "require",           speed = 100, wait = "2.5s" },
-  { mode = ":", typed = "e lua/wildest/highlight/", speed = 40, wait = "1.5s" },
-  { mode = ":", typed = "set sign",          speed =  70, wait = "2s" },
-  { mode = ":", typed = "help win",          speed =  80, wait = "2s" },
-  { mode = ":", typed = "lua vim.keymap",    speed =  60, wait = "1.5s" },
-  { mode = "/", typed = "end",              speed =  80, wait = "2s" },
-  { mode = ":", typed = "set number",        speed =  90, wait = "2s" },
-  { mode = ":", typed = "help buf",          speed =  70, wait = "2s" },
-  { mode = ":", typed = "lua vim.lsp",       speed =  50, wait = "1.5s" },
-  { mode = ":", typed = "e lua/wildest/renderer/", speed = 35, wait = "1.5s" },
+-- Pools of commands grouped by the completion type they exercise.
+-- mode = ":" or "/" (which key opens cmdline), typed = text after mode.
+local scene_pools = {
+  file = {
+    { mode = ":", typed = "e lua/wildest/" },
+    { mode = ":", typed = "e tests/" },
+    { mode = ":", typed = "e lua/wildest/cmdline/" },
+    { mode = ":", typed = "e lua/wildest/highlight/" },
+    { mode = ":", typed = "e lua/wildest/renderer/" },
+    { mode = ":", typed = "e lua/wildest/pipeline/" },
+    { mode = ":", typed = "e scripts/" },
+    { mode = ":", typed = "e lua/" },
+  },
+  option = {
+    { mode = ":", typed = "set fold" },
+    { mode = ":", typed = "set mouse" },
+    { mode = ":", typed = "set tab" },
+    { mode = ":", typed = "set sign" },
+    { mode = ":", typed = "set number" },
+    { mode = ":", typed = "set wrap" },
+    { mode = ":", typed = "set scroll" },
+    { mode = ":", typed = "set status" },
+  },
+  help = {
+    { mode = ":", typed = "help help-" },
+    { mode = ":", typed = "help nvim_b" },
+    { mode = ":", typed = "help api-" },
+    { mode = ":", typed = "help win" },
+    { mode = ":", typed = "help buf" },
+    { mode = ":", typed = "help option" },
+    { mode = ":", typed = "help map" },
+    { mode = ":", typed = "help cmd" },
+  },
+  lua = {
+    { mode = ":", typed = "lua vim.api.nvim" },
+    { mode = ":", typed = "lua vim.fn.get" },
+    { mode = ":", typed = "lua vim.keymap" },
+    { mode = ":", typed = "lua vim.lsp" },
+    { mode = ":", typed = "lua vim.api.nvim_buf" },
+    { mode = ":", typed = "lua vim.treesitter" },
+    { mode = ":", typed = "lua vim.diagnostic" },
+    { mode = ":", typed = "lua vim.fs" },
+  },
+  search = {
+    { mode = "/", typed = "function" },
+    { mode = "/", typed = "return" },
+    { mode = "/", typed = "local" },
+    { mode = "/", typed = "require" },
+    { mode = "/", typed = "end" },
+    { mode = "/", typed = "self" },
+    { mode = "/", typed = "table" },
+    { mode = "/", typed = "string" },
+  },
 }
 
---- Build the VHS tape body for N scenes, cycling through gif_scenes.
+-- Weighted distribution: file & option are the most common user actions,
+-- search and help are frequent, lua is less common but important to test.
+local scene_weights = {
+  { "file",   25 },
+  { "option", 25 },
+  { "help",   20 },
+  { "lua",    15 },
+  { "search", 15 },
+}
+
+local scene_weight_total = 0
+for _, w in ipairs(scene_weights) do
+  scene_weight_total = scene_weight_total + w[2]
+end
+
+--- Pick a random completion type respecting weights.
+---@return string type key into scene_pools
+local function pick_scene_type()
+  local roll = math.random(scene_weight_total)
+  local acc = 0
+  for _, w in ipairs(scene_weights) do
+    acc = acc + w[2]
+    if roll <= acc then
+      return w[1]
+    end
+  end
+  return scene_weights[1][1]
+end
+
+--- Build the VHS tape body for n randomly composed scenes.
 ---@param n number  how many scenes to emit
 ---@return string   VHS tape fragment (no preamble / postamble)
 local function build_scene_tape(n)
+  math.randomseed(os.time() + (vim.fn.getpid and vim.fn.getpid() or 0))
+
   local parts = {}
   for i = 1, n do
-    local s = gif_scenes[((i - 1) % #gif_scenes) + 1]
+    local kind = pick_scene_type()
+    local pool = scene_pools[kind]
+    local s = pool[math.random(#pool)]
+    local speed = math.random(30, 120)
+    local wait_ms = math.random(1500, 3000)
+
     if i > 1 then
       table.insert(parts, "Ctrl+n")
       table.insert(parts, "Sleep 300ms")
@@ -255,8 +315,8 @@ local function build_scene_tape(n)
     end
     table.insert(parts, string.format('Type "%s"', s.mode))
     table.insert(parts, "Sleep 300ms")
-    table.insert(parts, string.format('Type@%dms "%s"', s.speed, s.typed))
-    table.insert(parts, string.format("Sleep %s", s.wait))
+    table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
+    table.insert(parts, string.format("Sleep %dms", wait_ms))
     table.insert(parts, "Escape")
     table.insert(parts, "Sleep 300ms")
     table.insert(parts, "")
