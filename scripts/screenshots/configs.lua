@@ -431,6 +431,7 @@ function M.random_scene(label)
     { " ", "devicons" },
     { " ", "kind_icon" },
     { " ", "devicons", "kind_icon" },
+    { " ", "buffer_flags" },
   }
   local rights = {
     { " ", "scrollbar" },
@@ -479,6 +480,15 @@ function M.random_scene(label)
   if math.random(8) == 1 then
     scene.reverse = true
   end
+  if math.random(5) == 1 then
+    scene.pumblend = pick({ 10, 20, 30 })
+  end
+  if math.random(6) == 1 then
+    scene.offset = pick({ 1, 2 })
+  end
+  if math.random(8) == 1 then
+    scene.empty_message = pick({ " No matches ", " Nothing found ", " ∅ " })
+  end
 
   if recipe == "theme" then
     scene.renderer = "theme:" .. pick(M._random_themes)
@@ -490,6 +500,7 @@ function M.random_scene(label)
     scene.renderer = "wildmenu"
     scene.highlighter = pick(highlighters)
     scene.separator = pick({ " | ", "  ", " · " })
+    scene.ellipsis = pick({ "...", "…", " >" })
     scene.left = pick({ { "arrows" }, { " " } })
     scene.right = pick({ { "arrows_right", " ", "index" }, { " ", "index" }, { " " } })
 
@@ -512,6 +523,7 @@ function M.random_scene(label)
   elseif recipe == "border_custom" then
     scene.renderer = "border_theme"
     scene.border = pick(borders)
+    scene.position = pick({ "bottom", "bottom", "top", "center" })
     scene.highlighter = pick(highlighters)
     scene.custom_highlights = pick(custom_hl_sets)
     scene.left = pick(lefts)
@@ -564,6 +576,111 @@ function M.random_scenes(n)
     table.insert(scenes, M.random_scene(label))
   end
   return scenes
+end
+
+-- ── Scene description ────────────────────────────────────────────
+
+local function fmt_val(v)
+  if type(v) == "string" then
+    return '"' .. v .. '"'
+  elseif type(v) == "boolean" then
+    return tostring(v)
+  elseif type(v) == "number" then
+    return tostring(v)
+  elseif type(v) == "table" then
+    -- Shallow: list of strings/numbers
+    local parts = {}
+    local is_list = #v > 0
+    if is_list then
+      for _, item in ipairs(v) do
+        table.insert(parts, fmt_val(item))
+      end
+      return "{ " .. table.concat(parts, ", ") .. " }"
+    else
+      for k, sv in pairs(v) do
+        table.insert(parts, k .. " = " .. fmt_val(sv))
+      end
+      return "{ " .. table.concat(parts, ", ") .. " }"
+    end
+  end
+  return tostring(v)
+end
+
+--- Format a scene table as readable config lines for buffer display.
+---@param scene table
+---@param index number|nil scene index
+---@param total number|nil total scenes
+---@return string[] lines
+function M.scene_to_lines(scene, index, total)
+  local lines = {}
+  local function add(s) table.insert(lines, s) end
+
+  add("-- wildest.nvim")
+  if index and total then
+    add("-- Scene " .. index .. "/" .. total .. ': "' .. (scene.label or "") .. '"')
+  else
+    add('-- "' .. (scene.label or "") .. '"')
+  end
+  add("-- " .. string.rep("─", 50))
+  add("")
+  add("require('wildest').setup({")
+
+  -- Core fields
+  local field_order = {
+    "renderer", "pipeline", "highlighter",
+    "left", "right", "separator", "ellipsis",
+    "border", "position",
+    "noselect", "reverse", "pumblend", "offset",
+    "empty_message",
+    "highlights", "gradient_colors",
+  }
+
+  for _, key in ipairs(field_order) do
+    local val = scene[key]
+    if val ~= nil then
+      add("  " .. key .. " = " .. fmt_val(val) .. ",")
+    end
+  end
+
+  -- Palette sub-table
+  if scene.palette then
+    add("  palette = {")
+    for k, v in pairs(scene.palette) do
+      add("    " .. k .. " = " .. fmt_val(v) .. ",")
+    end
+    add("  },")
+  end
+
+  -- Custom highlights (just show the names)
+  if scene.custom_highlights then
+    local hl_names = {}
+    for name, _ in pairs(scene.custom_highlights) do
+      table.insert(hl_names, name)
+    end
+    table.sort(hl_names)
+    add("  custom_highlights = {")
+    for _, name in ipairs(hl_names) do
+      add("    " .. name .. " = { ... },")
+    end
+    add("  },")
+  end
+
+  -- Mux sub-table
+  if scene.mux then
+    add("  mux = {")
+    for mode, entry in pairs(scene.mux) do
+      add('    ["' .. mode .. '"] = {')
+      for k, v in pairs(entry) do
+        add("      " .. k .. " = " .. fmt_val(v) .. ",")
+      end
+      add("    },")
+    end
+    add("  },")
+  end
+
+  add("})")
+
+  return lines
 end
 
 -- ── Resolver internals ───────────────────────────────────────────
@@ -679,6 +796,15 @@ local function build_renderer_opts(cfg, w)
   if cfg.empty_message then
     opts.empty_message = cfg.empty_message
   end
+  if cfg.pumblend then
+    opts.pumblend = cfg.pumblend
+  end
+  if cfg.position then
+    opts.position = cfg.position
+  end
+  if cfg.ellipsis then
+    opts.ellipsis = cfg.ellipsis
+  end
   return opts
 end
 
@@ -787,6 +913,68 @@ function M.apply_vim_opts(vim_opts)
   if vim_opts.cmdheight ~= nil then
     vim.o.cmdheight = vim_opts.cmdheight
   end
+end
+
+-- ── GIF init helper ──────────────────────────────────────────────
+
+--- Bootstrap a GIF session: generate scenes, dump JSON, wire <C-n> cycling.
+---@param name string  GIF name used for the JSON dump (e.g. "showdown")
+---@param n number|nil Number of scenes (default 25)
+function M.gif_init(name, n)
+  local script_dir = vim.fn.fnamemodify(debug.getinfo(2, "S").source:sub(2), ":h")
+  local root = vim.fn.fnamemodify(script_dir, ":h:h")
+  M.setup(root)
+
+  local w = require("wildest")
+  n = n or 25
+  local scenes = M.random_scenes(n)
+
+  -- Dump scene configs for debugging
+  local output_dir = script_dir .. "/output"
+  vim.fn.mkdir(output_dir, "p")
+  local f = io.open(output_dir .. "/" .. name .. "_scenes.json", "w")
+  if f then
+    f:write(vim.json.encode(scenes))
+    f:close()
+  end
+
+  local current_scene = 1
+
+  local function apply_scene(index)
+    local scene = scenes[index]
+    if not scene then
+      return
+    end
+    vim.o.statusline = " %f %= " .. index .. "/" .. #scenes .. "  " .. scene.label .. " "
+
+    -- Write scene config as buffer content
+    local lines = M.scene_to_lines(scene, index, #scenes)
+    vim.bo.modifiable = true
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+    vim.bo.filetype = "lua"
+    vim.bo.modified = false
+    vim.api.nvim_win_set_cursor(0, { 1, 0 })
+
+    local built, vim_opts = M.build(scene, w)
+    w.setup(vim.tbl_extend("force", {
+      modes = { ":", "/", "?" },
+      next_key = "<Tab>",
+      previous_key = "<S-Tab>",
+      accept_key = "<Down>",
+      reject_key = "<Up>",
+    }, built))
+    M.apply_vim_opts(vim_opts)
+  end
+
+  vim.keymap.set("n", "<C-n>", function()
+    current_scene = current_scene + 1
+    if current_scene > #scenes then
+      current_scene = 1
+    end
+    apply_scene(current_scene)
+  end, { noremap = true, silent = true })
+
+  apply_scene(1)
 end
 
 return M

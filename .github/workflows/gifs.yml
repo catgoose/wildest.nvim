@@ -124,11 +124,14 @@ jobs:
 
       - name: Push to gifs branch
         run: |
-          cd output
-          git init
-          git checkout -b gifs
+          REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git clone --branch gifs --single-branch "$REPO_URL" repo || {
+            mkdir repo && cd repo && git init && git checkout -b gifs
+            git remote add origin "$REPO_URL"
+          }
+          cp output/*.gif output/*.json repo/
+          cd repo
           git add *.gif *.json
           git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" \
-            commit -m "Update GIFs [skip ci]"
-          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          git push --force origin gifs
+            commit -m "Update GIFs [skip ci]" || echo "No changes to commit"
+          git push origin gifs
