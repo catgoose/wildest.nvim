@@ -3,6 +3,13 @@ name: Documentation
 on:
   push:
     branches: [main]
+    paths:
+      - 'scripts/screenshots/configs.lua'
+      - 'scripts/readme/**'
+      - 'lua/wildest/themes/**'
+      - 'lua/wildest/renderer/init.lua'
+      - 'lua/**/*.lua'
+      - 'doc/**'
   workflow_dispatch:
 
 permissions:
@@ -11,7 +18,22 @@ permissions:
   id-token: write
 
 jobs:
+  readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Lua
+        run: sudo apt-get install -y lua5.4
+      - name: Generate README
+        run: lua5.4 scripts/readme/gen_readme.lua
+      - name: Commit
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: "docs: auto-generate README [skip ci]"
+          file_pattern: README.md
+
   vimdoc:
+    needs: readme
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
