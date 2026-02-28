@@ -39,6 +39,15 @@ function M.lua_pipeline(opts)
     -- Try vim.fn.getcompletion with 'lua' type
     local ok, results = pcall(vim.fn.getcompletion, expr, "lua")
     if ok and results and #results > 0 then
+      -- getcompletion for "lua" type returns field names without the base prefix
+      -- (e.g. "vim." returns {"api","fn",...} not {"vim.api","vim.fn",...}).
+      -- Prepend the base so candidates match the full expression the user typed.
+      local base = expr:match("^(.*%.)") or ""
+      if base ~= "" then
+        for i, r in ipairs(results) do
+          results[i] = base .. r
+        end
+      end
       return util.take(results, max_results)
     end
 

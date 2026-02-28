@@ -481,7 +481,6 @@ function M.random_scene(label)
     scene.renderer = "palette"
     scene.palette = {
       title = " Wildest ",
-      prompt_prefix = " :",
       prompt_position = "top",
       max_height = "60%",
       max_width = "60%",

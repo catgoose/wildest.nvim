@@ -91,7 +91,7 @@ T["random_scene()"]["palette recipe has palette config"] = function()
       found = true
       expect.equality(type(scene.palette), "table")
       expect.equality(scene.palette.title, " Wildest ")
-      expect.equality(scene.palette.prompt_prefix, " :")
+      expect.equality(scene.palette.prompt_prefix, nil)
       expect.equality(scene.palette.prompt_position, "top")
       expect.equality(scene.left, { " " })
       break

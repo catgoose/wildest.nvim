@@ -82,6 +82,15 @@ function M.cmdline_pipeline(opts)
       expand = ctx.expand or "",
     }
 
+    -- For file completions, highlight only the filename portion (after the
+    -- last path separator) so the common directory prefix isn't accented.
+    if ctx.expand == E.FILE or ctx.expand == E.DIR or ctx.expand == E.FILE_IN_PATH then
+      local last_sep = (ctx.arg or ""):match(".*/()")
+      if last_sep then
+        data.query = (ctx.arg or ""):sub(last_sep)
+      end
+    end
+
     -- For file completion, provide output/replace transforms
     local result = {
       value = candidates,

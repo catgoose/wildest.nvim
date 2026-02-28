@@ -82,6 +82,18 @@ function M.get_completions(parsed)
     return {}
   end
 
+  -- getcompletion for "lua" type returns field names without the base prefix
+  -- (e.g. "vim." returns {"api","fn",...} not {"vim.api","vim.fn",...}).
+  -- Prepend the base so candidates match the full expression the user typed.
+  if expand == E.LUA then
+    local base = arg:match("^(.*%.)") or ""
+    if base ~= "" then
+      for i, r in ipairs(results) do
+        results[i] = base .. r
+      end
+    end
+  end
+
   return results
 end
 
