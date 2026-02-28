@@ -8,7 +8,7 @@ local configs = dofile(script_dir .. "/configs.lua")
 configs.setup(root)
 
 local w = require("wildest")
-local scenes = configs.showdown_scenes
+local scenes = configs.random_scenes(10)
 local current_scene = 1
 
 local function apply_scene(index)

@@ -93,6 +93,16 @@ local ember_highlights = {
   WildestScrollbarThumb = { bg = "#884422" },
 }
 
+local ocean_highlights = {
+  WildestDefault = { bg = "#0a1520", fg = "#b0d0e8" },
+  WildestSelected = { bg = "#102030", fg = "#d0e8ff", bold = true },
+  WildestAccent = { bg = "#0a1520", fg = "#00bbdd", bold = true },
+  WildestSelectedAccent = { bg = "#102030", fg = "#44ddff", bold = true },
+  WildestBorder = { bg = "#061018", fg = "#226688" },
+  WildestScrollbar = { bg = "#0a1520" },
+  WildestScrollbarThumb = { bg = "#226688" },
+}
+
 -- ── Configs ──────────────────────────────────────────────────────
 
 M.configs = {
@@ -313,15 +323,7 @@ M.configs = {
     label = "Ocean",
     renderer = "border_theme",
     border = "rounded",
-    custom_highlights = {
-      WildestDefault = { bg = "#0a1520", fg = "#b0d0e8" },
-      WildestSelected = { bg = "#102030", fg = "#d0e8ff", bold = true },
-      WildestAccent = { bg = "#0a1520", fg = "#00bbdd", bold = true },
-      WildestSelectedAccent = { bg = "#102030", fg = "#44ddff", bold = true },
-      WildestBorder = { bg = "#061018", fg = "#226688" },
-      WildestScrollbar = { bg = "#0a1520" },
-      WildestScrollbarThumb = { bg = "#226688" },
-    },
+    custom_highlights = ocean_highlights,
   },
 }
 
@@ -400,49 +402,97 @@ for _, name in ipairs(M.theme_names) do
   end
 end
 
--- ── Showdown scenes ──────────────────────────────────────────────
+-- ── Random scene generation ──────────────────────────────────────
 
-M.showdown_scenes = {
-  {
-    label = "Tumbleweeds Roll",
-    pipeline = { "cmdline_fuzzy", "search" },
-    renderer = "wildmenu",
-    highlighter = "basic",
-    separator = " | ",
-    left = { "arrows" },
-    right = { "arrows_right", " ", "index" },
-  },
-  {
-    label = "Prairie Dust",
-    pipeline = { "lua", "cmdline_fuzzy", "search" },
-    renderer = "theme:prairie",
-    left = { " ", "devicons" },
-  },
-  {
-    label = "Clock Tower",
-    pipeline = { "cmdline_fuzzy", "search" },
-    renderer = "theme:midnight",
-    left = { " ", "kind_icon" },
-  },
-  {
-    label = "The Draw",
-    pipeline = { "lua", "cmdline_fuzzy", "search" },
-    renderer = "theme:outlaw",
-    left = { " ", "devicons" },
-  },
-  {
-    label = "Quickfire",
-    pipeline = { "lua", "cmdline_fuzzy", "search" },
-    renderer = "theme:outlaw",
-    left = { " ", "kind_icon" },
-  },
-  {
-    label = "Ricochet",
-    pipeline = { "cmdline_fuzzy", "search" },
-    renderer = "mux",
-    mux = {
+local function pick(t)
+  return t[math.random(#t)]
+end
+
+function M.random_scene(label)
+  local pipelines = {
+    { "cmdline_fuzzy", "search" },
+    { "lua", "cmdline_fuzzy", "search" },
+    { "help_fuzzy", "cmdline_fuzzy", "search" },
+  }
+  local lefts = {
+    { " " },
+    { " ", "devicons" },
+    { " ", "kind_icon" },
+    { " ", "devicons", "kind_icon" },
+  }
+  local rights = {
+    { " ", "scrollbar" },
+    { " " },
+  }
+  local highlighters = { "fzy", "basic" }
+  local custom_hl_sets = { neon_highlights, ember_highlights, ocean_highlights }
+
+  -- Weighted recipe selection
+  local recipe_weights = {
+    { "theme", 40 },
+    { "wildmenu", 15 },
+    { "palette", 15 },
+    { "border_custom", 10 },
+    { "mux", 10 },
+    { "gradient", 10 },
+  }
+  local total = 0
+  for _, rw in ipairs(recipe_weights) do
+    total = total + rw[2]
+  end
+  local roll = math.random(total)
+  local recipe
+  local acc = 0
+  for _, rw in ipairs(recipe_weights) do
+    acc = acc + rw[2]
+    if roll <= acc then
+      recipe = rw[1]
+      break
+    end
+  end
+
+  local scene = { label = label, pipeline = pick(pipelines) }
+
+  if recipe == "theme" then
+    scene.renderer = "theme:" .. pick(M._random_themes)
+    scene.left = pick(lefts)
+    scene.right = pick(rights)
+    scene.highlighter = pick(highlighters)
+
+  elseif recipe == "wildmenu" then
+    scene.renderer = "wildmenu"
+    scene.highlighter = "basic"
+    scene.separator = " | "
+    scene.left = { "arrows" }
+    scene.right = { "arrows_right", " ", "index" }
+
+  elseif recipe == "palette" then
+    scene.renderer = "palette"
+    scene.palette = {
+      title = " Wildest ",
+      prompt_prefix = " : ",
+      prompt_position = "top",
+      max_height = "60%",
+      max_width = "60%",
+      min_width = 40,
+      margin = "auto",
+    }
+    scene.left = { " " }
+    if math.random(2) == 1 then
+      scene.custom_highlights = pick(custom_hl_sets)
+    end
+
+  elseif recipe == "border_custom" then
+    scene.renderer = "border_theme"
+    scene.border = "rounded"
+    scene.custom_highlights = pick(custom_hl_sets)
+    scene.left = pick(lefts)
+
+  elseif recipe == "mux" then
+    scene.renderer = "mux"
+    scene.mux = {
       [":"] = {
-        renderer = "theme:auto",
+        renderer = "theme:" .. pick(M._random_themes),
         highlighter = "fzy",
         highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
         left = "devicons",
@@ -454,158 +504,26 @@ M.showdown_scenes = {
         highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
         separator = " | ",
       },
-    },
-  },
-  {
-    label = "Smoke Clears",
-    pipeline = { "lua", "cmdline_fuzzy", "search" },
-    renderer = "border_theme",
-    border = "rounded",
-    custom_highlights = neon_highlights,
-  },
-  {
-    label = "Sunset Silhouette",
-    pipeline = { "help_fuzzy", "cmdline_fuzzy", "search" },
-    renderer = "theme:sunset",
-    highlights = false,
-    highlighter = "gradient",
-    gradient_colors = rainbow_colors,
-    left = { " " },
-  },
-  {
-    label = "Dust Settles",
-    pipeline = { "cmdline_fuzzy", "search" },
-    renderer = "theme:dusty",
-    right = { " ", "scrollbar" },
-  },
-  {
-    label = "The Legend",
-    pipeline = { "lua", "cmdline_fuzzy", "search" },
-    renderer = "palette",
-    palette = {
-      title = " Wildest ",
-      prompt_prefix = " : ",
-      prompt_position = "top",
-      max_height = "60%",
-      max_width = "60%",
-      min_width = 40,
-      margin = "auto",
-    },
-    custom_highlights = ember_highlights,
-    left = { " " },
-  },
-}
+    }
 
--- ── Gunsmoke scenes ─────────────────────────────────────────────
+  elseif recipe == "gradient" then
+    scene.renderer = "theme:" .. pick(M._random_themes)
+    scene.highlights = false
+    scene.highlighter = "gradient"
+    scene.gradient_colors = rainbow_colors
+    scene.left = { " " }
+  end
 
-M.gunsmoke_scenes = {
-  -- Act I — The Arrival
-  {
-    label = "The Stranger Rides In",
-    pipeline = { "cmdline_fuzzy", "search" },
-    renderer = "theme:saloon",
-  },
-  {
-    label = "Wanted: Dead or Alive",
-    pipeline = { "help_fuzzy", "cmdline_fuzzy", "search" },
-    renderer = "palette",
-    palette = {
-      title = " Wildest ",
-      prompt_prefix = " : ",
-      prompt_position = "top",
-      max_height = "60%",
-      max_width = "60%",
-      min_width = 40,
-      margin = "auto",
-    },
-    left = { " " },
-  },
-  -- Act II — The Showdown
-  {
-    label = "Quick Draw",
-    pipeline = { "lua", "cmdline_fuzzy", "search" },
-    renderer = "theme:outlaw",
-    left = { " ", "devicons" },
-  },
-  {
-    label = "High Noon",
-    pipeline = { "cmdline_fuzzy", "search" },
-    renderer = "theme:midnight",
-    left = { " ", "kind_icon" },
-  },
-  {
-    label = "Tumbleweed",
-    pipeline = { "cmdline_fuzzy", "search" },
-    renderer = "wildmenu",
-    highlighter = "basic",
-    separator = " | ",
-    left = { "arrows" },
-    right = { "arrows_right", " ", "index" },
-  },
-  {
-    label = "Neon Saloon",
-    pipeline = { "lua", "cmdline_fuzzy", "search" },
-    renderer = "border_theme",
-    border = "rounded",
-    custom_highlights = neon_highlights,
-  },
-  {
-    label = "Sunset Riders",
-    pipeline = { "help_fuzzy", "cmdline_fuzzy", "search" },
-    renderer = "theme:sunset",
-    highlights = false,
-    highlighter = "gradient",
-    gradient_colors = rainbow_colors,
-    left = { " " },
-  },
-  -- Act III — The Finale
-  {
-    label = "The Posse",
-    pipeline = { "cmdline_fuzzy", "search" },
-    renderer = "mux",
-    mux = {
-      [":"] = {
-        renderer = "theme:auto",
-        highlighter = "fzy",
-        highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
-        left = "devicons",
-        right = { " ", "scrollbar" },
-      },
-      ["/"] = {
-        renderer = "wildmenu",
-        highlighter = "basic",
-        highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
-        separator = " | ",
-      },
-    },
-  },
-  {
-    label = "Ember Trail",
-    pipeline = { "lua", "cmdline_fuzzy", "search" },
-    renderer = "border_theme",
-    border = "rounded",
-    custom_highlights = ember_highlights,
-    left = { " ", "devicons", "kind_icon" },
-  },
-  {
-    label = "Ride Into the Sunset",
-    pipeline = { "help_fuzzy", "cmdline_fuzzy", "search" },
-    renderer = "palette",
-    palette = {
-      title = " Wildest ",
-      prompt_prefix = " : ",
-      prompt_position = "top",
-      max_height = "60%",
-      max_width = "60%",
-      min_width = 40,
-      margin = "auto",
-    },
-    highlights = false,
-    highlighter = "gradient",
-    gradient_colors = rainbow_colors,
-    left = { " " },
-  },
-}
+  return scene
+end
+
+function M.random_scenes(n)
+  local scenes = {}
+  for i = 1, n do
+    table.insert(scenes, M.random_scene("Scene " .. i))
+  end
+  return scenes
+end
 
 -- ── Resolver internals ───────────────────────────────────────────
 
