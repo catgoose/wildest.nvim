@@ -101,6 +101,29 @@ local cache_mod = require("wildest.cache")
 function M.create_base_state(opts, defaults)
   defaults = defaults or {}
   local user_hl = opts.highlights or {}
+
+  -- Compute padding (default 1, clamp >= 0)
+  local pad = math.max(0, opts.padding or defaults.padding or 1)
+  local pad_str = pad > 0 and string.rep(" ", pad) or nil
+
+  -- Build left: padding + user components
+  local left = {}
+  if pad_str then
+    table.insert(left, pad_str)
+  end
+  for _, v in ipairs(opts.left or {}) do
+    table.insert(left, v)
+  end
+
+  -- Build right: user components + padding
+  local right = {}
+  for _, v in ipairs(opts.right or {}) do
+    table.insert(right, v)
+  end
+  if pad_str then
+    table.insert(right, pad_str)
+  end
+
   return {
     highlights = {
       default = user_hl.default or opts.hl or "WildestDefault",
@@ -114,8 +137,8 @@ function M.create_base_state(opts, defaults)
     max_width = opts.max_width or defaults.max_width,
     min_width = opts.min_width or defaults.min_width or 16,
     pumblend = opts.pumblend,
-    left = opts.left or { " " },
-    right = opts.right or { " " },
+    left = left,
+    right = right,
     highlighter = opts.highlighter,
     reverse = opts.reverse or false,
     ellipsis = opts.ellipsis or "...",

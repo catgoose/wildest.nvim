@@ -31,13 +31,12 @@ and reference the config key so we can reproduce it.
 <tr>
 <td align="center">
 <strong>Popupmenu</strong><br>
-<em>plain popupmenu, basic, no devicons, scrollbar, :set fold</em><br>
+<em>plain popupmenu, basic, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 renderer = "popupmenu",
 highlighter = "basic",
-left = { " " },
 </code></pre>
 </details>
 </td>
@@ -53,12 +52,11 @@ left = { " " },
 </td>
 <td align="center">
 <strong>Palette</strong><br>
-<em>palette, fzy, no devicons, scrollbar, :set fold</em><br>
+<em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_palette.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 renderer = "palette",
-left = { " " },
 palette = {
   margin = "auto",
   max_height = "60%",
@@ -75,12 +73,11 @@ palette = {
 <tr>
 <td align="center">
 <strong>Palette (Bottom Prompt)</strong><br>
-<em>palette, fzy, no devicons, scrollbar, :set fold</em><br>
+<em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_prompt_bottom.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 renderer = "palette",
-left = { " " },
 palette = {
   margin = "auto",
   max_height = "60%",
@@ -123,31 +120,29 @@ separator = " | ",
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = ":e init",
-left = { " ", "devicons" },
+left = { "devicons" },
 </code></pre>
 </details>
 </td>
 <td align="center">
 <strong>fuzzy</strong><br>
-<em>auto theme, bordered, fzy, no devicons, scrollbar, :e rend</em><br>
+<em>auto theme, bordered, fzy, devicons, scrollbar, :e rend</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fuzzy.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = ":e rend",
-left = { " " },
 </code></pre>
 </details>
 </td>
 <td align="center">
 <strong>gradient</strong><br>
-<em>auto theme, bordered, gradient, no devicons, scrollbar, gradient colors, :help help-</em><br>
+<em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help help-</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = ":help help-",
 highlighter = "gradient",
 highlights = false,
-left = { " " },
 gradient_colors = {
   "#ff0000",
   "#ff4400",
@@ -173,13 +168,12 @@ gradient_colors = {
 <tr>
 <td align="center">
 <strong>search</strong><br>
-<em>auto theme, bordered, basic, no devicons, scrollbar, /function</em><br>
+<em>auto theme, bordered, basic, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = "/function",
 highlighter = "basic",
-left = { " " },
 </code></pre>
 </details>
 </td>
@@ -202,7 +196,7 @@ mux = {
     highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
     left = "devicons",
     renderer = "theme:auto",
-    right = { " ", "scrollbar" },
+    right = { "scrollbar" },
   },
 },
 </code></pre>
@@ -214,7 +208,7 @@ mux = {
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/kind_icons.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-left = { " ", "kind_icon" },
+left = { "kind_icon" },
 </code></pre>
 </details>
 </td>
@@ -222,25 +216,23 @@ left = { " ", "kind_icon" },
 <tr>
 <td align="center">
 <strong>Prefix Highlighter</strong><br>
-<em>auto theme, bordered, prefix, no devicons, scrollbar, :e conf</em><br>
+<em>auto theme, bordered, prefix, devicons, scrollbar, :e conf</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/prefix_highlighter.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = ":e conf",
 highlighter = "prefix",
-left = { " " },
 </code></pre>
 </details>
 </td>
 <td align="center">
 <strong>Scrollbar</strong><br>
-<em>auto theme, bordered, fzy, no devicons, scrollbar, :help nvim</em><br>
+<em>auto theme, bordered, fzy, devicons, scrollbar, :help nvim</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/scrollbar.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = ":help nvim",
-left = { " " },
-right = { " ", "scrollbar" },
+right = { "scrollbar" },
 </code></pre>
 </details>
 </td>
@@ -289,12 +281,11 @@ pipeline = { "help_fuzzy", "cmdline_fuzzy" },
 </td>
 <td align="center">
 <strong>History</strong><br>
-<em>auto theme, bordered, fzy, no devicons, scrollbar, history pipeline, :set fold</em><br>
+<em>auto theme, bordered, fzy, devicons, scrollbar, history pipeline, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/history_pipeline.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 pipeline = { "history", "cmdline_fuzzy" },
-left = { " " },
 </code></pre>
 </details>
 </td>
@@ -302,13 +293,12 @@ left = { " " },
 <tr>
 <td align="center">
 <strong>Search</strong><br>
-<em>auto theme, bordered, basic, no devicons, scrollbar, /function</em><br>
+<em>auto theme, bordered, basic, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = "/function",
 highlighter = "basic",
-left = { " " },
 </code></pre>
 </details>
 </td>
@@ -433,6 +423,48 @@ separator = "  ",
 </details>
 </td>
 </tr>
+<tr>
+<td align="center">
+<strong>Pipe Separator</strong><br>
+<em>wildmenu, fzy, arrows, separator=" │ ", :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_pipe.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "wildmenu",
+highlighter = "fzy",
+left = { "arrows" },
+right = { "arrows_right" },
+separator = " │ ",
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Arrows + Index</strong><br>
+<em>wildmenu, basic, arrows, index, separator=" · ", :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_arrows_index.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "wildmenu",
+highlighter = "basic",
+left = { "arrows" },
+right = { "arrows_right", " ", "index" },
+separator = " · ",
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Compact</strong><br>
+<em>wildmenu, basic, devicons, scrollbar, separator=" ", :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_compact.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "wildmenu",
+highlighter = "basic",
+separator = " ",
+</code></pre>
+</details>
+</td>
+</tr>
 </table>
 <!-- gen:wildmenu_variant_gallery_test:end -->
 
@@ -443,12 +475,11 @@ separator = "  ",
 <tr>
 <td align="center">
 <strong>No Title</strong><br>
-<em>palette, fzy, no devicons, scrollbar, :set fold</em><br>
+<em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_no_title.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 renderer = "palette",
-left = { " " },
 palette = {
   margin = "auto",
   max_height = "60%",
@@ -461,19 +492,76 @@ palette = {
 </td>
 <td align="center">
 <strong>Custom Prefix</strong><br>
-<em>palette, fzy, no devicons, scrollbar, /function</em><br>
+<em>palette, fzy, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_custom_prefix.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = "/function",
 renderer = "palette",
-left = { " " },
 palette = {
   margin = "auto",
   max_height = "60%",
   max_width = "60%",
   min_width = 40,
   prompt_position = "top",
+  title = " Search ",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Large</strong><br>
+<em>palette, fzy, devicons, scrollbar, :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_large.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "palette",
+palette = {
+  margin = "auto",
+  max_height = "75%",
+  max_width = "75%",
+  min_width = 50,
+  prompt_position = "top",
+  title = " Wildest ",
+},
+</code></pre>
+</details>
+</td>
+</tr>
+<tr>
+<td align="center">
+<strong>Compact</strong><br>
+<em>palette, fzy, devicons, scrollbar, :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_compact.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "palette",
+palette = {
+  margin = "auto",
+  max_height = "40%",
+  max_width = "40%",
+  min_width = 30,
+  prompt_position = "top",
+  title = " Wildest ",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Search Mode</strong><br>
+<em>palette, fzy, devicons, scrollbar, /function</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_search.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = "/function",
+renderer = "palette",
+palette = {
+  margin = "auto",
+  max_height = "60%",
+  max_width = "60%",
+  min_width = 40,
+  prompt_position = "top",
+  prompt_prefix = " / ",
   title = " Search ",
 },
 </code></pre>
@@ -541,6 +629,45 @@ min_height = 5,
 </code></pre>
 </details>
 </td>
+<td align="center">
+<strong>max_height=20</strong><br>
+<em>bordered, rounded, max_height=20, fzy, devicons, scrollbar, :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_height_large.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "border_theme",
+border = "rounded",
+max_height = 20,
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>max_width=40</strong><br>
+<em>bordered, rounded, fzy, devicons, scrollbar, :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_width_40.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "border_theme",
+border = "rounded",
+max_width = 40,
+</code></pre>
+</details>
+</td>
+</tr>
+<tr>
+<td align="center">
+<strong>min_width=40</strong><br>
+<em>bordered, rounded, fzy, devicons, scrollbar, :set wra</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/min_width_40.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":set wra",
+renderer = "border_theme",
+border = "rounded",
+min_width = 40,
+</code></pre>
+</details>
+</td>
 <td></td>
 <td></td>
 </tr>
@@ -554,14 +681,13 @@ min_height = 5,
 <tr>
 <td align="center">
 <strong>Warm</strong><br>
-<em>auto theme, bordered, gradient, no devicons, scrollbar, gradient colors, :help nvim_b</em><br>
+<em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help nvim_b</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_warm.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = ":help nvim_b",
 highlighter = "gradient",
 highlights = false,
-left = { " " },
 gradient_colors = {
   "#ff2200",
   "#ff6600",
@@ -575,14 +701,13 @@ gradient_colors = {
 </td>
 <td align="center">
 <strong>Cool</strong><br>
-<em>auto theme, bordered, gradient, no devicons, scrollbar, gradient colors, :help api-</em><br>
+<em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help api-</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_cool.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = ":help api-",
 highlighter = "gradient",
 highlights = false,
-left = { " " },
 gradient_colors = {
   "#00ffff",
   "#00ccff",
@@ -590,6 +715,68 @@ gradient_colors = {
   "#0066ff",
   "#6600ff",
   "#cc00ff",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Sunset</strong><br>
+<em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help option-</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_sunset.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":help option-",
+highlighter = "gradient",
+highlights = false,
+gradient_colors = {
+  "#8800cc",
+  "#cc44aa",
+  "#ff6644",
+  "#ff8800",
+  "#ffaa00",
+  "#ffcc22",
+},
+</code></pre>
+</details>
+</td>
+</tr>
+<tr>
+<td align="center">
+<strong>Ice</strong><br>
+<em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help vim.</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_ice.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":help vim.",
+highlighter = "gradient",
+highlights = false,
+gradient_colors = {
+  "#ffffff",
+  "#ccddff",
+  "#88bbff",
+  "#4488ff",
+  "#2244cc",
+  "#001188",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Forest</strong><br>
+<em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help auto</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_forest.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":help auto",
+highlighter = "gradient",
+highlights = false,
+gradient_colors = {
+  "#004400",
+  "#006600",
+  "#228800",
+  "#44bb00",
+  "#88dd00",
+  "#ccee22",
 },
 </code></pre>
 </details>
@@ -611,8 +798,8 @@ gradient_colors = {
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = ":e init",
-left = { " ", "devicons", "kind_icon" },
-right = { " ", "scrollbar" },
+left = { "devicons", "kind_icon" },
+right = { "scrollbar" },
 </code></pre>
 </details>
 </td>
@@ -630,13 +817,12 @@ reverse = true,
 </td>
 <td align="center">
 <strong>IncSearch Accent</strong><br>
-<em>auto theme, bordered, fzy, no devicons, scrollbar, :e high</em><br>
+<em>auto theme, bordered, fzy, devicons, scrollbar, :e high</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/accent_incsearch.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = ":e high",
 highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
-left = { " " },
 </code></pre>
 </details>
 </td>
@@ -655,8 +841,109 @@ reverse = true,
 </code></pre>
 </details>
 </td>
-<td></td>
-<td></td>
+<td align="center">
+<strong>Pumblend + Border</strong><br>
+<em>bordered, rounded, pumblend=20, fzy, devicons, scrollbar, :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/pumblend_bordered.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "border_theme",
+border = "rounded",
+pumblend = 20,
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Devicons + Scrollbar + Border</strong><br>
+<em>bordered, rounded, fzy, devicons, scrollbar, :e init</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons_scrollbar_border.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e init",
+renderer = "border_theme",
+left = { "devicons" },
+right = { "scrollbar" },
+border = "rounded",
+</code></pre>
+</details>
+</td>
+</tr>
+<tr>
+<td align="center">
+<strong>Gradient + Border</strong><br>
+<em>bordered, rounded, gradient, devicons, scrollbar, gradient colors, :help nvim_b</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_bordered.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":help nvim_b",
+renderer = "border_theme",
+highlighter = "gradient",
+highlights = false,
+border = "rounded",
+gradient_colors = {
+  "#ff0000",
+  "#ff4400",
+  "#ff8800",
+  "#ffcc00",
+  "#ffff00",
+  "#88ff00",
+  "#00ff44",
+  "#00ffaa",
+  "#00ffff",
+  "#00aaff",
+  "#0044ff",
+  "#4400ff",
+  "#8800ff",
+  "#cc00ff",
+  "#ff00ff",
+  "#ff0088",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Palette + Gradient</strong><br>
+<em>palette, gradient, devicons, scrollbar, gradient colors, :help api-</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_gradient.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":help api-",
+renderer = "palette",
+highlighter = "gradient",
+highlights = false,
+gradient_colors = {
+  "#ff2200",
+  "#ff6600",
+  "#ff9900",
+  "#ffcc00",
+  "#ffee00",
+  "#ffff44",
+},
+palette = {
+  margin = "auto",
+  max_height = "60%",
+  max_width = "60%",
+  min_width = 40,
+  prompt_position = "top",
+  title = " Wildest ",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>Wildmenu + Fzy</strong><br>
+<em>wildmenu, fzy, arrows, index, separator=" | ", :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_fzy.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "wildmenu",
+highlighter = "fzy",
+left = { "arrows" },
+right = { "arrows_right", " ", "index" },
+separator = " | ",
+</code></pre>
+</details>
+</td>
 </tr>
 </table>
 <!-- gen:combination_gallery_test:end -->
@@ -1224,7 +1511,7 @@ empty_message = " No matches, partner ",
 <pre><code class="language-lua">
 cmd = ":b ",
 pipeline = { "cmdline_fuzzy" },
-left = { " ", "buffer_flags" },
+left = { "buffer_flags" },
 </code></pre>
 </details>
 </td>
@@ -1266,6 +1553,46 @@ left = { "arrows" },
 right = { "arrows_right", " ", "index" },
 separator = " | ",
 ellipsis = "...",
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>position=top (bordered)</strong><br>
+<em>bordered, rounded, title, position=top, fzy, devicons, scrollbar, :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_top_bordered.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "border_theme",
+border = "rounded",
+title = " Completions ",
+position = "top",
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong>noselect (bordered)</strong><br>
+<em>bordered, rounded, noselect, fzy, devicons, scrollbar, :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_bordered.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "border_theme",
+border = "rounded",
+noselect = true,
+</code></pre>
+</details>
+</td>
+</tr>
+<tr>
+<td align="center">
+<strong>fixed_height=true</strong><br>
+<em>bordered, rounded, fzy, devicons, scrollbar, :set wra</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fixed_height_true.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":set wra",
+renderer = "border_theme",
+border = "rounded",
+fixed_height = true,
 </code></pre>
 </details>
 </td>

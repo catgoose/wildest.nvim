@@ -1104,6 +1104,11 @@ The popup adapts to your `laststatus`, `cmdheight`, and renderer `offset` settin
 </tr>
 <tr>
 <td align="center"><strong>ellipsis</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/ellipsis.png" width="400"></td>
+<td align="center"><strong>position=top (bordered)</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_top_bordered.png" width="400"></td>
+<td align="center"><strong>noselect (bordered)</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_bordered.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>fixed_height=true</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fixed_height_true.png" width="400"></td>
 <td></td>
 <td></td>
 </tr>

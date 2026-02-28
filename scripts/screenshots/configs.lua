@@ -59,7 +59,7 @@ M.defaults = {
   highlighter = "fzy",
   highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
   left = "devicons",
-  right = { " ", "scrollbar" },
+  right = { "scrollbar" },
   laststatus = 3,
   cmdheight = 1,
 }
@@ -112,7 +112,6 @@ M.configs = {
     label = "Popupmenu",
     renderer = "popupmenu",
     highlighter = "basic",
-    left = { " " },
   },
 
   popupmenu_border = {
@@ -133,7 +132,6 @@ M.configs = {
       min_width = 40,
       margin = "auto",
     },
-    left = { " " },
   },
 
   wildmenu = {
@@ -158,20 +156,18 @@ M.configs = {
       min_width = 40,
       margin = "auto",
     },
-    left = { " " },
   },
 
   -- Feature configs
   devicons = {
     category = "feature",
     cmd = ":e init",
-    left = { " ", "devicons" },
+    left = { "devicons" },
   },
 
   fuzzy = {
     category = "feature",
     cmd = ":e rend",
-    left = { " " },
   },
 
   gradient = {
@@ -180,14 +176,12 @@ M.configs = {
     highlights = false,
     highlighter = "gradient",
     gradient_colors = rainbow_colors,
-    left = { " " },
   },
 
   search = {
     category = "feature",
     cmd = "/function",
     highlighter = "basic",
-    left = { " " },
   },
 
   renderer_mux = {
@@ -199,7 +193,7 @@ M.configs = {
         highlighter = "fzy",
         highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
         left = "devicons",
-        right = { " ", "scrollbar" },
+        right = { "scrollbar" },
       },
       ["/"] = {
         renderer = "wildmenu",
@@ -212,7 +206,7 @@ M.configs = {
 
   kind_icons = {
     category = "feature",
-    left = { " ", "kind_icon" },
+    left = { "kind_icon" },
   },
 
   prefix_highlighter = {
@@ -220,15 +214,13 @@ M.configs = {
     label = "Prefix Highlighter",
     cmd = ":e conf",
     highlighter = "prefix",
-    left = { " " },
   },
 
   scrollbar = {
     category = "feature",
     label = "Scrollbar",
     cmd = ":help nvim",
-    left = { " " },
-    right = { " ", "scrollbar" },
+    right = { "scrollbar" },
   },
 
   pumblend = {
@@ -258,7 +250,6 @@ M.configs = {
     category = "pipeline",
     label = "History",
     pipeline = { "history", "cmdline_fuzzy" },
-    left = { " " },
   },
 
   -- Layout configs (statusline / offset variations)
@@ -337,7 +328,7 @@ M.configs = {
     category = "option",
     cmd = ":b ",
     pipeline = { "cmdline_fuzzy" },
-    left = { " ", "buffer_flags" },
+    left = { "buffer_flags" },
   },
 
   position_top = {
@@ -365,6 +356,32 @@ M.configs = {
     ellipsis = "...",
     left = { "arrows" },
     right = { "arrows_right", " ", "index" },
+  },
+
+  position_top_bordered = {
+    category = "option",
+    label = "position=top (bordered)",
+    renderer = "border_theme",
+    border = "rounded",
+    position = "top",
+    title = " Completions ",
+  },
+
+  noselect_bordered = {
+    category = "option",
+    label = "noselect (bordered)",
+    renderer = "border_theme",
+    border = "rounded",
+    noselect = true,
+  },
+
+  fixed_height_true = {
+    category = "option",
+    label = "fixed_height=true",
+    cmd = ":set wra",
+    renderer = "border_theme",
+    border = "rounded",
+    fixed_height = true,
   },
 
   -- Border style configs
@@ -434,6 +451,34 @@ M.configs = {
     separator = "  ",
   },
 
+  wildmenu_pipe = {
+    category = "wildmenu_variant",
+    label = "Pipe Separator",
+    renderer = "wildmenu",
+    highlighter = "fzy",
+    separator = " │ ",
+    left = { "arrows" },
+    right = { "arrows_right" },
+  },
+
+  wildmenu_arrows_index = {
+    category = "wildmenu_variant",
+    label = "Arrows + Index",
+    renderer = "wildmenu",
+    highlighter = "basic",
+    separator = " · ",
+    left = { "arrows" },
+    right = { "arrows_right", " ", "index" },
+  },
+
+  wildmenu_compact = {
+    category = "wildmenu_variant",
+    label = "Compact",
+    renderer = "wildmenu",
+    highlighter = "basic",
+    separator = " ",
+  },
+
   -- Palette variant configs
   palette_no_title = {
     category = "palette_variant",
@@ -446,7 +491,6 @@ M.configs = {
       min_width = 40,
       margin = "auto",
     },
-    left = { " " },
   },
 
   palette_custom_prefix = {
@@ -462,7 +506,50 @@ M.configs = {
       min_width = 40,
       margin = "auto",
     },
-    left = { " " },
+  },
+
+  palette_large = {
+    category = "palette_variant",
+    label = "Large",
+    renderer = "palette",
+    palette = {
+      title = " Wildest ",
+      prompt_position = "top",
+      max_height = "75%",
+      max_width = "75%",
+      min_width = 50,
+      margin = "auto",
+    },
+  },
+
+  palette_compact = {
+    category = "palette_variant",
+    label = "Compact",
+    renderer = "palette",
+    palette = {
+      title = " Wildest ",
+      prompt_position = "top",
+      max_height = "40%",
+      max_width = "40%",
+      min_width = 30,
+      margin = "auto",
+    },
+  },
+
+  palette_search = {
+    category = "palette_variant",
+    label = "Search Mode",
+    cmd = "/function",
+    renderer = "palette",
+    palette = {
+      title = " Search ",
+      prompt_prefix = " / ",
+      prompt_position = "top",
+      max_height = "60%",
+      max_width = "60%",
+      min_width = 40,
+      margin = "auto",
+    },
   },
 
   -- Dimension configs
@@ -500,6 +587,31 @@ M.configs = {
     min_height = 5,
   },
 
+  max_height_large = {
+    category = "dimension",
+    label = "max_height=20",
+    renderer = "border_theme",
+    border = "rounded",
+    max_height = 20,
+  },
+
+  max_width_40 = {
+    category = "dimension",
+    label = "max_width=40",
+    renderer = "border_theme",
+    border = "rounded",
+    max_width = 40,
+  },
+
+  min_width_40 = {
+    category = "dimension",
+    label = "min_width=40",
+    cmd = ":set wra",
+    renderer = "border_theme",
+    border = "rounded",
+    min_width = 40,
+  },
+
   -- Gradient variant configs
   gradient_warm = {
     category = "gradient",
@@ -508,7 +620,6 @@ M.configs = {
     highlights = false,
     highlighter = "gradient",
     gradient_colors = { "#ff2200", "#ff6600", "#ff9900", "#ffcc00", "#ffee00", "#ffff44" },
-    left = { " " },
   },
 
   gradient_cool = {
@@ -518,7 +629,33 @@ M.configs = {
     highlights = false,
     highlighter = "gradient",
     gradient_colors = { "#00ffff", "#00ccff", "#0099ff", "#0066ff", "#6600ff", "#cc00ff" },
-    left = { " " },
+  },
+
+  gradient_sunset = {
+    category = "gradient",
+    label = "Sunset",
+    cmd = ":help option-",
+    highlights = false,
+    highlighter = "gradient",
+    gradient_colors = { "#8800cc", "#cc44aa", "#ff6644", "#ff8800", "#ffaa00", "#ffcc22" },
+  },
+
+  gradient_ice = {
+    category = "gradient",
+    label = "Ice",
+    cmd = ":help vim.",
+    highlights = false,
+    highlighter = "gradient",
+    gradient_colors = { "#ffffff", "#ccddff", "#88bbff", "#4488ff", "#2244cc", "#001188" },
+  },
+
+  gradient_forest = {
+    category = "gradient",
+    label = "Forest",
+    cmd = ":help auto",
+    highlights = false,
+    highlighter = "gradient",
+    gradient_colors = { "#004400", "#006600", "#228800", "#44bb00", "#88dd00", "#ccee22" },
   },
 
   -- Combination configs
@@ -526,8 +663,8 @@ M.configs = {
     category = "combination",
     label = "Devicons + Kind",
     cmd = ":e init",
-    left = { " ", "devicons", "kind_icon" },
-    right = { " ", "scrollbar" },
+    left = { "devicons", "kind_icon" },
+    right = { "scrollbar" },
   },
 
   reverse_bordered = {
@@ -543,7 +680,6 @@ M.configs = {
     label = "IncSearch Accent",
     cmd = ":e high",
     highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
-    left = { " " },
   },
 
   noselect_reverse = {
@@ -553,6 +689,63 @@ M.configs = {
     border = "rounded",
     noselect = true,
     reverse = true,
+  },
+
+  pumblend_bordered = {
+    category = "combination",
+    label = "Pumblend + Border",
+    renderer = "border_theme",
+    border = "rounded",
+    pumblend = 20,
+  },
+
+  devicons_scrollbar_border = {
+    category = "combination",
+    label = "Devicons + Scrollbar + Border",
+    cmd = ":e init",
+    renderer = "border_theme",
+    border = "rounded",
+    left = { "devicons" },
+    right = { "scrollbar" },
+  },
+
+  gradient_bordered = {
+    category = "combination",
+    label = "Gradient + Border",
+    cmd = ":help nvim_b",
+    renderer = "border_theme",
+    border = "rounded",
+    highlights = false,
+    highlighter = "gradient",
+    gradient_colors = rainbow_colors,
+  },
+
+  palette_gradient = {
+    category = "combination",
+    label = "Palette + Gradient",
+    cmd = ":help api-",
+    renderer = "palette",
+    highlights = false,
+    highlighter = "gradient",
+    gradient_colors = { "#ff2200", "#ff6600", "#ff9900", "#ffcc00", "#ffee00", "#ffff44" },
+    palette = {
+      title = " Wildest ",
+      prompt_position = "top",
+      max_height = "60%",
+      max_width = "60%",
+      min_width = 40,
+      margin = "auto",
+    },
+  },
+
+  wildmenu_fzy = {
+    category = "combination",
+    label = "Wildmenu + Fzy",
+    renderer = "wildmenu",
+    highlighter = "fzy",
+    separator = " | ",
+    left = { "arrows" },
+    right = { "arrows_right", " ", "index" },
   },
 
   -- Custom highlight configs
@@ -593,11 +786,11 @@ M.feature_names = {
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
 M.border_names = { "border_rounded", "border_single", "border_double", "border_solid", "border_title" }
-M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal" }
-M.palette_variant_names = { "palette_no_title", "palette_custom_prefix" }
-M.dimension_names = { "max_height_small", "fixed_height_false", "max_width_60", "min_height_5" }
-M.gradient_names = { "gradient_warm", "gradient_cool" }
-M.combination_names = { "devicons_kind", "reverse_bordered", "accent_incsearch", "noselect_reverse" }
+M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal", "wildmenu_pipe", "wildmenu_arrows_index", "wildmenu_compact" }
+M.palette_variant_names = { "palette_no_title", "palette_custom_prefix", "palette_large", "palette_compact", "palette_search" }
+M.dimension_names = { "max_height_small", "fixed_height_false", "max_width_60", "min_height_5", "max_height_large", "max_width_40", "min_width_40" }
+M.gradient_names = { "gradient_warm", "gradient_cool", "gradient_sunset", "gradient_ice", "gradient_forest" }
+M.combination_names = { "devicons_kind", "reverse_bordered", "accent_incsearch", "noselect_reverse", "pumblend_bordered", "devicons_scrollbar_border", "gradient_bordered", "palette_gradient", "wildmenu_fzy" }
 M.layout_names = {
   "laststatus_0", "laststatus_2", "laststatus_3",
   "cmdheight_0", "cmdheight_0_offset_1", "cmdheight_0_offset_2",
@@ -606,6 +799,7 @@ M.layout_names = {
 M.option_names = {
   "noselect_false", "reverse", "empty_message", "buffer_flags",
   "position_top", "position_center", "ellipsis",
+  "position_top_bordered", "noselect_bordered", "fixed_height_true",
 }
 
 -- Theme configs (generated)
@@ -693,15 +887,15 @@ function M.random_scene(label)
     { "history", "cmdline_fuzzy", "search" },
   }
   local lefts = {
-    { " " },
-    { " ", "devicons" },
-    { " ", "kind_icon" },
-    { " ", "devicons", "kind_icon" },
-    { " ", "buffer_flags" },
+    {},
+    { "devicons" },
+    { "kind_icon" },
+    { "devicons", "kind_icon" },
+    { "buffer_flags" },
   }
   local rights = {
-    { " ", "scrollbar" },
-    { " " },
+    { "scrollbar" },
+    {},
   }
   local highlighters = { "fzy", "basic", "prefix" }
   local borders = { "rounded", "single", "double", "solid" }
@@ -776,8 +970,8 @@ function M.random_scene(label)
     scene.highlighter = pick(highlighters)
     scene.separator = pick({ " | ", "  ", " · " })
     scene.ellipsis = pick({ "...", "…", " >" })
-    scene.left = pick({ { "arrows" }, { " " } })
-    scene.right = pick({ { "arrows_right", " ", "index" }, { " ", "index" }, { " " } })
+    scene.left = pick({ { "arrows" }, {} })
+    scene.right = pick({ { "arrows_right", " ", "index" }, { "index" }, {} })
 
   elseif recipe == "palette" then
     scene.renderer = "palette"
@@ -811,7 +1005,7 @@ function M.random_scene(label)
         renderer = "theme:" .. pick(M._random_themes),
         highlighter = pick(highlighters),
         highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
-        left = pick({ "devicons", { " " }, { " ", "kind_icon" } }),
+        left = pick({ "devicons", {}, { "kind_icon" } }),
         right = pick(rights),
       },
       ["/"] = {
@@ -891,9 +1085,9 @@ local function setup_block_lines(cfg, lines, add)
   -- Core fields
   local field_order = {
     "renderer", "pipeline", "highlighter",
-    "left", "right", "separator", "ellipsis",
+    "padding", "left", "right", "separator", "ellipsis",
     "border", "title", "position",
-    "max_height", "min_height", "fixed_height",
+    "max_height", "min_height", "max_width", "min_width", "fixed_height",
     "noselect", "reverse", "pumblend", "offset",
     "empty_message",
     "highlights", "gradient_colors",
@@ -1041,9 +1235,9 @@ local function resolve_components(list, w)
   if type(list) == "string" then
     if list == "devicons" then
       if M._has_devicons then
-        return { " ", w.popupmenu_devicons() }
+        return { w.popupmenu_devicons() }
       end
-      return { " " }
+      return {}
     end
   end
   local result = {}
@@ -1089,6 +1283,9 @@ local function build_renderer_opts(cfg, w)
   if right then
     opts.right = right
   end
+  if cfg.padding then
+    opts.padding = cfg.padding
+  end
   if cfg.separator then
     opts.separator = cfg.separator
   end
@@ -1121,6 +1318,12 @@ local function build_renderer_opts(cfg, w)
   end
   if cfg.min_height then
     opts.min_height = cfg.min_height
+  end
+  if cfg.max_width then
+    opts.max_width = cfg.max_width
+  end
+  if cfg.min_width then
+    opts.min_width = cfg.min_width
   end
   if cfg.fixed_height ~= nil then
     opts.fixed_height = cfg.fixed_height

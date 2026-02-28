@@ -16,7 +16,5 @@ return themes.define({
   },
   renderer_opts = {
     border = "single",
-    left = { " " },
-    right = { " " },
   },
 })
