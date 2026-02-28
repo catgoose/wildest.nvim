@@ -214,14 +214,20 @@ end
 -- mode = ":" or "/" (which key opens cmdline), typed = text after mode.
 local scene_pools = {
   file = {
+    -- Fuzzy searches that show off fzy matching across filenames
+    { mode = ":", typed = "e init" },
+    { mode = ":", typed = "e rend" },
+    { mode = ":", typed = "e high" },
+    { mode = ":", typed = "e pipe" },
+    { mode = ":", typed = "e test" },
+    { mode = ":", typed = "e conf" },
+    { mode = ":", typed = "e util" },
+    { mode = ":", typed = "e gen" },
+    -- Directory prefix completions
     { mode = ":", typed = "e lua/wildest/" },
-    { mode = ":", typed = "e tests/" },
-    { mode = ":", typed = "e lua/wildest/cmdline/" },
-    { mode = ":", typed = "e lua/wildest/highlight/" },
     { mode = ":", typed = "e lua/wildest/renderer/" },
-    { mode = ":", typed = "e lua/wildest/pipeline/" },
     { mode = ":", typed = "e scripts/" },
-    { mode = ":", typed = "e lua/" },
+    { mode = ":", typed = "e tests/" },
   },
   option = {
     { mode = ":", typed = "set fold" },
@@ -498,6 +504,11 @@ local function list_configs()
     { name = "Pipelines", list = configs_mod.pipeline_names },
     { name = "Highlights", list = configs_mod.highlight_names },
     { name = "Borders", list = configs_mod.border_names },
+    { name = "Wildmenu Variants", list = configs_mod.wildmenu_variant_names },
+    { name = "Palette Variants", list = configs_mod.palette_variant_names },
+    { name = "Dimensions", list = configs_mod.dimension_names },
+    { name = "Gradients", list = configs_mod.gradient_names },
+    { name = "Combinations", list = configs_mod.combination_names },
     { name = "Layouts", list = configs_mod.layout_names },
     { name = "Options", list = configs_mod.option_names },
   }
@@ -526,6 +537,11 @@ local function all_config_names()
   add(configs_mod.pipeline_names)
   add(configs_mod.highlight_names)
   add(configs_mod.border_names)
+  add(configs_mod.wildmenu_variant_names)
+  add(configs_mod.palette_variant_names)
+  add(configs_mod.dimension_names)
+  add(configs_mod.gradient_names)
+  add(configs_mod.combination_names)
   add(configs_mod.layout_names)
   add(configs_mod.option_names)
   return names
@@ -596,6 +612,26 @@ local function main()
       end
     elseif a == "--borders" then
       for _, n in ipairs(configs_mod.border_names) do
+        table.insert(configs_to_run, n)
+      end
+    elseif a == "--wildmenu-variants" then
+      for _, n in ipairs(configs_mod.wildmenu_variant_names) do
+        table.insert(configs_to_run, n)
+      end
+    elseif a == "--palette-variants" then
+      for _, n in ipairs(configs_mod.palette_variant_names) do
+        table.insert(configs_to_run, n)
+      end
+    elseif a == "--dimensions" then
+      for _, n in ipairs(configs_mod.dimension_names) do
+        table.insert(configs_to_run, n)
+      end
+    elseif a == "--gradients" then
+      for _, n in ipairs(configs_mod.gradient_names) do
+        table.insert(configs_to_run, n)
+      end
+    elseif a == "--combinations" then
+      for _, n in ipairs(configs_mod.combination_names) do
         table.insert(configs_to_run, n)
       end
     elseif a == "--layouts" then

@@ -182,6 +182,11 @@ local function gen_screenshot_table()
     configs_mod.pipeline_names,
     configs_mod.highlight_names,
     configs_mod.border_names,
+    configs_mod.wildmenu_variant_names,
+    configs_mod.palette_variant_names,
+    configs_mod.dimension_names,
+    configs_mod.gradient_names,
+    configs_mod.combination_names,
     configs_mod.layout_names,
     configs_mod.option_names,
   }
@@ -233,6 +238,26 @@ end
 
 local function gen_border_gallery()
   return gallery_table(configs_mod.border_names, nil, nil)
+end
+
+local function gen_wildmenu_variant_gallery()
+  return gallery_table(configs_mod.wildmenu_variant_names, nil, nil)
+end
+
+local function gen_palette_variant_gallery()
+  return gallery_table(configs_mod.palette_variant_names, nil, nil)
+end
+
+local function gen_dimension_gallery()
+  return gallery_table(configs_mod.dimension_names, nil, nil)
+end
+
+local function gen_gradient_gallery()
+  return gallery_table(configs_mod.gradient_names, nil, nil)
+end
+
+local function gen_combination_gallery()
+  return gallery_table(configs_mod.combination_names, nil, nil)
 end
 
 local function gen_highlight_groups()
@@ -302,6 +327,11 @@ local generators = {
   renderer_gallery = gen_renderer_gallery,
   feature_gallery = gen_feature_gallery,
   border_gallery = gen_border_gallery,
+  wildmenu_variant_gallery = gen_wildmenu_variant_gallery,
+  palette_variant_gallery = gen_palette_variant_gallery,
+  dimension_gallery = gen_dimension_gallery,
+  gradient_gallery = gen_gradient_gallery,
+  combination_gallery = gen_combination_gallery,
   highlight_groups = gen_highlight_groups,
   highlight_gallery = gen_highlight_gallery,
   theme_table = gen_theme_table,

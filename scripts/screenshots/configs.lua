@@ -164,13 +164,13 @@ M.configs = {
   -- Feature configs
   devicons = {
     category = "feature",
-    cmd = ":e lua/wildest/",
+    cmd = ":e init",
     left = { " ", "devicons" },
   },
 
   fuzzy = {
     category = "feature",
-    cmd = ":help win",
+    cmd = ":e rend",
     left = { " " },
   },
 
@@ -218,6 +218,7 @@ M.configs = {
   prefix_highlighter = {
     category = "feature",
     label = "Prefix Highlighter",
+    cmd = ":e conf",
     highlighter = "prefix",
     left = { " " },
   },
@@ -395,6 +396,165 @@ M.configs = {
     border = "solid",
   },
 
+  border_title = {
+    category = "border",
+    label = "With Title",
+    renderer = "border_theme",
+    border = "rounded",
+    title = " Completions ",
+  },
+
+  -- Wildmenu variant configs
+  wildmenu_dot = {
+    category = "wildmenu_variant",
+    label = "Dot Separator",
+    renderer = "wildmenu",
+    highlighter = "basic",
+    separator = " · ",
+    left = { "arrows" },
+    right = { "arrows_right", " ", "index" },
+  },
+
+  wildmenu_reverse = {
+    category = "wildmenu_variant",
+    label = "Reversed",
+    renderer = "wildmenu",
+    highlighter = "fzy",
+    separator = " | ",
+    reverse = true,
+    left = { "arrows" },
+    right = { "arrows_right", " ", "index" },
+  },
+
+  wildmenu_minimal = {
+    category = "wildmenu_variant",
+    label = "Minimal",
+    renderer = "wildmenu",
+    highlighter = "basic",
+    separator = "  ",
+  },
+
+  -- Palette variant configs
+  palette_no_title = {
+    category = "palette_variant",
+    label = "No Title",
+    renderer = "palette",
+    palette = {
+      prompt_position = "top",
+      max_height = "60%",
+      max_width = "60%",
+      min_width = 40,
+      margin = "auto",
+    },
+    left = { " " },
+  },
+
+  palette_custom_prefix = {
+    category = "palette_variant",
+    label = "Custom Prefix",
+    cmd = "/function",
+    renderer = "palette",
+    palette = {
+      title = " Search ",
+      prompt_position = "top",
+      max_height = "60%",
+      max_width = "60%",
+      min_width = 40,
+      margin = "auto",
+    },
+    left = { " " },
+  },
+
+  -- Dimension configs
+  max_height_small = {
+    category = "dimension",
+    label = "max_height=8",
+    renderer = "border_theme",
+    border = "rounded",
+    max_height = 8,
+  },
+
+  fixed_height_false = {
+    category = "dimension",
+    label = "fixed_height=false",
+    cmd = ":set wra",
+    renderer = "border_theme",
+    border = "rounded",
+    fixed_height = false,
+  },
+
+  max_width_60 = {
+    category = "dimension",
+    label = "max_width=60",
+    renderer = "border_theme",
+    border = "rounded",
+    max_width = 60,
+  },
+
+  min_height_5 = {
+    category = "dimension",
+    label = "min_height=5",
+    cmd = ":set wra",
+    renderer = "border_theme",
+    border = "rounded",
+    min_height = 5,
+  },
+
+  -- Gradient variant configs
+  gradient_warm = {
+    category = "gradient",
+    label = "Warm",
+    cmd = ":help nvim_b",
+    highlights = false,
+    highlighter = "gradient",
+    gradient_colors = { "#ff2200", "#ff6600", "#ff9900", "#ffcc00", "#ffee00", "#ffff44" },
+    left = { " " },
+  },
+
+  gradient_cool = {
+    category = "gradient",
+    label = "Cool",
+    cmd = ":help api-",
+    highlights = false,
+    highlighter = "gradient",
+    gradient_colors = { "#00ffff", "#00ccff", "#0099ff", "#0066ff", "#6600ff", "#cc00ff" },
+    left = { " " },
+  },
+
+  -- Combination configs
+  devicons_kind = {
+    category = "combination",
+    label = "Devicons + Kind",
+    cmd = ":e init",
+    left = { " ", "devicons", "kind_icon" },
+    right = { " ", "scrollbar" },
+  },
+
+  reverse_bordered = {
+    category = "combination",
+    label = "Reverse + Border",
+    renderer = "border_theme",
+    border = "rounded",
+    reverse = true,
+  },
+
+  accent_incsearch = {
+    category = "combination",
+    label = "IncSearch Accent",
+    cmd = ":e high",
+    highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
+    left = { " " },
+  },
+
+  noselect_reverse = {
+    category = "combination",
+    label = "Noselect + Reverse",
+    renderer = "border_theme",
+    border = "rounded",
+    noselect = true,
+    reverse = true,
+  },
+
   -- Custom highlight configs
   hl_neon = {
     category = "highlight",
@@ -432,7 +592,12 @@ M.feature_names = {
 }
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
-M.border_names = { "border_rounded", "border_single", "border_double", "border_solid" }
+M.border_names = { "border_rounded", "border_single", "border_double", "border_solid", "border_title" }
+M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal" }
+M.palette_variant_names = { "palette_no_title", "palette_custom_prefix" }
+M.dimension_names = { "max_height_small", "fixed_height_false", "max_width_60", "min_height_5" }
+M.gradient_names = { "gradient_warm", "gradient_cool" }
+M.combination_names = { "devicons_kind", "reverse_bordered", "accent_incsearch", "noselect_reverse" }
 M.layout_names = {
   "laststatus_0", "laststatus_2", "laststatus_3",
   "cmdheight_0", "cmdheight_0_offset_1", "cmdheight_0_offset_2",
@@ -590,6 +755,15 @@ function M.random_scene(label)
   if math.random(8) == 1 then
     scene.empty_message = pick({ " No matches ", " Nothing found ", " ∅ " })
   end
+  if math.random(4) == 1 then
+    scene.max_height = pick({ 8, 10, 12, 20 })
+  end
+  if math.random(5) == 1 then
+    scene.min_height = pick({ 3, 5, 8 })
+  end
+  if math.random(4) == 1 then
+    scene.fixed_height = pick({ true, false })
+  end
 
   if recipe == "theme" then
     scene.renderer = "theme:" .. pick(M._random_themes)
@@ -730,7 +904,8 @@ function M.scene_to_lines(scene, index, total)
   local field_order = {
     "renderer", "pipeline", "highlighter",
     "left", "right", "separator", "ellipsis",
-    "border", "position",
+    "border", "title", "position",
+    "max_height", "min_height", "fixed_height",
     "noselect", "reverse", "pumblend", "offset",
     "empty_message",
     "highlights", "gradient_colors",
@@ -888,6 +1063,9 @@ local function build_renderer_opts(cfg, w)
   if cfg.border then
     opts.border = cfg.border
   end
+  if cfg.title then
+    opts.title = cfg.title
+  end
   if cfg.offset then
     opts.offset = cfg.offset
   end
@@ -905,6 +1083,15 @@ local function build_renderer_opts(cfg, w)
   end
   if cfg.ellipsis then
     opts.ellipsis = cfg.ellipsis
+  end
+  if cfg.max_height then
+    opts.max_height = cfg.max_height
+  end
+  if cfg.min_height then
+    opts.min_height = cfg.min_height
+  end
+  if cfg.fixed_height ~= nil then
+    opts.fixed_height = cfg.fixed_height
   end
   return opts
 end

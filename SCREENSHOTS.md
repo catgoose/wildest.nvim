@@ -8,7 +8,8 @@ image is labeled with its **config key** (e.g. `popupmenu_border`, `hl_neon`,
 If something looks off, [open an issue](https://github.com/catgoose/wildest.nvim/issues)
 and reference the config key so we can reproduce it.
 
-## Renderers
+<details>
+<summary><strong>Renderers</strong></summary>
 
 <!-- gen:renderer_gallery:start -->
 <table>
@@ -27,7 +28,10 @@ and reference the config key so we can reproduce it.
 </table>
 <!-- gen:renderer_gallery:end -->
 
-## Features
+</details>
+
+<details>
+<summary><strong>Features</strong></summary>
 
 <!-- gen:feature_gallery:start -->
 <table>
@@ -54,7 +58,10 @@ and reference the config key so we can reproduce it.
 </table>
 <!-- gen:feature_gallery:end -->
 
-## Pipelines
+</details>
+
+<details>
+<summary><strong>Pipelines</strong></summary>
 
 <!-- gen:pipeline_gallery:start -->
 <table>
@@ -69,7 +76,10 @@ and reference the config key so we can reproduce it.
 </table>
 <!-- gen:pipeline_gallery:end -->
 
-## Border Styles
+</details>
+
+<details>
+<summary><strong>Border Styles</strong></summary>
 
 <!-- gen:border_gallery:start -->
 <table>
@@ -81,10 +91,99 @@ and reference the config key so we can reproduce it.
 <td align="center"><strong>Double</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_double.png" width="400"></td>
 <td align="center"><strong>Solid</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_solid.png" width="400"></td>
 </tr>
+<tr>
+<td align="center"><strong>With Title</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_title.png" width="400"></td>
+<td></td>
+</tr>
 </table>
 <!-- gen:border_gallery:end -->
 
-## Custom Highlights
+</details>
+
+<details>
+<summary><strong>Wildmenu Variants</strong></summary>
+
+<!-- gen:wildmenu_variant_gallery:start -->
+<table>
+<tr>
+<td align="center"><strong>Dot Separator</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_dot.png" width="400"></td>
+<td align="center"><strong>Reversed</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_reverse.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>Minimal</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_minimal.png" width="400"></td>
+<td></td>
+</tr>
+</table>
+<!-- gen:wildmenu_variant_gallery:end -->
+
+</details>
+
+<details>
+<summary><strong>Palette Variants</strong></summary>
+
+<!-- gen:palette_variant_gallery:start -->
+<table>
+<tr>
+<td align="center"><strong>No Title</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_no_title.png" width="400"></td>
+<td align="center"><strong>Custom Prefix</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_custom_prefix.png" width="400"></td>
+</tr>
+</table>
+<!-- gen:palette_variant_gallery:end -->
+
+</details>
+
+<details>
+<summary><strong>Dimensions</strong></summary>
+
+<!-- gen:dimension_gallery:start -->
+<table>
+<tr>
+<td align="center"><strong>max_height=8</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_height_small.png" width="400"></td>
+<td align="center"><strong>fixed_height=false</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fixed_height_false.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>max_width=60</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_width_60.png" width="400"></td>
+<td align="center"><strong>min_height=5</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/min_height_5.png" width="400"></td>
+</tr>
+</table>
+<!-- gen:dimension_gallery:end -->
+
+</details>
+
+<details>
+<summary><strong>Gradients</strong></summary>
+
+<!-- gen:gradient_gallery:start -->
+<table>
+<tr>
+<td align="center"><strong>Warm</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_warm.png" width="400"></td>
+<td align="center"><strong>Cool</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_cool.png" width="400"></td>
+</tr>
+</table>
+<!-- gen:gradient_gallery:end -->
+
+</details>
+
+<details>
+<summary><strong>Combinations</strong></summary>
+
+<!-- gen:combination_gallery:start -->
+<table>
+<tr>
+<td align="center"><strong>Devicons + Kind</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons_kind.png" width="400"></td>
+<td align="center"><strong>Reverse + Border</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/reverse_bordered.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>IncSearch Accent</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/accent_incsearch.png" width="400"></td>
+<td align="center"><strong>Noselect + Reverse</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_reverse.png" width="400"></td>
+</tr>
+</table>
+<!-- gen:combination_gallery:end -->
+
+</details>
+
+<details>
+<summary><strong>Custom Highlights</strong></summary>
 
 <!-- gen:highlight_gallery:start -->
 <table>
@@ -99,7 +198,10 @@ and reference the config key so we can reproduce it.
 </table>
 <!-- gen:highlight_gallery:end -->
 
-## Themes
+</details>
+
+<details>
+<summary><strong>Themes</strong></summary>
 
 <!-- gen:theme_gallery:start -->
 <table>
@@ -170,7 +272,10 @@ and reference the config key so we can reproduce it.
 </table>
 <!-- gen:theme_gallery:end -->
 
-## Layout Variations
+</details>
+
+<details>
+<summary><strong>Layout Variations</strong></summary>
 
 <!-- gen:layout_gallery:start -->
 <table>
@@ -193,7 +298,10 @@ and reference the config key so we can reproduce it.
 </table>
 <!-- gen:layout_gallery:end -->
 
-## Renderer Options
+</details>
+
+<details>
+<summary><strong>Renderer Options</strong></summary>
 
 <!-- gen:option_gallery:start -->
 <table>
@@ -215,3 +323,5 @@ and reference the config key so we can reproduce it.
 </tr>
 </table>
 <!-- gen:option_gallery:end -->
+
+</details>
