@@ -252,6 +252,90 @@ function M.is_active()
   return preview_state.config ~= nil and preview_state.enabled
 end
 
+--- Compute the floating window position/size for the preview panel.
+--- Exposed for testing as M._compute_win_config.
+---@param params table
+---@return table|nil {row, col, width, height}
+function M._compute_win_config(params)
+  local position = params.position
+  local anchor = params.anchor
+  local cfg_width = params.width
+  local cfg_height = params.height
+  local editor_cols = params.editor_cols
+  local available_rows = params.available_rows
+  local content_lines = params.content_lines
+  local geom = params.geom
+
+  local result = {}
+
+  if anchor == "popup" then
+    if not geom then
+      return nil
+    end
+    local has_border = geom.border and geom.border ~= "none"
+    local border_size = has_border and 1 or 0
+
+    if position == "right" then
+      local w = parse_dim(cfg_width, editor_cols)
+      local h = math.max(1, math.min(geom.height, content_lines))
+      result.col = geom.col + geom.width + border_size
+      result.row = geom.row
+      result.width = math.max(1, w - 2)
+      result.height = h
+    elseif position == "left" then
+      local w = parse_dim(cfg_width, editor_cols)
+      local h = math.max(1, math.min(geom.height, content_lines))
+      result.col = geom.col - w - border_size
+      result.row = geom.row
+      result.width = math.max(1, w - 2)
+      result.height = h
+    elseif position == "top" then
+      local h = parse_dim(cfg_height, available_rows)
+      h = math.max(1, math.min(h, content_lines))
+      result.col = geom.col
+      result.row = geom.row - h - 2
+      result.width = math.max(1, geom.width)
+      result.height = h
+    elseif position == "bottom" then
+      local h = parse_dim(cfg_height, available_rows)
+      h = math.max(1, math.min(h, content_lines))
+      result.col = geom.col
+      result.row = geom.row + geom.height + border_size + 1
+      result.width = math.max(1, geom.width)
+      result.height = h
+    end
+  else
+    -- Screen anchor: fill entire edge of screen
+    if position == "right" then
+      local w = parse_dim(cfg_width, editor_cols)
+      result.row = 0
+      result.col = editor_cols - w
+      result.width = math.max(1, w - 2)
+      result.height = available_rows
+    elseif position == "left" then
+      local w = parse_dim(cfg_width, editor_cols)
+      result.row = 0
+      result.col = 0
+      result.width = math.max(1, w - 2)
+      result.height = available_rows
+    elseif position == "top" then
+      local h = parse_dim(cfg_height, available_rows)
+      result.row = 0
+      result.col = 0
+      result.width = math.max(1, editor_cols - 2)
+      result.height = math.max(1, h - 2)
+    elseif position == "bottom" then
+      local h = parse_dim(cfg_height, available_rows)
+      result.row = available_rows - h + 1
+      result.col = 0
+      result.width = math.max(1, editor_cols - 2)
+      result.height = math.max(1, h - 2)
+    end
+  end
+
+  return result
+end
+
 --- Update the preview window with the selected candidate's content.
 --- Called after each renderer draw.
 ---@param ctx table render context
@@ -308,8 +392,21 @@ function M.update(ctx, result)
   local cmdheight = vim.o.cmdheight
   local reserved_rows = cmdheight + (vim.o.laststatus > 0 and 1 or 0)
   local available_rows = math.max(1, editor_lines - reserved_rows - 1)
-  local position = cfg.position
   local content_lines = vim.api.nvim_buf_line_count(preview_state.buf)
+
+  local pos = M._compute_win_config({
+    position = cfg.position,
+    anchor = cfg.anchor,
+    width = cfg.width,
+    height = cfg.height,
+    editor_cols = editor_cols,
+    available_rows = available_rows,
+    content_lines = content_lines,
+    geom = renderer_util._last_popup_geometry,
+  })
+  if not pos then
+    return
+  end
 
   local win_config = {
     relative = "editor",
@@ -318,74 +415,11 @@ function M.update(ctx, result)
     zindex = 251,
     focusable = false,
     noautocmd = true,
+    row = pos.row,
+    col = pos.col,
+    width = pos.width,
+    height = pos.height,
   }
-
-  if cfg.anchor == "popup" then
-    -- Popup anchor: position adjacent to popup, content-aware sizing
-    local geom = renderer_util._last_popup_geometry
-    if not geom then
-      return
-    end
-    local has_border = geom.border and geom.border ~= "none"
-    local border_size = has_border and 1 or 0
-
-    if position == "right" then
-      local w = parse_dim(cfg.width, editor_cols)
-      local h = math.max(1, math.min(geom.height, content_lines))
-      win_config.col = geom.col + geom.width + border_size
-      win_config.row = geom.row
-      win_config.width = math.max(1, w - 2)
-      win_config.height = h
-    elseif position == "left" then
-      local w = parse_dim(cfg.width, editor_cols)
-      local h = math.max(1, math.min(geom.height, content_lines))
-      win_config.col = geom.col - w - border_size
-      win_config.row = geom.row
-      win_config.width = math.max(1, w - 2)
-      win_config.height = h
-    elseif position == "top" then
-      local h = parse_dim(cfg.height, available_rows)
-      h = math.max(1, math.min(h, content_lines))
-      win_config.col = geom.col
-      win_config.row = geom.row - h - border_size - 1
-      win_config.width = math.max(1, geom.width)
-      win_config.height = h
-    elseif position == "bottom" then
-      local h = parse_dim(cfg.height, available_rows)
-      h = math.max(1, math.min(h, content_lines))
-      win_config.col = geom.col
-      win_config.row = geom.row + geom.height + border_size + 1
-      win_config.width = math.max(1, geom.width)
-      win_config.height = h
-    end
-  else
-    -- Screen anchor: fill entire edge of screen
-    if position == "right" then
-      local w = parse_dim(cfg.width, editor_cols)
-      win_config.row = 0
-      win_config.col = editor_cols - w
-      win_config.width = math.max(1, w - 2)
-      win_config.height = available_rows
-    elseif position == "left" then
-      local w = parse_dim(cfg.width, editor_cols)
-      win_config.row = 0
-      win_config.col = 0
-      win_config.width = math.max(1, w - 2)
-      win_config.height = available_rows
-    elseif position == "top" then
-      local h = parse_dim(cfg.height, available_rows)
-      win_config.row = 0
-      win_config.col = 0
-      win_config.width = math.max(1, editor_cols - 2)
-      win_config.height = h
-    elseif position == "bottom" then
-      local h = parse_dim(cfg.height, available_rows)
-      win_config.row = available_rows - h
-      win_config.col = 0
-      win_config.width = math.max(1, editor_cols - 2)
-      win_config.height = h
-    end
-  end
 
   if cfg.title and title then
     win_config.title = { { " " .. title .. " ", "FloatTitle" } }
@@ -437,5 +471,8 @@ end
 
 --- Expose detect_expand for testing.
 M._detect_expand = detect_expand
+
+--- Expose parse_dim for testing.
+M._parse_dim = parse_dim
 
 return M

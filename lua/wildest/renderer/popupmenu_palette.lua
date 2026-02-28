@@ -253,10 +253,13 @@ function M.new(opts)
     end
 
     -- Position: centered within usable area
-    local margin_left = renderer_util.parse_margin(state.margin, editor_cols, outer_width) + space.left
+    local margin_left = renderer_util.parse_margin(state.margin, editor_cols, outer_width)
+      + space.left
     local total_with_border = height + border_rows
-    local margin_top =
-      math.max(0, math.floor((usable_lines - total_with_border) / 2) - (state.offset or 0)) + space.top
+    local margin_top = math.max(
+      0,
+      math.floor((usable_lines - total_with_border) / 2) - (state.offset or 0)
+    ) + space.top
 
     vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
     renderer_util.apply_line_highlights(state.buf, state.ns_id, lines, line_highlights)
