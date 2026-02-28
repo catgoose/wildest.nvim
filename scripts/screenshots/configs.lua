@@ -47,6 +47,8 @@ function M.setup(root)
   end
 
   M._has_devicons = pcall(require, "nvim-web-devicons")
+
+  math.randomseed(os.time() + vim.fn.getpid())
 end
 
 -- ── Defaults ─────────────────────────────────────────────────────
@@ -319,6 +321,14 @@ M.theme_names = {
 
 for _, name in ipairs(M.theme_names) do
   M.configs["theme_" .. name] = { category = "theme", theme = name }
+end
+
+-- Non-auto themes for random selection in non-theme screenshots
+M._random_themes = {}
+for _, name in ipairs(M.theme_names) do
+  if name ~= "auto" then
+    table.insert(M._random_themes, name)
+  end
 end
 
 -- ── Showdown scenes ──────────────────────────────────────────────
@@ -687,6 +697,12 @@ function M.build(name_or_cfg, w)
   if merged.theme then
     merged.renderer = "theme:" .. merged.theme
     merged.highlights = false
+  end
+
+  -- Randomize theme for non-theme configs that inherit theme:auto
+  if merged.category ~= "theme" and merged.renderer == "theme:auto" then
+    local pick = M._random_themes[math.random(#M._random_themes)]
+    merged.renderer = "theme:" .. pick
   end
 
   -- Custom highlights: apply them, skip accent highlights
