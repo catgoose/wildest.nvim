@@ -81,6 +81,16 @@ local neon_highlights = {
   WildestScrollbarThumb = { bg = "#6644ff" },
 }
 
+local ember_highlights = {
+  WildestDefault = { bg = "#1a0f0a", fg = "#e8c8a0" },
+  WildestSelected = { bg = "#2d1810", fg = "#ffe0b0", bold = true },
+  WildestAccent = { bg = "#1a0f0a", fg = "#ff6622", bold = true },
+  WildestSelectedAccent = { bg = "#2d1810", fg = "#ffaa44", bold = true },
+  WildestBorder = { bg = "#120a06", fg = "#884422" },
+  WildestScrollbar = { bg = "#1a0f0a" },
+  WildestScrollbarThumb = { bg = "#884422" },
+}
+
 -- ── Configs ──────────────────────────────────────────────────────
 
 M.configs = {
@@ -264,15 +274,7 @@ M.configs = {
     category = "highlight",
     renderer = "border_theme",
     border = "rounded",
-    custom_highlights = {
-      WildestDefault = { bg = "#1a0f0a", fg = "#e8c8a0" },
-      WildestSelected = { bg = "#2d1810", fg = "#ffe0b0", bold = true },
-      WildestAccent = { bg = "#1a0f0a", fg = "#ff6622", bold = true },
-      WildestSelectedAccent = { bg = "#2d1810", fg = "#ffaa44", bold = true },
-      WildestBorder = { bg = "#120a06", fg = "#884422" },
-      WildestScrollbar = { bg = "#1a0f0a" },
-      WildestScrollbarThumb = { bg = "#884422" },
-    },
+    custom_highlights = ember_highlights,
   },
 
   hl_ocean = {
@@ -323,12 +325,191 @@ end
 
 M.showdown_scenes = {
   {
-    label = "Popupmenu + Devicons + Kind Icons + Fzy",
-    pipeline = { "lua", "help_fuzzy", "cmdline_fuzzy", "search" },
+    label = "Tumbleweeds Roll",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "wildmenu",
+    highlighter = "basic",
+    separator = " | ",
+    left = { "arrows" },
+    right = { "arrows_right", " ", "index" },
+  },
+  {
+    label = "Prairie Dust",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "theme:prairie",
+    left = { " ", "devicons" },
+  },
+  {
+    label = "Clock Tower",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "theme:midnight",
+    left = { " ", "kind_icon" },
+  },
+  {
+    label = "The Draw",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "theme:outlaw",
+    left = { " ", "devicons" },
+  },
+  {
+    label = "Quickfire",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "theme:outlaw",
+    left = { " ", "kind_icon" },
+  },
+  {
+    label = "Ricochet",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "mux",
+    mux = {
+      [":"] = {
+        renderer = "theme:auto",
+        highlighter = "fzy",
+        highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
+        left = "devicons",
+        right = { " ", "scrollbar" },
+      },
+      ["/"] = {
+        renderer = "wildmenu",
+        highlighter = "basic",
+        highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
+        separator = " | ",
+      },
+    },
+  },
+  {
+    label = "Smoke Clears",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "border_theme",
+    border = "rounded",
+    custom_highlights = neon_highlights,
+  },
+  {
+    label = "Sunset Silhouette",
+    pipeline = { "help_fuzzy", "cmdline_fuzzy", "search" },
+    renderer = "theme:sunset",
+    highlights = false,
+    highlighter = "gradient",
+    gradient_colors = rainbow_colors,
+    left = { " " },
+  },
+  {
+    label = "Dust Settles",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "theme:dusty",
+    right = { " ", "scrollbar" },
+  },
+  {
+    label = "The Legend",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "palette",
+    palette = {
+      title = " Wildest ",
+      prompt_prefix = " : ",
+      prompt_position = "top",
+      max_height = "60%",
+      max_width = "60%",
+      min_width = 40,
+      margin = "auto",
+    },
+    custom_highlights = ember_highlights,
+    left = { " " },
+  },
+}
+
+-- ── Gunsmoke scenes ─────────────────────────────────────────────
+
+M.gunsmoke_scenes = {
+  -- Act I — The Arrival
+  {
+    label = "The Stranger Rides In",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "theme:saloon",
+  },
+  {
+    label = "Wanted: Dead or Alive",
+    pipeline = { "help_fuzzy", "cmdline_fuzzy", "search" },
+    renderer = "palette",
+    palette = {
+      title = " Wildest ",
+      prompt_prefix = " : ",
+      prompt_position = "top",
+      max_height = "60%",
+      max_width = "60%",
+      min_width = 40,
+      margin = "auto",
+    },
+    left = { " " },
+  },
+  -- Act II — The Showdown
+  {
+    label = "Quick Draw",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "theme:outlaw",
+    left = { " ", "devicons" },
+  },
+  {
+    label = "High Noon",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "theme:midnight",
+    left = { " ", "kind_icon" },
+  },
+  {
+    label = "Tumbleweed",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "wildmenu",
+    highlighter = "basic",
+    separator = " | ",
+    left = { "arrows" },
+    right = { "arrows_right", " ", "index" },
+  },
+  {
+    label = "Neon Saloon",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "border_theme",
+    border = "rounded",
+    custom_highlights = neon_highlights,
+  },
+  {
+    label = "Sunset Riders",
+    pipeline = { "help_fuzzy", "cmdline_fuzzy", "search" },
+    renderer = "theme:sunset",
+    highlights = false,
+    highlighter = "gradient",
+    gradient_colors = rainbow_colors,
+    left = { " " },
+  },
+  -- Act III — The Finale
+  {
+    label = "The Posse",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "mux",
+    mux = {
+      [":"] = {
+        renderer = "theme:auto",
+        highlighter = "fzy",
+        highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
+        left = "devicons",
+        right = { " ", "scrollbar" },
+      },
+      ["/"] = {
+        renderer = "wildmenu",
+        highlighter = "basic",
+        highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
+        separator = " | ",
+      },
+    },
+  },
+  {
+    label = "Ember Trail",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "border_theme",
+    border = "rounded",
+    custom_highlights = ember_highlights,
     left = { " ", "devicons", "kind_icon" },
   },
   {
-    label = "Palette + Gradient Rainbow",
+    label = "Ride Into the Sunset",
     pipeline = { "help_fuzzy", "cmdline_fuzzy", "search" },
     renderer = "palette",
     palette = {
@@ -344,20 +525,6 @@ M.showdown_scenes = {
     highlighter = "gradient",
     gradient_colors = rainbow_colors,
     left = { " " },
-  },
-  {
-    label = "Wildmenu + Search",
-    renderer = "wildmenu",
-    highlighter = "basic",
-    separator = " | ",
-    left = { "arrows" },
-    right = { "arrows_right", " ", "index" },
-  },
-  {
-    label = "Neon Theme",
-    renderer = "border_theme",
-    border = "rounded",
-    custom_highlights = neon_highlights,
   },
 }
 

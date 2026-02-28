@@ -9,7 +9,7 @@
   - [Roundup (Requirements)](#roundup-requirements)
   - [Saddlin' Up (Installation)](#saddlin-up-installation)
     - [lazy.nvim](#lazynvim)
-    - [packer.nvim](#packernvim)
+    - [mini.deps](#minideps)
     - [Manual](#manual)
   - [Hitchin' Your Horse (Quick Start)](#hitchin-your-horse-quick-start)
   - [The Full Spread (Advanced Config)](#the-full-spread-advanced-config)
@@ -57,6 +57,10 @@
 ```
 
 [Documentation](https://catgoose.github.io/wildest.nvim/)
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gunsmoke.gif" alt="wildest.nvim gunsmoke" width="800">
+</p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/showdown.gif" alt="wildest.nvim showdown" width="800">
@@ -237,18 +241,24 @@ which hasn't been updated in over four years. Drops VimScript and Python.
 }
 ```
 
-### packer.nvim
+### mini.deps
 
 ```lua
-use({
-  "catgoose/wildest.nvim",
-  run = "make -C csrc",
-  config = function()
-    local w = require("wildest")
-    w.setup({
-      -- Saddle up
-    })
-  end,
+local add = MiniDeps.add
+
+add({
+  source = "catgoose/wildest.nvim",
+  hooks = {
+    post_install = function()
+      local path = vim.fn.stdpath("data") .. "/site/pack/deps/opt/wildest.nvim"
+      vim.fn.system({ "make", "-C", "csrc" }, { cwd = path })
+    end,
+  },
+})
+
+local w = require("wildest")
+w.setup({
+  -- Saddle up
 })
 ```
 
