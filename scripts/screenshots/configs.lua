@@ -881,6 +881,70 @@ local function fmt_val(v)
   return tostring(v)
 end
 
+--- Emit the `require('wildest').setup({...})` body for a config table.
+---@param cfg table  scene or resolved config
+---@param lines string[]
+---@param add fun(s: string)
+local function setup_block_lines(cfg, lines, add)
+  add("require('wildest').setup({")
+
+  -- Core fields
+  local field_order = {
+    "renderer", "pipeline", "highlighter",
+    "left", "right", "separator", "ellipsis",
+    "border", "title", "position",
+    "max_height", "min_height", "fixed_height",
+    "noselect", "reverse", "pumblend", "offset",
+    "empty_message",
+    "highlights", "gradient_colors",
+  }
+
+  for _, key in ipairs(field_order) do
+    local val = cfg[key]
+    if val ~= nil then
+      add("  " .. key .. " = " .. fmt_val(val) .. ",")
+    end
+  end
+
+  -- Palette sub-table
+  if cfg.palette then
+    add("  palette = {")
+    for k, v in pairs(cfg.palette) do
+      add("    " .. k .. " = " .. fmt_val(v) .. ",")
+    end
+    add("  },")
+  end
+
+  -- Custom highlights (just show the names)
+  if cfg.custom_highlights then
+    local hl_names = {}
+    for name, _ in pairs(cfg.custom_highlights) do
+      table.insert(hl_names, name)
+    end
+    table.sort(hl_names)
+    add("  custom_highlights = {")
+    for _, name in ipairs(hl_names) do
+      add("    " .. name .. " = { ... },")
+    end
+    add("  },")
+  end
+
+  -- Mux sub-table
+  if cfg.mux then
+    add("  mux = {")
+    for mode, entry in pairs(cfg.mux) do
+      add('    ["' .. mode .. '"] = {')
+      for k, v in pairs(entry) do
+        add("      " .. k .. " = " .. fmt_val(v) .. ",")
+      end
+      add("    },")
+    end
+    add("  },")
+  end
+
+  add("})")
+end
+
 --- Format a scene table as readable config lines for buffer display.
 ---@param scene table
 ---@param index number|nil scene index
@@ -898,63 +962,31 @@ function M.scene_to_lines(scene, index, total)
   end
   add("-- " .. string.rep("─", 50))
   add("")
-  add("require('wildest').setup({")
 
-  -- Core fields
-  local field_order = {
-    "renderer", "pipeline", "highlighter",
-    "left", "right", "separator", "ellipsis",
-    "border", "title", "position",
-    "max_height", "min_height", "fixed_height",
-    "noselect", "reverse", "pumblend", "offset",
-    "empty_message",
-    "highlights", "gradient_colors",
-  }
+  setup_block_lines(scene, lines, add)
 
-  for _, key in ipairs(field_order) do
-    local val = scene[key]
-    if val ~= nil then
-      add("  " .. key .. " = " .. fmt_val(val) .. ",")
-    end
+  return lines
+end
+
+--- Format a named config as readable lines for screenshot buffer display.
+---@param name string  config key from M.configs
+---@return string[] lines
+function M.config_to_lines(name)
+  local cfg = M.configs[name]
+  if not cfg then
+    return { "-- unknown config: " .. name }
   end
 
-  -- Palette sub-table
-  if scene.palette then
-    add("  palette = {")
-    for k, v in pairs(scene.palette) do
-      add("    " .. k .. " = " .. fmt_val(v) .. ",")
-    end
-    add("  },")
-  end
+  local label = cfg.label or name
+  local lines = {}
+  local function add(s) table.insert(lines, s) end
 
-  -- Custom highlights (just show the names)
-  if scene.custom_highlights then
-    local hl_names = {}
-    for name, _ in pairs(scene.custom_highlights) do
-      table.insert(hl_names, name)
-    end
-    table.sort(hl_names)
-    add("  custom_highlights = {")
-    for _, name in ipairs(hl_names) do
-      add("    " .. name .. " = { ... },")
-    end
-    add("  },")
-  end
+  add("-- wildest.nvim")
+  add('-- "' .. label .. '" (' .. name .. ")")
+  add("-- " .. string.rep("─", 50))
+  add("")
 
-  -- Mux sub-table
-  if scene.mux then
-    add("  mux = {")
-    for mode, entry in pairs(scene.mux) do
-      add('    ["' .. mode .. '"] = {')
-      for k, v in pairs(entry) do
-        add("      " .. k .. " = " .. fmt_val(v) .. ",")
-      end
-      add("    },")
-    end
-    add("  },")
-  end
-
-  add("})")
+  setup_block_lines(cfg, lines, add)
 
   return lines
 end
@@ -1203,14 +1235,51 @@ function M.apply_vim_opts(vim_opts)
   end
 end
 
+-- ── Shared setup defaults ────────────────────────────────────────
+
+M.setup_defaults = {
+  modes = { ":", "/", "?" },
+  next_key = "<Tab>",
+  previous_key = "<S-Tab>",
+  accept_key = "<Down>",
+  reject_key = "<Up>",
+}
+
+-- ── Screenshot init helper ──────────────────────────────────────
+
+--- Bootstrap a screenshot session: set buffer content to the config's own
+--- description, apply the config, and configure wildest.
+---@param config_name string  key from M.configs (or env WILDEST_CONFIG)
+function M.screenshot_init(config_name)
+  local configs_dir = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":h")
+  local root = vim.fn.fnamemodify(configs_dir, ":h:h")
+  M.setup(root)
+
+  local w = require("wildest")
+  config_name = config_name or "popupmenu_border"
+  vim.o.statusline = " %f %m%= " .. config_name .. " "
+
+  -- Write config description as buffer content
+  local lines = M.config_to_lines(config_name)
+  vim.bo.modifiable = true
+  vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+  vim.bo.filetype = "lua"
+  vim.bo.modified = false
+  vim.api.nvim_win_set_cursor(0, { 1, 0 })
+
+  local built, vim_opts = M.build(config_name, w)
+  w.setup(vim.tbl_extend("force", M.setup_defaults, built))
+  M.apply_vim_opts(vim_opts)
+end
+
 -- ── GIF init helper ──────────────────────────────────────────────
 
 --- Bootstrap a GIF session: generate scenes, dump JSON, wire <C-n> cycling.
 ---@param name string  GIF name used for the JSON dump (e.g. "showdown")
 ---@param n number|nil Number of scenes (default 25)
 function M.gif_init(name, n)
-  local script_dir = vim.fn.fnamemodify(debug.getinfo(2, "S").source:sub(2), ":h")
-  local root = vim.fn.fnamemodify(script_dir, ":h:h")
+  local configs_dir = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":h")
+  local root = vim.fn.fnamemodify(configs_dir, ":h:h")
   M.setup(root)
 
   local w = require("wildest")
@@ -1218,9 +1287,9 @@ function M.gif_init(name, n)
   local scenes = M.random_scenes(n)
 
   -- Dump scene configs for debugging
-  local output_dir = script_dir .. "/output"
-  vim.fn.mkdir(output_dir, "p")
-  local f = io.open(output_dir .. "/" .. name .. "_scenes.json", "w")
+  local out_dir = configs_dir .. "/output"
+  vim.fn.mkdir(out_dir, "p")
+  local f = io.open(out_dir .. "/" .. name .. "_scenes.json", "w")
   if f then
     f:write(vim.json.encode(scenes))
     f:close()
@@ -1244,13 +1313,7 @@ function M.gif_init(name, n)
     vim.api.nvim_win_set_cursor(0, { 1, 0 })
 
     local built, vim_opts = M.build(scene, w)
-    w.setup(vim.tbl_extend("force", {
-      modes = { ":", "/", "?" },
-      next_key = "<Tab>",
-      previous_key = "<S-Tab>",
-      accept_key = "<Down>",
-      reject_key = "<Up>",
-    }, built))
+    w.setup(vim.tbl_extend("force", M.setup_defaults, built))
     M.apply_vim_opts(vim_opts)
   end
 

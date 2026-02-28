@@ -32,7 +32,7 @@ local script_dir = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":h")
 local root_dir = vim.fn.fnamemodify(script_dir .. "/../..", ":p"):gsub("/$", "")
 local output_dir = script_dir .. "/output"
 local init_lua = script_dir .. "/init.lua"
-local sample_lua = script_dir .. "/sample.lua"
+local gif_init_lua = script_dir .. "/gif_init.lua"
 
 -- ── Load configs ─────────────────────────────────────────────────
 
@@ -83,22 +83,14 @@ local function file_size_human(path)
   end
 end
 
--- ── VHS tape generation ──────────────────────────────────────────
+-- ── VHS helpers ──────────────────────────────────────────────────
 
-local function generate_tape(config_name, generate_gifs)
-  local cmd = get_cmd(config_name)
-  local mode = cmd:sub(1, 1)
-  local typed = cmd:sub(2)
-  local nvim_cmd = string.format("WILDEST_CONFIG=%s nvim -u %s -i NONE %s", config_name, init_lua, sample_lua)
-
-  local parts = {}
-
-  if generate_gifs then
-    table.insert(parts, string.format('Output "%s/%s.gif"', output_dir, config_name))
-    table.insert(parts, "")
-  end
-
-  table.insert(parts, string.format([[Require nvim
+--- Shared VHS preamble (shell, font, dimensions, theme).
+---@param typing_speed string|nil  e.g. "50ms" (default "50ms")
+---@return string
+local function vhs_preamble(typing_speed)
+  typing_speed = typing_speed or "50ms"
+  return string.format([[Require nvim
 
 Set Shell "bash"
 Set FontSize %d
@@ -107,7 +99,26 @@ Set Width %d
 Set Height %d
 Set Padding %d
 Set Theme "%s"
-Set TypingSpeed 50ms
+Set TypingSpeed %s]], settings.font_size, settings.font_family, settings.width, settings.height,
+    settings.padding, settings.theme, typing_speed)
+end
+
+-- ── VHS tape generation ──────────────────────────────────────────
+
+local function generate_tape(config_name, generate_gifs)
+  local cmd = get_cmd(config_name)
+  local mode = cmd:sub(1, 1)
+  local typed = cmd:sub(2)
+  local nvim_cmd = string.format("WILDEST_CONFIG=%s nvim -u %s -i NONE", config_name, init_lua)
+
+  local parts = {}
+
+  if generate_gifs then
+    table.insert(parts, string.format('Output "%s/%s.gif"', output_dir, config_name))
+    table.insert(parts, "")
+  end
+
+  table.insert(parts, string.format([[%s
 
 Type "%s"
 Enter
@@ -124,8 +135,7 @@ Escape
 Sleep 300ms
 Type ":q!"
 Enter
-Sleep 500ms]], settings.font_size, settings.font_family, settings.width, settings.height,
-    settings.padding, settings.theme, nvim_cmd, mode, typed, output_dir, config_name))
+Sleep 500ms]], vhs_preamble(), nvim_cmd, mode, typed, output_dir, config_name))
 
   local path = os.tmpname() .. ".tape"
   local f = io.open(path, "w")
@@ -330,28 +340,19 @@ local function build_scene_tape(n)
   return table.concat(parts, "\n")
 end
 
--- ── Showdown GIF ─────────────────────────────────────────────────
+-- ── Animated GIF generation ──────────────────────────────────────
 
-local function generate_showdown()
-  printf("Generating animated showdown GIF...")
+local function generate_gif(name)
+  printf("Generating animated %s GIF...", name)
 
-  local showdown_init = script_dir .. "/showdown_init.lua"
   local scene_tape = build_scene_tape(25)
-  local tape = string.format([[Output "%s/showdown.gif"
+  local nvim_cmd = string.format("WILDEST_GIF_NAME=%s nvim -u %s -i NONE", name, gif_init_lua)
+  local tape = string.format([[Output "%s/%s.gif"
 
-Require nvim
-
-Set Shell "bash"
-Set FontSize %d
-Set FontFamily "%s"
-Set Width %d
-Set Height %d
-Set Padding %d
-Set Theme "%s"
-Set TypingSpeed 60ms
+%s
 
 Hide
-Type "nvim -u %s -i NONE %s"
+Type "%s"
 Enter
 Sleep 2s
 Show
@@ -361,8 +362,7 @@ Show
 Hide
 Type ":q!"
 Enter
-Sleep 500ms]], output_dir, settings.font_size, settings.font_family, settings.width, settings.height,
-    settings.padding, settings.theme, showdown_init, sample_lua, scene_tape)
+Sleep 500ms]], output_dir, name, vhs_preamble("60ms"), nvim_cmd, scene_tape)
 
   local tape_file = os.tmpname() .. ".tape"
   local f = io.open(tape_file, "w")
@@ -372,61 +372,10 @@ Sleep 500ms]], output_dir, settings.font_size, settings.font_family, settings.wi
   local ok = run_vhs(tape_file)
   os.remove(tape_file)
 
-  if ok and file_exists(output_dir .. "/showdown.gif") then
-    printf("  OK: showdown.gif (%s)", file_size_human(output_dir .. "/showdown.gif"))
+  if ok and file_exists(output_dir .. "/" .. name .. ".gif") then
+    printf("  OK: %s.gif (%s)", name, file_size_human(output_dir .. "/" .. name .. ".gif"))
   else
-    printf("  FAILED: showdown.gif")
-    return false
-  end
-  return true
-end
-
--- ── Gunsmoke GIF ─────────────────────────────────────────────────
-
-local function generate_gunsmoke()
-  printf("Generating animated gunsmoke GIF...")
-
-  local gunsmoke_init = script_dir .. "/gunsmoke_init.lua"
-  local scene_tape = build_scene_tape(25)
-  local tape = string.format([[Output "%s/gunsmoke.gif"
-
-Require nvim
-
-Set Shell "bash"
-Set FontSize %d
-Set FontFamily "%s"
-Set Width %d
-Set Height %d
-Set Padding %d
-Set Theme "%s"
-Set TypingSpeed 60ms
-
-Hide
-Type "nvim -u %s -i NONE %s"
-Enter
-Sleep 2s
-Show
-
-%s
-
-Hide
-Type ":q!"
-Enter
-Sleep 500ms]], output_dir, settings.font_size, settings.font_family, settings.width, settings.height,
-    settings.padding, settings.theme, gunsmoke_init, sample_lua, scene_tape)
-
-  local tape_file = os.tmpname() .. ".tape"
-  local f = io.open(tape_file, "w")
-  f:write(tape)
-  f:close()
-
-  local ok = run_vhs(tape_file)
-  os.remove(tape_file)
-
-  if ok and file_exists(output_dir .. "/gunsmoke.gif") then
-    printf("  OK: gunsmoke.gif (%s)", file_size_human(output_dir .. "/gunsmoke.gif"))
-  else
-    printf("  FAILED: gunsmoke.gif")
+    printf("  FAILED: %s.gif", name)
     return false
   end
   return true
@@ -671,10 +620,10 @@ local function main()
   -- GIF-only mode
   if #configs_to_run == 0 and (generate_showdown_flag or generate_gunsmoke_flag) then
     if generate_showdown_flag then
-      generate_showdown()
+      generate_gif("showdown")
     end
     if generate_gunsmoke_flag then
-      generate_gunsmoke()
+      generate_gif("gunsmoke")
     end
     printf("")
     printf("Output: %s/", output_dir)
@@ -729,10 +678,10 @@ local function main()
 
   -- Generate GIFs if requested alongside screenshots
   if generate_showdown_flag then
-    generate_showdown()
+    generate_gif("showdown")
   end
   if generate_gunsmoke_flag then
-    generate_gunsmoke()
+    generate_gif("gunsmoke")
   end
 
   os.exit(failed > 0 and 1 or 0)

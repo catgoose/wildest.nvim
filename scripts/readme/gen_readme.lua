@@ -150,20 +150,19 @@ local function img_cell(name, label, width)
 end
 
 local function gallery_table(names, prefix, label_fn)
+  local cols = 3
   local lines = { "<table>" }
-  for i = 1, #names, 2 do
-    local name1 = names[i]
-    local name2 = names[i + 1]
-    local img_name1 = prefix and (prefix .. name1) or name1
-    local img_name2 = name2 and (prefix and (prefix .. name2) or name2) or nil
-    local label1 = label_fn and label_fn(name1) or get_label(name1)
-    local label2 = name2 and (label_fn and label_fn(name2) or get_label(name2)) or nil
+  for i = 1, #names, cols do
     lines[#lines + 1] = "<tr>"
-    lines[#lines + 1] = img_cell(img_name1, label1)
-    if img_name2 then
-      lines[#lines + 1] = img_cell(img_name2, label2)
-    else
-      lines[#lines + 1] = "<td></td>"
+    for j = 0, cols - 1 do
+      local name = names[i + j]
+      if name then
+        local img_name = prefix and (prefix .. name) or name
+        local label = label_fn and label_fn(name) or get_label(name)
+        lines[#lines + 1] = img_cell(img_name, label)
+      else
+        lines[#lines + 1] = "<td></td>"
+      end
     end
     lines[#lines + 1] = "</tr>"
   end
@@ -434,20 +433,19 @@ local function img_cell_detailed(config_name, label, width)
 end
 
 local function gallery_table_detailed(names, prefix, label_fn)
+  local cols = 3
   local lines = { "<table>" }
-  for i = 1, #names, 2 do
-    local name1 = names[i]
-    local name2 = names[i + 1]
-    local img_name1 = prefix and (prefix .. name1) or name1
-    local img_name2 = name2 and (prefix and (prefix .. name2) or name2) or nil
-    local label1 = label_fn and label_fn(name1) or get_label(name1)
-    local label2 = name2 and (label_fn and label_fn(name2) or get_label(name2)) or nil
+  for i = 1, #names, cols do
     lines[#lines + 1] = "<tr>"
-    lines[#lines + 1] = img_cell_detailed(img_name1, label1)
-    if img_name2 then
-      lines[#lines + 1] = img_cell_detailed(img_name2, label2)
-    else
-      lines[#lines + 1] = "<td></td>"
+    for j = 0, cols - 1 do
+      local name = names[i + j]
+      if name then
+        local img_name = prefix and (prefix .. name) or name
+        local label = label_fn and label_fn(name) or get_label(name)
+        lines[#lines + 1] = img_cell_detailed(img_name, label)
+      else
+        lines[#lines + 1] = "<td></td>"
+      end
     end
     lines[#lines + 1] = "</tr>"
   end
