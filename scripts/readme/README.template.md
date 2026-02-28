@@ -59,6 +59,10 @@
 [Documentation](https://catgoose.github.io/wildest.nvim/)
 
 <p align="center">
+  <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gunsmoke.gif" alt="wildest.nvim gunsmoke" width="800">
+</p>
+
+<p align="center">
   <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/showdown.gif" alt="wildest.nvim showdown" width="800">
 </p>
 

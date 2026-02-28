@@ -8,7 +8,7 @@ MINI_DIR := $(DEPS_DIR)/mini.nvim
 
 .PHONY: help test test_file lint docs docs-vimdoc docs-html build clean deps \
        screenshots screenshots-themes screenshots-renderers screenshots-features \
-       screenshots-pipelines screenshots-highlights showdown screenshots-all \
+       screenshots-pipelines screenshots-highlights showdown gunsmoke screenshots-all \
        readme readme-check
 
 ## Show this help
@@ -74,10 +74,14 @@ screenshots-highlights:
 showdown:
 	scripts/screenshots/generate.sh --showdown
 
-## Generate all screenshots + showdown GIF (clean first)
+## Generate animated gunsmoke GIF
+gunsmoke:
+	scripts/screenshots/generate.sh --gunsmoke
+
+## Generate all screenshots + GIFs (clean first)
 screenshots-all:
 	rm -rf scripts/screenshots/output
-	$(MAKE) screenshots showdown
+	$(MAKE) screenshots showdown gunsmoke
 
 ## Generate README.md from template
 readme:

@@ -13,6 +13,7 @@
 #   ./generate.sh --options        # Generate renderer option screenshots only
 #   ./generate.sh --gifs           # Also generate animated GIFs
 #   ./generate.sh --showdown        # Generate the animated showdown GIF only
+#   ./generate.sh --gunsmoke        # Generate the animated gunsmoke GIF only
 #   ./generate.sh -j4              # Run 4 screenshots in parallel
 #   ./generate.sh --install-deps   # Install VHS, ttyd, and Nerd Font (for CI)
 #
@@ -131,6 +132,7 @@ PADDING=20
 VHS_THEME="Catppuccin Mocha"
 GENERATE_GIFS=false
 GENERATE_SHOWDOWN=false
+GENERATE_GUNSMOKE=false
 
 # ── Showdown scenes ──────────────────────────────────────────────
 # The showdown GIF uses a hard-coded tape (see generate_showdown) so
@@ -424,6 +426,166 @@ TAPE
   rm -f "$tape_file"
 }
 
+# Generate the animated gunsmoke GIF (single nvim session, 10 packed scenes)
+generate_gunsmoke() {
+  echo "Generating animated gunsmoke GIF..."
+
+  local gunsmoke_init="$SCRIPT_DIR/gunsmoke_init.lua"
+  local tape_file
+  tape_file="$(mktemp /tmp/wildest_gunsmoke_XXXXXX.tape)"
+
+  cat >"$tape_file" <<TAPE
+Output "${OUTPUT_DIR}/gunsmoke.gif"
+
+Require nvim
+
+Set Shell "bash"
+Set FontSize $FONT_SIZE
+Set FontFamily "$FONT_FAMILY"
+Set Width $WIDTH
+Set Height $HEIGHT
+Set Padding $PADDING
+Set Theme "$VHS_THEME"
+Set TypingSpeed 60ms
+
+Hide
+Type "nvim -u ${gunsmoke_init} -i NONE ${SAMPLE_LUA}"
+Enter
+Sleep 2s
+Show
+
+# ── Scene 1: The Stranger Rides In (Act I) ──
+Type ":"
+Sleep 300ms
+Type@150ms "set fold"
+Sleep 3s
+Escape
+Sleep 300ms
+
+# ── Scene 2: Wanted: Dead or Alive (Act I) ──
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@100ms "help nvim_b"
+Sleep 2.5s
+Escape
+Sleep 300ms
+
+# ── Scene 3: Quick Draw (Act II) ──
+Ctrl+n
+Sleep 500ms
+
+Type ":"
+Sleep 300ms
+Type@40ms "e lua/wildest/"
+Sleep 1.5s
+Escape
+Sleep 300ms
+
+# ── Scene 4: High Noon (Act II) ──
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@50ms "set fold"
+Sleep 1.5s
+Escape
+Sleep 300ms
+
+# ── Scene 5: Tumbleweed (Act II) ──
+Ctrl+n
+Sleep 300ms
+
+Type "/"
+Sleep 300ms
+Type@80ms "function"
+Sleep 2.5s
+Escape
+Sleep 300ms
+
+# ── Scene 6: Neon Saloon (Act II) ──
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@60ms "e lua/wildest/"
+Sleep 2s
+Escape
+Sleep 300ms
+
+# ── Scene 7: Sunset Riders (Act II) ──
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@80ms "help help-"
+Sleep 2.5s
+Escape
+Sleep 300ms
+
+# ── Scene 8: The Posse (Act III) ──
+Ctrl+n
+Sleep 500ms
+
+Type ":"
+Sleep 300ms
+Type@60ms "set fold"
+Sleep 1s
+Escape
+Sleep 300ms
+Type "/"
+Sleep 300ms
+Type@60ms "function"
+Sleep 1.5s
+Escape
+Sleep 300ms
+
+# ── Scene 9: Ember Trail (Act III) ──
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@60ms "lua vim.api.nvim"
+Sleep 2s
+Escape
+Sleep 300ms
+
+# ── Scene 10: Ride Into the Sunset (Act III) ──
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@120ms "help help-"
+Sleep 3s
+Escape
+Sleep 300ms
+
+Hide
+Type ":q!"
+Enter
+Sleep 500ms
+TAPE
+
+  if vhs "$tape_file" 2>&1; then
+    local size
+    size="$(du -h "$OUTPUT_DIR/gunsmoke.gif" | cut -f1)"
+    echo "  OK: gunsmoke.gif ($size)"
+  else
+    echo "  FAILED: gunsmoke.gif"
+    rm -f "$tape_file"
+    return 1
+  fi
+
+  rm -f "$tape_file"
+}
+
 # ── Main ───────────────────────────────────────────────────────────
 
 main() {
@@ -467,6 +629,7 @@ main() {
       --options)     configs_to_run+=("${OPTION_CONFIGS[@]}") ;;
       --gifs)        GENERATE_GIFS=true ;;
       --showdown)    GENERATE_SHOWDOWN=true ;;
+      --gunsmoke)    GENERATE_GUNSMOKE=true ;;
       -j*)           PARALLEL_JOBS="${1#-j}" ;;
       --install-deps) install_deps ;;
       *)
@@ -478,7 +641,7 @@ main() {
   done
 
   # Default: all configs
-  if [ ${#configs_to_run[@]} -eq 0 ] && [ "$GENERATE_SHOWDOWN" = false ]; then
+  if [ ${#configs_to_run[@]} -eq 0 ] && [ "$GENERATE_SHOWDOWN" = false ] && [ "$GENERATE_GUNSMOKE" = false ]; then
     configs_to_run=("${ALL_CONFIGS[@]}")
   fi
 
@@ -486,9 +649,14 @@ main() {
   ensure_devicons
   mkdir -p "$OUTPUT_DIR"
 
-  # Showdown-only mode: just generate the showdown GIF and exit
-  if [ "$GENERATE_SHOWDOWN" = true ] && [ ${#configs_to_run[@]} -eq 0 ]; then
-    generate_showdown
+  # GIF-only mode: just generate the requested GIF(s) and exit
+  if [ ${#configs_to_run[@]} -eq 0 ] && { [ "$GENERATE_SHOWDOWN" = true ] || [ "$GENERATE_GUNSMOKE" = true ]; }; then
+    if [ "$GENERATE_SHOWDOWN" = true ]; then
+      generate_showdown
+    fi
+    if [ "$GENERATE_GUNSMOKE" = true ]; then
+      generate_gunsmoke
+    fi
     echo ""
     echo "Output: $OUTPUT_DIR/"
     exit 0
@@ -533,9 +701,12 @@ main() {
   echo "Done: $succeeded succeeded, $failed failed"
   echo "Screenshots: $OUTPUT_DIR/"
 
-  # Generate showdown GIF if requested alongside screenshots
+  # Generate GIFs if requested alongside screenshots
   if [ "$GENERATE_SHOWDOWN" = true ]; then
     generate_showdown
+  fi
+  if [ "$GENERATE_GUNSMOKE" = true ]; then
+    generate_gunsmoke
   fi
 }
 
