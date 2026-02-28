@@ -11,103 +11,103 @@ and reference the config key so we can reproduce it.
 <details>
 <summary><strong>Renderers</strong></summary>
 
-<!-- gen:renderer_gallery:start -->
-<!-- gen:renderer_gallery:end -->
+<!-- gen:renderer_gallery_test:start -->
+<!-- gen:renderer_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Features</strong></summary>
 
-<!-- gen:feature_gallery:start -->
-<!-- gen:feature_gallery:end -->
+<!-- gen:feature_gallery_test:start -->
+<!-- gen:feature_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Pipelines</strong></summary>
 
-<!-- gen:pipeline_gallery:start -->
-<!-- gen:pipeline_gallery:end -->
+<!-- gen:pipeline_gallery_test:start -->
+<!-- gen:pipeline_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Border Styles</strong></summary>
 
-<!-- gen:border_gallery:start -->
-<!-- gen:border_gallery:end -->
+<!-- gen:border_gallery_test:start -->
+<!-- gen:border_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Wildmenu Variants</strong></summary>
 
-<!-- gen:wildmenu_variant_gallery:start -->
-<!-- gen:wildmenu_variant_gallery:end -->
+<!-- gen:wildmenu_variant_gallery_test:start -->
+<!-- gen:wildmenu_variant_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Palette Variants</strong></summary>
 
-<!-- gen:palette_variant_gallery:start -->
-<!-- gen:palette_variant_gallery:end -->
+<!-- gen:palette_variant_gallery_test:start -->
+<!-- gen:palette_variant_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Dimensions</strong></summary>
 
-<!-- gen:dimension_gallery:start -->
-<!-- gen:dimension_gallery:end -->
+<!-- gen:dimension_gallery_test:start -->
+<!-- gen:dimension_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Gradients</strong></summary>
 
-<!-- gen:gradient_gallery:start -->
-<!-- gen:gradient_gallery:end -->
+<!-- gen:gradient_gallery_test:start -->
+<!-- gen:gradient_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Combinations</strong></summary>
 
-<!-- gen:combination_gallery:start -->
-<!-- gen:combination_gallery:end -->
+<!-- gen:combination_gallery_test:start -->
+<!-- gen:combination_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Custom Highlights</strong></summary>
 
-<!-- gen:highlight_gallery:start -->
-<!-- gen:highlight_gallery:end -->
+<!-- gen:highlight_gallery_test:start -->
+<!-- gen:highlight_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Themes</strong></summary>
 
-<!-- gen:theme_gallery:start -->
-<!-- gen:theme_gallery:end -->
+<!-- gen:theme_gallery_test:start -->
+<!-- gen:theme_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Layout Variations</strong></summary>
 
-<!-- gen:layout_gallery:start -->
-<!-- gen:layout_gallery:end -->
+<!-- gen:layout_gallery_test:start -->
+<!-- gen:layout_gallery_test:end -->
 
 </details>
 
 <details>
 <summary><strong>Renderer Options</strong></summary>
 
-<!-- gen:option_gallery:start -->
-<!-- gen:option_gallery:end -->
+<!-- gen:option_gallery_test:start -->
+<!-- gen:option_gallery_test:end -->
 
 </details>

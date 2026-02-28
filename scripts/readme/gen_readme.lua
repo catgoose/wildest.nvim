@@ -171,6 +171,290 @@ local function gallery_table(names, prefix, label_fn)
   return table.concat(lines, "\n")
 end
 
+-- ── Lua value serializer ─────────────────────────────────────────
+
+local function serialize_lua(v, indent)
+  indent = indent or 0
+  local t = type(v)
+  if t == "string" then
+    return string.format("%q", v)
+  elseif t == "number" or t == "boolean" then
+    return tostring(v)
+  elseif t ~= "table" then
+    return tostring(v)
+  end
+  local pad = string.rep("  ", indent + 1)
+  local pad_close = string.rep("  ", indent)
+  -- Check if sequential list
+  local count = 0
+  for _ in pairs(v) do count = count + 1 end
+  if count == #v and count > 0 then
+    local parts = {}
+    for _, item in ipairs(v) do
+      parts[#parts + 1] = serialize_lua(item, 0)
+    end
+    local inline = "{ " .. table.concat(parts, ", ") .. " }"
+    if #inline <= 60 then return inline end
+    local lines = { "{" }
+    for _, item in ipairs(v) do
+      lines[#lines + 1] = pad .. serialize_lua(item, indent + 1) .. ","
+    end
+    lines[#lines + 1] = pad_close .. "}"
+    return table.concat(lines, "\n")
+  end
+  -- Dict-style table
+  local keys = {}
+  for k in pairs(v) do keys[#keys + 1] = k end
+  table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+  local parts = {}
+  for _, k in ipairs(keys) do
+    local ks = (type(k) == "string" and k:match("^[%a_][%w_]*$")) and k
+      or ("[" .. serialize_lua(k, 0) .. "]")
+    parts[#parts + 1] = ks .. " = " .. serialize_lua(v[k], 0)
+  end
+  local inline = "{ " .. table.concat(parts, ", ") .. " }"
+  if #inline <= 60 then return inline end
+  local lines = { "{" }
+  for _, k in ipairs(keys) do
+    local ks = (type(k) == "string" and k:match("^[%a_][%w_]*$")) and k
+      or ("[" .. serialize_lua(k, 0) .. "]")
+    lines[#lines + 1] = pad .. ks .. " = " .. serialize_lua(v[k], indent + 1) .. ","
+  end
+  lines[#lines + 1] = pad_close .. "}"
+  return table.concat(lines, "\n")
+end
+
+-- ── Config serializer ────────────────────────────────────────────
+
+local config_field_order = {
+  "cmd", "renderer", "theme", "pipeline", "highlighter", "highlights",
+  "left", "right", "separator", "ellipsis",
+  "border", "title", "position",
+  "max_height", "min_height", "fixed_height", "max_width",
+  "noselect", "reverse", "pumblend", "offset",
+  "empty_message", "laststatus", "cmdheight",
+  "gradient_colors", "custom_highlights",
+  "palette", "mux",
+}
+
+local config_skip_keys = { category = true, label = true }
+
+local function config_to_lua(name)
+  local raw = configs_mod.configs[name]
+  if not raw then return "-- (unknown config)" end
+  local seen = {}
+  local parts = {}
+  for _, key in ipairs(config_field_order) do
+    if raw[key] ~= nil and not config_skip_keys[key] then
+      seen[key] = true
+      parts[#parts + 1] = key .. " = " .. serialize_lua(raw[key], 0) .. ","
+    end
+  end
+  for k, v in pairs(raw) do
+    if not seen[k] and not config_skip_keys[k] then
+      parts[#parts + 1] = k .. " = " .. serialize_lua(v, 0) .. ","
+    end
+  end
+  if #parts == 0 then
+    return "-- (default settings)"
+  end
+  return table.concat(parts, "\n")
+end
+
+-- ── Expect description generator ─────────────────────────────────
+
+local function gen_expect(name)
+  local raw = configs_mod.configs[name]
+  if not raw then return name end
+
+  local merged = vim.tbl_extend("keep", raw, configs_mod.defaults)
+  if merged.theme then
+    merged.renderer = "theme:" .. merged.theme
+    merged.highlights = false
+  end
+
+  local tokens = {}
+  local function add(s) tokens[#tokens + 1] = s end
+
+  -- Renderer
+  local renderer = merged.renderer or "theme:auto"
+  if renderer == "popupmenu" then
+    add("plain popupmenu")
+  elseif renderer == "border_theme" then
+    add("bordered")
+  elseif renderer == "palette" then
+    add("palette")
+  elseif renderer == "wildmenu" then
+    add("wildmenu")
+  elseif renderer == "mux" then
+    add("renderer mux")
+  elseif renderer:match("^theme:") then
+    local theme_name = renderer:match("^theme:(.+)$")
+    add(theme_name .. " theme")
+    if theme_meta[theme_name] then
+      add(theme_meta[theme_name].renderer)
+    end
+  end
+
+  -- Border
+  if merged.border then
+    add(merged.border)
+  end
+
+  -- Notable options
+  if merged.title then add("title") end
+  if merged.position and merged.position ~= "bottom" then
+    add("position=" .. merged.position)
+  end
+  if merged.reverse then add("reverse") end
+  if merged.noselect == true then add("noselect") end
+  if merged.noselect == false then add("noselect=false") end
+  if merged.pumblend then add("pumblend=" .. merged.pumblend) end
+  if merged.offset then add("offset=" .. merged.offset) end
+  if merged.max_height then add("max_height=" .. merged.max_height) end
+  if merged.min_height then add("min_height=" .. merged.min_height) end
+  if merged.fixed_height == false then add("fixed_height=false") end
+  if merged.empty_message then add("empty_message") end
+  if merged.ellipsis then add("ellipsis") end
+
+  -- Highlighter
+  add(merged.highlighter or "fzy")
+
+  -- Left components
+  local left = merged.left
+  local has_devicons, has_kind, has_buffer_flags = false, false, false
+  if type(left) == "string" then
+    if left == "devicons" then has_devicons = true end
+  elseif type(left) == "table" then
+    for _, item in ipairs(left) do
+      if item == "devicons" then has_devicons = true end
+      if item == "kind_icon" then has_kind = true end
+      if item == "buffer_flags" then has_buffer_flags = true end
+    end
+  end
+  if has_devicons then add("devicons") end
+  if has_kind then add("kind icons") end
+  if has_buffer_flags then add("buffer flags") end
+  if not has_devicons and configs_mod.defaults.left == "devicons"
+    and renderer ~= "wildmenu" and renderer ~= "mux" then
+    add("no devicons")
+  end
+
+  -- Right components
+  local has_scrollbar = false
+  if type(merged.right) == "table" then
+    for _, item in ipairs(merged.right) do
+      if item == "scrollbar" then has_scrollbar = true end
+    end
+  end
+  if has_scrollbar then add("scrollbar") end
+  local default_has_scrollbar = false
+  if type(configs_mod.defaults.right) == "table" then
+    for _, item in ipairs(configs_mod.defaults.right) do
+      if item == "scrollbar" then default_has_scrollbar = true end
+    end
+  end
+  if not has_scrollbar and default_has_scrollbar
+    and renderer ~= "wildmenu" and renderer ~= "mux" then
+    add("no scrollbar")
+  end
+
+  -- Wildmenu-specific
+  if renderer == "wildmenu" then
+    local has_arrows = false
+    if type(left) == "table" then
+      for _, item in ipairs(left) do
+        if item == "arrows" then has_arrows = true end
+      end
+    end
+    if type(merged.right) == "table" then
+      for _, item in ipairs(merged.right) do
+        if item == "arrows_right" then has_arrows = true end
+      end
+    end
+    if has_arrows then add("arrows") end
+    if type(merged.right) == "table" then
+      for _, item in ipairs(merged.right) do
+        if item == "index" then add("index"); break end
+      end
+    end
+    if merged.separator then
+      add('separator="' .. merged.separator .. '"')
+    end
+  end
+
+  -- Pipeline (non-default)
+  if merged.pipeline then
+    for _, p in ipairs(merged.pipeline) do
+      if p == "lua" then add("lua pipeline") end
+      if p == "help_fuzzy" then add("help pipeline") end
+      if p == "history" then add("history pipeline") end
+    end
+  end
+
+  -- Layout (non-default)
+  if merged.laststatus ~= configs_mod.defaults.laststatus then
+    add("laststatus=" .. merged.laststatus)
+  end
+  if merged.cmdheight ~= configs_mod.defaults.cmdheight then
+    add("cmdheight=" .. merged.cmdheight)
+  end
+
+  -- Highlights
+  if merged.custom_highlights then add("custom highlights") end
+  if merged.gradient_colors then add("gradient colors") end
+
+  -- Command
+  local cmd = raw.cmd or configs_mod.default_cmd
+  add(cmd:match("^(.-)%s*$"))
+
+  return table.concat(tokens, ", ")
+end
+
+-- ── Detailed HTML helpers ────────────────────────────────────────
+
+local function img_cell_detailed(config_name, label, width)
+  width = width or 400
+  label = label or config_name
+  local expect = gen_expect(config_name)
+  local config_lua = config_to_lua(config_name)
+  return string.format(
+    '<td align="center">\n'
+    .. '<strong>%s</strong><br>\n'
+    .. '<em>%s</em><br>\n'
+    .. '<img src="%s%s.png" width="%d"><br>\n'
+    .. '<details><summary>Config</summary>\n'
+    .. '<pre><code class="language-lua">\n'
+    .. '%s\n'
+    .. '</code></pre>\n'
+    .. '</details>\n'
+    .. '</td>',
+    label, expect, IMG_BASE, config_name, width, config_lua
+  )
+end
+
+local function gallery_table_detailed(names, prefix, label_fn)
+  local lines = { "<table>" }
+  for i = 1, #names, 2 do
+    local name1 = names[i]
+    local name2 = names[i + 1]
+    local img_name1 = prefix and (prefix .. name1) or name1
+    local img_name2 = name2 and (prefix and (prefix .. name2) or name2) or nil
+    local label1 = label_fn and label_fn(name1) or get_label(name1)
+    local label2 = name2 and (label_fn and label_fn(name2) or get_label(name2)) or nil
+    lines[#lines + 1] = "<tr>"
+    lines[#lines + 1] = img_cell_detailed(img_name1, label1)
+    if img_name2 then
+      lines[#lines + 1] = img_cell_detailed(img_name2, label2)
+    else
+      lines[#lines + 1] = "<td></td>"
+    end
+    lines[#lines + 1] = "</tr>"
+  end
+  lines[#lines + 1] = "</table>"
+  return table.concat(lines, "\n")
+end
+
 -- ── Section generators ─────────────────────────────────────────────
 
 local function gen_screenshot_table()
@@ -319,6 +603,69 @@ local function gen_option_gallery()
   return gallery_table(configs_mod.option_names, nil, nil)
 end
 
+-- ── Test section generators (for SCREENSHOTS.md) ──────────────────
+
+local function gen_renderer_gallery_test()
+  return gallery_table_detailed(configs_mod.renderer_names, nil, nil)
+end
+
+local function gen_feature_gallery_test()
+  return gallery_table_detailed(configs_mod.feature_names, nil, nil)
+end
+
+local function gen_pipeline_gallery_test()
+  local names = {}
+  for _, n in ipairs(configs_mod.pipeline_names) do
+    names[#names + 1] = n
+  end
+  names[#names + 1] = "search"
+  local label_fn = function(n)
+    if n == "search" then return "Search" end
+    return get_label(n)
+  end
+  return gallery_table_detailed(names, nil, label_fn)
+end
+
+local function gen_border_gallery_test()
+  return gallery_table_detailed(configs_mod.border_names, nil, nil)
+end
+
+local function gen_wildmenu_variant_gallery_test()
+  return gallery_table_detailed(configs_mod.wildmenu_variant_names, nil, nil)
+end
+
+local function gen_palette_variant_gallery_test()
+  return gallery_table_detailed(configs_mod.palette_variant_names, nil, nil)
+end
+
+local function gen_dimension_gallery_test()
+  return gallery_table_detailed(configs_mod.dimension_names, nil, nil)
+end
+
+local function gen_gradient_gallery_test()
+  return gallery_table_detailed(configs_mod.gradient_names, nil, nil)
+end
+
+local function gen_combination_gallery_test()
+  return gallery_table_detailed(configs_mod.combination_names, nil, nil)
+end
+
+local function gen_highlight_gallery_test()
+  return gallery_table_detailed(configs_mod.highlight_names, nil, nil)
+end
+
+local function gen_theme_gallery_test()
+  return gallery_table_detailed(configs_mod.theme_names, "theme_", function(name) return name end)
+end
+
+local function gen_layout_gallery_test()
+  return gallery_table_detailed(configs_mod.layout_names, nil, nil)
+end
+
+local function gen_option_gallery_test()
+  return gallery_table_detailed(configs_mod.option_names, nil, nil)
+end
+
 -- ── Marker replacement ─────────────────────────────────────────────
 
 local generators = {
@@ -338,6 +685,20 @@ local generators = {
   theme_gallery = gen_theme_gallery,
   layout_gallery = gen_layout_gallery,
   option_gallery = gen_option_gallery,
+  -- Test variants (for SCREENSHOTS.md — includes descriptions + configs)
+  renderer_gallery_test = gen_renderer_gallery_test,
+  feature_gallery_test = gen_feature_gallery_test,
+  pipeline_gallery_test = gen_pipeline_gallery_test,
+  border_gallery_test = gen_border_gallery_test,
+  wildmenu_variant_gallery_test = gen_wildmenu_variant_gallery_test,
+  palette_variant_gallery_test = gen_palette_variant_gallery_test,
+  dimension_gallery_test = gen_dimension_gallery_test,
+  gradient_gallery_test = gen_gradient_gallery_test,
+  combination_gallery_test = gen_combination_gallery_test,
+  highlight_gallery_test = gen_highlight_gallery_test,
+  theme_gallery_test = gen_theme_gallery_test,
+  layout_gallery_test = gen_layout_gallery_test,
+  option_gallery_test = gen_option_gallery_test,
 }
 
 local function read_file(path)

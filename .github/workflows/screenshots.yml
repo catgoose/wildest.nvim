@@ -69,14 +69,12 @@ jobs:
 
       - name: Push to screenshots branch
         run: |
-          REPO_URL="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
-          git clone --branch screenshots --single-branch "$REPO_URL" repo || {
-            mkdir repo && cd repo && git init && git checkout -b screenshots
-            git remote add origin "$REPO_URL"
-          }
-          cp output/*.png repo/
-          cd repo
+          cd output
+          git init -b screenshots
           git add *.png
-          git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" \
-            commit -m "Update screenshots [skip ci]" || echo "No changes to commit"
-          git push origin screenshots
+          git -c user.name="github-actions[bot]" \
+              -c user.email="github-actions[bot]@users.noreply.github.com" \
+              commit -m "Update screenshots [skip ci]"
+          git push --force \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            screenshots
