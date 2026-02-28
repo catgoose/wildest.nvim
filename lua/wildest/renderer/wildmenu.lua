@@ -122,7 +122,7 @@ function M.new(opts)
       return
     end
 
-    local editor_width = vim.o.columns
+    local editor_width = vim.o.columns - require("wildest.preview").reserved_width()
     local sep_width = util.strdisplaywidth(state.separator)
 
     -- Calculate space used by left/right components

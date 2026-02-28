@@ -324,6 +324,15 @@ M.configs = {
     empty_message = " No matches, partner ",
   },
 
+  empty_message_popupmenu = {
+    category = "option",
+    label = "empty_message (popupmenu)",
+    cmd = ":zzzznotacommand",
+    renderer = "popupmenu",
+    highlighter = "basic",
+    empty_message = " No matches, partner ",
+  },
+
   buffer_flags = {
     category = "option",
     cmd = ":b ",
@@ -797,8 +806,8 @@ M.layout_names = {
   "offset_1", "offset_2",
 }
 M.option_names = {
-  "noselect_false", "reverse", "empty_message", "buffer_flags",
-  "position_top", "position_center", "ellipsis",
+  "noselect_false", "reverse", "empty_message", "empty_message_popupmenu",
+  "buffer_flags", "position_top", "position_center", "ellipsis",
   "position_top_bordered", "noselect_bordered", "fixed_height_true",
 }
 

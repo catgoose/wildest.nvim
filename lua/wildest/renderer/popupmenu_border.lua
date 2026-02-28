@@ -147,10 +147,16 @@ function M.new(opts)
       win_row = math.max(0, row - height - 1)
     end
 
+    -- Center horizontally when popup is narrower than available space
+    local actual_col = col
+    if outer_width < editor_width then
+      actual_col = col + math.floor((editor_width - outer_width) / 2)
+    end
+
     local win_config = {
       relative = "editor",
       row = win_row,
-      col = col,
+      col = actual_col,
       width = outer_width,
       height = height,
       style = "minimal",

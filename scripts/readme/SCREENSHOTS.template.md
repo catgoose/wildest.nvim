@@ -88,3 +88,8 @@ and reference the config key so we can reproduce it.
 
 <!-- gen:option_gallery_test:start -->
 <!-- gen:option_gallery_test:end -->
+
+## Preview
+
+<!-- gen:preview_gallery_test:start -->
+<!-- gen:preview_gallery_test:end -->

@@ -374,7 +374,7 @@ end
 ---@return integer row, integer col, integer width
 function M.default_position(offset)
   local height = vim.o.lines
-  local width = vim.o.columns
+  local width = vim.o.columns - require("wildest.preview").reserved_width()
   -- Account for statusline and cmdline area.
   local cmdheight = vim.o.cmdheight
   local reserved = cmdheight + (vim.o.laststatus > 0 and 1 or 0)
@@ -412,6 +412,12 @@ function M.render_components(state, ctx, result, index, is_selected)
   local right_parts = {}
   local hl = is_selected and state.highlights.selected or state.highlights.default
 
+  local candidate = result.value[index + 1]
+  local query = ""
+  if result.data then
+    query = result.data.query or result.data.arg or result.data.input or ""
+  end
+
   local comp_ctx = {
     selected = ctx.selected,
     index = index,
@@ -420,6 +426,8 @@ function M.render_components(state, ctx, result, index, is_selected)
     page_end = state.page[2],
     is_selected = is_selected,
     result = result,
+    candidate = candidate,
+    query = query,
     default_hl = state.highlights.default,
     selected_hl = state.highlights.selected,
   }

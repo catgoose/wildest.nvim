@@ -124,7 +124,7 @@ function M.new(opts)
     renderer_util.check_run_id(state, ctx)
 
     local editor_lines = vim.o.lines
-    local editor_cols = vim.o.columns
+    local editor_cols = vim.o.columns - require("wildest.preview").reserved_width()
 
     local max_w = renderer_util.parse_dimension(state.max_width, editor_cols)
     local min_w = renderer_util.parse_dimension(state.min_width, editor_cols)
