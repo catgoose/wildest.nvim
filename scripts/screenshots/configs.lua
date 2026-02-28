@@ -291,6 +291,18 @@ M.configs = {
   },
 }
 
+-- Ordered name lists (single source of truth for README generation + generate.sh)
+M.renderer_names = { "popupmenu", "popupmenu_border", "popupmenu_palette", "wildmenu" }
+M.feature_names = { "devicons", "fuzzy", "gradient", "search", "renderer_mux", "kind_icons" }
+M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline" }
+M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
+M.layout_names = {
+  "laststatus_0", "laststatus_2", "laststatus_3",
+  "cmdheight_0", "cmdheight_0_offset_1", "cmdheight_0_offset_2",
+  "offset_1", "offset_2",
+}
+M.option_names = { "noselect_false", "reverse", "empty_message", "buffer_flags" }
+
 -- Theme configs (generated)
 M.theme_names = {
   "auto", "default", "saloon", "outlaw", "sunset", "prairie", "dusty",

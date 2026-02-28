@@ -8,7 +8,8 @@ MINI_DIR := $(DEPS_DIR)/mini.nvim
 
 .PHONY: help test test_file lint docs docs-vimdoc docs-html build clean deps \
        screenshots screenshots-themes screenshots-renderers screenshots-features \
-       screenshots-pipelines screenshots-highlights showdown screenshots-all
+       screenshots-pipelines screenshots-highlights showdown screenshots-all \
+       readme readme-check
 
 ## Show this help
 help:
@@ -30,8 +31,8 @@ lint:
 format:
 	stylua lua/ plugin/
 
-## Generate vimdoc + HTML docs
-docs: docs-vimdoc docs-html
+## Generate vimdoc + HTML docs + README
+docs: docs-vimdoc docs-html readme
 
 ## Generate vimdoc only (lemmy-help)
 docs-vimdoc:
@@ -77,6 +78,14 @@ showdown:
 screenshots-all:
 	rm -rf scripts/screenshots/output
 	$(MAKE) screenshots showdown
+
+## Generate README.md from template
+readme:
+	lua scripts/readme/gen_readme.lua
+
+## Check README.md is up-to-date
+readme-check:
+	lua scripts/readme/gen_readme.lua --check
 
 ## Clean build artifacts
 clean:
