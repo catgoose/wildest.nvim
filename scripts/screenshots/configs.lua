@@ -126,7 +126,7 @@ M.configs = {
     renderer = "palette",
     palette = {
       title = " Wildest ",
-      prompt_prefix = " : ",
+      prompt_prefix = " :",
       prompt_position = "top",
       max_height = "60%",
       max_width = "60%",
@@ -404,6 +404,17 @@ end
 
 -- ── Random scene generation ──────────────────────────────────────
 
+local scene_names = {
+  "Tumbleweeds Roll", "Prairie Dust", "Clock Tower", "The Draw",
+  "Quickfire", "Ricochet", "Smoke Clears", "Sunset Silhouette",
+  "Dust Settles", "The Legend", "The Stranger Rides In", "Quick Draw",
+  "High Noon", "Tumbleweed", "Neon Saloon", "Sunset Riders",
+  "The Posse", "Ember Trail", "Ride Into the Sunset", "Wanted",
+  "Rustler's Moon", "Coyote Howl", "Dusty Trail", "Gallows Humor",
+  "Last Stand", "Campfire Glow", "Gold Rush", "Canyon Echo",
+  "Barbed Wire", "Whiskey Creek",
+}
+
 local function pick(t)
   return t[math.random(#t)]
 end
@@ -470,7 +481,7 @@ function M.random_scene(label)
     scene.renderer = "palette"
     scene.palette = {
       title = " Wildest ",
-      prompt_prefix = " : ",
+      prompt_prefix = " :",
       prompt_position = "top",
       max_height = "60%",
       max_width = "60%",
@@ -518,9 +529,20 @@ function M.random_scene(label)
 end
 
 function M.random_scenes(n)
+  -- Shuffle scene names so each run gets a unique order
+  local names = {}
+  for _, name in ipairs(scene_names) do
+    table.insert(names, name)
+  end
+  for i = #names, 2, -1 do
+    local j = math.random(i)
+    names[i], names[j] = names[j], names[i]
+  end
+
   local scenes = {}
   for i = 1, n do
-    table.insert(scenes, M.random_scene("Scene " .. i))
+    local label = names[((i - 1) % #names) + 1]
+    table.insert(scenes, M.random_scene(label))
   end
   return scenes
 end

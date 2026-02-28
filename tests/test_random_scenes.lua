@@ -91,7 +91,7 @@ T["random_scene()"]["palette recipe has palette config"] = function()
       found = true
       expect.equality(type(scene.palette), "table")
       expect.equality(scene.palette.title, " Wildest ")
-      expect.equality(scene.palette.prompt_prefix, " : ")
+      expect.equality(scene.palette.prompt_prefix, " :")
       expect.equality(scene.palette.prompt_position, "top")
       expect.equality(scene.left, { " " })
       break
@@ -188,10 +188,13 @@ T["random_scenes()"]["returns empty table for n=0"] = function()
   expect.equality(#scenes, 0)
 end
 
-T["random_scenes()"]["labels are sequential"] = function()
+T["random_scenes()"]["labels are western-themed strings"] = function()
   local scenes = configs.random_scenes(5)
-  for i, scene in ipairs(scenes) do
-    expect.equality(scene.label, "Scene " .. i)
+  for _, scene in ipairs(scenes) do
+    expect.equality(type(scene.label), "string")
+    expect.equality(scene.label ~= "", true)
+    -- Should not be generic "Scene N" format
+    expect.equality(scene.label:match("^Scene %d+$"), nil)
   end
 end
 
