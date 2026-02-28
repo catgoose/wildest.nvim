@@ -1,0 +1,130 @@
+name: GIFs
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "scripts/screenshots/**"
+      - "lua/wildest/themes/**"
+
+permissions:
+  contents: write
+
+jobs:
+  showdown:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: nightly
+
+      - name: Install VHS and ttyd
+        run: |
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+          sudo apt-get update
+          sudo apt-get install -y vhs ttyd
+
+      - name: Install JetBrainsMono Nerd Font
+        run: |
+          mkdir -p ~/.local/share/fonts
+          curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz \
+            | tar -xJf - -C ~/.local/share/fonts
+          fc-cache -fv
+
+      - name: Build fuzzy.so
+        run: make build
+
+      - name: Clone nvim-web-devicons
+        run: |
+          mkdir -p deps
+          git clone --depth 1 https://github.com/nvim-tree/nvim-web-devicons deps/nvim-web-devicons
+
+      - name: Clone kanagawa colorscheme
+        run: |
+          mkdir -p deps
+          git clone --depth 1 https://github.com/rebelot/kanagawa.nvim deps/kanagawa.nvim
+
+      - name: Generate showdown GIF
+        run: scripts/screenshots/generate.sh --showdown
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: showdown
+          path: scripts/screenshots/output/showdown.gif
+
+  gunsmoke:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: rhysd/action-setup-vim@v1
+        with:
+          neovim: true
+          version: nightly
+
+      - name: Install VHS and ttyd
+        run: |
+          sudo mkdir -p /etc/apt/keyrings
+          curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg
+          echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list
+          sudo apt-get update
+          sudo apt-get install -y vhs ttyd
+
+      - name: Install JetBrainsMono Nerd Font
+        run: |
+          mkdir -p ~/.local/share/fonts
+          curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz \
+            | tar -xJf - -C ~/.local/share/fonts
+          fc-cache -fv
+
+      - name: Build fuzzy.so
+        run: make build
+
+      - name: Clone nvim-web-devicons
+        run: |
+          mkdir -p deps
+          git clone --depth 1 https://github.com/nvim-tree/nvim-web-devicons deps/nvim-web-devicons
+
+      - name: Clone kanagawa colorscheme
+        run: |
+          mkdir -p deps
+          git clone --depth 1 https://github.com/rebelot/kanagawa.nvim deps/kanagawa.nvim
+
+      - name: Generate gunsmoke GIF
+        run: scripts/screenshots/generate.sh --gunsmoke
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: gunsmoke
+          path: scripts/screenshots/output/gunsmoke.gif
+
+  publish:
+    runs-on: ubuntu-latest
+    needs: [showdown, gunsmoke]
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: showdown
+          path: output
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: gunsmoke
+          path: output
+
+      - name: Push to gifs branch
+        run: |
+          cd output
+          git init
+          git checkout -b gifs
+          git add *.gif
+          git -c user.name="github-actions[bot]" -c user.email="github-actions[bot]@users.noreply.github.com" \
+            commit -m "Update GIFs [skip ci]"
+          git remote add origin "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
+          git push --force origin gifs
