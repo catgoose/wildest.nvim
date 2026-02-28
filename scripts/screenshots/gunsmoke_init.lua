@@ -8,7 +8,7 @@ local configs = dofile(script_dir .. "/configs.lua")
 configs.setup(root)
 
 local w = require("wildest")
-local scenes = configs.random_scenes(10)
+local scenes = configs.random_scenes(25)
 
 -- Dump scene configs for debugging
 local output_dir = script_dir .. "/output"

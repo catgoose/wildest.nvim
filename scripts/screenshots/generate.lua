@@ -202,12 +202,75 @@ local function run_parallel(jobs, max_concurrent)
   return results
 end
 
+-- ── GIF scene definitions ────────────────────────────────────────
+--
+-- Each entry is one scene typed by VHS.  Fields:
+--   mode   – ":" or "/" (which key opens cmdline)
+--   typed  – the text typed after the mode key
+--   speed  – per-char delay in ms (VHS Type@<speed>ms)
+--   wait   – how long to linger on the result (e.g. "2s")
+--
+-- The list is cycled when a GIF needs more scenes than entries.
+-- Varying speed and wait keeps the GIF rhythm from feeling robotic.
+
+local gif_scenes = {
+  { mode = "/", typed = "function",          speed = 120, wait = "3s" },
+  { mode = ":", typed = "e lua/wildest/",    speed = 100, wait = "2.5s" },
+  { mode = ":", typed = "set fold",          speed =  80, wait = "2s" },
+  { mode = ":", typed = "lua vim.api.nvim",  speed =  40, wait = "1.5s" },
+  { mode = ":", typed = "help help-",        speed =  80, wait = "2.5s" },
+  { mode = "/", typed = "return",            speed =  60, wait = "2s" },
+  { mode = ":", typed = "e tests/",          speed =  50, wait = "2s" },
+  { mode = ":", typed = "set mouse",         speed =  70, wait = "2s" },
+  { mode = ":", typed = "help nvim_b",       speed = 100, wait = "2.5s" },
+  { mode = ":", typed = "lua vim.fn.get",    speed =  50, wait = "1.5s" },
+  { mode = "/", typed = "local",             speed =  90, wait = "2s" },
+  { mode = ":", typed = "e lua/wildest/cmdline/", speed = 30, wait = "1.5s" },
+  { mode = ":", typed = "set tab",           speed =  80, wait = "2s" },
+  { mode = ":", typed = "help api-",         speed =  60, wait = "2s" },
+  { mode = ":", typed = "lua vim.api.nvim_buf", speed = 40, wait = "2s" },
+  { mode = "/", typed = "require",           speed = 100, wait = "2.5s" },
+  { mode = ":", typed = "e lua/wildest/highlight/", speed = 40, wait = "1.5s" },
+  { mode = ":", typed = "set sign",          speed =  70, wait = "2s" },
+  { mode = ":", typed = "help win",          speed =  80, wait = "2s" },
+  { mode = ":", typed = "lua vim.keymap",    speed =  60, wait = "1.5s" },
+  { mode = "/", typed = "end",              speed =  80, wait = "2s" },
+  { mode = ":", typed = "set number",        speed =  90, wait = "2s" },
+  { mode = ":", typed = "help buf",          speed =  70, wait = "2s" },
+  { mode = ":", typed = "lua vim.lsp",       speed =  50, wait = "1.5s" },
+  { mode = ":", typed = "e lua/wildest/renderer/", speed = 35, wait = "1.5s" },
+}
+
+--- Build the VHS tape body for N scenes, cycling through gif_scenes.
+---@param n number  how many scenes to emit
+---@return string   VHS tape fragment (no preamble / postamble)
+local function build_scene_tape(n)
+  local parts = {}
+  for i = 1, n do
+    local s = gif_scenes[((i - 1) % #gif_scenes) + 1]
+    if i > 1 then
+      table.insert(parts, "Ctrl+n")
+      table.insert(parts, "Sleep 300ms")
+      table.insert(parts, "")
+    end
+    table.insert(parts, string.format('Type "%s"', s.mode))
+    table.insert(parts, "Sleep 300ms")
+    table.insert(parts, string.format('Type@%dms "%s"', s.speed, s.typed))
+    table.insert(parts, string.format("Sleep %s", s.wait))
+    table.insert(parts, "Escape")
+    table.insert(parts, "Sleep 300ms")
+    table.insert(parts, "")
+  end
+  return table.concat(parts, "\n")
+end
+
 -- ── Showdown GIF ─────────────────────────────────────────────────
 
 local function generate_showdown()
   printf("Generating animated showdown GIF...")
 
   local showdown_init = script_dir .. "/showdown_init.lua"
+  local scene_tape = build_scene_tape(25)
   local tape = string.format([[Output "%s/showdown.gif"
 
 Require nvim
@@ -227,114 +290,13 @@ Enter
 Sleep 2s
 Show
 
-Type "/"
-Sleep 300ms
-Type@120ms "function"
-Sleep 3s
-Escape
-Sleep 300ms
-
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@100ms "e lua/wildest/"
-Sleep 2.5s
-Escape
-Sleep 300ms
-
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@80ms "set fold"
-Sleep 2s
-Escape
-Sleep 500ms
-
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@30ms "e lua/wildest/"
-Sleep 1s
-Escape
-Sleep 300ms
-
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@40ms "lua vim.api.nvim"
-Sleep 1.5s
-Escape
-Sleep 300ms
-
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@40ms "set fold"
-Sleep 1s
-Escape
-Sleep 300ms
-Type "/"
-Sleep 300ms
-Type@40ms "function"
-Sleep 1s
-Escape
-Sleep 300ms
-
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@60ms "e lua/wildest/"
-Sleep 2s
-Escape
-Sleep 500ms
-
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@80ms "help help-"
-Sleep 2.5s
-Escape
-Sleep 300ms
-
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@100ms "set fold"
-Sleep 2.5s
-Escape
-Sleep 300ms
-
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@120ms "lua vim.api.nvim"
-Sleep 3s
-Escape
-Sleep 300ms
+%s
 
 Hide
 Type ":q!"
 Enter
 Sleep 500ms]], output_dir, settings.font_size, settings.font_family, settings.width, settings.height,
-    settings.padding, settings.theme, showdown_init, sample_lua)
+    settings.padding, settings.theme, showdown_init, sample_lua, scene_tape)
 
   local tape_file = os.tmpname() .. ".tape"
   local f = io.open(tape_file, "w")
@@ -359,6 +321,7 @@ local function generate_gunsmoke()
   printf("Generating animated gunsmoke GIF...")
 
   local gunsmoke_init = script_dir .. "/gunsmoke_init.lua"
+  local scene_tape = build_scene_tape(25)
   local tape = string.format([[Output "%s/gunsmoke.gif"
 
 Require nvim
@@ -378,124 +341,13 @@ Enter
 Sleep 2s
 Show
 
-# ── Scene 1: The Stranger Rides In (Act I) ──
-Type ":"
-Sleep 300ms
-Type@150ms "set fold"
-Sleep 3s
-Escape
-Sleep 300ms
-
-# ── Scene 2: Wanted: Dead or Alive (Act I) ──
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@100ms "help nvim_b"
-Sleep 2.5s
-Escape
-Sleep 300ms
-
-# ── Scene 3: Quick Draw (Act II) ──
-Ctrl+n
-Sleep 500ms
-
-Type ":"
-Sleep 300ms
-Type@40ms "e lua/wildest/"
-Sleep 1.5s
-Escape
-Sleep 300ms
-
-# ── Scene 4: High Noon (Act II) ──
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@50ms "set fold"
-Sleep 1.5s
-Escape
-Sleep 300ms
-
-# ── Scene 5: Tumbleweed (Act II) ──
-Ctrl+n
-Sleep 300ms
-
-Type "/"
-Sleep 300ms
-Type@80ms "function"
-Sleep 2.5s
-Escape
-Sleep 300ms
-
-# ── Scene 6: Neon Saloon (Act II) ──
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@60ms "e lua/wildest/"
-Sleep 2s
-Escape
-Sleep 300ms
-
-# ── Scene 7: Sunset Riders (Act II) ──
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@80ms "help help-"
-Sleep 2.5s
-Escape
-Sleep 300ms
-
-# ── Scene 8: The Posse (Act III) ──
-Ctrl+n
-Sleep 500ms
-
-Type ":"
-Sleep 300ms
-Type@60ms "set fold"
-Sleep 1s
-Escape
-Sleep 300ms
-Type "/"
-Sleep 300ms
-Type@60ms "function"
-Sleep 1.5s
-Escape
-Sleep 300ms
-
-# ── Scene 9: Ember Trail (Act III) ──
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@60ms "lua vim.api.nvim"
-Sleep 2s
-Escape
-Sleep 300ms
-
-# ── Scene 10: Ride Into the Sunset (Act III) ──
-Ctrl+n
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@120ms "help help-"
-Sleep 3s
-Escape
-Sleep 300ms
+%s
 
 Hide
 Type ":q!"
 Enter
 Sleep 500ms]], output_dir, settings.font_size, settings.font_family, settings.width, settings.height,
-    settings.padding, settings.theme, gunsmoke_init, sample_lua)
+    settings.padding, settings.theme, gunsmoke_init, sample_lua, scene_tape)
 
   local tape_file = os.tmpname() .. ".tape"
   local f = io.open(tape_file, "w")
