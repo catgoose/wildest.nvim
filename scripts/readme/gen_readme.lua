@@ -453,32 +453,49 @@ local function gallery_table_detailed(names, prefix, label_fn)
   return table.concat(lines, "\n")
 end
 
--- ── Section generators ─────────────────────────────────────────────
+-- ── Gallery sections (data-driven) ───────────────────────────────────
+--
+-- Each entry generates both a `<key>_gallery` (README) and
+-- `<key>_gallery_test` (SCREENSHOTS / wanted posters) marker generator.
+
+local pipeline_names_with_search = (function()
+  local names = {}
+  for _, n in ipairs(configs_mod.pipeline_names) do
+    names[#names + 1] = n
+  end
+  names[#names + 1] = "search"
+  return names
+end)()
+
+local pipeline_label_fn = function(n)
+  if n == "search" then return "Search" end
+  return get_label(n)
+end
+
+local gallery_sections = {
+  { key = "renderer",         names = configs_mod.renderer_names },
+  { key = "feature",          names = configs_mod.feature_names },
+  { key = "pipeline",         names = pipeline_names_with_search, label_fn = pipeline_label_fn },
+  { key = "border",           names = configs_mod.border_names },
+  { key = "wildmenu_variant", names = configs_mod.wildmenu_variant_names },
+  { key = "palette_variant",  names = configs_mod.palette_variant_names },
+  { key = "dimension",        names = configs_mod.dimension_names },
+  { key = "gradient",         names = configs_mod.gradient_names },
+  { key = "combination",      names = configs_mod.combination_names },
+  { key = "highlight",        names = configs_mod.highlight_names },
+  { key = "theme",            names = configs_mod.theme_names, prefix = "theme_", label_fn = function(name) return name end },
+  { key = "layout",           names = configs_mod.layout_names },
+  { key = "option",           names = configs_mod.option_names },
+}
+
+-- ── One-off section generators ───────────────────────────────────────
 
 local function gen_screenshot_table()
-  -- All configs from all categories in order
   local all_names = {}
-  local lists = {
-    configs_mod.renderer_names,
-    configs_mod.feature_names,
-    configs_mod.pipeline_names,
-    configs_mod.highlight_names,
-    configs_mod.border_names,
-    configs_mod.wildmenu_variant_names,
-    configs_mod.palette_variant_names,
-    configs_mod.dimension_names,
-    configs_mod.gradient_names,
-    configs_mod.combination_names,
-    configs_mod.layout_names,
-    configs_mod.option_names,
-  }
-  for _, list in ipairs(lists) do
-    for _, name in ipairs(list) do
-      all_names[#all_names + 1] = name
+  for _, section in ipairs(gallery_sections) do
+    for _, name in ipairs(section.names) do
+      all_names[#all_names + 1] = (section.prefix or "") .. name
     end
-  end
-  for _, name in ipairs(configs_mod.theme_names) do
-    all_names[#all_names + 1] = "theme_" .. name
   end
 
   local lines = { "<table>" }
@@ -496,52 +513,6 @@ local function gen_screenshot_table()
   return table.concat(lines, "\n")
 end
 
-local function gen_pipeline_gallery()
-  -- Pipeline gallery includes the named pipelines plus "search" from features
-  local names = {}
-  for _, n in ipairs(configs_mod.pipeline_names) do
-    names[#names + 1] = n
-  end
-  names[#names + 1] = "search"
-  local label_fn = function(n)
-    if n == "search" then return "Search" end
-    return get_label(n)
-  end
-  return gallery_table(names, nil, label_fn)
-end
-
-local function gen_renderer_gallery()
-  return gallery_table(configs_mod.renderer_names, nil, nil)
-end
-
-local function gen_feature_gallery()
-  return gallery_table(configs_mod.feature_names, nil, nil)
-end
-
-local function gen_border_gallery()
-  return gallery_table(configs_mod.border_names, nil, nil)
-end
-
-local function gen_wildmenu_variant_gallery()
-  return gallery_table(configs_mod.wildmenu_variant_names, nil, nil)
-end
-
-local function gen_palette_variant_gallery()
-  return gallery_table(configs_mod.palette_variant_names, nil, nil)
-end
-
-local function gen_dimension_gallery()
-  return gallery_table(configs_mod.dimension_names, nil, nil)
-end
-
-local function gen_gradient_gallery()
-  return gallery_table(configs_mod.gradient_names, nil, nil)
-end
-
-local function gen_combination_gallery()
-  return gallery_table(configs_mod.combination_names, nil, nil)
-end
-
 local function gen_highlight_groups()
   local hl_defaults = parse_highlight_defaults()
   local lines = {}
@@ -554,16 +525,11 @@ local function gen_highlight_groups()
   return table.concat(lines, "\n")
 end
 
-local function gen_highlight_gallery()
-  return gallery_table(configs_mod.highlight_names, nil, nil)
-end
-
 local function gen_theme_table()
   local lines = {}
-  -- Compute column widths for alignment
-  local max_theme = 5  -- "Theme"
-  local max_rend = 8   -- "Renderer"
-  local max_desc = 11  -- "Description"
+  local max_theme = 5
+  local max_rend = 8
+  local max_desc = 11
   for _, name in ipairs(configs_mod.theme_names) do
     local meta = theme_meta[name]
     local theme_col = string.format("`%s`", name)
@@ -589,115 +555,24 @@ local function gen_theme_table()
   return table.concat(lines, "\n")
 end
 
-local function gen_theme_gallery()
-  return gallery_table(configs_mod.theme_names, "theme_", function(name) return name end)
-end
-
-local function gen_layout_gallery()
-  return gallery_table(configs_mod.layout_names, nil, nil)
-end
-
-local function gen_option_gallery()
-  return gallery_table(configs_mod.option_names, nil, nil)
-end
-
--- ── Test section generators (for SCREENSHOTS.md) ──────────────────
-
-local function gen_renderer_gallery_test()
-  return gallery_table_detailed(configs_mod.renderer_names, nil, nil)
-end
-
-local function gen_feature_gallery_test()
-  return gallery_table_detailed(configs_mod.feature_names, nil, nil)
-end
-
-local function gen_pipeline_gallery_test()
-  local names = {}
-  for _, n in ipairs(configs_mod.pipeline_names) do
-    names[#names + 1] = n
-  end
-  names[#names + 1] = "search"
-  local label_fn = function(n)
-    if n == "search" then return "Search" end
-    return get_label(n)
-  end
-  return gallery_table_detailed(names, nil, label_fn)
-end
-
-local function gen_border_gallery_test()
-  return gallery_table_detailed(configs_mod.border_names, nil, nil)
-end
-
-local function gen_wildmenu_variant_gallery_test()
-  return gallery_table_detailed(configs_mod.wildmenu_variant_names, nil, nil)
-end
-
-local function gen_palette_variant_gallery_test()
-  return gallery_table_detailed(configs_mod.palette_variant_names, nil, nil)
-end
-
-local function gen_dimension_gallery_test()
-  return gallery_table_detailed(configs_mod.dimension_names, nil, nil)
-end
-
-local function gen_gradient_gallery_test()
-  return gallery_table_detailed(configs_mod.gradient_names, nil, nil)
-end
-
-local function gen_combination_gallery_test()
-  return gallery_table_detailed(configs_mod.combination_names, nil, nil)
-end
-
-local function gen_highlight_gallery_test()
-  return gallery_table_detailed(configs_mod.highlight_names, nil, nil)
-end
-
-local function gen_theme_gallery_test()
-  return gallery_table_detailed(configs_mod.theme_names, "theme_", function(name) return name end)
-end
-
-local function gen_layout_gallery_test()
-  return gallery_table_detailed(configs_mod.layout_names, nil, nil)
-end
-
-local function gen_option_gallery_test()
-  return gallery_table_detailed(configs_mod.option_names, nil, nil)
-end
-
 -- ── Marker replacement ─────────────────────────────────────────────
 
 local generators = {
   screenshot_table = gen_screenshot_table,
-  pipeline_gallery = gen_pipeline_gallery,
-  renderer_gallery = gen_renderer_gallery,
-  feature_gallery = gen_feature_gallery,
-  border_gallery = gen_border_gallery,
-  wildmenu_variant_gallery = gen_wildmenu_variant_gallery,
-  palette_variant_gallery = gen_palette_variant_gallery,
-  dimension_gallery = gen_dimension_gallery,
-  gradient_gallery = gen_gradient_gallery,
-  combination_gallery = gen_combination_gallery,
   highlight_groups = gen_highlight_groups,
-  highlight_gallery = gen_highlight_gallery,
   theme_table = gen_theme_table,
-  theme_gallery = gen_theme_gallery,
-  layout_gallery = gen_layout_gallery,
-  option_gallery = gen_option_gallery,
-  -- Test variants (for SCREENSHOTS.md — includes descriptions + configs)
-  renderer_gallery_test = gen_renderer_gallery_test,
-  feature_gallery_test = gen_feature_gallery_test,
-  pipeline_gallery_test = gen_pipeline_gallery_test,
-  border_gallery_test = gen_border_gallery_test,
-  wildmenu_variant_gallery_test = gen_wildmenu_variant_gallery_test,
-  palette_variant_gallery_test = gen_palette_variant_gallery_test,
-  dimension_gallery_test = gen_dimension_gallery_test,
-  gradient_gallery_test = gen_gradient_gallery_test,
-  combination_gallery_test = gen_combination_gallery_test,
-  highlight_gallery_test = gen_highlight_gallery_test,
-  theme_gallery_test = gen_theme_gallery_test,
-  layout_gallery_test = gen_layout_gallery_test,
-  option_gallery_test = gen_option_gallery_test,
 }
+
+-- Register gallery generators from the sections table
+for _, section in ipairs(gallery_sections) do
+  local names, prefix, label_fn = section.names, section.prefix, section.label_fn
+  generators[section.key .. "_gallery"] = function()
+    return gallery_table(names, prefix, label_fn)
+  end
+  generators[section.key .. "_gallery_test"] = function()
+    return gallery_table_detailed(names, prefix, label_fn)
+  end
+end
 
 local function read_file(path)
   local f = io.open(path, "r")
