@@ -768,8 +768,8 @@ function M.build(name_or_cfg, w)
     merged.highlights = false
   end
 
-  -- Randomize theme for non-theme configs that inherit theme:auto
-  if merged.category ~= "theme" and merged.renderer == "theme:auto" then
+  -- Randomize theme for GIF scenes (no category) that inherit theme:auto
+  if not merged.category and merged.renderer == "theme:auto" then
     local pick = M._random_themes[math.random(#M._random_themes)]
     merged.renderer = "theme:" .. pick
   end
