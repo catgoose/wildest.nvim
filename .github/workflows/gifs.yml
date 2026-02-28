@@ -51,7 +51,7 @@ jobs:
           git clone --depth 1 https://github.com/rebelot/kanagawa.nvim deps/kanagawa.nvim
 
       - name: Generate showdown GIF
-        run: scripts/screenshots/generate.sh --showdown
+        run: nvim --headless -l scripts/screenshots/generate.lua --showdown
 
       - uses: actions/upload-artifact@v4
         with:
@@ -97,7 +97,7 @@ jobs:
           git clone --depth 1 https://github.com/rebelot/kanagawa.nvim deps/kanagawa.nvim
 
       - name: Generate gunsmoke GIF
-        run: scripts/screenshots/generate.sh --gunsmoke
+        run: nvim --headless -l scripts/screenshots/generate.lua --gunsmoke
 
       - uses: actions/upload-artifact@v4
         with:

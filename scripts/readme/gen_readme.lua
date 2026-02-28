@@ -122,40 +122,7 @@ local hl_descriptions = {
 
 -- ── Theme metadata ─────────────────────────────────────────────────
 
-local theme_meta = {
-  auto            = { renderer = "bordered", desc = "Derives colors from your colorscheme - a chameleon" },
-  default         = { renderer = "plain",    desc = "Standard Pmenu links, no frills" },
-  saloon          = { renderer = "bordered", desc = "Amber and whiskey - belly up to the bar" },
-  outlaw          = { renderer = "bordered", desc = "Dark with crimson - wanted dead or alive" },
-  sunset          = { renderer = "bordered", desc = "Orange to purple - end of the trail" },
-  prairie         = { renderer = "bordered", desc = "Soft greens and earth - wide open spaces" },
-  dusty           = { renderer = "bordered", desc = "Sandstone and sage - desert wanderer" },
-  midnight        = { renderer = "bordered", desc = "Deep blue and silver - stars over the range" },
-  wanted          = { renderer = "palette",  desc = "Parchment and ink - nailed to the post office wall" },
-  cactus          = { renderer = "bordered", desc = "Green on dark soil - prickly but pretty" },
-  tumbleweed      = { renderer = "plain",    desc = "Light and minimal - blowin' through town" },
-  kanagawa        = { renderer = "bordered", desc = "Deep ink, warm autumn - the far east frontier" },
-  kanagawa_dragon = { renderer = "bordered", desc = "Dark earth tones - dragon in the canyon" },
-  kanagawa_lotus  = { renderer = "bordered", desc = "Light parchment - lotus in the desert spring" },
-  catppuccin_mocha  = { renderer = "bordered", desc = "Rich dark pastels - lavender in the moonlight" },
-  catppuccin_frappe = { renderer = "bordered", desc = "Dusky blue-grey pastels - twilight in the valley" },
-  catppuccin_latte  = { renderer = "bordered", desc = "Warm light pastels - cream and ink at dawn" },
-  tokyonight_night  = { renderer = "bordered", desc = "Deep midnight blue - neon in the dark" },
-  tokyonight_storm  = { renderer = "bordered", desc = "Stormy dark blue - lightning on the horizon" },
-  tokyonight_moon   = { renderer = "bordered", desc = "Soft moonlit blue - silver glow on the plains" },
-  rose_pine         = { renderer = "bordered", desc = "Muted dark tones - wild roses at dusk" },
-  rose_pine_moon    = { renderer = "bordered", desc = "Deeper purple base - roses under moonlight" },
-  rose_pine_dawn    = { renderer = "bordered", desc = "Warm parchment light - roses at first light" },
-  gruvbox_dark      = { renderer = "bordered", desc = "Warm retro earth - campfire in the canyon" },
-  gruvbox_light     = { renderer = "bordered", desc = "Sandy retro light - parchment in the sun" },
-  nord              = { renderer = "bordered", desc = "Arctic cool - frost on the frontier" },
-  onedark           = { renderer = "bordered", desc = "Atom-inspired grey - steel and blue" },
-  nightfox          = { renderer = "bordered", desc = "Deep ocean blue - foxfire in the night" },
-  everforest_dark   = { renderer = "bordered", desc = "Woodland greens on dark soil - deep in the forest" },
-  everforest_light  = { renderer = "bordered", desc = "Soft cream with fresh greens - forest clearing" },
-  dracula           = { renderer = "bordered", desc = "Classic dark purple - the count rides at midnight" },
-  solarized_dark    = { renderer = "bordered", desc = "Precision teal and cyan - the original classic" },
-}
+local theme_meta = configs_mod.theme_meta
 
 -- Validate every theme_name has metadata
 for _, name in ipairs(configs_mod.theme_names) do
@@ -164,37 +131,12 @@ for _, name in ipairs(configs_mod.theme_names) do
   end
 end
 
--- ── Display labels for gallery items ───────────────────────────────
+-- ── Display labels (read from configs) ─────────────────────────────
 
-local display_labels = {
-  -- Renderers
-  popupmenu = "Popupmenu",
-  popupmenu_border = "Bordered",
-  popupmenu_palette = "Palette",
-  wildmenu = "Wildmenu",
-  -- Pipelines
-  lua_pipeline = "Lua Completion",
-  help_pipeline = "Help Tags",
-  history_pipeline = "History",
-  -- Highlights
-  hl_neon = "Neon",
-  hl_ember = "Ember",
-  hl_ocean = "Ocean",
-  -- Layouts
-  laststatus_0 = "laststatus=0",
-  laststatus_2 = "laststatus=2",
-  laststatus_3 = "laststatus=3",
-  cmdheight_0 = "cmdheight=0",
-  cmdheight_0_offset_1 = "cmdheight=0 offset=1",
-  cmdheight_0_offset_2 = "cmdheight=0 offset=2",
-  offset_1 = "offset=1",
-  offset_2 = "offset=2",
-  -- Options
-  noselect_false = "noselect=false",
-  reverse = "reverse=true",
-  empty_message = "empty_message",
-  buffer_flags = "buffer_flags",
-}
+local function get_label(name)
+  local cfg = configs_mod.configs[name]
+  return cfg and cfg.label or name
+end
 
 -- ── HTML helpers ───────────────────────────────────────────────────
 
@@ -214,8 +156,8 @@ local function gallery_table(names, prefix, label_fn)
     local name2 = names[i + 1]
     local img_name1 = prefix and (prefix .. name1) or name1
     local img_name2 = name2 and (prefix and (prefix .. name2) or name2) or nil
-    local label1 = label_fn and label_fn(name1) or (display_labels[name1] or name1)
-    local label2 = name2 and (label_fn and label_fn(name2) or (display_labels[name2] or name2)) or nil
+    local label1 = label_fn and label_fn(name1) or get_label(name1)
+    local label2 = name2 and (label_fn and label_fn(name2) or get_label(name2)) or nil
     lines[#lines + 1] = "<tr>"
     lines[#lines + 1] = img_cell(img_name1, label1)
     if img_name2 then
@@ -276,7 +218,7 @@ local function gen_pipeline_gallery()
   names[#names + 1] = "search"
   local label_fn = function(n)
     if n == "search" then return "Search" end
-    return display_labels[n] or n
+    return get_label(n)
   end
   return gallery_table(names, nil, label_fn)
 end

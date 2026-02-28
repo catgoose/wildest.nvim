@@ -99,15 +99,20 @@ M.configs = {
   -- Renderer configs
   popupmenu = {
     category = "renderer",
+    label = "Popupmenu",
     renderer = "popupmenu",
     highlighter = "basic",
     left = { " " },
   },
 
-  popupmenu_border = { category = "renderer" },
+  popupmenu_border = {
+    category = "renderer",
+    label = "Bordered",
+  },
 
   popupmenu_palette = {
     category = "renderer",
+    label = "Palette",
     renderer = "palette",
     palette = {
       title = " Wildest ",
@@ -123,6 +128,7 @@ M.configs = {
 
   wildmenu = {
     category = "renderer",
+    label = "Wildmenu",
     renderer = "wildmenu",
     highlighter = "basic",
     separator = " | ",
@@ -133,16 +139,19 @@ M.configs = {
   -- Feature configs
   devicons = {
     category = "feature",
+    cmd = ":e lua/wildest/",
     left = { " ", "devicons" },
   },
 
   fuzzy = {
     category = "feature",
+    cmd = ":help win",
     left = { " " },
   },
 
   gradient = {
     category = "feature",
+    cmd = ":help help-",
     highlights = false,
     highlighter = "gradient",
     gradient_colors = rainbow_colors,
@@ -151,6 +160,7 @@ M.configs = {
 
   search = {
     category = "feature",
+    cmd = "/function",
     highlighter = "basic",
     left = { " " },
   },
@@ -183,16 +193,21 @@ M.configs = {
   -- Pipeline configs
   lua_pipeline = {
     category = "pipeline",
+    label = "Lua Completion",
+    cmd = ":lua vim.api.nvim",
     pipeline = { "lua", "cmdline_fuzzy" },
   },
 
   help_pipeline = {
     category = "pipeline",
+    label = "Help Tags",
+    cmd = ":help nvim_b",
     pipeline = { "help_fuzzy", "cmdline_fuzzy" },
   },
 
   history_pipeline = {
     category = "pipeline",
+    label = "History",
     pipeline = { "history", "cmdline_fuzzy" },
     left = { " " },
   },
@@ -200,59 +215,70 @@ M.configs = {
   -- Layout configs (statusline / offset variations)
   laststatus_0 = {
     category = "layout",
+    label = "laststatus=0",
     laststatus = 0,
   },
 
   laststatus_2 = {
     category = "layout",
+    label = "laststatus=2",
     laststatus = 2,
   },
 
   laststatus_3 = {
     category = "layout",
+    label = "laststatus=3",
     laststatus = 3,
   },
 
   cmdheight_0 = {
     category = "layout",
+    label = "cmdheight=0",
     cmdheight = 0,
   },
 
   cmdheight_0_offset_1 = {
     category = "layout",
+    label = "cmdheight=0 offset=1",
     cmdheight = 0,
     offset = 1,
   },
 
   cmdheight_0_offset_2 = {
     category = "layout",
+    label = "cmdheight=0 offset=2",
     cmdheight = 0,
     offset = 2,
   },
 
   offset_1 = {
     category = "layout",
+    label = "offset=1",
     offset = 1,
   },
 
   offset_2 = {
     category = "layout",
+    label = "offset=2",
     offset = 2,
   },
 
   -- Renderer option configs
   noselect_false = {
     category = "option",
+    label = "noselect=false",
     noselect = false,
   },
 
   reverse = {
     category = "option",
+    label = "reverse=true",
     reverse = true,
   },
 
   empty_message = {
     category = "option",
+    cmd = ":zzzznotacommand",
     renderer = "border_theme",
     border = "rounded",
     empty_message = " No matches, partner ",
@@ -260,6 +286,7 @@ M.configs = {
 
   buffer_flags = {
     category = "option",
+    cmd = ":b ",
     pipeline = { "cmdline_fuzzy" },
     left = { " ", "buffer_flags" },
   },
@@ -267,6 +294,7 @@ M.configs = {
   -- Custom highlight configs
   hl_neon = {
     category = "highlight",
+    label = "Neon",
     renderer = "border_theme",
     border = "rounded",
     custom_highlights = neon_highlights,
@@ -274,6 +302,7 @@ M.configs = {
 
   hl_ember = {
     category = "highlight",
+    label = "Ember",
     renderer = "border_theme",
     border = "rounded",
     custom_highlights = ember_highlights,
@@ -281,6 +310,7 @@ M.configs = {
 
   hl_ocean = {
     category = "highlight",
+    label = "Ocean",
     renderer = "border_theme",
     border = "rounded",
     custom_highlights = {
@@ -294,6 +324,9 @@ M.configs = {
     },
   },
 }
+
+-- Default VHS command for configs that don't specify one
+M.default_cmd = ":set fold"
 
 -- Ordered name lists (single source of truth for README generation + generate.sh)
 M.renderer_names = { "popupmenu", "popupmenu_border", "popupmenu_palette", "wildmenu" }
@@ -317,6 +350,42 @@ M.theme_names = {
   "rose_pine", "rose_pine_moon", "rose_pine_dawn",
   "gruvbox_dark", "gruvbox_light", "nord", "onedark", "nightfox",
   "everforest_dark", "everforest_light", "dracula", "solarized_dark",
+}
+
+-- Theme metadata (descriptions for README generation)
+M.theme_meta = {
+  auto            = { renderer = "bordered", desc = "Derives colors from your colorscheme - a chameleon" },
+  default         = { renderer = "plain",    desc = "Standard Pmenu links, no frills" },
+  saloon          = { renderer = "bordered", desc = "Amber and whiskey - belly up to the bar" },
+  outlaw          = { renderer = "bordered", desc = "Dark with crimson - wanted dead or alive" },
+  sunset          = { renderer = "bordered", desc = "Orange to purple - end of the trail" },
+  prairie         = { renderer = "bordered", desc = "Soft greens and earth - wide open spaces" },
+  dusty           = { renderer = "bordered", desc = "Sandstone and sage - desert wanderer" },
+  midnight        = { renderer = "bordered", desc = "Deep blue and silver - stars over the range" },
+  wanted          = { renderer = "palette",  desc = "Parchment and ink - nailed to the post office wall" },
+  cactus          = { renderer = "bordered", desc = "Green on dark soil - prickly but pretty" },
+  tumbleweed      = { renderer = "plain",    desc = "Light and minimal - blowin' through town" },
+  kanagawa        = { renderer = "bordered", desc = "Deep ink, warm autumn - the far east frontier" },
+  kanagawa_dragon = { renderer = "bordered", desc = "Dark earth tones - dragon in the canyon" },
+  kanagawa_lotus  = { renderer = "bordered", desc = "Light parchment - lotus in the desert spring" },
+  catppuccin_mocha  = { renderer = "bordered", desc = "Rich dark pastels - lavender in the moonlight" },
+  catppuccin_frappe = { renderer = "bordered", desc = "Dusky blue-grey pastels - twilight in the valley" },
+  catppuccin_latte  = { renderer = "bordered", desc = "Warm light pastels - cream and ink at dawn" },
+  tokyonight_night  = { renderer = "bordered", desc = "Deep midnight blue - neon in the dark" },
+  tokyonight_storm  = { renderer = "bordered", desc = "Stormy dark blue - lightning on the horizon" },
+  tokyonight_moon   = { renderer = "bordered", desc = "Soft moonlit blue - silver glow on the plains" },
+  rose_pine         = { renderer = "bordered", desc = "Muted dark tones - wild roses at dusk" },
+  rose_pine_moon    = { renderer = "bordered", desc = "Deeper purple base - roses under moonlight" },
+  rose_pine_dawn    = { renderer = "bordered", desc = "Warm parchment light - roses at first light" },
+  gruvbox_dark      = { renderer = "bordered", desc = "Warm retro earth - campfire in the canyon" },
+  gruvbox_light     = { renderer = "bordered", desc = "Sandy retro light - parchment in the sun" },
+  nord              = { renderer = "bordered", desc = "Arctic cool - frost on the frontier" },
+  onedark           = { renderer = "bordered", desc = "Atom-inspired grey - steel and blue" },
+  nightfox          = { renderer = "bordered", desc = "Deep ocean blue - foxfire in the night" },
+  everforest_dark   = { renderer = "bordered", desc = "Woodland greens on dark soil - deep in the forest" },
+  everforest_light  = { renderer = "bordered", desc = "Soft cream with fresh greens - forest clearing" },
+  dracula           = { renderer = "bordered", desc = "Classic dark purple - the count rides at midnight" },
+  solarized_dark    = { renderer = "bordered", desc = "Precision teal and cyan - the original classic" },
 }
 
 for _, name in ipairs(M.theme_names) do

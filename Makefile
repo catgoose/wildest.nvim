@@ -48,35 +48,35 @@ build:
 
 ## Generate all screenshots (parallel)
 screenshots:
-	scripts/screenshots/generate.sh -j8
+	nvim --headless -l scripts/screenshots/generate.lua -j8
 
 ## Generate theme screenshots only
 screenshots-themes:
-	scripts/screenshots/generate.sh -j8 --themes
+	nvim --headless -l scripts/screenshots/generate.lua -j8 --themes
 
 ## Generate renderer screenshots only
 screenshots-renderers:
-	scripts/screenshots/generate.sh -j8 --renderers
+	nvim --headless -l scripts/screenshots/generate.lua -j8 --renderers
 
 ## Generate feature screenshots only
 screenshots-features:
-	scripts/screenshots/generate.sh -j8 --features
+	nvim --headless -l scripts/screenshots/generate.lua -j8 --features
 
 ## Generate pipeline screenshots only
 screenshots-pipelines:
-	scripts/screenshots/generate.sh -j8 --pipelines
+	nvim --headless -l scripts/screenshots/generate.lua -j8 --pipelines
 
 ## Generate highlight screenshots only
 screenshots-highlights:
-	scripts/screenshots/generate.sh -j8 --highlights
+	nvim --headless -l scripts/screenshots/generate.lua -j8 --highlights
 
 ## Generate animated showdown GIF
 showdown:
-	scripts/screenshots/generate.sh --showdown
+	nvim --headless -l scripts/screenshots/generate.lua --showdown
 
 ## Generate animated gunsmoke GIF
 gunsmoke:
-	scripts/screenshots/generate.sh --gunsmoke
+	nvim --headless -l scripts/screenshots/generate.lua --gunsmoke
 
 ## Generate all screenshots + GIFs (clean first)
 screenshots-all:

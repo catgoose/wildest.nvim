@@ -51,7 +51,7 @@ jobs:
           git clone --depth 1 https://github.com/rebelot/kanagawa.nvim deps/kanagawa.nvim
 
       - name: Generate screenshots
-        run: scripts/screenshots/generate.sh
+        run: nvim --headless -l scripts/screenshots/generate.lua
 
       - uses: actions/upload-artifact@v4
         with:
