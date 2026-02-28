@@ -1,9 +1,9 @@
 #!/usr/bin/env lua
--- Generate README.md from template + runtime data.
+-- Generate README.md and SCREENSHOTS.md from templates + runtime data.
 -- Usage:
---   lua scripts/readme/gen_readme.lua            -- write README.md
---   lua scripts/readme/gen_readme.lua --check    -- exit 1 if README is stale
---   lua scripts/readme/gen_readme.lua --output X -- write to X instead
+--   lua scripts/readme/gen_readme.lua            -- write README.md + SCREENSHOTS.md
+--   lua scripts/readme/gen_readme.lua --check    -- exit 1 if any output is stale
+--   lua scripts/readme/gen_readme.lua --output X -- write README to X instead
 
 local IMG_BASE = "https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/"
 
@@ -174,14 +174,14 @@ end
 -- ── Section generators ─────────────────────────────────────────────
 
 local function gen_screenshot_table()
-  -- All configs from all categories in order: renderer, feature, pipeline,
-  -- highlight, layout, option, then themes
+  -- All configs from all categories in order
   local all_names = {}
   local lists = {
     configs_mod.renderer_names,
     configs_mod.feature_names,
     configs_mod.pipeline_names,
     configs_mod.highlight_names,
+    configs_mod.border_names,
     configs_mod.layout_names,
     configs_mod.option_names,
   }
@@ -225,6 +225,14 @@ end
 
 local function gen_renderer_gallery()
   return gallery_table(configs_mod.renderer_names, nil, nil)
+end
+
+local function gen_feature_gallery()
+  return gallery_table(configs_mod.feature_names, nil, nil)
+end
+
+local function gen_border_gallery()
+  return gallery_table(configs_mod.border_names, nil, nil)
 end
 
 local function gen_highlight_groups()
@@ -292,6 +300,8 @@ local generators = {
   screenshot_table = gen_screenshot_table,
   pipeline_gallery = gen_pipeline_gallery,
   renderer_gallery = gen_renderer_gallery,
+  feature_gallery = gen_feature_gallery,
+  border_gallery = gen_border_gallery,
   highlight_groups = gen_highlight_groups,
   highlight_gallery = gen_highlight_gallery,
   theme_table = gen_theme_table,
@@ -342,33 +352,51 @@ local function replace_markers(template)
   return table.concat(lines, "\n")
 end
 
+local function write_file(path, content)
+  local f = io.open(path, "w")
+  if not f then
+    error("Cannot write: " .. path)
+  end
+  f:write(content)
+  f:close()
+end
+
 -- ── Main ───────────────────────────────────────────────────────────
 
-local template = read_file("scripts/readme/README.template.md")
-local result = replace_markers(template)
+-- Files to generate: { template_path, output_path }
+local targets = {
+  { template = "scripts/readme/README.template.md", output = output_path },
+  { template = "scripts/readme/SCREENSHOTS.template.md", output = "SCREENSHOTS.md" },
+}
 
-if check_mode then
-  local current = read_file(output_path)
-  if current == result then
-    print("README.md is up-to-date.")
-    os.exit(0)
+local all_ok = true
+
+for _, target in ipairs(targets) do
+  local template = read_file(target.template)
+  local result = replace_markers(template)
+
+  if check_mode then
+    local ok, current = pcall(read_file, target.output)
+    if ok and current == result then
+      print(target.output .. " is up-to-date.")
+    else
+      all_ok = false
+      io.stderr:write(target.output .. " is out-of-date. Run 'make readme' to regenerate.\n")
+      if ok then
+        local tmp = os.tmpname()
+        local f = io.open(tmp, "w")
+        f:write(result)
+        f:close()
+        os.execute(string.format("diff -u %s %s || true", target.output, tmp))
+        os.remove(tmp)
+      end
+    end
   else
-    io.stderr:write("README.md is out-of-date. Run 'make readme' to regenerate.\n")
-    -- Write to temp for diff
-    local tmp = os.tmpname()
-    local f = io.open(tmp, "w")
-    f:write(result)
-    f:close()
-    os.execute(string.format("diff -u %s %s || true", output_path, tmp))
-    os.remove(tmp)
-    os.exit(1)
+    write_file(target.output, result)
+    print("Generated " .. target.output)
   end
-else
-  local f = io.open(output_path, "w")
-  if not f then
-    error("Cannot write: " .. output_path)
-  end
-  f:write(result)
-  f:close()
-  print("Generated " .. output_path)
+end
+
+if check_mode and not all_ok then
+  os.exit(1)
 end

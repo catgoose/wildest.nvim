@@ -146,6 +146,21 @@ M.configs = {
     right = { "arrows_right", " ", "index" },
   },
 
+  palette_prompt_bottom = {
+    category = "renderer",
+    label = "Palette (Bottom Prompt)",
+    renderer = "palette",
+    palette = {
+      title = " Wildest ",
+      prompt_position = "bottom",
+      max_height = "60%",
+      max_width = "60%",
+      min_width = 40,
+      margin = "auto",
+    },
+    left = { " " },
+  },
+
   -- Feature configs
   devicons = {
     category = "feature",
@@ -198,6 +213,29 @@ M.configs = {
   kind_icons = {
     category = "feature",
     left = { " ", "kind_icon" },
+  },
+
+  prefix_highlighter = {
+    category = "feature",
+    label = "Prefix Highlighter",
+    highlighter = "prefix",
+    left = { " " },
+  },
+
+  scrollbar = {
+    category = "feature",
+    label = "Scrollbar",
+    cmd = ":help nvim",
+    left = { " " },
+    right = { " ", "scrollbar" },
+  },
+
+  pumblend = {
+    category = "feature",
+    label = "Pumblend",
+    renderer = "border_theme",
+    border = "rounded",
+    pumblend = 30,
   },
 
   -- Pipeline configs
@@ -301,6 +339,62 @@ M.configs = {
     left = { " ", "buffer_flags" },
   },
 
+  position_top = {
+    category = "option",
+    label = "position=top",
+    renderer = "border_theme",
+    border = "rounded",
+    position = "top",
+  },
+
+  position_center = {
+    category = "option",
+    label = "position=center",
+    renderer = "border_theme",
+    border = "rounded",
+    position = "center",
+  },
+
+  ellipsis = {
+    category = "option",
+    label = "ellipsis",
+    renderer = "wildmenu",
+    highlighter = "basic",
+    separator = " | ",
+    ellipsis = "...",
+    left = { "arrows" },
+    right = { "arrows_right", " ", "index" },
+  },
+
+  -- Border style configs
+  border_rounded = {
+    category = "border",
+    label = "Rounded",
+    renderer = "border_theme",
+    border = "rounded",
+  },
+
+  border_single = {
+    category = "border",
+    label = "Single",
+    renderer = "border_theme",
+    border = "single",
+  },
+
+  border_double = {
+    category = "border",
+    label = "Double",
+    renderer = "border_theme",
+    border = "double",
+  },
+
+  border_solid = {
+    category = "border",
+    label = "Solid",
+    renderer = "border_theme",
+    border = "solid",
+  },
+
   -- Custom highlight configs
   hl_neon = {
     category = "highlight",
@@ -331,16 +425,23 @@ M.configs = {
 M.default_cmd = ":set fold"
 
 -- Ordered name lists (single source of truth for README generation + generate.sh)
-M.renderer_names = { "popupmenu", "popupmenu_border", "popupmenu_palette", "wildmenu" }
-M.feature_names = { "devicons", "fuzzy", "gradient", "search", "renderer_mux", "kind_icons" }
+M.renderer_names = { "popupmenu", "popupmenu_border", "popupmenu_palette", "palette_prompt_bottom", "wildmenu" }
+M.feature_names = {
+  "devicons", "fuzzy", "gradient", "search", "renderer_mux", "kind_icons",
+  "prefix_highlighter", "scrollbar", "pumblend",
+}
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
+M.border_names = { "border_rounded", "border_single", "border_double", "border_solid" }
 M.layout_names = {
   "laststatus_0", "laststatus_2", "laststatus_3",
   "cmdheight_0", "cmdheight_0_offset_1", "cmdheight_0_offset_2",
   "offset_1", "offset_2",
 }
-M.option_names = { "noselect_false", "reverse", "empty_message", "buffer_flags" }
+M.option_names = {
+  "noselect_false", "reverse", "empty_message", "buffer_flags",
+  "position_top", "position_center", "ellipsis",
+}
 
 -- Theme configs (generated)
 M.theme_names = {

@@ -497,6 +497,7 @@ local function list_configs()
     { name = "Features", list = configs_mod.feature_names },
     { name = "Pipelines", list = configs_mod.pipeline_names },
     { name = "Highlights", list = configs_mod.highlight_names },
+    { name = "Borders", list = configs_mod.border_names },
     { name = "Layouts", list = configs_mod.layout_names },
     { name = "Options", list = configs_mod.option_names },
   }
@@ -524,6 +525,7 @@ local function all_config_names()
   add(configs_mod.feature_names)
   add(configs_mod.pipeline_names)
   add(configs_mod.highlight_names)
+  add(configs_mod.border_names)
   add(configs_mod.layout_names)
   add(configs_mod.option_names)
   return names
@@ -590,6 +592,10 @@ local function main()
       end
     elseif a == "--highlights" then
       for _, n in ipairs(configs_mod.highlight_names) do
+        table.insert(configs_to_run, n)
+      end
+    elseif a == "--borders" then
+      for _, n in ipairs(configs_mod.border_names) do
         table.insert(configs_to_run, n)
       end
     elseif a == "--layouts" then

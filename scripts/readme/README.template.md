@@ -84,11 +84,7 @@
   <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/gifs/showdown.gif" alt="wildest.nvim showdown" width="800">
 </p>
 
-<details>
-<summary>Screenshot tests</summary>
-<!-- gen:screenshot_table:start -->
-<!-- gen:screenshot_table:end -->
-</details>
+**[Screenshot Tests](SCREENSHOTS.md)** — visual regression tests for every config combination.
 
 ### Howdy partner. Welcome to the wildest cmdline completion this side of the Mississippi.
 

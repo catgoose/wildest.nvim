@@ -25,5 +25,5 @@ jobs:
       - name: Commit
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "docs: auto-generate README [skip ci]"
-          file_pattern: README.md
+          commit_message: "docs: auto-generate README and SCREENSHOTS [skip ci]"
+          file_pattern: "README.md SCREENSHOTS.md"
