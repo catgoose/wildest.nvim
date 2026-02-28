@@ -303,7 +303,7 @@ run_config() {
   fi
 }
 
-# Generate the animated showdown GIF (single nvim session, 4 packed scenes)
+# Generate the animated showdown GIF (single nvim session, 10 packed scenes)
 generate_showdown() {
   echo "Generating animated showdown GIF..."
 
@@ -331,26 +331,24 @@ Enter
 Sleep 2s
 Show
 
-# ── Scene 1: Popupmenu + Devicons + Kind Icons + Fzy ──
-Type ":"
+Type "/"
 Sleep 300ms
-Type@80ms "e lua/wildest/"
-Sleep 2s
+Type@120ms "function"
+Sleep 3s
 Escape
+Sleep 300ms
+
+Ctrl+n
 Sleep 300ms
 
 Type ":"
 Sleep 300ms
-Type@80ms "help nvim_b"
-Sleep 2s
+Type@100ms "e lua/wildest/"
+Sleep 2.5s
 Escape
 Sleep 300ms
 
-Type ":"
-Sleep 300ms
-Type@80ms "lua vim.api.nvim"
-Sleep 2s
-Escape
+Ctrl+n
 Sleep 300ms
 
 Type ":"
@@ -358,52 +356,81 @@ Sleep 300ms
 Type@80ms "set fold"
 Sleep 2s
 Escape
+Sleep 500ms
+
+Ctrl+n
 Sleep 300ms
 
-# ── Scene 2: Palette + Gradient Rainbow ──
+Type ":"
+Sleep 300ms
+Type@30ms "e lua/wildest/"
+Sleep 1s
+Escape
+Sleep 300ms
+
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@40ms "lua vim.api.nvim"
+Sleep 1.5s
+Escape
+Sleep 300ms
+
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@40ms "set fold"
+Sleep 1s
+Escape
+Sleep 300ms
+Type "/"
+Sleep 300ms
+Type@40ms "function"
+Sleep 1s
+Escape
+Sleep 300ms
+
+Ctrl+n
+Sleep 300ms
+
+Type ":"
+Sleep 300ms
+Type@60ms "e lua/wildest/"
+Sleep 2s
+Escape
+Sleep 500ms
+
 Ctrl+n
 Sleep 300ms
 
 Type ":"
 Sleep 300ms
 Type@80ms "help help-"
-Sleep 2s
+Sleep 2.5s
 Escape
 Sleep 300ms
 
-# ── Scene 3: Wildmenu + Search ──
 Ctrl+n
 Sleep 300ms
 
 Type ":"
 Sleep 300ms
-Type@80ms "set fold"
-Sleep 2s
+Type@100ms "set fold"
+Sleep 2.5s
 Escape
 Sleep 300ms
 
-Type "/"
-Sleep 300ms
-Type@80ms "function"
-Sleep 2s
-Escape
-Sleep 300ms
-
-# ── Scene 4: Neon Theme ──
 Ctrl+n
 Sleep 300ms
 
 Type ":"
 Sleep 300ms
-Type@80ms "e lua/wildest/"
-Sleep 2s
-Escape
-Sleep 300ms
-
-Type ":"
-Sleep 300ms
-Type@80ms "set fold"
-Sleep 2s
+Type@120ms "lua vim.api.nvim"
+Sleep 3s
 Escape
 Sleep 300ms
 

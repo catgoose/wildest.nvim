@@ -325,13 +325,83 @@ end
 
 M.showdown_scenes = {
   {
-    label = "Popupmenu + Devicons + Kind Icons + Fzy",
-    pipeline = { "lua", "help_fuzzy", "cmdline_fuzzy", "search" },
-    left = { " ", "devicons", "kind_icon" },
+    label = "Tumbleweeds Roll",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "wildmenu",
+    highlighter = "basic",
+    separator = " | ",
+    left = { "arrows" },
+    right = { "arrows_right", " ", "index" },
   },
   {
-    label = "Palette + Gradient Rainbow",
+    label = "Prairie Dust",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "theme:prairie",
+    left = { " ", "devicons" },
+  },
+  {
+    label = "Clock Tower",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "theme:midnight",
+    left = { " ", "kind_icon" },
+  },
+  {
+    label = "The Draw",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "theme:outlaw",
+    left = { " ", "devicons" },
+  },
+  {
+    label = "Quickfire",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "theme:outlaw",
+    left = { " ", "kind_icon" },
+  },
+  {
+    label = "Ricochet",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "mux",
+    mux = {
+      [":"] = {
+        renderer = "theme:auto",
+        highlighter = "fzy",
+        highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
+        left = "devicons",
+        right = { " ", "scrollbar" },
+      },
+      ["/"] = {
+        renderer = "wildmenu",
+        highlighter = "basic",
+        highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
+        separator = " | ",
+      },
+    },
+  },
+  {
+    label = "Smoke Clears",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
+    renderer = "border_theme",
+    border = "rounded",
+    custom_highlights = neon_highlights,
+  },
+  {
+    label = "Sunset Silhouette",
     pipeline = { "help_fuzzy", "cmdline_fuzzy", "search" },
+    renderer = "theme:sunset",
+    highlights = false,
+    highlighter = "gradient",
+    gradient_colors = rainbow_colors,
+    left = { " " },
+  },
+  {
+    label = "Dust Settles",
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "theme:dusty",
+    right = { " ", "scrollbar" },
+  },
+  {
+    label = "The Legend",
+    pipeline = { "lua", "cmdline_fuzzy", "search" },
     renderer = "palette",
     palette = {
       title = " Wildest ",
@@ -342,24 +412,8 @@ M.showdown_scenes = {
       min_width = 40,
       margin = "auto",
     },
-    highlights = false,
-    highlighter = "gradient",
-    gradient_colors = rainbow_colors,
+    custom_highlights = ember_highlights,
     left = { " " },
-  },
-  {
-    label = "Wildmenu + Search",
-    renderer = "wildmenu",
-    highlighter = "basic",
-    separator = " | ",
-    left = { "arrows" },
-    right = { "arrows_right", " ", "index" },
-  },
-  {
-    label = "Neon Theme",
-    renderer = "border_theme",
-    border = "rounded",
-    custom_highlights = neon_highlights,
   },
 }
 
