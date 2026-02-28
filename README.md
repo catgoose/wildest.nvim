@@ -2,9 +2,6 @@
 
 [![CI](https://github.com/catgoose/wildest.nvim/actions/workflows/ci.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/ci.yml)
 [![Screenshots](https://github.com/catgoose/wildest.nvim/actions/workflows/screenshots.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/screenshots.yml)
-[![README](https://github.com/catgoose/wildest.nvim/actions/workflows/readme.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/readme.yml)
-[![GIFs](https://github.com/catgoose/wildest.nvim/actions/workflows/gifs.yml/badge.svg?branch=main)](https://github.com/catgoose/wildest.nvim/actions/workflows/gifs.yml)
-[![GIFs](https://github.com/catgoose/wildest.nvim/actions/workflows/gifs.yml/badge.svg)](https://github.com/catgoose/wildest.nvim/actions/workflows/gifs.yml)
 
 <!--toc:start-->
 - [wildest.nvim](#wildestnvim)
