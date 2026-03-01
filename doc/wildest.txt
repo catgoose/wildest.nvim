@@ -265,17 +265,19 @@ RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 wildest.PopupmenuOpts                                    *wildest.PopupmenuOpts*
 
     Fields: ~
-        {highlighter?}   (table)        Highlighter for match accents
-        {left?}          (table)        Left components (default { " " })
-        {right?}         (table)        Right components (default { " " })
-        {max_height?}    (integer)      Maximum number of visible lines (default 16)
-        {min_height?}    (integer)      Minimum number of visible lines (default 0)
-        {max_width?}     (integer|nil)  Maximum width (nil = full editor width)
-        {min_width?}     (integer)      Minimum width (default 16)
-        {reverse?}       (boolean)      Reverse candidate order (default false)
-        {fixed_height?}  (boolean)      Pad to max_height to prevent resizing (default false)
-        {pumblend?}      (integer)      Window transparency 0-100
-        {zindex?}        (integer)      Floating window z-index (default 250)
+        {highlighter?}    (table)               Highlighter for match accents
+        {padding?}        (number)              Inner padding spaces (default 1, clamped >= 0)
+        {left?}           (table)               Left components
+        {right?}          (table)               Right components
+        {max_height?}     (integer)             Maximum number of visible lines (default 16)
+        {min_height?}     (integer)             Minimum number of visible lines (default 0)
+        {max_width?}      (integer|string|nil)  Maximum width, integer or percentage (nil = full editor width)
+        {min_width?}      (integer|string)      Minimum width, integer or percentage (default 16)
+        {reverse?}        (boolean)             Reverse candidate order (default false)
+        {fixed_height?}   (boolean)             Pad to max_height to prevent resizing (default false)
+        {empty_message?}  (string|nil)          Message shown when there are no results
+        {pumblend?}       (integer)             Window transparency 0-100
+        {zindex?}         (integer)             Floating window z-index (default 250)
 
 
 wildest.PopupmenuBorderOpts                        *wildest.PopupmenuBorderOpts*
@@ -284,8 +286,9 @@ wildest.PopupmenuBorderOpts                        *wildest.PopupmenuBorderOpts*
         {border?}         (string|table)        Border style preset or 8-char array (default "single")
         {title?}          (string)              Title centered in the top border
         {highlighter?}    (table)               Highlighter for match accents
-        {left?}           (table)               Left components (default { " " })
-        {right?}          (table)               Right components (default { " " })
+        {padding?}        (number)              Inner padding spaces (default 1, clamped >= 0)
+        {left?}           (table)               Left components
+        {right?}          (table)               Right components
         {max_height?}     (integer|string)      Max visible lines, integer or percentage (default 16)
         {min_height?}     (integer)             Minimum visible lines (default 0)
         {max_width?}      (integer|string|nil)  Max width, integer or percentage (nil = full width)
@@ -306,8 +309,9 @@ wildest.PopupmenuPaletteOpts                      *wildest.PopupmenuPaletteOpts*
         {prompt_prefix?}    (string)          Prefix shown before cmdline input (default " : ")
         {prompt_position?}  (string)          Prompt placement: "top" or "bottom" (default "top")
         {highlighter?}      (table)           Highlighter for match accents
-        {left?}             (table)           Left components (default { " " })
-        {right?}            (table)           Right components (default { " " })
+        {padding?}          (number)          Inner padding spaces (default 1, clamped >= 0)
+        {left?}             (table)           Left components
+        {right?}            (table)           Right components
         {max_height?}       (string|integer)  Max height, percentage or integer (default "75%")
         {min_height?}       (integer)         Minimum height (default 0)
         {max_width?}        (string|integer)  Max width, percentage or integer (default "75%")
@@ -677,6 +681,23 @@ M.clear_theme_cache()                                *wildest.clear_theme_cache*
     Clear all compiled theme bytecode caches.
 
 
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+
+M.register_action({name}, {fn})                        *wildest.register_action*
+    Register a named action for use in the actions config.
+
+    Parameters: ~
+        {name}  (string)                          Action name
+        {fn}    (fun(ctx:wildest.ActionContext))  Action function
+
+
+M.list_actions()                                          *wildest.list_actions*
+    List all registered action names (sorted).
+
+    Returns: ~
+        (string[])
+
+
 SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS
 
 M.enable()                                                      *wildest.enable*
@@ -702,28 +723,31 @@ merged with defaults using `vim.tbl_deep_extend`.
 wildest.Config                                                  *wildest.Config*
 
     Fields: ~
-        {modes?}             (string[])                                     Cmdline modes to enable (default: { ':', '/', '?' })
-        {next_key?}          (string|string[])                              Key(s) to select next candidate (default: '<Tab>')
-        {previous_key?}      (string|string[])                              Key(s) to select previous candidate (default: '<S-Tab>')
-        {accept_key?}        (string|string[])                              Key(s) to accept current selection (default: '<Down>')
-        {reject_key?}        (string|string[])                              Key(s) to reject and restore original (default: '<Up>')
-        {scroll_up_key?}     (string|string[])                              Key(s) to scroll up by page (default: '<C-b>')
-        {scroll_down_key?}   (string|string[])                              Key(s) to scroll down by page (default: '<C-f>')
-        {scroll_size?}       (integer)                                      Number of items to scroll per page (default: 10)
-        {close_key?}         (string|string[])                              Key(s) to close popup but stay in cmdline (default: '<C-e>')
-        {confirm_key?}       (string|string[])                              Key(s) to accept selection and execute (default: '<C-y>')
-        {dismiss_key?}       (string|string[])                              Key(s) to dismiss popup and restore input (default: nil)
-        {jump_keys?}         (table[])                                      Custom jump bindings: { { key, count } ... } e.g. { { "<C-n>", 5 }, { "<C-p>", -10 } }
-        {interval?}          (integer)                                      Debounce interval in ms (default: 100)
-        {num_workers?}       (integer)                                      Number of async workers (default: 2)
-        {noselect?}          (boolean)                                      No item selected initially (default: true)
-        {trigger?}           ("auto"|"tab")                                 When to show completions (default: 'auto')
-        {longest_prefix?}    (boolean)                                      Insert longest common prefix on first Tab (default: false)
-        {pipeline_timeout?}  (integer)                                      Timeout in ms for pipeline steps, 0 = no timeout (default: 0)
-        {skip_commands?}     (string[])                                     Commands to skip completions for (default: {})
-        {min_input?}         (integer)                                      Minimum input length before showing completions (default: 0)
-        {pipeline?}          (wildest.PipelineStep|wildest.PipelineStep[])  Pipeline steps or single pipeline step
-        {renderer?}          (wildest.Renderer)                             Renderer instance
+        {modes?}             (string[])                                             Cmdline modes to enable (default: { ':', '/', '?' })
+        {next_key?}          (string|string[])                                      Key(s) to select next candidate (default: '<Tab>')
+        {previous_key?}      (string|string[])                                      Key(s) to select previous candidate (default: '<S-Tab>')
+        {accept_key?}        (string|string[])                                      Key(s) to accept current selection (default: '<Down>')
+        {reject_key?}        (string|string[])                                      Key(s) to reject and restore original (default: '<Up>')
+        {scroll_up_key?}     (string|string[])                                      Key(s) to scroll up by page (default: '<C-b>')
+        {scroll_down_key?}   (string|string[])                                      Key(s) to scroll down by page (default: '<C-f>')
+        {scroll_size?}       (integer)                                              Number of items to scroll per page (default: 10)
+        {close_key?}         (string|string[])                                      Key(s) to close popup but stay in cmdline (default: '<C-e>')
+        {confirm_key?}       (string|string[])                                      Key(s) to accept selection and execute (default: '<C-y>')
+        {dismiss_key?}       (string|string[])                                      Key(s) to dismiss popup and restore input (default: nil)
+        {jump_keys?}         (table[])                                              Custom jump bindings: { { key, count } ... } e.g. { { "<C-n>", 5 }, { "<C-p>", -10 } }
+        {actions?}           (table<string,string|fun(ctx:wildest.ActionContext)>)  Key-to-action mappings
+        {interval?}          (integer)                                              Debounce interval in ms (default: 100)
+        {num_workers?}       (integer)                                              Number of async workers (default: 2)
+        {noselect?}          (boolean)                                              No item selected initially (default: true)
+        {trigger?}           ("auto"|"tab")                                         When to show completions (default: 'auto')
+        {longest_prefix?}    (boolean)                                              Insert longest common prefix on first Tab (default: false)
+        {pipeline_timeout?}  (integer)                                              Timeout in ms for pipeline steps, 0 = no timeout (default: 0)
+        {skip_commands?}     (string[])                                             Commands to skip completions for (default: {})
+        {min_input?}         (integer)                                              Minimum input length before showing completions (default: 0)
+        {pipeline?}          (wildest.PipelineStep|wildest.PipelineStep[])          Pipeline steps or single pipeline step
+        {preview?}           (wildest.PreviewConfig)                                Preview window configuration
+        {auto_colorscheme?}  (boolean)                                              Re-apply highlights on colorscheme change (default: true)
+        {renderer?}          (wildest.Renderer)                                     Renderer instance
 
 
 M.setup({opts?})                                          *wildest.config.setup*
@@ -959,6 +983,17 @@ M.shorten_home({path})                               *wildest.util.shorten_home*
         (string)
 
 
+M.parse_percent({str}, {total})                     *wildest.util.parse_percent*
+     Parse percentage string (e.g. "75%") to integer given total.
+
+    Parameters: ~
+        {str}    (string)
+        {total}  (number)
+
+    Returns: ~
+        (integer|nil)  or nil if str is not a "N%" string
+
+
 M.is_empty({str?})                                       *wildest.util.is_empty*
      Check if a string is empty or nil
 
@@ -1000,17 +1035,37 @@ M.clear_project_root_cache()             *wildest.util.clear_project_root_cache*
      Clear the project root cache
 
 
+M.detect_expand({data})                             *wildest.util.detect_expand*
+     Determine the "expand" type from pipeline data.
+     Returns "file", "buffer", "help", or nil.
+
+    Parameters: ~
+        {data}  (table)
+
+    Returns: ~
+        (string|nil)
+
+
 ==============================================================================
 Cache                                                            *wildest.cache*
 
 Cache implementations for wildest.nvim.
 Provides dictionary and MRU (Most Recently Used) caches.
 
+wildest.DictCache                                            *wildest.DictCache*
+
+    Fields: ~
+        {_data}  (table)
+
+
 M.dict_cache()                                        *wildest.cache.dict_cache*
     Create a simple dictionary cache.
 
     Returns: ~
-        (table)  object with get/set/clear/has methods
+        (wildest.DictCache)
+
+
+wildest.MRUCache : wildest                                    *wildest.MRUCache*
 
 
 M.mru_cache({max_size})                                *wildest.cache.mru_cache*
@@ -1020,7 +1075,7 @@ M.mru_cache({max_size})                                *wildest.cache.mru_cache*
         {max_size}  (integer)  maximum number of entries
 
     Returns: ~
-        (table)  object with get/set/clear/has methods
+        (wildest.MRUCache)
 
 
 ==============================================================================
@@ -1322,6 +1377,27 @@ M.parse_margin({margin}, {total}, {content_size})
         (integer)
 
 
+M.component_display_width({comp})     *wildest.renderer.component_display_width*
+     Return display width estimate for a single component (for layout).
+
+    Parameters: ~
+        {comp}  (string|table)
+
+    Returns: ~
+        (integer)
+
+
+                                  *wildest.renderer.resolve_component_to_chunks*
+M.resolve_component_to_chunks({default_hl}, {fill_hl?})
+
+    Parameters: ~
+        {default_hl}  (string)
+        {fill_hl?}    (string)  when set, parts with nil or empty hl use this
+
+    Returns: ~
+        (table[])  chunks
+
+
 M.create_base_state({opts}, {defaults?})    *wildest.renderer.create_base_state*
      Create the common state table shared by all popupmenu-style renderers
 
@@ -1354,6 +1430,19 @@ M.make_page()                                       *wildest.renderer.make_page*
 
 
 M.default_position()                         *wildest.renderer.default_position*
+
+
+                                                   *wildest.renderer.center_col*
+M.center_col({col}, {content_width}, {editor_width})
+     Center a popup horizontally within available space
+
+    Parameters: ~
+        {col}            (integer)  left edge from default_position
+        {content_width}  (integer)  width of the popup content
+        {editor_width}   (integer)  total available width
+
+    Returns: ~
+        (integer)  col
 
 
 M.ensure_buf({state}, {ns_name})                   *wildest.renderer.ensure_buf*
