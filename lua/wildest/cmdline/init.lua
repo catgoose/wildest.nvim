@@ -91,6 +91,22 @@ function M.cmdline_pipeline(opts)
       end
     end
 
+    -- For dot-separated completions (e.g. lua vim.api.nvim), highlight only
+    -- the last segment so the common prefix isn't accented.
+    -- Skip file types where dots are part of filenames, not namespaces.
+    if
+      not data.query
+      and ctx.expand ~= E.FILE
+      and ctx.expand ~= E.DIR
+      and ctx.expand ~= E.FILE_IN_PATH
+    then
+      local arg = ctx.arg or ""
+      local last_dot = arg:find("%.[^.]*$")
+      if last_dot then
+        data.query = arg:sub(last_dot + 1)
+      end
+    end
+
     -- For file completion, provide output/replace transforms
     local result = {
       value = candidates,
