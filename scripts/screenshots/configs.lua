@@ -1252,6 +1252,33 @@ end
 --- Format a named config as readable lines for screenshot buffer display.
 ---@param name string  config key from M.configs
 ---@return string[] lines
+-- Sample Lua code appended to screenshot buffers so that search-mode
+-- screenshots (cmd = "/function", etc.) find matches in the buffer.
+local sample_lua_lines = {
+  "",
+  "-- Example: custom pipeline stage",
+  "local function my_filter(ctx, candidates)",
+  "  local result = {}",
+  "  for _, candidate in ipairs(candidates) do",
+  "    if not candidate:match('^_') then",
+  "      table.insert(result, candidate)",
+  "    end",
+  "  end",
+  "  return result",
+  "end",
+  "",
+  "-- Example: conditional renderer",
+  "local function setup_renderer(opts)",
+  "  local renderer = require('wildest').popupmenu_border({",
+  "    border = opts.border or 'rounded',",
+  "    max_height = opts.max_height or 12,",
+  "    left = { require('wildest').popupmenu_devicons() },",
+  "    right = { require('wildest').popupmenu_scrollbar() },",
+  "  })",
+  "  return renderer",
+  "end",
+}
+
 function M.config_to_lines(name)
   local cfg = M.configs[name]
   if not cfg then
@@ -1268,6 +1295,10 @@ function M.config_to_lines(name)
   add("")
 
   setup_block_lines(cfg, lines, add)
+
+  for _, line in ipairs(sample_lua_lines) do
+    add(line)
+  end
 
   return lines
 end
