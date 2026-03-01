@@ -8,6 +8,13 @@ on:
       - "scripts/readme/**"
       - "lua/wildest/themes/**"
       - "lua/wildest/renderer/init.lua"
+  pull_request:
+    branches: [main]
+    paths:
+      - "scripts/screenshots/configs.lua"
+      - "scripts/readme/**"
+      - "lua/wildest/themes/**"
+      - "lua/wildest/renderer/init.lua"
   workflow_dispatch:
 
 concurrency:
