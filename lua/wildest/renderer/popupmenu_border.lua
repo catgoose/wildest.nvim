@@ -70,7 +70,8 @@ function PopupmenuBorder:render(ctx, result)
   local page_start, page_end = renderer_util.make_page(ctx.selected, total, max_h, state.page)
   state.page = { page_start, page_end }
 
-  if page_start == -1 or total == 0 then
+  local show_empty = total == 0 and state.empty_message
+  if not show_empty and (page_start == -1 or total == 0) then
     self:hide()
     return
   end
@@ -81,8 +82,23 @@ function PopupmenuBorder:render(ctx, result)
   local outer_width = math.max(min_w, math.min(max_w, editor_width))
   local content_width = outer_width
 
-  local lines, line_highlights =
-    self:render_candidates(result, ctx, page_start, page_end, content_width)
+  local lines, line_highlights
+  if show_empty then
+    lines = {}
+    line_highlights = {}
+    local msg = state.empty_message
+    local msg_w = vim.api.nvim_strwidth(msg)
+    local pad_w = content_width - msg_w
+    if pad_w < 0 then
+      pad_w = 0
+    end
+    local empty_line = msg .. string.rep(" ", pad_w)
+    table.insert(lines, empty_line)
+    table.insert(line_highlights, { spans = {}, base_hl = state.highlights.default })
+  else
+    lines, line_highlights =
+      self:render_candidates(result, ctx, page_start, page_end, content_width)
+  end
 
   -- Pad to fixed height
   if state.fixed_height then
