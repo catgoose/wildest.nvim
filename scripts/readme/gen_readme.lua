@@ -149,7 +149,7 @@ local function img_cell(name, label, width)
   )
 end
 
-local function gallery_table(names, prefix, label_fn)
+local function gallery_table_with(cell_fn, names, prefix, label_fn)
   local cols = 3
   local lines = { "<table>" }
   for i = 1, #names, cols do
@@ -159,7 +159,7 @@ local function gallery_table(names, prefix, label_fn)
       if name then
         local img_name = prefix and (prefix .. name) or name
         local label = label_fn and label_fn(name) or get_label(name)
-        lines[#lines + 1] = img_cell(img_name, label)
+        lines[#lines + 1] = cell_fn(img_name, label)
       else
         lines[#lines + 1] = "<td></td>"
       end
@@ -168,6 +168,10 @@ local function gallery_table(names, prefix, label_fn)
   end
   lines[#lines + 1] = "</table>"
   return table.concat(lines, "\n")
+end
+
+local function gallery_table(names, prefix, label_fn)
+  return gallery_table_with(img_cell, names, prefix, label_fn)
 end
 
 -- ── Lua value serializer ─────────────────────────────────────────
@@ -266,154 +270,14 @@ local function gen_expect(name)
   local raw = configs_mod.configs[name]
   if not raw then return name end
 
-  local merged = vim.tbl_extend("keep", raw, configs_mod.defaults)
-  if merged.theme then
-    merged.renderer = "theme:" .. merged.theme
-    merged.highlights = false
-  end
+  local desc = configs_mod.scene_to_description(raw)
 
-  local tokens = {}
-  local function add(s) tokens[#tokens + 1] = s end
-
-  -- Renderer
-  local renderer = merged.renderer or "theme:auto"
-  if renderer == "popupmenu" then
-    add("plain popupmenu")
-  elseif renderer == "border_theme" then
-    add("bordered")
-  elseif renderer == "palette" then
-    add("palette")
-  elseif renderer == "wildmenu" then
-    add("wildmenu")
-  elseif renderer == "mux" then
-    add("renderer mux")
-  elseif renderer:match("^theme:") then
-    local theme_name = renderer:match("^theme:(.+)$")
-    add(theme_name .. " theme")
-    if theme_meta[theme_name] then
-      add(theme_meta[theme_name].renderer)
-    end
+  -- Append command (README-specific)
+  local cmd = (raw.cmd or configs_mod.default_cmd):match("^(.-)%s*$")
+  if desc ~= "" then
+    return desc .. ", " .. cmd
   end
-
-  -- Border
-  if merged.border then
-    add(merged.border)
-  end
-
-  -- Notable options
-  if merged.title then add("title") end
-  if merged.position and merged.position ~= "bottom" then
-    add("position=" .. merged.position)
-  end
-  if merged.reverse then add("reverse") end
-  if merged.noselect == true then add("noselect") end
-  if merged.noselect == false then add("noselect=false") end
-  if merged.pumblend then add("pumblend=" .. merged.pumblend) end
-  if merged.offset then add("offset=" .. merged.offset) end
-  if merged.max_height then add("max_height=" .. merged.max_height) end
-  if merged.min_height then add("min_height=" .. merged.min_height) end
-  if merged.fixed_height == false then add("fixed_height=false") end
-  if merged.empty_message then add("empty_message") end
-  if merged.ellipsis then add("ellipsis") end
-
-  -- Highlighter
-  add(merged.highlighter or "fzy")
-
-  -- Left components
-  local left = merged.left
-  local has_devicons, has_kind, has_buffer_flags = false, false, false
-  if type(left) == "string" then
-    if left == "devicons" then has_devicons = true end
-  elseif type(left) == "table" then
-    for _, item in ipairs(left) do
-      if item == "devicons" then has_devicons = true end
-      if item == "kind_icon" then has_kind = true end
-      if item == "buffer_flags" then has_buffer_flags = true end
-    end
-  end
-  if has_devicons then add("devicons") end
-  if has_kind then add("kind icons") end
-  if has_buffer_flags then add("buffer flags") end
-  if not has_devicons and configs_mod.defaults.left == "devicons"
-    and renderer ~= "wildmenu" and renderer ~= "mux" then
-    add("no devicons")
-  end
-
-  -- Right components
-  local has_scrollbar = false
-  if type(merged.right) == "table" then
-    for _, item in ipairs(merged.right) do
-      if item == "scrollbar" then has_scrollbar = true end
-    end
-  end
-  if has_scrollbar then add("scrollbar") end
-  local default_has_scrollbar = false
-  if type(configs_mod.defaults.right) == "table" then
-    for _, item in ipairs(configs_mod.defaults.right) do
-      if item == "scrollbar" then default_has_scrollbar = true end
-    end
-  end
-  if not has_scrollbar and default_has_scrollbar
-    and renderer ~= "wildmenu" and renderer ~= "mux" then
-    add("no scrollbar")
-  end
-
-  -- Wildmenu-specific
-  if renderer == "wildmenu" then
-    local has_arrows = false
-    if type(left) == "table" then
-      for _, item in ipairs(left) do
-        if item == "arrows" then has_arrows = true end
-      end
-    end
-    if type(merged.right) == "table" then
-      for _, item in ipairs(merged.right) do
-        if item == "arrows_right" then has_arrows = true end
-      end
-    end
-    if has_arrows then add("arrows") end
-    if type(merged.right) == "table" then
-      for _, item in ipairs(merged.right) do
-        if item == "index" then add("index"); break end
-      end
-    end
-    if merged.separator then
-      add('separator="' .. merged.separator .. '"')
-    end
-  end
-
-  -- Pipeline (non-default)
-  if merged.pipeline then
-    for _, p in ipairs(merged.pipeline) do
-      if p == "lua" then add("lua pipeline") end
-      if p == "help_fuzzy" then add("help pipeline") end
-      if p == "history" then add("history pipeline") end
-    end
-  end
-
-  -- Layout (non-default)
-  if merged.laststatus ~= configs_mod.defaults.laststatus then
-    add("laststatus=" .. merged.laststatus)
-  end
-  if merged.cmdheight ~= configs_mod.defaults.cmdheight then
-    add("cmdheight=" .. merged.cmdheight)
-  end
-
-  -- Preview
-  if merged.preview then
-    local p = merged.preview
-    add("preview " .. (p.position or "right") .. " " .. (p.anchor or "screen"))
-  end
-
-  -- Highlights
-  if merged.custom_highlights then add("custom highlights") end
-  if merged.gradient_colors then add("gradient colors") end
-
-  -- Command
-  local cmd = raw.cmd or configs_mod.default_cmd
-  add(cmd:match("^(.-)%s*$"))
-
-  return table.concat(tokens, ", ")
+  return cmd
 end
 
 -- ── Detailed HTML helpers ────────────────────────────────────────
@@ -461,24 +325,7 @@ local function img_cell_detailed(config_name, label, width)
 end
 
 local function gallery_table_detailed(names, prefix, label_fn)
-  local cols = 3
-  local lines = { "<table>" }
-  for i = 1, #names, cols do
-    lines[#lines + 1] = "<tr>"
-    for j = 0, cols - 1 do
-      local name = names[i + j]
-      if name then
-        local img_name = prefix and (prefix .. name) or name
-        local label = label_fn and label_fn(name) or get_label(name)
-        lines[#lines + 1] = img_cell_detailed(img_name, label)
-      else
-        lines[#lines + 1] = "<td></td>"
-      end
-    end
-    lines[#lines + 1] = "</tr>"
-  end
-  lines[#lines + 1] = "</table>"
-  return table.concat(lines, "\n")
+  return gallery_table_with(img_cell_detailed, names, prefix, label_fn)
 end
 
 -- ── Gallery sections (data-driven) ───────────────────────────────────

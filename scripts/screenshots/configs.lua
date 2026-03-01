@@ -880,6 +880,25 @@ M.preview_names = {
   "preview_right_popup", "preview_left_popup", "preview_top_popup", "preview_bottom_popup",
 }
 
+-- ── Categories (ordered, used by generate.lua CLI + list) ──────
+
+M.categories = {
+  { flag = "renderers",         display = "Renderers",         names = M.renderer_names },
+  { flag = "themes",            display = "Themes",            names = M.theme_names, prefix = "theme_" },
+  { flag = "features",          display = "Features",          names = M.feature_names },
+  { flag = "pipelines",         display = "Pipelines",         names = M.pipeline_names },
+  { flag = "highlights",        display = "Highlights",        names = M.highlight_names },
+  { flag = "borders",           display = "Borders",           names = M.border_names },
+  { flag = "wildmenu-variants", display = "Wildmenu Variants", names = M.wildmenu_variant_names },
+  { flag = "palette-variants",  display = "Palette Variants",  names = M.palette_variant_names },
+  { flag = "dimensions",        display = "Dimensions",        names = M.dimension_names },
+  { flag = "gradients",         display = "Gradients",         names = M.gradient_names },
+  { flag = "combinations",      display = "Combinations",      names = M.combination_names },
+  { flag = "layouts",           display = "Layouts",           names = M.layout_names },
+  { flag = "options",           display = "Options",           names = M.option_names },
+  { flag = "previews",          display = "Previews",          names = M.preview_names },
+}
+
 -- Theme configs (generated)
 M.theme_names = {
   "auto", "default", "saloon", "outlaw", "sunset", "prairie", "dusty",
@@ -1791,8 +1810,9 @@ function M.gif_init(name, n)
       return
     end
     local desc = M.scene_to_description(scene)
-    vim.api.nvim_buf_set_name(0, desc ~= "" and desc or ("Scene " .. index))
-    vim.o.statusline = " %f %= " .. index .. "/" .. #scenes .. "  " .. (scene.label or "") .. " "
+    local buf_name = desc ~= "" and ("[" .. desc .. "]") or ("[Scene " .. index .. "]")
+    vim.api.nvim_buf_set_name(0, buf_name)
+    vim.o.statusline = " %f %= [" .. index .. "/" .. #scenes .. " - " .. (scene.label or "") .. "] "
 
     -- Write scene config as buffer content
     local lines = M.scene_to_lines(scene, index, #scenes)

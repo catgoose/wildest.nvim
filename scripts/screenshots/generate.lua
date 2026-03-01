@@ -83,6 +83,16 @@ local function file_size_human(path)
   end
 end
 
+-- ── Tmpfile helper ───────────────────────────────────────────────
+
+local function write_tmpfile(content)
+  local path = os.tmpname() .. ".tape"
+  local f = io.open(path, "w")
+  f:write(content)
+  f:close()
+  return path
+end
+
 -- ── VHS helpers ──────────────────────────────────────────────────
 
 --- Shared VHS preamble (shell, font, dimensions, theme).
@@ -137,11 +147,7 @@ Type ":q!"
 Enter
 Sleep 500ms]], vhs_preamble(), nvim_cmd, mode, typed, output_dir, config_name))
 
-  local path = os.tmpname() .. ".tape"
-  local f = io.open(path, "w")
-  f:write(table.concat(parts, "\n"))
-  f:close()
-  return path
+  return write_tmpfile(table.concat(parts, "\n"))
 end
 
 -- ── VHS execution ────────────────────────────────────────────────
@@ -363,10 +369,7 @@ Type ":q!"
 Enter
 Sleep 500ms]], output_dir, name, vhs_preamble("60ms"), nvim_cmd, scene_tape)
 
-  local tape_file = os.tmpname() .. ".tape"
-  local f = io.open(tape_file, "w")
-  f:write(tape)
-  f:close()
+  local tape_file = write_tmpfile(tape)
 
   local ok = run_vhs(tape_file)
   os.remove(tape_file)
@@ -445,26 +448,9 @@ local function list_configs()
   printf("Available configs:")
   printf("")
 
-  local categories = {
-    { name = "Renderers", list = configs_mod.renderer_names },
-    { name = "Themes", list = configs_mod.theme_names, prefix = "theme_" },
-    { name = "Features", list = configs_mod.feature_names },
-    { name = "Pipelines", list = configs_mod.pipeline_names },
-    { name = "Highlights", list = configs_mod.highlight_names },
-    { name = "Borders", list = configs_mod.border_names },
-    { name = "Wildmenu Variants", list = configs_mod.wildmenu_variant_names },
-    { name = "Palette Variants", list = configs_mod.palette_variant_names },
-    { name = "Dimensions", list = configs_mod.dimension_names },
-    { name = "Gradients", list = configs_mod.gradient_names },
-    { name = "Combinations", list = configs_mod.combination_names },
-    { name = "Layouts", list = configs_mod.layout_names },
-    { name = "Options", list = configs_mod.option_names },
-    { name = "Previews", list = configs_mod.preview_names },
-  }
-
-  for _, cat in ipairs(categories) do
-    printf("%s:", cat.name)
-    for _, name in ipairs(cat.list) do
+  for _, cat in ipairs(configs_mod.categories) do
+    printf("%s:", cat.display)
+    for _, name in ipairs(cat.names) do
       printf("  %s", (cat.prefix or "") .. name)
     end
     printf("")
@@ -475,25 +461,11 @@ end
 
 local function all_config_names()
   local names = {}
-  local function add(list, prefix)
-    for _, n in ipairs(list) do
-      table.insert(names, (prefix or "") .. n)
+  for _, cat in ipairs(configs_mod.categories) do
+    for _, n in ipairs(cat.names) do
+      table.insert(names, (cat.prefix or "") .. n)
     end
   end
-  add(configs_mod.renderer_names)
-  add(configs_mod.theme_names, "theme_")
-  add(configs_mod.feature_names)
-  add(configs_mod.pipeline_names)
-  add(configs_mod.highlight_names)
-  add(configs_mod.border_names)
-  add(configs_mod.wildmenu_variant_names)
-  add(configs_mod.palette_variant_names)
-  add(configs_mod.dimension_names)
-  add(configs_mod.gradient_names)
-  add(configs_mod.combination_names)
-  add(configs_mod.layout_names)
-  add(configs_mod.option_names)
-  add(configs_mod.preview_names)
   return names
 end
 
@@ -519,6 +491,12 @@ local function main()
     end
   end
 
+  -- Build flag→category lookup from configs_mod.categories
+  local category_flags = {}
+  for _, cat in ipairs(configs_mod.categories) do
+    category_flags["--" .. cat.flag] = cat
+  end
+
   local i = 1
   while i <= #script_args do
     local a = script_args[i]
@@ -540,61 +518,10 @@ local function main()
     elseif a == "--list" then
       list_configs()
       os.exit(0)
-    elseif a == "--themes" then
-      for _, n in ipairs(configs_mod.theme_names) do
-        table.insert(configs_to_run, "theme_" .. n)
-      end
-    elseif a == "--renderers" then
-      for _, n in ipairs(configs_mod.renderer_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--features" then
-      for _, n in ipairs(configs_mod.feature_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--pipelines" then
-      for _, n in ipairs(configs_mod.pipeline_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--highlights" then
-      for _, n in ipairs(configs_mod.highlight_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--borders" then
-      for _, n in ipairs(configs_mod.border_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--wildmenu-variants" then
-      for _, n in ipairs(configs_mod.wildmenu_variant_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--palette-variants" then
-      for _, n in ipairs(configs_mod.palette_variant_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--dimensions" then
-      for _, n in ipairs(configs_mod.dimension_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--gradients" then
-      for _, n in ipairs(configs_mod.gradient_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--combinations" then
-      for _, n in ipairs(configs_mod.combination_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--layouts" then
-      for _, n in ipairs(configs_mod.layout_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--options" then
-      for _, n in ipairs(configs_mod.option_names) do
-        table.insert(configs_to_run, n)
-      end
-    elseif a == "--previews" then
-      for _, n in ipairs(configs_mod.preview_names) do
-        table.insert(configs_to_run, n)
+    elseif category_flags[a] then
+      local cat = category_flags[a]
+      for _, n in ipairs(cat.names) do
+        table.insert(configs_to_run, (cat.prefix or "") .. n)
       end
     elseif a == "--gifs" then
       generate_gifs = true
