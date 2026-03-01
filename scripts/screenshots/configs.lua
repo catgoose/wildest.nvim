@@ -161,13 +161,13 @@ M.configs = {
   -- Feature configs
   devicons = {
     category = "feature",
-    cmd = ":e init",
+    cmd = ":e lua/wildest/renderer/components/",
     left = { "devicons" },
   },
 
   fuzzy = {
     category = "feature",
-    cmd = ":e rend",
+    cmd = ":e tests/test_c",
   },
 
   gradient = {
@@ -212,7 +212,7 @@ M.configs = {
   prefix_highlighter = {
     category = "feature",
     label = "Prefix Highlighter",
-    cmd = ":e conf",
+    cmd = ":e tests/",
     highlighter = "prefix",
   },
 
@@ -671,7 +671,7 @@ M.configs = {
   devicons_kind = {
     category = "combination",
     label = "Devicons + Kind",
-    cmd = ":e init",
+    cmd = ":e lua/wildest/renderer/components/",
     left = { "devicons", "kind_icon" },
     right = { "scrollbar" },
   },
@@ -687,7 +687,7 @@ M.configs = {
   accent_incsearch = {
     category = "combination",
     label = "IncSearch Accent",
-    cmd = ":e high",
+    cmd = ":e lua/wildest/renderer/components/",
     highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
   },
 
@@ -711,7 +711,7 @@ M.configs = {
   devicons_scrollbar_border = {
     category = "combination",
     label = "Devicons + Scrollbar + Border",
-    cmd = ":e init",
+    cmd = ":e lua/wildest/renderer/components/",
     renderer = "border_theme",
     border = "rounded",
     left = { "devicons" },
@@ -786,7 +786,7 @@ M.configs = {
   preview_right_screen = {
     category = "preview",
     label = "Preview Right (Screen)",
-    cmd = ":e conf",
+    cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
     preview = { position = "right", anchor = "screen", width = "40%", border = "rounded" },
   },
@@ -794,7 +794,7 @@ M.configs = {
   preview_left_screen = {
     category = "preview",
     label = "Preview Left (Screen)",
-    cmd = ":e conf",
+    cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
     preview = { position = "left", anchor = "screen", width = "40%", border = "rounded" },
   },
@@ -802,7 +802,7 @@ M.configs = {
   preview_top_screen = {
     category = "preview",
     label = "Preview Top (Screen)",
-    cmd = ":e conf",
+    cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
     preview = { position = "top", anchor = "screen", height = "40%", border = "rounded" },
   },
@@ -810,7 +810,7 @@ M.configs = {
   preview_bottom_screen = {
     category = "preview",
     label = "Preview Bottom (Screen)",
-    cmd = ":e conf",
+    cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
     preview = { position = "bottom", anchor = "screen", height = "40%", border = "rounded" },
   },
@@ -818,7 +818,7 @@ M.configs = {
   preview_right_popup = {
     category = "preview",
     label = "Preview Right (Popup)",
-    cmd = ":e conf",
+    cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
     preview = { position = "right", anchor = "popup", width = "40%", border = "rounded" },
   },
@@ -826,7 +826,7 @@ M.configs = {
   preview_left_popup = {
     category = "preview",
     label = "Preview Left (Popup)",
-    cmd = ":e conf",
+    cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
     preview = { position = "left", anchor = "popup", width = "40%", border = "rounded" },
   },
@@ -834,7 +834,7 @@ M.configs = {
   preview_top_popup = {
     category = "preview",
     label = "Preview Top (Popup)",
-    cmd = ":e conf",
+    cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
     preview = { position = "top", anchor = "popup", height = "40%", border = "rounded" },
   },
@@ -842,7 +842,7 @@ M.configs = {
   preview_bottom_popup = {
     category = "preview",
     label = "Preview Bottom (Popup)",
-    cmd = ":e conf",
+    cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
     preview = { position = "bottom", anchor = "popup", height = "40%", border = "rounded" },
   },
@@ -1246,6 +1246,10 @@ function M.scene_to_lines(scene, index, total)
 
   setup_block_lines(scene, lines, add)
 
+  for _, line in ipairs(sample_lua_lines) do
+    add(line)
+  end
+
   return lines
 end
 
@@ -1254,13 +1258,18 @@ end
 ---@return string[] lines
 -- Sample Lua code appended to screenshot buffers so that search-mode
 -- screenshots (cmd = "/function", etc.) find matches in the buffer.
+-- Sample Lua code appended to screenshot buffers so search-mode
+-- screenshots and GIF scenes (cmd = "/function", "/self", etc.)
+-- find matches in the buffer.  Every search term used in scene_pools
+-- (generate.lua) and screenshot configs must appear here.
 local sample_lua_lines = {
   "",
   "-- Example: custom pipeline stage",
-  "local function my_filter(ctx, candidates)",
+  "local function my_filter(self, ctx, candidates)",
   "  local result = {}",
   "  for _, candidate in ipairs(candidates) do",
-  "    if not candidate:match('^_') then",
+  "    local str = tostring(candidate)",
+  "    if not string.match(str, '^_') then",
   "      table.insert(result, candidate)",
   "    end",
   "  end",
@@ -1268,7 +1277,7 @@ local sample_lua_lines = {
   "end",
   "",
   "-- Example: conditional renderer",
-  "local function setup_renderer(opts)",
+  "local function setup_renderer(self, opts)",
   "  local renderer = require('wildest').popupmenu_border({",
   "    border = opts.border or 'rounded',",
   "    max_height = opts.max_height or 12,",
@@ -1590,6 +1599,21 @@ function M.screenshot_init(config_name)
   vim.bo.filetype = "lua"
   vim.bo.modified = false
   vim.api.nvim_win_set_cursor(0, { 1, 0 })
+
+  -- Create dummy buffers for configs that use buffer completion (:b)
+  local cfg = M.configs[config_name]
+  if cfg and cfg.cmd and cfg.cmd:match("^:b ") then
+    local dummy_names = {
+      "lua/wildest/init.lua",
+      "lua/wildest/cache.lua",
+      "lua/wildest/renderer/popupmenu.lua",
+      "lua/wildest/pipeline/init.lua",
+      "tests/test_cache.lua",
+    }
+    for _, name in ipairs(dummy_names) do
+      vim.cmd("badd " .. name)
+    end
+  end
 
   local built, vim_opts = M.build(config_name, w)
   w.setup(vim.tbl_extend("force", M.setup_defaults, built))
