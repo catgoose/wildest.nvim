@@ -345,13 +345,94 @@ local function build_scene_tape(n)
   return table.concat(parts, "\n")
 end
 
+-- ── Showdown GIF scene generation ────────────────────────────────
+
+local showdown_action_keys = {
+  accept          = { key = "Enter" },
+  open_tab        = { key = "Ctrl+t" },
+  open_split      = { key = "Ctrl+s" },
+  open_vsplit     = { key = "Ctrl+v" },
+  send_to_quickfix = { key = "Ctrl+q" },
+  toggle_preview  = { key = "Ctrl+p", toggle = true },
+  search_accept   = { key = "Enter" },
+}
+
+--- Build the VHS tape body for showdown scenes (preview + actions).
+---@param n number  how many scenes to emit
+---@param seed number  deterministic seed (shared with configs.lua)
+---@return string   VHS tape fragment (no preamble / postamble)
+local function build_showdown_tape(n, seed)
+  local plan = configs_mod.showdown_scene_plan(n, seed)
+
+  -- Independent random source for typing speed (doesn't need to match configs)
+  math.randomseed(seed + 99)
+
+  local parts = {}
+  for i, entry in ipairs(plan) do
+    if i > 1 then
+      table.insert(parts, "Ctrl+n")
+      table.insert(parts, "Sleep 300ms")
+      table.insert(parts, "")
+    end
+
+    local s = entry.vhs_cmd
+    local speed = math.random(30, 120)
+    local act = showdown_action_keys[entry.action]
+
+    if entry.action == "toggle_preview" then
+      -- Toggle preview showcase: type command, show with preview, toggle off, toggle on, escape
+      table.insert(parts, string.format('Type "%s"', s.mode))
+      table.insert(parts, "Sleep 300ms")
+      table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
+      table.insert(parts, "Sleep 1500ms")
+      table.insert(parts, "Ctrl+p")
+      table.insert(parts, "Sleep 1500ms")
+      table.insert(parts, "Ctrl+p")
+      table.insert(parts, "Sleep 1000ms")
+      table.insert(parts, "Escape")
+      table.insert(parts, "Sleep 300ms")
+    elseif entry.action == "search_accept" then
+      -- Search showcase: type search, show results, accept
+      table.insert(parts, string.format('Type "%s"', s.mode))
+      table.insert(parts, "Sleep 300ms")
+      table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
+      table.insert(parts, "Sleep 1500ms")
+      table.insert(parts, "Enter")
+      table.insert(parts, "Sleep 2000ms")
+    else
+      -- File action showcase: type command, show popup + preview, select, act
+      table.insert(parts, string.format('Type "%s"', s.mode))
+      table.insert(parts, "Sleep 300ms")
+      table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
+      table.insert(parts, "Sleep 1500ms")
+      table.insert(parts, "Tab")
+      table.insert(parts, "Sleep 500ms")
+      table.insert(parts, act.key)
+      table.insert(parts, "Sleep 2000ms")
+    end
+
+    table.insert(parts, "")
+  end
+  return table.concat(parts, "\n")
+end
+
 -- ── Animated GIF generation ──────────────────────────────────────
 
 local function generate_gif(name)
   printf("Generating animated %s GIF...", name)
 
-  local scene_tape = build_scene_tape(25)
-  local nvim_cmd = string.format("WILDEST_GIF_NAME=%s nvim -u %s -i NONE", name, gif_init_lua)
+  local scene_tape
+  local seed = os.time() + (vim.fn.getpid and vim.fn.getpid() or 0)
+  local env_prefix = ""
+
+  if name == "showdown" then
+    scene_tape = build_showdown_tape(25, seed)
+    env_prefix = string.format("WILDEST_GIF_SEED=%d ", seed)
+  else
+    scene_tape = build_scene_tape(25)
+  end
+
+  local nvim_cmd = string.format("%sWILDEST_GIF_NAME=%s nvim -u %s -i NONE", env_prefix, name, gif_init_lua)
   local tape = string.format([[Output "%s/%s.gif"
 
 %s

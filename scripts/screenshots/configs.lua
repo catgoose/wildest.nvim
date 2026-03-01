@@ -1055,13 +1055,6 @@ function M.random_scene(label)
   if math.random(4) == 1 then
     scene.fixed_height = pick({ true, false })
   end
-  if math.random(5) == 1 then
-    local pos = pick({ "right", "left", "top", "bottom" })
-    local anchor = pick({ "screen", "popup" })
-    local dim = (pos == "right" or pos == "left") and "width" or "height"
-    scene.preview = { position = pos, anchor = anchor, [dim] = pick({ "30%", "40%", "50%" }), border = pick(borders) }
-  end
-
   if recipe == "theme" then
     scene.renderer = "theme:" .. pick(M._random_themes)
     scene.left = pick(lefts)
@@ -1146,6 +1139,122 @@ function M.random_scenes(n)
   for i = 1, n do
     local label = names[((i - 1) % #names) + 1]
     table.insert(scenes, M.random_scene(label))
+  end
+  return scenes
+end
+
+-- ── Showdown scene generation ────────────────────────────────────
+
+local showdown_file_cmds = {
+  { mode = ":", typed = "e lua/wildest/renderer/components/" },
+  { mode = ":", typed = "e tests/" },
+  { mode = ":", typed = "e lua/wildest/" },
+  { mode = ":", typed = "e lua/wildest/renderer/" },
+  { mode = ":", typed = "e scripts/" },
+  { mode = ":", typed = "e tests/test_c" },
+}
+
+local showdown_search_cmds = {
+  { mode = "/", typed = "function" },
+  { mode = "/", typed = "return" },
+  { mode = "/", typed = "local" },
+  { mode = "/", typed = "require" },
+}
+
+local showdown_action_weights = {
+  { "accept",            10 },
+  { "open_tab",          15 },
+  { "open_split",        15 },
+  { "open_vsplit",       10 },
+  { "send_to_quickfix",  15 },
+  { "toggle_preview",    15 },
+  { "search_accept",     10 },
+}
+
+local showdown_action_total = 0
+for _, aw in ipairs(showdown_action_weights) do
+  showdown_action_total = showdown_action_total + aw[2]
+end
+
+local function pick_showdown_action()
+  local roll = math.random(showdown_action_total)
+  local acc = 0
+  for _, aw in ipairs(showdown_action_weights) do
+    acc = acc + aw[2]
+    if roll <= acc then
+      return aw[1]
+    end
+  end
+  return showdown_action_weights[1][1]
+end
+
+--- Generate a deterministic showdown scene plan (lightweight: vhs_cmd + action only).
+--- Both generate.lua (VHS tape) and gif_init (config) use the same seed to stay in sync.
+---@param n number
+---@param seed number  deterministic seed for math.random
+---@return table[]  list of { vhs_cmd = {mode, typed}, action = string }
+function M.showdown_scene_plan(n, seed)
+  math.randomseed(seed)
+  local plan = {}
+  for _ = 1, n do
+    local action = pick_showdown_action()
+    local vhs_cmd
+    if action == "search_accept" then
+      vhs_cmd = pick(showdown_search_cmds)
+    else
+      vhs_cmd = pick(showdown_file_cmds)
+    end
+    table.insert(plan, { vhs_cmd = vhs_cmd, action = action })
+  end
+  return plan
+end
+
+--- Generate full showdown scenes with random configs, preview, and actions.
+--- Uses WILDEST_GIF_SEED env var for seed synchronization with VHS tape.
+---@param n number
+---@return table[]
+function M.showdown_scenes(n)
+  local seed = tonumber(os.getenv("WILDEST_GIF_SEED")) or (os.time() + (vim.fn.getpid and vim.fn.getpid() or 0))
+  local plan = M.showdown_scene_plan(n, seed)
+
+  -- Re-seed for the config randomization (independent of the plan seed)
+  math.randomseed(seed + 1)
+
+  local borders = { "rounded", "single", "double", "solid" }
+  local names = {}
+  for _, name in ipairs(scene_names) do
+    table.insert(names, name)
+  end
+  for i = #names, 2, -1 do
+    local j = math.random(i)
+    names[i], names[j] = names[j], names[i]
+  end
+
+  local scenes = {}
+  for i = 1, n do
+    local label = names[((i - 1) % #names) + 1]
+    local scene = M.random_scene(label)
+
+    -- Always add preview
+    local pos = pick({ "right", "left", "top", "bottom" })
+    local anchor = pick({ "screen", "popup" })
+    local dim = (pos == "right" or pos == "left") and "width" or "height"
+    scene.preview = { position = pos, anchor = anchor, [dim] = pick({ "30%", "40%", "50%" }), border = pick(borders) }
+
+    -- Add default actions keymaps
+    scene.actions = {
+      ["<C-t>"] = "open_tab",
+      ["<C-s>"] = "open_split",
+      ["<C-v>"] = "open_vsplit",
+      ["<C-q>"] = "send_to_quickfix",
+      ["<C-p>"] = "toggle_preview",
+    }
+
+    -- Copy plan metadata
+    scene.action = plan[i].action
+    scene.vhs_cmd = plan[i].vhs_cmd
+
+    table.insert(scenes, scene)
   end
   return scenes
 end
@@ -1444,6 +1553,8 @@ function M.scene_to_description(cfg)
     add("preview " .. (p.position or "right") .. " " .. (p.anchor or "screen"))
   end
 
+  if merged.action then add("action: " .. merged.action) end
+
   if merged.custom_highlights then add("custom highlights") end
   if merged.gradient_colors then add("gradient colors") end
 
@@ -1707,6 +1818,9 @@ function M.build(name_or_cfg, w)
   if merged.preview then
     setup_opts.preview = merged.preview
   end
+  if merged.actions then
+    setup_opts.actions = merged.actions
+  end
 
   -- Collect vim option overrides to return to the caller.
   -- The caller should apply these AFTER w.setup() so that nothing
@@ -1797,7 +1911,12 @@ function M.gif_init(name, n)
 
   local w = require("wildest")
   n = n or 25
-  local scenes = M.random_scenes(n)
+  local scenes
+  if name == "showdown" then
+    scenes = M.showdown_scenes(n)
+  else
+    scenes = M.random_scenes(n)
+  end
 
   -- Dump scene configs for debugging
   local out_dir = configs_dir .. "/output"
