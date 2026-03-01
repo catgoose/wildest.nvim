@@ -54,7 +54,8 @@ function BasePopupmenu:render_candidates(result, ctx, page_start, page_end, widt
       state.highlights.selected_accent,
       is_selected
     )
-    local left_parts, right_parts = renderer_util.render_components(state, ctx, result, i, is_selected)
+    local left_parts, right_parts =
+      renderer_util.render_components(state, ctx, result, i, is_selected)
 
     local line, spans =
       renderer_util.render_line(candidate, left_parts, right_parts, candidate_spans, width, base_hl)

@@ -206,7 +206,12 @@ function PopupmenuPalette:render(ctx, result)
   -- Pad content area to target height
   local min_content_h = math.max(0, (state.min_height or 0) - chrome_lines)
   local target_content_h = state.fixed_height and content_max_h or min_content_h
-  self:pad_to_height(lines, line_highlights, #lines + (target_content_h - content_count), content_width)
+  self:pad_to_height(
+    lines,
+    line_highlights,
+    #lines + (target_content_h - content_count),
+    content_width
+  )
 
   -- Prompt at bottom
   if state.prompt_position == "bottom" then
