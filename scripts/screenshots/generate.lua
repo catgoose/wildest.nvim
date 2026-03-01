@@ -645,7 +645,8 @@ local function main()
   if parallel_jobs > 1 then
     -- Build all tape files, then run in parallel
     local jobs = {}
-    for _, config_name in ipairs(configs_to_run) do
+    for i, config_name in ipairs(configs_to_run) do
+      printf("  [%d] %s", i, config_name)
       local tape_file = generate_tape(config_name, generate_gifs)
       table.insert(jobs, { config = config_name, tape = tape_file })
     end
@@ -661,8 +662,8 @@ local function main()
     end
   else
     -- Sequential execution
-    for _, config_name in ipairs(configs_to_run) do
-      printf("  Generating: %s", config_name)
+    for i, config_name in ipairs(configs_to_run) do
+      printf("  [%d] Generating: %s", i, config_name)
       local tape_file = generate_tape(config_name, generate_gifs)
       local ok = run_vhs(tape_file)
       os.remove(tape_file)
@@ -681,6 +682,13 @@ local function main()
   printf("")
   printf("Done: %d succeeded, %d failed", succeeded, failed)
   printf("Screenshots: %s/", output_dir)
+
+  -- Print index for easy reference
+  printf("")
+  printf("Index:")
+  for i, config_name in ipairs(configs_to_run) do
+    printf("  [%d] %s", i, config_name)
+  end
 
   -- Generate GIFs if requested alongside screenshots
   if generate_showdown_flag then

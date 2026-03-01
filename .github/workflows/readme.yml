@@ -4,11 +4,15 @@ on:
   push:
     branches: [main]
     paths:
-      - 'scripts/screenshots/configs.lua'
-      - 'scripts/readme/**'
-      - 'lua/wildest/themes/**'
-      - 'lua/wildest/renderer/init.lua'
+      - "scripts/screenshots/configs.lua"
+      - "scripts/readme/**"
+      - "lua/wildest/themes/**"
+      - "lua/wildest/renderer/init.lua"
   workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -18,7 +22,7 @@ jobs:
   readme:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
       - name: Install Lua
         run: sudo apt-get install -y lua5.4
       - name: Generate README

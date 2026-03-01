@@ -31,7 +31,7 @@ function M.cmdline_pipeline(opts)
     end
 
     -- Check cache
-    local cached = parse_cache.get(input)
+    local cached = parse_cache:get(input)
     if cached then
       ctx.arg = cached.arg
       ctx.cmd = cached.cmd
@@ -59,7 +59,7 @@ function M.cmdline_pipeline(opts)
     end
 
     -- Cache the result
-    parse_cache.set(input, {
+    parse_cache:set(input, {
       candidates = candidates,
       arg = parsed.arg,
       cmd = parsed.cmd,
@@ -88,6 +88,22 @@ function M.cmdline_pipeline(opts)
       local last_sep = (ctx.arg or ""):match(".*/()")
       if last_sep then
         data.query = (ctx.arg or ""):sub(last_sep)
+      end
+    end
+
+    -- For dot-separated completions (e.g. lua vim.api.nvim), highlight only
+    -- the last segment so the common prefix isn't accented.
+    -- Skip file types where dots are part of filenames, not namespaces.
+    if
+      not data.query
+      and ctx.expand ~= E.FILE
+      and ctx.expand ~= E.DIR
+      and ctx.expand ~= E.FILE_IN_PATH
+    then
+      local arg = ctx.arg or ""
+      local last_dot = arg:find("%.[^.]*$")
+      if last_dot then
+        data.query = arg:sub(last_dot + 1)
       end
     end
 
