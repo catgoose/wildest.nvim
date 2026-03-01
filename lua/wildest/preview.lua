@@ -5,6 +5,7 @@
 ---@brief ]]
 
 local renderer_util = require("wildest.renderer")
+local util = require("wildest.util")
 
 local M = {}
 
@@ -27,8 +28,10 @@ local preview_state = {
   last_candidate = nil,
 }
 
---- Parse a dimension config (width or height) into an integer.
----@param dim integer|string
+--- Parse a dimension config (width or height) into an integer, clamped to [1, total].
+--- Unlike renderer_util.parse_dimension, this clamps to valid preview bounds and
+--- falls back to half the total for non-parseable input.
+---@param dim integer|string|nil
 ---@param total integer
 ---@return integer
 local function parse_dim(dim, total)
@@ -44,38 +47,7 @@ local function parse_dim(dim, total)
   return math.floor(total / 2)
 end
 
---- Determine the "expand" type from pipeline data.
---- Returns "file", "buffer", "help", or nil.
----@param data table
----@return string|nil
-local function detect_expand(data)
-  if data.expand then
-    local e = data.expand
-    if e == "file" or e == "file_in_path" or e == "dir" then
-      return "file"
-    end
-    if e == "buffer" then
-      return "buffer"
-    end
-    if e == "help" then
-      return "help"
-    end
-    return nil
-  end
-  if data.cmd then
-    local cmd = data.cmd:lower()
-    if cmd == "help" or cmd == "h" then
-      return "help"
-    end
-    if cmd == "buffer" or cmd == "b" or cmd == "sbuffer" or cmd == "sb" then
-      return "buffer"
-    end
-    if cmd == "edit" or cmd == "e" or cmd == "split" or cmd == "sp" or cmd == "vsplit" or cmd == "vs" or cmd == "tabedit" or cmd == "tabe" then
-      return "file"
-    end
-  end
-  return nil
-end
+local detect_expand = util.detect_expand
 
 --- Ensure preview buffer and namespace exist.
 local function ensure_buf()
@@ -146,26 +118,26 @@ end
 ---@param tag string
 ---@return string|nil title
 local function load_help(tag)
+  -- Try direct file lookup first
   local help_file = vim.fn.findfile("doc/" .. tag .. ".txt", vim.o.runtimepath)
-  if help_file == "" then
-    -- Try to find via help tags
-    local ok, result = pcall(vim.fn.execute, "silent help " .. vim.fn.fnameescape(tag), "silent!")
-    if ok and result then
-      -- The help command opened a window; grab the buffer contents
-      local help_bufnr = vim.fn.bufnr(tag)
-      if help_bufnr ~= -1 and vim.api.nvim_buf_is_valid(help_bufnr) then
-        local lines = vim.api.nvim_buf_get_lines(help_bufnr, 0, 500, false)
-        vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
-        vim.bo[preview_state.buf].filetype = "help"
-        return tag
-      end
-    end
-  end
   if help_file ~= "" then
     local lines = vim.fn.readfile(help_file, "", 500)
     vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
     vim.bo[preview_state.buf].filetype = "help"
     return tag
+  end
+  -- Fall back to taglist to locate the help file without opening a window
+  local ok, tags = pcall(vim.fn.taglist, "^" .. vim.fn.escape(tag, "\\") .. "$")
+  if ok and type(tags) == "table" then
+    for _, entry in ipairs(tags) do
+      local fname = entry.filename
+      if fname and vim.fn.filereadable(fname) == 1 then
+        local lines = vim.fn.readfile(fname, "", 500)
+        vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+        vim.bo[preview_state.buf].filetype = "help"
+        return tag
+      end
+    end
   end
   return nil
 end

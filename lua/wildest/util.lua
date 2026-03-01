@@ -163,4 +163,46 @@ function M.clear_project_root_cache()
   project_root_cache = {}
 end
 
+--- Determine the "expand" type from pipeline data.
+--- Returns "file", "buffer", "help", or nil.
+---@param data table
+---@return string|nil
+function M.detect_expand(data)
+  if data.expand then
+    local e = data.expand
+    if e == "file" or e == "file_in_path" or e == "dir" then
+      return "file"
+    end
+    if e == "buffer" then
+      return "buffer"
+    end
+    if e == "help" then
+      return "help"
+    end
+    return nil
+  end
+  if data.cmd then
+    local cmd = data.cmd:lower()
+    if cmd == "help" or cmd == "h" then
+      return "help"
+    end
+    if cmd == "buffer" or cmd == "b" or cmd == "sbuffer" or cmd == "sb" then
+      return "buffer"
+    end
+    if
+      cmd == "edit"
+      or cmd == "e"
+      or cmd == "split"
+      or cmd == "sp"
+      or cmd == "vsplit"
+      or cmd == "vs"
+      or cmd == "tabedit"
+      or cmd == "tabe"
+    then
+      return "file"
+    end
+  end
+  return nil
+end
+
 return M

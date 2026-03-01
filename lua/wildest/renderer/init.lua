@@ -386,6 +386,18 @@ function M.default_position(offset)
   return row, space.left, width, avail
 end
 
+--- Center a popup horizontally within available space
+---@param col integer left edge from default_position
+---@param content_width integer width of the popup content
+---@param editor_width integer total available width
+---@return integer centered col
+function M.center_col(col, content_width, editor_width)
+  if content_width < editor_width then
+    return col + math.floor((editor_width - content_width) / 2)
+  end
+  return col
+end
+
 --- Ensure a scratch buffer and namespace exist
 ---@param state table renderer state (mutated: sets .buf and .ns_id)
 ---@param ns_name string namespace name

@@ -15,6 +15,7 @@
 ---@field input string Current cmdline input
 
 local state = require("wildest.state")
+local util = require("wildest.util")
 
 local M = {}
 
@@ -122,36 +123,7 @@ end
 -- Built-in actions
 -- ---------------------------------------------------------------------------
 
---- Determine the "expand" type from pipeline data.
---- Returns "file", "buffer", "help", or nil.
----@param data table
----@return string|nil
-local function detect_expand(data)
-  if data.expand then
-    local e = data.expand
-    if e == "file" or e == "file_in_path" or e == "dir" then
-      return "file"
-    end
-    if e == "buffer" then
-      return "buffer"
-    end
-    if e == "help" then
-      return "help"
-    end
-    return e
-  end
-  -- Heuristic: check the command name
-  if data.cmd then
-    local cmd = data.cmd:lower()
-    if cmd == "help" or cmd == "h" then
-      return "help"
-    end
-    if cmd == "buffer" or cmd == "b" or cmd == "sbuffer" or cmd == "sb" then
-      return "buffer"
-    end
-  end
-  return nil
-end
+local detect_expand = util.detect_expand
 
 M.register("open_split", function(ctx)
   if not ctx.candidate then

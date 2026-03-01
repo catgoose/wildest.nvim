@@ -124,11 +124,7 @@ function M.new(opts)
     vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
     renderer_util.apply_line_highlights(state.buf, state.ns_id, lines, line_highlights)
 
-    -- Center horizontally when popup is narrower than available space
-    local actual_col = col
-    if width < editor_width then
-      actual_col = col + math.floor((editor_width - width) / 2)
-    end
+    local actual_col = renderer_util.center_col(col, width, editor_width)
 
     -- +1 aligns the borderless popup's bottom with the bordered renderer's
     -- bottom border, sitting directly above the statusline.

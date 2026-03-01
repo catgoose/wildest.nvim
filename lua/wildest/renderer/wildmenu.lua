@@ -279,17 +279,17 @@ function M.new(opts)
     vim.api.nvim_buf_clear_namespace(state.buf, state.ns_id, 0, -1)
 
     -- Apply highlights from chunks
-    local col = 0
+    local hl_col = 0
     for _, chunk in ipairs(chunks) do
       local len = #chunk[1]
       if chunk[2] and chunk[2] ~= "" then
-        vim.api.nvim_buf_set_extmark(state.buf, state.ns_id, 0, col, {
-          end_col = col + len,
+        vim.api.nvim_buf_set_extmark(state.buf, state.ns_id, 0, hl_col, {
+          end_col = hl_col + len,
           hl_group = chunk[2],
           priority = 1000,
         })
       end
-      col = col + len
+      hl_col = hl_col + len
     end
 
     -- Position: single line above cmdline
