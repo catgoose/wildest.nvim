@@ -348,13 +348,14 @@ end
 -- ── Showdown GIF scene generation ────────────────────────────────
 
 local showdown_action_keys = {
-  accept          = { key = "Enter" },
-  open_tab        = { key = "Ctrl+T" },
-  open_split      = { key = "Ctrl+S" },
-  open_vsplit     = { key = "Ctrl+V" },
+  accept           = { key = "Enter" },
+  open_tab         = { key = "Ctrl+T" },
+  open_split       = { key = "Ctrl+S" },
+  open_vsplit      = { key = "Ctrl+V" },
   send_to_quickfix = { key = "Ctrl+Q" },
-  toggle_preview  = { key = "Ctrl+P", toggle = true },
-  search_accept   = { key = "Enter" },
+  send_to_loclist  = { key = "Ctrl+L" },
+  toggle_preview   = { key = "Ctrl+P" },
+  search_accept    = { key = "Enter" },
 }
 
 --- Build the VHS tape body for showdown scenes (preview + actions).
@@ -370,6 +371,15 @@ local function build_showdown_tape(n, seed)
   local parts = {}
   for i, entry in ipairs(plan) do
     if i > 1 then
+      -- Reset windows/tabs/quickfix/loclist from the previous action
+      table.insert(parts, "Hide")
+      table.insert(parts, 'Type ":"')
+      table.insert(parts, "Sleep 100ms")
+      table.insert(parts, 'Type "only | tabonly | cclose | lclose"')
+      table.insert(parts, "Enter")
+      table.insert(parts, "Sleep 300ms")
+      table.insert(parts, "Show")
+      -- Cycle to next scene config
       table.insert(parts, "Ctrl+N")
       table.insert(parts, "Sleep 300ms")
       table.insert(parts, "")
@@ -380,35 +390,35 @@ local function build_showdown_tape(n, seed)
     local act = showdown_action_keys[entry.action]
 
     if entry.action == "toggle_preview" then
-      -- Toggle preview showcase: type command, show with preview, toggle off, toggle on, escape
+      -- Toggle preview: show with preview, toggle off, toggle on, escape
       table.insert(parts, string.format('Type "%s"', s.mode))
       table.insert(parts, "Sleep 300ms")
       table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
-      table.insert(parts, "Sleep 1500ms")
+      table.insert(parts, "Sleep 2500ms")
+      table.insert(parts, "Ctrl+P")
+      table.insert(parts, "Sleep 2500ms")
       table.insert(parts, "Ctrl+P")
       table.insert(parts, "Sleep 1500ms")
-      table.insert(parts, "Ctrl+P")
-      table.insert(parts, "Sleep 1000ms")
       table.insert(parts, "Escape")
       table.insert(parts, "Sleep 300ms")
     elseif entry.action == "search_accept" then
-      -- Search showcase: type search, show results, accept
+      -- Search: show results + preview, accept
       table.insert(parts, string.format('Type "%s"', s.mode))
       table.insert(parts, "Sleep 300ms")
       table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
-      table.insert(parts, "Sleep 1500ms")
+      table.insert(parts, "Sleep 2500ms")
       table.insert(parts, "Enter")
-      table.insert(parts, "Sleep 2000ms")
+      table.insert(parts, "Sleep 2500ms")
     else
-      -- File action showcase: type command, show popup + preview, select, act
+      -- File action: show popup + preview, select, execute action, show result
       table.insert(parts, string.format('Type "%s"', s.mode))
       table.insert(parts, "Sleep 300ms")
       table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
-      table.insert(parts, "Sleep 1500ms")
+      table.insert(parts, "Sleep 2500ms")
       table.insert(parts, "Tab")
       table.insert(parts, "Sleep 500ms")
       table.insert(parts, act.key)
-      table.insert(parts, "Sleep 2000ms")
+      table.insert(parts, "Sleep 2500ms")
     end
 
     table.insert(parts, "")

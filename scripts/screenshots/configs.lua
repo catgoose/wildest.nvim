@@ -1161,32 +1161,17 @@ local showdown_search_cmds = {
   { mode = "/", typed = "require" },
 }
 
-local showdown_action_weights = {
-  { "accept",            10 },
-  { "open_tab",          15 },
-  { "open_split",        15 },
-  { "open_vsplit",       10 },
-  { "send_to_quickfix",  15 },
-  { "toggle_preview",    15 },
-  { "search_accept",     10 },
+-- Deterministic cycle: each action type gets showcased in order, then repeats.
+local showdown_action_cycle = {
+  "accept",
+  "open_split",
+  "open_vsplit",
+  "open_tab",
+  "send_to_quickfix",
+  "send_to_loclist",
+  "toggle_preview",
+  "search_accept",
 }
-
-local showdown_action_total = 0
-for _, aw in ipairs(showdown_action_weights) do
-  showdown_action_total = showdown_action_total + aw[2]
-end
-
-local function pick_showdown_action()
-  local roll = math.random(showdown_action_total)
-  local acc = 0
-  for _, aw in ipairs(showdown_action_weights) do
-    acc = acc + aw[2]
-    if roll <= acc then
-      return aw[1]
-    end
-  end
-  return showdown_action_weights[1][1]
-end
 
 --- Generate a deterministic showdown scene plan (lightweight: vhs_cmd + action only).
 --- Both generate.lua (VHS tape) and gif_init (config) use the same seed to stay in sync.
@@ -1196,8 +1181,8 @@ end
 function M.showdown_scene_plan(n, seed)
   math.randomseed(seed)
   local plan = {}
-  for _ = 1, n do
-    local action = pick_showdown_action()
+  for i = 1, n do
+    local action = showdown_action_cycle[((i - 1) % #showdown_action_cycle) + 1]
     local vhs_cmd
     if action == "search_accept" then
       vhs_cmd = pick(showdown_search_cmds)
@@ -1247,6 +1232,7 @@ function M.showdown_scenes(n)
       ["<C-s>"] = "open_split",
       ["<C-v>"] = "open_vsplit",
       ["<C-q>"] = "send_to_quickfix",
+      ["<C-l>"] = "send_to_loclist",
       ["<C-p>"] = "toggle_preview",
     }
 
