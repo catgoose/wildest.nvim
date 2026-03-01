@@ -63,9 +63,9 @@ function M.parse_dimension(value, total)
     return value
   end
   if type(value) == "string" then
-    local pct = value:match("^(%d+)%%$")
-    if pct then
-      return math.floor(tonumber(pct) / 100 * total)
+    local val = util.parse_percent(value, total)
+    if val then
+      return val
     end
   end
   return total
@@ -84,12 +84,62 @@ function M.parse_margin(margin, total, content_size)
     return margin
   end
   if type(margin) == "string" then
-    local pct = margin:match("^(%d+)%%$")
-    if pct then
-      return math.floor(tonumber(pct) / 100 * total)
+    local val = util.parse_percent(margin, total)
+    if val then
+      return val
     end
   end
   return 0
+end
+
+--- Return display width estimate for a single component (for layout).
+---@param comp string|table
+---@return integer
+function M.component_display_width(comp)
+  if type(comp) == "string" then
+    return util.strdisplaywidth(comp)
+  end
+  if type(comp) == "table" and (comp.render_left or comp.render_right) then
+    return 3
+  end
+  return 0
+end
+
+--- Resolve a component to a list of { text, hl } chunks.
+---@param comp string|table
+---@param ctx table context passed to render methods
+---@param side "left"|"right"
+---@param default_hl string
+---@param fill_hl? string when set, parts with nil or empty hl use this
+---@return table[] chunks
+function M.resolve_component_to_chunks(comp, ctx, side, default_hl, fill_hl)
+  if type(comp) == "string" then
+    return { { comp, default_hl } }
+  end
+  if type(comp) ~= "table" then
+    return {}
+  end
+  local parts = nil
+  if side == "left" and comp.render_left then
+    parts = comp:render_left(ctx)
+  elseif side == "right" and comp.render_right then
+    parts = comp:render_right(ctx)
+  elseif comp.render then
+    ctx.side = side
+    parts = comp:render(ctx)
+  end
+  if not parts then
+    return {}
+  end
+  local out = {}
+  for _, p in ipairs(parts) do
+    local hl = p[2]
+    if fill_hl and (not hl or hl == "") then
+      hl = fill_hl
+    end
+    table.insert(out, { p[1], hl })
+  end
+  return out
 end
 
 local cache_mod = require("wildest.cache")
@@ -448,34 +498,14 @@ function M.render_components(state, ctx, result, index, is_selected)
   }
 
   for _, comp in ipairs(state.left) do
-    if type(comp) == "string" then
-      table.insert(left_parts, { comp, hl })
-    elseif type(comp) == "table" and comp.render then
-      local parts = comp:render(comp_ctx)
-      if parts then
-        for _, p in ipairs(parts) do
-          if not p[2] or p[2] == "" then
-            p[2] = hl
-          end
-          table.insert(left_parts, p)
-        end
-      end
+    for _, p in ipairs(M.resolve_component_to_chunks(comp, comp_ctx, "left", hl, hl)) do
+      table.insert(left_parts, p)
     end
   end
 
   for _, comp in ipairs(state.right) do
-    if type(comp) == "string" then
-      table.insert(right_parts, { comp, hl })
-    elseif type(comp) == "table" and comp.render then
-      local parts = comp:render(comp_ctx)
-      if parts then
-        for _, p in ipairs(parts) do
-          if not p[2] or p[2] == "" then
-            p[2] = hl
-          end
-          table.insert(right_parts, p)
-        end
-      end
+    for _, p in ipairs(M.resolve_component_to_chunks(comp, comp_ctx, "right", hl, hl)) do
+      table.insert(right_parts, p)
     end
   end
 

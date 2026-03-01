@@ -84,6 +84,21 @@ function M.shorten_home(path)
   return path
 end
 
+--- Parse percentage string (e.g. "75%") to integer given total.
+---@param str string
+---@param total number
+---@return integer|nil value or nil if str is not a "N%" string
+function M.parse_percent(str, total)
+  if type(str) ~= "string" then
+    return nil
+  end
+  local pct = str:match("^(%d+)%%$")
+  if pct then
+    return math.floor(tonumber(pct) / 100 * total)
+  end
+  return nil
+end
+
 --- Check if a string is empty or nil
 ---@param str? string
 ---@return boolean

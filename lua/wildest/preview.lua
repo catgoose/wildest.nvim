@@ -39,9 +39,9 @@ local function parse_dim(dim, total)
     return math.max(1, math.min(dim, total))
   end
   if type(dim) == "string" then
-    local pct = dim:match("^(%d+)%%$")
-    if pct then
-      return math.max(1, math.floor(tonumber(pct) / 100 * total))
+    local val = util.parse_percent(dim, total)
+    if val then
+      return math.max(1, math.min(val, total))
     end
   end
   return math.floor(total / 2)

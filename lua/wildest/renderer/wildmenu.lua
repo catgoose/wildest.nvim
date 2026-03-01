@@ -127,23 +127,13 @@ function M.new(opts)
     local editor_width = vim.o.columns - space.left - space.right
     local sep_width = util.strdisplaywidth(state.separator)
 
-    -- Calculate space used by left/right components
     local left_width = 0
     local right_width = 0
     for _, comp in ipairs(state.left) do
-      if type(comp) == "string" then
-        left_width = left_width + util.strdisplaywidth(comp)
-      elseif type(comp) == "table" and comp.render_left then
-        -- Estimate width for arrows
-        left_width = left_width + 3
-      end
+      left_width = left_width + renderer_util.component_display_width(comp)
     end
     for _, comp in ipairs(state.right) do
-      if type(comp) == "string" then
-        right_width = right_width + util.strdisplaywidth(comp)
-      elseif type(comp) == "table" and comp.render_right then
-        right_width = right_width + 3
-      end
+      right_width = right_width + renderer_util.component_display_width(comp)
     end
 
     local avail_width = editor_width - left_width - right_width
@@ -173,25 +163,9 @@ function M.new(opts)
       page_end = page_end,
     }
 
-    -- Left components
     for _, comp in ipairs(state.left) do
-      if type(comp) == "string" then
-        table.insert(chunks, { comp, state.highlights.default })
-      elseif type(comp) == "table" and comp.render_left then
-        local parts = comp:render_left(comp_ctx)
-        if parts then
-          for _, p in ipairs(parts) do
-            table.insert(chunks, p)
-          end
-        end
-      elseif type(comp) == "table" and comp.render then
-        comp_ctx.side = "left"
-        local parts = comp:render(comp_ctx)
-        if parts then
-          for _, p in ipairs(parts) do
-            table.insert(chunks, p)
-          end
-        end
+      for _, c in ipairs(renderer_util.resolve_component_to_chunks(comp, comp_ctx, "left", state.highlights.default)) do
+        table.insert(chunks, c)
       end
     end
 
@@ -234,25 +208,9 @@ function M.new(opts)
       end
     end
 
-    -- Right components
     for _, comp in ipairs(state.right) do
-      if type(comp) == "string" then
-        table.insert(chunks, { comp, state.highlights.default })
-      elseif type(comp) == "table" and comp.render_right then
-        local parts = comp:render_right(comp_ctx)
-        if parts then
-          for _, p in ipairs(parts) do
-            table.insert(chunks, p)
-          end
-        end
-      elseif type(comp) == "table" and comp.render then
-        comp_ctx.side = "right"
-        local parts = comp:render(comp_ctx)
-        if parts then
-          for _, p in ipairs(parts) do
-            table.insert(chunks, p)
-          end
-        end
+      for _, c in ipairs(renderer_util.resolve_component_to_chunks(comp, comp_ctx, "right", state.highlights.default)) do
+        table.insert(chunks, c)
       end
     end
 

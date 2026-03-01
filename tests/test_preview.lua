@@ -548,7 +548,8 @@ end
 
 T["_compute_win_config()"]["screen top: minimum height 1 for tiny editor"] = function()
   local preview = get_preview()
-  local p = preview._compute_win_config(screen_params("top", { available_rows = 4, height = "50%" }))
+  local p =
+    preview._compute_win_config(screen_params("top", { available_rows = 4, height = "50%" }))
   -- 50% of 4 = 2, height = max(1, 2-2) = 1
   expect.equality(p.height, 1)
 end
@@ -628,6 +629,340 @@ T["popup geometry"]["cleared by hide_win"] = function()
   local state = { win = -1, page = { -1, -1 } }
   renderer_util.hide_win(state)
   expect.equality(renderer_util._last_popup_geometry, nil)
+end
+
+-- ─── _compute_win_config(): integer dimensions ──────────────────────────────
+
+T["_compute_win_config()"]["screen right: integer width"] = function()
+  local preview = get_preview()
+  local p = preview._compute_win_config(screen_params("right", { width = 50 }))
+  expect.equality(p.col, 150) -- 200 - 50
+  expect.equality(p.width, 48) -- 50 - 2 (border)
+  expect.equality(p.height, 50)
+end
+
+T["_compute_win_config()"]["screen left: integer width"] = function()
+  local preview = get_preview()
+  local p = preview._compute_win_config(screen_params("left", { width = 60 }))
+  expect.equality(p.col, 0)
+  expect.equality(p.width, 58) -- 60 - 2
+end
+
+T["_compute_win_config()"]["screen top: integer height"] = function()
+  local preview = get_preview()
+  local p = preview._compute_win_config(screen_params("top", { height = 15 }))
+  expect.equality(p.row, 0)
+  expect.equality(p.height, 13) -- 15 - 2
+  expect.equality(p.width, 198) -- 200 - 2
+end
+
+T["_compute_win_config()"]["screen bottom: integer height"] = function()
+  local preview = get_preview()
+  local p = preview._compute_win_config(screen_params("bottom", { height = 15 }))
+  -- row = 50 - 15 + 1 = 36
+  expect.equality(p.row, 36)
+  expect.equality(p.height, 13) -- 15 - 2
+end
+
+-- ─── _compute_win_config(): popup anchor edge positions ─────────────────────
+
+T["_compute_win_config()"]["popup right: popup at col 0"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 0, width = 40 })
+  local p = preview._compute_win_config(popup_params("right", { geom = geom }))
+  -- col = 0 + 40 + 1 = 41
+  expect.equality(p.col, 41)
+  expect.equality(p.row, 20)
+end
+
+T["_compute_win_config()"]["popup left: popup at col 0 gives negative col"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 0, width = 40 })
+  local p = preview._compute_win_config(popup_params("left", { geom = geom }))
+  -- col = 0 - 80 - 1 = -81 (Neovim clamps this)
+  expect.equality(p.col < 0, true)
+end
+
+T["_compute_win_config()"]["popup top: popup at row 0 gives negative row"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ row = 0 })
+  local p = preview._compute_win_config(popup_params("top", { geom = geom, content_lines = 10 }))
+  -- row = 0 - 10 - 2 = -12
+  expect.equality(p.row < 0, true)
+end
+
+T["_compute_win_config()"]["popup bottom: popup near bottom of screen"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ row = 40, height = 5 })
+  local p = preview._compute_win_config(popup_params("bottom", { geom = geom, content_lines = 3 }))
+  -- row = 40 + 5 + 1 + 1 = 47
+  expect.equality(p.row, 47)
+  expect.equality(p.height, 3)
+end
+
+-- ─── _compute_win_config(): popup anchor borderless all positions ───────────
+
+T["_compute_win_config()"]["popup left: borderless has no offset"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 100, border = "none" })
+  local p = preview._compute_win_config(popup_params("left", { geom = geom }))
+  -- border_size=0, col = 100 - 80 - 0 = 20
+  expect.equality(p.col, 20)
+end
+
+T["_compute_win_config()"]["popup bottom: borderless has no offset"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ row = 10, height = 8, border = "none" })
+  local p = preview._compute_win_config(popup_params("bottom", { geom = geom, content_lines = 5 }))
+  -- border_size=0, row = 10 + 8 + 0 + 1 = 19
+  expect.equality(p.row, 19)
+  expect.equality(p.height, 5)
+end
+
+-- ─── _compute_win_config(): popup anchor very small geometry ────────────────
+
+T["_compute_win_config()"]["popup right: tiny popup (1x1)"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ row = 10, col = 10, width = 1, height = 1, border = "none" })
+  local p = preview._compute_win_config(popup_params("right", { geom = geom, content_lines = 50 }))
+  expect.equality(p.row, 10)
+  expect.equality(p.col, 11) -- 10 + 1 + 0
+  expect.equality(p.height, 1) -- capped by popup height
+end
+
+T["_compute_win_config()"]["popup top: tiny popup (1x1) uses popup width"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ row = 25, col = 50, width = 1, height = 1, border = "none" })
+  local p = preview._compute_win_config(popup_params("top", { geom = geom, content_lines = 5 }))
+  expect.equality(p.width, 1) -- matches popup width
+  expect.equality(p.height, 5)
+end
+
+-- ─── _compute_win_config(): popup anchor large content ──────────────────────
+
+T["_compute_win_config()"]["popup right: content 0 lines gives height 1"] = function()
+  local preview = get_preview()
+  local p = preview._compute_win_config(popup_params("right", { content_lines = 0 }))
+  expect.equality(p.height, 1) -- math.max(1, min(15, 0))
+end
+
+T["_compute_win_config()"]["popup bottom: content capped by config height"] = function()
+  local preview = get_preview()
+  -- height "40%" of 50 = 20, content = 500
+  local p = preview._compute_win_config(popup_params("bottom", { content_lines = 500 }))
+  expect.equality(p.height, 20) -- capped at parsed height
+end
+
+T["_compute_win_config()"]["popup left: content exactly matches popup height"] = function()
+  local preview = get_preview()
+  -- popup height = 15, content = 15
+  local p = preview._compute_win_config(popup_params("left", { content_lines = 15 }))
+  expect.equality(p.height, 15)
+end
+
+-- ─── _compute_win_config(): screen anchor varying editor sizes ──────────────
+
+T["_compute_win_config()"]["screen right: large editor (400 cols)"] = function()
+  local preview = get_preview()
+  local p =
+    preview._compute_win_config(screen_params("right", { editor_cols = 400, width = "25%" }))
+  -- 25% of 400 = 100
+  expect.equality(p.col, 300) -- 400 - 100
+  expect.equality(p.width, 98) -- 100 - 2
+end
+
+T["_compute_win_config()"]["screen bottom: large editor (100 rows)"] = function()
+  local preview = get_preview()
+  local p =
+    preview._compute_win_config(screen_params("bottom", { available_rows = 100, height = "10%" }))
+  -- 10% of 100 = 10, row = 100 - 10 + 1 = 91
+  expect.equality(p.row, 91)
+  expect.equality(p.height, 8) -- 10 - 2
+end
+
+T["_compute_win_config()"]["screen left: 100% width fills entire editor minus border"] = function()
+  local preview = get_preview()
+  local p = preview._compute_win_config(screen_params("left", { editor_cols = 80, width = "100%" }))
+  expect.equality(p.col, 0)
+  expect.equality(p.width, 78) -- 80 - 2
+end
+
+T["_compute_win_config()"]["screen top: 100% height fills all available rows minus border"] = function()
+  local preview = get_preview()
+  local p =
+    preview._compute_win_config(screen_params("top", { available_rows = 30, height = "100%" }))
+  expect.equality(p.row, 0)
+  expect.equality(p.height, 28) -- 30 - 2
+end
+
+-- ─── _parse_dim(): edge cases ───────────────────────────────────────────────
+
+T["_parse_dim()"]["negative integer clamps to 1"] = function()
+  local preview = get_preview()
+  expect.equality(preview._parse_dim(-5, 100), 1)
+end
+
+T["_parse_dim()"]["1% of small total is at least 1"] = function()
+  local preview = get_preview()
+  -- 1% of 3 = 0.03 → floor = 0 → max(1, 0) = 1
+  expect.equality(preview._parse_dim("1%", 3), 1)
+end
+
+T["_parse_dim()"]["0% returns 1 (minimum)"] = function()
+  local preview = get_preview()
+  expect.equality(preview._parse_dim("0%", 200), 1)
+end
+
+T["_parse_dim()"]["integer equal to total returns total"] = function()
+  local preview = get_preview()
+  expect.equality(preview._parse_dim(50, 50), 50)
+end
+
+T["_parse_dim()"]["integer 1 returns 1"] = function()
+  local preview = get_preview()
+  expect.equality(preview._parse_dim(1, 200), 1)
+end
+
+T["_parse_dim()"]["boolean falls back to half total"] = function()
+  local preview = get_preview()
+  expect.equality(preview._parse_dim(true, 60), 30)
+end
+
+-- ─── update(): state behavior ───────────────────────────────────────────────
+
+T["update()"] = new_set()
+
+T["update()"]["does nothing when not configured"] = function()
+  local preview = get_preview()
+  -- Should not error
+  preview.update({ selected = 0 }, { value = { "foo" }, data = {} })
+end
+
+T["update()"]["does nothing when disabled"] = function()
+  local preview = get_preview()
+  preview.setup({ enabled = false })
+  -- Should not error
+  preview.update({ selected = 0 }, { value = { "foo" }, data = {} })
+end
+
+T["update()"]["hides when no candidate selected"] = function()
+  local preview = get_preview()
+  preview.setup({})
+  -- selected = -1 means no selection → should hide (not error)
+  preview.update({ selected = -1 }, { value = { "foo", "bar" }, data = {} })
+end
+
+T["update()"]["hides when selected is out of range"] = function()
+  local preview = get_preview()
+  preview.setup({})
+  -- selected = 5 but only 2 candidates
+  preview.update({ selected = 5 }, { value = { "foo", "bar" }, data = {} })
+end
+
+T["update()"]["hides when candidates list is empty"] = function()
+  local preview = get_preview()
+  preview.setup({})
+  preview.update({ selected = 0 }, { value = {}, data = {} })
+end
+
+-- ─── _reset(): state cleanup ────────────────────────────────────────────────
+
+T["_reset()"] = new_set()
+
+T["_reset()"]["clears active state"] = function()
+  local preview = get_preview()
+  preview.setup({ enabled = true })
+  expect.equality(preview.is_active(), true)
+  preview._reset()
+  expect.equality(preview.is_active(), false)
+end
+
+T["_reset()"]["is safe to call multiple times"] = function()
+  local preview = get_preview()
+  preview._reset()
+  preview._reset()
+  preview._reset()
+  expect.equality(preview.is_active(), false)
+end
+
+-- ─── center_col() ───────────────────────────────────────────────────────────
+
+T["center_col()"] = new_set()
+
+T["center_col()"]["centers narrow content"] = function()
+  local renderer_util = require("wildest.renderer")
+  -- content 40, editor 100, col 0 → (100-40)/2 = 30
+  expect.equality(renderer_util.center_col(0, 40, 100), 30)
+end
+
+T["center_col()"]["returns col unchanged when content fills width"] = function()
+  local renderer_util = require("wildest.renderer")
+  expect.equality(renderer_util.center_col(0, 100, 100), 0)
+end
+
+T["center_col()"]["returns col unchanged when content exceeds width"] = function()
+  local renderer_util = require("wildest.renderer")
+  expect.equality(renderer_util.center_col(0, 120, 100), 0)
+end
+
+T["center_col()"]["accounts for non-zero col offset"] = function()
+  local renderer_util = require("wildest.renderer")
+  -- col=10, content 40, editor 100 → 10 + (100-40)/2 = 40
+  expect.equality(renderer_util.center_col(10, 40, 100), 40)
+end
+
+T["center_col()"]["floors fractional centering"] = function()
+  local renderer_util = require("wildest.renderer")
+  -- content 41, editor 100 → (100-41)/2 = 29.5 → floor = 29
+  expect.equality(renderer_util.center_col(0, 41, 100), 29)
+end
+
+-- ─── parse_dimension() ──────────────────────────────────────────────────────
+
+T["parse_dimension()"] = new_set()
+
+T["parse_dimension()"]["returns number as-is"] = function()
+  local renderer_util = require("wildest.renderer")
+  expect.equality(renderer_util.parse_dimension(42, 200), 42)
+  expect.equality(renderer_util.parse_dimension(0, 200), 0)
+end
+
+T["parse_dimension()"]["parses percentage string"] = function()
+  local renderer_util = require("wildest.renderer")
+  expect.equality(renderer_util.parse_dimension("50%", 200), 100)
+  expect.equality(renderer_util.parse_dimension("75%", 80), 60)
+end
+
+T["parse_dimension()"]["returns total for non-parseable input"] = function()
+  local renderer_util = require("wildest.renderer")
+  expect.equality(renderer_util.parse_dimension("abc", 200), 200)
+  expect.equality(renderer_util.parse_dimension(nil, 80), 80)
+end
+
+-- ─── parse_margin() ─────────────────────────────────────────────────────────
+
+T["parse_margin()"] = new_set()
+
+T["parse_margin()"]["auto centers content"] = function()
+  local renderer_util = require("wildest.renderer")
+  -- total=200, content=80 → (200-80)/2 = 60
+  expect.equality(renderer_util.parse_margin("auto", 200, 80), 60)
+end
+
+T["parse_margin()"]["returns number as-is"] = function()
+  local renderer_util = require("wildest.renderer")
+  expect.equality(renderer_util.parse_margin(15, 200, 80), 15)
+end
+
+T["parse_margin()"]["parses percentage"] = function()
+  local renderer_util = require("wildest.renderer")
+  expect.equality(renderer_util.parse_margin("10%", 200, 80), 20)
+end
+
+T["parse_margin()"]["returns 0 for non-parseable input"] = function()
+  local renderer_util = require("wildest.renderer")
+  expect.equality(renderer_util.parse_margin("xyz", 200, 80), 0)
+  expect.equality(renderer_util.parse_margin(nil, 200, 80), 0)
 end
 
 return T
