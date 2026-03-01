@@ -224,20 +224,19 @@ end
 -- mode = ":" or "/" (which key opens cmdline), typed = text after mode.
 local scene_pools = {
   file = {
-    -- Fuzzy searches that show off fzy matching across filenames
-    { mode = ":", typed = "e init" },
-    { mode = ":", typed = "e rend" },
-    { mode = ":", typed = "e high" },
-    { mode = ":", typed = "e pipe" },
-    { mode = ":", typed = "e test" },
-    { mode = ":", typed = "e conf" },
-    { mode = ":", typed = "e util" },
-    { mode = ":", typed = "e gen" },
-    -- Directory prefix completions
+    -- Directories with many files (13+ matches)
+    { mode = ":", typed = "e lua/wildest/renderer/components/" },
+    { mode = ":", typed = "e tests/" },
+    -- Directories with moderate matches
     { mode = ":", typed = "e lua/wildest/" },
     { mode = ":", typed = "e lua/wildest/renderer/" },
+    { mode = ":", typed = "e lua/wildest/pipeline/" },
     { mode = ":", typed = "e scripts/" },
-    { mode = ":", typed = "e tests/" },
+    -- Prefix completions within directories
+    { mode = ":", typed = "e tests/test_c" },
+    { mode = ":", typed = "e tests/test_h" },
+    { mode = ":", typed = "e lua/wildest/renderer/components/s" },
+    { mode = ":", typed = "e lua/wildest/renderer/p" },
   },
   option = {
     { mode = ":", typed = "set fold" },
