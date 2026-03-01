@@ -7,15 +7,17 @@ on:
     branches: [main]
   workflow_dispatch:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   lint:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: JohnnyMorganz/stylua-action@v4
+      - uses: JohnnyMorganz/stylua-action@479972f01e665acfcba96ada452c36608bdbbb5e
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           version: latest
@@ -45,19 +47,33 @@ jobs:
       matrix:
         nvim-version: [v0.10.2, nightly]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
-      - uses: rhysd/action-setup-vim@v1
+      - uses: rhysd/action-setup-vim@19e3dd31a84dbc2c5445d65e9b363f616cab96c1
         with:
           neovim: true
           version: ${{ matrix.nvim-version }}
 
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        id: cache-deps
+        with:
+          path: deps
+          key: deps-${{ hashFiles('Makefile', 'csrc/**') }}
+
+      - uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830
+        id: cache-csrc
+        with:
+          path: csrc
+          key: csrc-${{ hashFiles('csrc/**') }}
+
       - name: Clone mini.nvim
+        if: steps.cache-deps.outputs.cache-hit != 'true'
         run: |
           mkdir -p deps
           git clone --depth 1 https://github.com/echasnovski/mini.nvim deps/mini.nvim
 
       - name: Build C library
+        if: steps.cache-csrc.outputs.cache-hit != 'true'
         run: make build
 
       - name: Run tests
