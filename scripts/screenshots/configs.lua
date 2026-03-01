@@ -1226,38 +1226,6 @@ local function setup_block_lines(cfg, lines, add)
   add("})")
 end
 
---- Format a scene table as readable config lines for buffer display.
----@param scene table
----@param index number|nil scene index
----@param total number|nil total scenes
----@return string[] lines
-function M.scene_to_lines(scene, index, total)
-  local lines = {}
-  local function add(s) table.insert(lines, s) end
-
-  add("-- wildest.nvim")
-  if index and total then
-    add("-- Scene " .. index .. "/" .. total .. ': "' .. (scene.label or "") .. '"')
-  else
-    add('-- "' .. (scene.label or "") .. '"')
-  end
-  add("-- " .. string.rep("─", 50))
-  add("")
-
-  setup_block_lines(scene, lines, add)
-
-  for _, line in ipairs(sample_lua_lines) do
-    add(line)
-  end
-
-  return lines
-end
-
---- Format a named config as readable lines for screenshot buffer display.
----@param name string  config key from M.configs
----@return string[] lines
--- Sample Lua code appended to screenshot buffers so that search-mode
--- screenshots (cmd = "/function", etc.) find matches in the buffer.
 -- Sample Lua code appended to screenshot buffers so search-mode
 -- screenshots and GIF scenes (cmd = "/function", "/self", etc.)
 -- find matches in the buffer.  Every search term used in scene_pools
@@ -1288,6 +1256,36 @@ local sample_lua_lines = {
   "end",
 }
 
+--- Format a scene table as readable config lines for buffer display.
+---@param scene table
+---@param index number|nil scene index
+---@param total number|nil total scenes
+---@return string[] lines
+function M.scene_to_lines(scene, index, total)
+  local lines = {}
+  local function add(s) table.insert(lines, s) end
+
+  add("-- wildest.nvim")
+  if index and total then
+    add("-- Scene " .. index .. "/" .. total .. ': "' .. (scene.label or "") .. '"')
+  else
+    add('-- "' .. (scene.label or "") .. '"')
+  end
+  add("-- " .. string.rep("─", 50))
+  add("")
+
+  setup_block_lines(scene, lines, add)
+
+  for _, line in ipairs(sample_lua_lines) do
+    add(line)
+  end
+
+  return lines
+end
+
+--- Format a named config as readable lines for screenshot buffer display.
+---@param name string  config key from M.configs
+---@return string[] lines
 function M.config_to_lines(name)
   local cfg = M.configs[name]
   if not cfg then
