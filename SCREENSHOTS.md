@@ -30,7 +30,7 @@ and reference the config key so we can reproduce it.
 <table>
 <tr>
 <td align="center">
-<strong>Popupmenu</strong><br>
+<strong>[1] Popupmenu</strong><br>
 <em>plain popupmenu, basic, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu.png" width="400"><br>
 <details><summary>Config</summary>
@@ -41,7 +41,7 @@ highlighter = "basic",
 </details>
 </td>
 <td align="center">
-<strong>Bordered</strong><br>
+<strong>[2] Bordered</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_border.png" width="400"><br>
 <details><summary>Config</summary>
@@ -51,7 +51,7 @@ highlighter = "basic",
 </details>
 </td>
 <td align="center">
-<strong>Palette</strong><br>
+<strong>[3] Palette</strong><br>
 <em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_palette.png" width="400"><br>
 <details><summary>Config</summary>
@@ -72,7 +72,7 @@ palette = {
 </tr>
 <tr>
 <td align="center">
-<strong>Palette (Bottom Prompt)</strong><br>
+<strong>[4] Palette (Bottom Prompt)</strong><br>
 <em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_prompt_bottom.png" width="400"><br>
 <details><summary>Config</summary>
@@ -90,7 +90,7 @@ palette = {
 </details>
 </td>
 <td align="center">
-<strong>Wildmenu</strong><br>
+<strong>[5] Wildmenu</strong><br>
 <em>wildmenu, basic, arrows, index, separator=" | ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu.png" width="400"><br>
 <details><summary>Config</summary>
@@ -114,7 +114,7 @@ separator = " | ",
 <table>
 <tr>
 <td align="center">
-<strong>devicons</strong><br>
+<strong>[6] devicons</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :e init</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons.png" width="400"><br>
 <details><summary>Config</summary>
@@ -125,7 +125,7 @@ left = { "devicons" },
 </details>
 </td>
 <td align="center">
-<strong>fuzzy</strong><br>
+<strong>[7] fuzzy</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :e rend</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fuzzy.png" width="400"><br>
 <details><summary>Config</summary>
@@ -135,7 +135,7 @@ cmd = ":e rend",
 </details>
 </td>
 <td align="center">
-<strong>gradient</strong><br>
+<strong>[8] gradient</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help help-</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient.png" width="400"><br>
 <details><summary>Config</summary>
@@ -167,7 +167,7 @@ gradient_colors = {
 </tr>
 <tr>
 <td align="center">
-<strong>search</strong><br>
+<strong>[9] search</strong><br>
 <em>auto theme, bordered, basic, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png" width="400"><br>
 <details><summary>Config</summary>
@@ -178,7 +178,7 @@ highlighter = "basic",
 </details>
 </td>
 <td align="center">
-<strong>renderer_mux</strong><br>
+<strong>[10] renderer_mux</strong><br>
 <em>renderer mux, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/renderer_mux.png" width="400"><br>
 <details><summary>Config</summary>
@@ -203,7 +203,7 @@ mux = {
 </details>
 </td>
 <td align="center">
-<strong>kind_icons</strong><br>
+<strong>[11] kind_icons</strong><br>
 <em>auto theme, bordered, fzy, kind icons, no devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/kind_icons.png" width="400"><br>
 <details><summary>Config</summary>
@@ -215,7 +215,7 @@ left = { "kind_icon" },
 </tr>
 <tr>
 <td align="center">
-<strong>Prefix Highlighter</strong><br>
+<strong>[12] Prefix Highlighter</strong><br>
 <em>auto theme, bordered, prefix, devicons, scrollbar, :e conf</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/prefix_highlighter.png" width="400"><br>
 <details><summary>Config</summary>
@@ -226,7 +226,7 @@ highlighter = "prefix",
 </details>
 </td>
 <td align="center">
-<strong>Scrollbar</strong><br>
+<strong>[13] Scrollbar</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :help nvim</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/scrollbar.png" width="400"><br>
 <details><summary>Config</summary>
@@ -237,7 +237,7 @@ right = { "scrollbar" },
 </details>
 </td>
 <td align="center">
-<strong>Pumblend</strong><br>
+<strong>[14] Pumblend</strong><br>
 <em>bordered, rounded, pumblend=30, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/pumblend.png" width="400"><br>
 <details><summary>Config</summary>
@@ -258,7 +258,7 @@ pumblend = 30,
 <table>
 <tr>
 <td align="center">
-<strong>Lua Completion</strong><br>
+<strong>[15] Lua Completion</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, lua pipeline, :lua vim.api.nvim</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/lua_pipeline.png" width="400"><br>
 <details><summary>Config</summary>
@@ -269,7 +269,7 @@ pipeline = { "lua", "cmdline_fuzzy" },
 </details>
 </td>
 <td align="center">
-<strong>Help Tags</strong><br>
+<strong>[16] Help Tags</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, help pipeline, :help nvim_b</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/help_pipeline.png" width="400"><br>
 <details><summary>Config</summary>
@@ -280,7 +280,7 @@ pipeline = { "help_fuzzy", "cmdline_fuzzy" },
 </details>
 </td>
 <td align="center">
-<strong>History</strong><br>
+<strong>[17] History</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, history pipeline, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/history_pipeline.png" width="400"><br>
 <details><summary>Config</summary>
@@ -292,7 +292,7 @@ pipeline = { "history", "cmdline_fuzzy" },
 </tr>
 <tr>
 <td align="center">
-<strong>Search</strong><br>
+<strong>[18] Search</strong><br>
 <em>auto theme, bordered, basic, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png" width="400"><br>
 <details><summary>Config</summary>
@@ -314,7 +314,7 @@ highlighter = "basic",
 <table>
 <tr>
 <td align="center">
-<strong>Rounded</strong><br>
+<strong>[19] Rounded</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_rounded.png" width="400"><br>
 <details><summary>Config</summary>
@@ -325,7 +325,7 @@ border = "rounded",
 </details>
 </td>
 <td align="center">
-<strong>Single</strong><br>
+<strong>[20] Single</strong><br>
 <em>bordered, single, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_single.png" width="400"><br>
 <details><summary>Config</summary>
@@ -336,7 +336,7 @@ border = "single",
 </details>
 </td>
 <td align="center">
-<strong>Double</strong><br>
+<strong>[21] Double</strong><br>
 <em>bordered, double, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_double.png" width="400"><br>
 <details><summary>Config</summary>
@@ -349,7 +349,7 @@ border = "double",
 </tr>
 <tr>
 <td align="center">
-<strong>Solid</strong><br>
+<strong>[22] Solid</strong><br>
 <em>bordered, solid, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_solid.png" width="400"><br>
 <details><summary>Config</summary>
@@ -360,7 +360,7 @@ border = "solid",
 </details>
 </td>
 <td align="center">
-<strong>With Title</strong><br>
+<strong>[23] With Title</strong><br>
 <em>bordered, rounded, title, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_title.png" width="400"><br>
 <details><summary>Config</summary>
@@ -382,7 +382,7 @@ title = " Completions ",
 <table>
 <tr>
 <td align="center">
-<strong>Dot Separator</strong><br>
+<strong>[24] Dot Separator</strong><br>
 <em>wildmenu, basic, arrows, index, separator=" · ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_dot.png" width="400"><br>
 <details><summary>Config</summary>
@@ -396,7 +396,7 @@ separator = " · ",
 </details>
 </td>
 <td align="center">
-<strong>Reversed</strong><br>
+<strong>[25] Reversed</strong><br>
 <em>wildmenu, reverse, fzy, arrows, index, separator=" | ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_reverse.png" width="400"><br>
 <details><summary>Config</summary>
@@ -411,7 +411,7 @@ reverse = true,
 </details>
 </td>
 <td align="center">
-<strong>Minimal</strong><br>
+<strong>[26] Minimal</strong><br>
 <em>wildmenu, basic, devicons, scrollbar, separator="  ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_minimal.png" width="400"><br>
 <details><summary>Config</summary>
@@ -425,7 +425,7 @@ separator = "  ",
 </tr>
 <tr>
 <td align="center">
-<strong>Pipe Separator</strong><br>
+<strong>[27] Pipe Separator</strong><br>
 <em>wildmenu, fzy, arrows, separator=" │ ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_pipe.png" width="400"><br>
 <details><summary>Config</summary>
@@ -439,7 +439,7 @@ separator = " │ ",
 </details>
 </td>
 <td align="center">
-<strong>Arrows + Index</strong><br>
+<strong>[28] Arrows + Index</strong><br>
 <em>wildmenu, basic, arrows, index, separator=" · ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_arrows_index.png" width="400"><br>
 <details><summary>Config</summary>
@@ -453,7 +453,7 @@ separator = " · ",
 </details>
 </td>
 <td align="center">
-<strong>Compact</strong><br>
+<strong>[29] Compact</strong><br>
 <em>wildmenu, basic, devicons, scrollbar, separator=" ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_compact.png" width="400"><br>
 <details><summary>Config</summary>
@@ -474,7 +474,7 @@ separator = " ",
 <table>
 <tr>
 <td align="center">
-<strong>No Title</strong><br>
+<strong>[30] No Title</strong><br>
 <em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_no_title.png" width="400"><br>
 <details><summary>Config</summary>
@@ -491,7 +491,7 @@ palette = {
 </details>
 </td>
 <td align="center">
-<strong>Custom Prefix</strong><br>
+<strong>[31] Custom Prefix</strong><br>
 <em>palette, fzy, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_custom_prefix.png" width="400"><br>
 <details><summary>Config</summary>
@@ -510,7 +510,7 @@ palette = {
 </details>
 </td>
 <td align="center">
-<strong>Large</strong><br>
+<strong>[32] Large</strong><br>
 <em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_large.png" width="400"><br>
 <details><summary>Config</summary>
@@ -530,7 +530,7 @@ palette = {
 </tr>
 <tr>
 <td align="center">
-<strong>Compact</strong><br>
+<strong>[33] Compact</strong><br>
 <em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_compact.png" width="400"><br>
 <details><summary>Config</summary>
@@ -548,7 +548,7 @@ palette = {
 </details>
 </td>
 <td align="center">
-<strong>Search Mode</strong><br>
+<strong>[34] Search Mode</strong><br>
 <em>palette, fzy, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_search.png" width="400"><br>
 <details><summary>Config</summary>
@@ -578,7 +578,7 @@ palette = {
 <table>
 <tr>
 <td align="center">
-<strong>max_height=8</strong><br>
+<strong>[35] max_height=8</strong><br>
 <em>bordered, rounded, max_height=8, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_height_small.png" width="400"><br>
 <details><summary>Config</summary>
@@ -590,7 +590,7 @@ max_height = 8,
 </details>
 </td>
 <td align="center">
-<strong>fixed_height=false</strong><br>
+<strong>[36] fixed_height=false</strong><br>
 <em>bordered, rounded, fixed_height=false, fzy, devicons, scrollbar, :set wra</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fixed_height_false.png" width="400"><br>
 <details><summary>Config</summary>
@@ -603,7 +603,7 @@ fixed_height = false,
 </details>
 </td>
 <td align="center">
-<strong>max_width=60</strong><br>
+<strong>[37] max_width=60</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_width_60.png" width="400"><br>
 <details><summary>Config</summary>
@@ -617,7 +617,7 @@ max_width = 60,
 </tr>
 <tr>
 <td align="center">
-<strong>min_height=5</strong><br>
+<strong>[38] min_height=5</strong><br>
 <em>bordered, rounded, min_height=5, fzy, devicons, scrollbar, :set wra</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/min_height_5.png" width="400"><br>
 <details><summary>Config</summary>
@@ -630,7 +630,7 @@ min_height = 5,
 </details>
 </td>
 <td align="center">
-<strong>max_height=20</strong><br>
+<strong>[39] max_height=20</strong><br>
 <em>bordered, rounded, max_height=20, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_height_large.png" width="400"><br>
 <details><summary>Config</summary>
@@ -642,7 +642,7 @@ max_height = 20,
 </details>
 </td>
 <td align="center">
-<strong>max_width=40</strong><br>
+<strong>[40] max_width=40</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_width_40.png" width="400"><br>
 <details><summary>Config</summary>
@@ -656,7 +656,7 @@ max_width = 40,
 </tr>
 <tr>
 <td align="center">
-<strong>min_width=40</strong><br>
+<strong>[41] min_width=40</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set wra</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/min_width_40.png" width="400"><br>
 <details><summary>Config</summary>
@@ -680,7 +680,7 @@ min_width = 40,
 <table>
 <tr>
 <td align="center">
-<strong>Warm</strong><br>
+<strong>[42] Warm</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help nvim_b</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_warm.png" width="400"><br>
 <details><summary>Config</summary>
@@ -700,7 +700,7 @@ gradient_colors = {
 </details>
 </td>
 <td align="center">
-<strong>Cool</strong><br>
+<strong>[43] Cool</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help api-</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_cool.png" width="400"><br>
 <details><summary>Config</summary>
@@ -720,7 +720,7 @@ gradient_colors = {
 </details>
 </td>
 <td align="center">
-<strong>Sunset</strong><br>
+<strong>[44] Sunset</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help option-</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_sunset.png" width="400"><br>
 <details><summary>Config</summary>
@@ -742,7 +742,7 @@ gradient_colors = {
 </tr>
 <tr>
 <td align="center">
-<strong>Ice</strong><br>
+<strong>[45] Ice</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help vim.</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_ice.png" width="400"><br>
 <details><summary>Config</summary>
@@ -762,7 +762,7 @@ gradient_colors = {
 </details>
 </td>
 <td align="center">
-<strong>Forest</strong><br>
+<strong>[46] Forest</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help auto</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_forest.png" width="400"><br>
 <details><summary>Config</summary>
@@ -792,7 +792,7 @@ gradient_colors = {
 <table>
 <tr>
 <td align="center">
-<strong>Devicons + Kind</strong><br>
+<strong>[47] Devicons + Kind</strong><br>
 <em>auto theme, bordered, fzy, devicons, kind icons, scrollbar, :e init</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons_kind.png" width="400"><br>
 <details><summary>Config</summary>
@@ -804,7 +804,7 @@ right = { "scrollbar" },
 </details>
 </td>
 <td align="center">
-<strong>Reverse + Border</strong><br>
+<strong>[48] Reverse + Border</strong><br>
 <em>bordered, rounded, reverse, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/reverse_bordered.png" width="400"><br>
 <details><summary>Config</summary>
@@ -816,7 +816,7 @@ reverse = true,
 </details>
 </td>
 <td align="center">
-<strong>IncSearch Accent</strong><br>
+<strong>[49] IncSearch Accent</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :e high</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/accent_incsearch.png" width="400"><br>
 <details><summary>Config</summary>
@@ -829,7 +829,7 @@ highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
 </tr>
 <tr>
 <td align="center">
-<strong>Noselect + Reverse</strong><br>
+<strong>[50] Noselect + Reverse</strong><br>
 <em>bordered, rounded, reverse, noselect, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_reverse.png" width="400"><br>
 <details><summary>Config</summary>
@@ -842,7 +842,7 @@ reverse = true,
 </details>
 </td>
 <td align="center">
-<strong>Pumblend + Border</strong><br>
+<strong>[51] Pumblend + Border</strong><br>
 <em>bordered, rounded, pumblend=20, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/pumblend_bordered.png" width="400"><br>
 <details><summary>Config</summary>
@@ -854,7 +854,7 @@ pumblend = 20,
 </details>
 </td>
 <td align="center">
-<strong>Devicons + Scrollbar + Border</strong><br>
+<strong>[52] Devicons + Scrollbar + Border</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :e init</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons_scrollbar_border.png" width="400"><br>
 <details><summary>Config</summary>
@@ -870,7 +870,7 @@ border = "rounded",
 </tr>
 <tr>
 <td align="center">
-<strong>Gradient + Border</strong><br>
+<strong>[53] Gradient + Border</strong><br>
 <em>bordered, rounded, gradient, devicons, scrollbar, gradient colors, :help nvim_b</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_bordered.png" width="400"><br>
 <details><summary>Config</summary>
@@ -902,7 +902,7 @@ gradient_colors = {
 </details>
 </td>
 <td align="center">
-<strong>Palette + Gradient</strong><br>
+<strong>[54] Palette + Gradient</strong><br>
 <em>palette, gradient, devicons, scrollbar, gradient colors, :help api-</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_gradient.png" width="400"><br>
 <details><summary>Config</summary>
@@ -931,7 +931,7 @@ palette = {
 </details>
 </td>
 <td align="center">
-<strong>Wildmenu + Fzy</strong><br>
+<strong>[55] Wildmenu + Fzy</strong><br>
 <em>wildmenu, fzy, arrows, index, separator=" | ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_fzy.png" width="400"><br>
 <details><summary>Config</summary>
@@ -954,7 +954,7 @@ separator = " | ",
 <table>
 <tr>
 <td align="center">
-<strong>Neon</strong><br>
+<strong>[56] Neon</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, custom highlights, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_neon.png" width="400"><br>
 <details><summary>Config</summary>
@@ -974,7 +974,7 @@ custom_highlights = {
 </details>
 </td>
 <td align="center">
-<strong>Ember</strong><br>
+<strong>[57] Ember</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, custom highlights, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ember.png" width="400"><br>
 <details><summary>Config</summary>
@@ -994,7 +994,7 @@ custom_highlights = {
 </details>
 </td>
 <td align="center">
-<strong>Ocean</strong><br>
+<strong>[58] Ocean</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, custom highlights, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ocean.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1023,7 +1023,7 @@ custom_highlights = {
 <table>
 <tr>
 <td align="center">
-<strong>auto</strong><br>
+<strong>[59] auto</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_auto.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1033,7 +1033,7 @@ theme = "auto",
 </details>
 </td>
 <td align="center">
-<strong>default</strong><br>
+<strong>[60] default</strong><br>
 <em>default theme, plain, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_default.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1043,7 +1043,7 @@ theme = "default",
 </details>
 </td>
 <td align="center">
-<strong>saloon</strong><br>
+<strong>[61] saloon</strong><br>
 <em>saloon theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_saloon.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1055,7 +1055,7 @@ theme = "saloon",
 </tr>
 <tr>
 <td align="center">
-<strong>outlaw</strong><br>
+<strong>[62] outlaw</strong><br>
 <em>outlaw theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_outlaw.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1065,7 +1065,7 @@ theme = "outlaw",
 </details>
 </td>
 <td align="center">
-<strong>sunset</strong><br>
+<strong>[63] sunset</strong><br>
 <em>sunset theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_sunset.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1075,7 +1075,7 @@ theme = "sunset",
 </details>
 </td>
 <td align="center">
-<strong>prairie</strong><br>
+<strong>[64] prairie</strong><br>
 <em>prairie theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_prairie.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1087,7 +1087,7 @@ theme = "prairie",
 </tr>
 <tr>
 <td align="center">
-<strong>dusty</strong><br>
+<strong>[65] dusty</strong><br>
 <em>dusty theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dusty.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1097,7 +1097,7 @@ theme = "dusty",
 </details>
 </td>
 <td align="center">
-<strong>midnight</strong><br>
+<strong>[66] midnight</strong><br>
 <em>midnight theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_midnight.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1107,7 +1107,7 @@ theme = "midnight",
 </details>
 </td>
 <td align="center">
-<strong>wanted</strong><br>
+<strong>[67] wanted</strong><br>
 <em>wanted theme, palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_wanted.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1119,7 +1119,7 @@ theme = "wanted",
 </tr>
 <tr>
 <td align="center">
-<strong>cactus</strong><br>
+<strong>[68] cactus</strong><br>
 <em>cactus theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_cactus.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1129,7 +1129,7 @@ theme = "cactus",
 </details>
 </td>
 <td align="center">
-<strong>tumbleweed</strong><br>
+<strong>[69] tumbleweed</strong><br>
 <em>tumbleweed theme, plain, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tumbleweed.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1139,7 +1139,7 @@ theme = "tumbleweed",
 </details>
 </td>
 <td align="center">
-<strong>kanagawa</strong><br>
+<strong>[70] kanagawa</strong><br>
 <em>kanagawa theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1151,7 +1151,7 @@ theme = "kanagawa",
 </tr>
 <tr>
 <td align="center">
-<strong>kanagawa_dragon</strong><br>
+<strong>[71] kanagawa_dragon</strong><br>
 <em>kanagawa_dragon theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_dragon.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1161,7 +1161,7 @@ theme = "kanagawa_dragon",
 </details>
 </td>
 <td align="center">
-<strong>kanagawa_lotus</strong><br>
+<strong>[72] kanagawa_lotus</strong><br>
 <em>kanagawa_lotus theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_lotus.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1171,7 +1171,7 @@ theme = "kanagawa_lotus",
 </details>
 </td>
 <td align="center">
-<strong>catppuccin_mocha</strong><br>
+<strong>[73] catppuccin_mocha</strong><br>
 <em>catppuccin_mocha theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_mocha.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1183,7 +1183,7 @@ theme = "catppuccin_mocha",
 </tr>
 <tr>
 <td align="center">
-<strong>catppuccin_frappe</strong><br>
+<strong>[74] catppuccin_frappe</strong><br>
 <em>catppuccin_frappe theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_frappe.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1193,7 +1193,7 @@ theme = "catppuccin_frappe",
 </details>
 </td>
 <td align="center">
-<strong>catppuccin_latte</strong><br>
+<strong>[75] catppuccin_latte</strong><br>
 <em>catppuccin_latte theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_latte.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1203,7 +1203,7 @@ theme = "catppuccin_latte",
 </details>
 </td>
 <td align="center">
-<strong>tokyonight_night</strong><br>
+<strong>[76] tokyonight_night</strong><br>
 <em>tokyonight_night theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_night.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1215,7 +1215,7 @@ theme = "tokyonight_night",
 </tr>
 <tr>
 <td align="center">
-<strong>tokyonight_storm</strong><br>
+<strong>[77] tokyonight_storm</strong><br>
 <em>tokyonight_storm theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_storm.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1225,7 +1225,7 @@ theme = "tokyonight_storm",
 </details>
 </td>
 <td align="center">
-<strong>tokyonight_moon</strong><br>
+<strong>[78] tokyonight_moon</strong><br>
 <em>tokyonight_moon theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_moon.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1235,7 +1235,7 @@ theme = "tokyonight_moon",
 </details>
 </td>
 <td align="center">
-<strong>rose_pine</strong><br>
+<strong>[79] rose_pine</strong><br>
 <em>rose_pine theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1247,7 +1247,7 @@ theme = "rose_pine",
 </tr>
 <tr>
 <td align="center">
-<strong>rose_pine_moon</strong><br>
+<strong>[80] rose_pine_moon</strong><br>
 <em>rose_pine_moon theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine_moon.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1257,7 +1257,7 @@ theme = "rose_pine_moon",
 </details>
 </td>
 <td align="center">
-<strong>rose_pine_dawn</strong><br>
+<strong>[81] rose_pine_dawn</strong><br>
 <em>rose_pine_dawn theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine_dawn.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1267,7 +1267,7 @@ theme = "rose_pine_dawn",
 </details>
 </td>
 <td align="center">
-<strong>gruvbox_dark</strong><br>
+<strong>[82] gruvbox_dark</strong><br>
 <em>gruvbox_dark theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_gruvbox_dark.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1279,7 +1279,7 @@ theme = "gruvbox_dark",
 </tr>
 <tr>
 <td align="center">
-<strong>gruvbox_light</strong><br>
+<strong>[83] gruvbox_light</strong><br>
 <em>gruvbox_light theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_gruvbox_light.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1289,7 +1289,7 @@ theme = "gruvbox_light",
 </details>
 </td>
 <td align="center">
-<strong>nord</strong><br>
+<strong>[84] nord</strong><br>
 <em>nord theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_nord.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1299,7 +1299,7 @@ theme = "nord",
 </details>
 </td>
 <td align="center">
-<strong>onedark</strong><br>
+<strong>[85] onedark</strong><br>
 <em>onedark theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_onedark.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1311,7 +1311,7 @@ theme = "onedark",
 </tr>
 <tr>
 <td align="center">
-<strong>nightfox</strong><br>
+<strong>[86] nightfox</strong><br>
 <em>nightfox theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_nightfox.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1321,7 +1321,7 @@ theme = "nightfox",
 </details>
 </td>
 <td align="center">
-<strong>everforest_dark</strong><br>
+<strong>[87] everforest_dark</strong><br>
 <em>everforest_dark theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_everforest_dark.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1331,7 +1331,7 @@ theme = "everforest_dark",
 </details>
 </td>
 <td align="center">
-<strong>everforest_light</strong><br>
+<strong>[88] everforest_light</strong><br>
 <em>everforest_light theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_everforest_light.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1343,7 +1343,7 @@ theme = "everforest_light",
 </tr>
 <tr>
 <td align="center">
-<strong>dracula</strong><br>
+<strong>[89] dracula</strong><br>
 <em>dracula theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dracula.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1353,7 +1353,7 @@ theme = "dracula",
 </details>
 </td>
 <td align="center">
-<strong>solarized_dark</strong><br>
+<strong>[90] solarized_dark</strong><br>
 <em>solarized_dark theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_solarized_dark.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1373,7 +1373,7 @@ theme = "solarized_dark",
 <table>
 <tr>
 <td align="center">
-<strong>laststatus=0</strong><br>
+<strong>[91] laststatus=0</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, laststatus=0, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_0.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1383,7 +1383,7 @@ laststatus = 0,
 </details>
 </td>
 <td align="center">
-<strong>laststatus=2</strong><br>
+<strong>[92] laststatus=2</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, laststatus=2, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_2.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1393,7 +1393,7 @@ laststatus = 2,
 </details>
 </td>
 <td align="center">
-<strong>laststatus=3</strong><br>
+<strong>[93] laststatus=3</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_3.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1405,7 +1405,7 @@ laststatus = 3,
 </tr>
 <tr>
 <td align="center">
-<strong>cmdheight=0</strong><br>
+<strong>[94] cmdheight=0</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, cmdheight=0, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1415,7 +1415,7 @@ cmdheight = 0,
 </details>
 </td>
 <td align="center">
-<strong>cmdheight=0 offset=1</strong><br>
+<strong>[95] cmdheight=0 offset=1</strong><br>
 <em>auto theme, bordered, offset=1, fzy, devicons, scrollbar, cmdheight=0, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0_offset_1.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1426,7 +1426,7 @@ cmdheight = 0,
 </details>
 </td>
 <td align="center">
-<strong>cmdheight=0 offset=2</strong><br>
+<strong>[96] cmdheight=0 offset=2</strong><br>
 <em>auto theme, bordered, offset=2, fzy, devicons, scrollbar, cmdheight=0, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0_offset_2.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1439,7 +1439,7 @@ cmdheight = 0,
 </tr>
 <tr>
 <td align="center">
-<strong>offset=1</strong><br>
+<strong>[97] offset=1</strong><br>
 <em>auto theme, bordered, offset=1, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/offset_1.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1449,7 +1449,7 @@ offset = 1,
 </details>
 </td>
 <td align="center">
-<strong>offset=2</strong><br>
+<strong>[98] offset=2</strong><br>
 <em>auto theme, bordered, offset=2, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/offset_2.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1469,7 +1469,7 @@ offset = 2,
 <table>
 <tr>
 <td align="center">
-<strong>noselect=false</strong><br>
+<strong>[99] noselect=false</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_false.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1479,7 +1479,7 @@ noselect = false,
 </details>
 </td>
 <td align="center">
-<strong>reverse=true</strong><br>
+<strong>[100] reverse=true</strong><br>
 <em>auto theme, bordered, reverse, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/reverse.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1489,7 +1489,7 @@ reverse = true,
 </details>
 </td>
 <td align="center">
-<strong>empty_message</strong><br>
+<strong>[101] empty_message</strong><br>
 <em>bordered, rounded, empty_message, fzy, devicons, scrollbar, :zzzznotacommand</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1504,7 +1504,7 @@ empty_message = " No matches, partner ",
 </tr>
 <tr>
 <td align="center">
-<strong>empty_message (popupmenu)</strong><br>
+<strong>[102] empty_message (popupmenu)</strong><br>
 <em>plain popupmenu, empty_message, basic, devicons, scrollbar, :zzzznotacommand</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message_popupmenu.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1517,7 +1517,7 @@ empty_message = " No matches, partner ",
 </details>
 </td>
 <td align="center">
-<strong>buffer_flags</strong><br>
+<strong>[103] buffer_flags</strong><br>
 <em>auto theme, bordered, fzy, buffer flags, no devicons, scrollbar, :b</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/buffer_flags.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1529,7 +1529,7 @@ left = { "buffer_flags" },
 </details>
 </td>
 <td align="center">
-<strong>position=top</strong><br>
+<strong>[104] position=top</strong><br>
 <em>bordered, rounded, position=top, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_top.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1543,7 +1543,7 @@ position = "top",
 </tr>
 <tr>
 <td align="center">
-<strong>position=center</strong><br>
+<strong>[105] position=center</strong><br>
 <em>bordered, rounded, position=center, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_center.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1555,7 +1555,7 @@ position = "center",
 </details>
 </td>
 <td align="center">
-<strong>ellipsis</strong><br>
+<strong>[106] ellipsis</strong><br>
 <em>wildmenu, ellipsis, basic, arrows, index, separator=" | ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/ellipsis.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1570,7 +1570,7 @@ ellipsis = "...",
 </details>
 </td>
 <td align="center">
-<strong>position=top (bordered)</strong><br>
+<strong>[107] position=top (bordered)</strong><br>
 <em>bordered, rounded, title, position=top, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_top_bordered.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1585,7 +1585,7 @@ position = "top",
 </tr>
 <tr>
 <td align="center">
-<strong>noselect (bordered)</strong><br>
+<strong>[108] noselect (bordered)</strong><br>
 <em>bordered, rounded, noselect, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_bordered.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1597,7 +1597,7 @@ noselect = true,
 </details>
 </td>
 <td align="center">
-<strong>fixed_height=true</strong><br>
+<strong>[109] fixed_height=true</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set wra</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fixed_height_true.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1620,7 +1620,7 @@ fixed_height = true,
 <table>
 <tr>
 <td align="center">
-<strong>Preview Right (Screen)</strong><br>
+<strong>[110] Preview Right (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right screen, :e conf</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_right_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1637,7 +1637,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong>Preview Left (Screen)</strong><br>
+<strong>[111] Preview Left (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left screen, :e conf</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_left_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1654,7 +1654,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong>Preview Top (Screen)</strong><br>
+<strong>[112] Preview Top (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top screen, :e conf</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_top_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1673,7 +1673,7 @@ preview = {
 </tr>
 <tr>
 <td align="center">
-<strong>Preview Bottom (Screen)</strong><br>
+<strong>[113] Preview Bottom (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom screen, :e conf</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_bottom_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1690,7 +1690,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong>Preview Right (Popup)</strong><br>
+<strong>[114] Preview Right (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right popup, :e conf</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_right_popup.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1707,7 +1707,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong>Preview Left (Popup)</strong><br>
+<strong>[115] Preview Left (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left popup, :e conf</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_left_popup.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1726,7 +1726,7 @@ preview = {
 </tr>
 <tr>
 <td align="center">
-<strong>Preview Top (Popup)</strong><br>
+<strong>[116] Preview Top (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top popup, :e conf</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_top_popup.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1743,7 +1743,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong>Preview Bottom (Popup)</strong><br>
+<strong>[117] Preview Bottom (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom popup, :e conf</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_bottom_popup.png" width="400"><br>
 <details><summary>Config</summary>
