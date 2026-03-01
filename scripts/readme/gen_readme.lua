@@ -420,15 +420,34 @@ end
 
 local detail_index = 0
 
+local ISSUE_BASE = "https://github.com/catgoose/wildest.nvim/issues/new"
+
+local function issue_url(config_name, index)
+  local title = string.format("Screenshot issue: [%d] %s", index, config_name)
+  local body = string.format(
+    "**Screenshot index:** %d\n**Config key:** `%s`\n\n"
+    .. "**Describe the issue:**\n",
+    index, config_name
+  )
+  -- Minimal percent-encoding for URL query params
+  local function encode(s)
+    return (s:gsub("[^%w%-_.~]", function(c)
+      return string.format("%%%02X", string.byte(c))
+    end))
+  end
+  return string.format("%s?title=%s&body=%s", ISSUE_BASE, encode(title), encode(body))
+end
+
 local function img_cell_detailed(config_name, label, width)
   width = width or 400
   label = label or config_name
   detail_index = detail_index + 1
   local expect = gen_expect(config_name)
   local config_lua = config_to_lua(config_name)
+  local report_url = issue_url(config_name, detail_index)
   return string.format(
     '<td align="center">\n'
-    .. '<strong>[%d] %s</strong><br>\n'
+    .. '<strong><a href="%s">[%d]</a> %s</strong><br>\n'
     .. '<em>%s</em><br>\n'
     .. '<img src="%s%s.png" width="%d"><br>\n'
     .. '<details><summary>Config</summary>\n'
@@ -437,7 +456,7 @@ local function img_cell_detailed(config_name, label, width)
     .. '</code></pre>\n'
     .. '</details>\n'
     .. '</td>',
-    detail_index, label, expect, IMG_BASE, config_name, width, config_lua
+    report_url, detail_index, label, expect, IMG_BASE, config_name, width, config_lua
   )
 end
 

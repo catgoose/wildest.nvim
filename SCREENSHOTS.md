@@ -30,7 +30,7 @@ and reference the config key so we can reproduce it.
 <table>
 <tr>
 <td align="center">
-<strong>[1] Popupmenu</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B1%5D%20popupmenu&body=%2A%2AScreenshot%20index%3A%2A%2A%201%0A%2A%2AConfig%20key%3A%2A%2A%20%60popupmenu%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[1]</a> Popupmenu</strong><br>
 <em>plain popupmenu, basic, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu.png" width="400"><br>
 <details><summary>Config</summary>
@@ -41,7 +41,7 @@ highlighter = "basic",
 </details>
 </td>
 <td align="center">
-<strong>[2] Bordered</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B2%5D%20popupmenu_border&body=%2A%2AScreenshot%20index%3A%2A%2A%202%0A%2A%2AConfig%20key%3A%2A%2A%20%60popupmenu_border%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[2]</a> Bordered</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_border.png" width="400"><br>
 <details><summary>Config</summary>
@@ -51,7 +51,7 @@ highlighter = "basic",
 </details>
 </td>
 <td align="center">
-<strong>[3] Palette</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B3%5D%20popupmenu_palette&body=%2A%2AScreenshot%20index%3A%2A%2A%203%0A%2A%2AConfig%20key%3A%2A%2A%20%60popupmenu_palette%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[3]</a> Palette</strong><br>
 <em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_palette.png" width="400"><br>
 <details><summary>Config</summary>
@@ -72,7 +72,7 @@ palette = {
 </tr>
 <tr>
 <td align="center">
-<strong>[4] Palette (Bottom Prompt)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B4%5D%20palette_prompt_bottom&body=%2A%2AScreenshot%20index%3A%2A%2A%204%0A%2A%2AConfig%20key%3A%2A%2A%20%60palette_prompt_bottom%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[4]</a> Palette (Bottom Prompt)</strong><br>
 <em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_prompt_bottom.png" width="400"><br>
 <details><summary>Config</summary>
@@ -90,7 +90,7 @@ palette = {
 </details>
 </td>
 <td align="center">
-<strong>[5] Wildmenu</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B5%5D%20wildmenu&body=%2A%2AScreenshot%20index%3A%2A%2A%205%0A%2A%2AConfig%20key%3A%2A%2A%20%60wildmenu%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[5]</a> Wildmenu</strong><br>
 <em>wildmenu, basic, arrows, index, separator=" | ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu.png" width="400"><br>
 <details><summary>Config</summary>
@@ -114,7 +114,7 @@ separator = " | ",
 <table>
 <tr>
 <td align="center">
-<strong>[6] devicons</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B6%5D%20devicons&body=%2A%2AScreenshot%20index%3A%2A%2A%206%0A%2A%2AConfig%20key%3A%2A%2A%20%60devicons%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[6]</a> devicons</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons.png" width="400"><br>
 <details><summary>Config</summary>
@@ -125,7 +125,7 @@ left = { "devicons" },
 </details>
 </td>
 <td align="center">
-<strong>[7] fuzzy</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B7%5D%20fuzzy&body=%2A%2AScreenshot%20index%3A%2A%2A%207%0A%2A%2AConfig%20key%3A%2A%2A%20%60fuzzy%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[7]</a> fuzzy</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :e tests/test_c</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fuzzy.png" width="400"><br>
 <details><summary>Config</summary>
@@ -135,7 +135,7 @@ cmd = ":e tests/test_c",
 </details>
 </td>
 <td align="center">
-<strong>[8] gradient</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B8%5D%20gradient&body=%2A%2AScreenshot%20index%3A%2A%2A%208%0A%2A%2AConfig%20key%3A%2A%2A%20%60gradient%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[8]</a> gradient</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help help-</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient.png" width="400"><br>
 <details><summary>Config</summary>
@@ -167,7 +167,7 @@ gradient_colors = {
 </tr>
 <tr>
 <td align="center">
-<strong>[9] search</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B9%5D%20search&body=%2A%2AScreenshot%20index%3A%2A%2A%209%0A%2A%2AConfig%20key%3A%2A%2A%20%60search%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[9]</a> search</strong><br>
 <em>auto theme, bordered, basic, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png" width="400"><br>
 <details><summary>Config</summary>
@@ -178,7 +178,7 @@ highlighter = "basic",
 </details>
 </td>
 <td align="center">
-<strong>[10] renderer_mux</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B10%5D%20renderer_mux&body=%2A%2AScreenshot%20index%3A%2A%2A%2010%0A%2A%2AConfig%20key%3A%2A%2A%20%60renderer_mux%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[10]</a> renderer_mux</strong><br>
 <em>renderer mux, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/renderer_mux.png" width="400"><br>
 <details><summary>Config</summary>
@@ -203,7 +203,7 @@ mux = {
 </details>
 </td>
 <td align="center">
-<strong>[11] kind_icons</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B11%5D%20kind_icons&body=%2A%2AScreenshot%20index%3A%2A%2A%2011%0A%2A%2AConfig%20key%3A%2A%2A%20%60kind_icons%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[11]</a> kind_icons</strong><br>
 <em>auto theme, bordered, fzy, kind icons, no devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/kind_icons.png" width="400"><br>
 <details><summary>Config</summary>
@@ -215,7 +215,7 @@ left = { "kind_icon" },
 </tr>
 <tr>
 <td align="center">
-<strong>[12] Prefix Highlighter</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B12%5D%20prefix_highlighter&body=%2A%2AScreenshot%20index%3A%2A%2A%2012%0A%2A%2AConfig%20key%3A%2A%2A%20%60prefix_highlighter%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[12]</a> Prefix Highlighter</strong><br>
 <em>auto theme, bordered, prefix, devicons, scrollbar, :e tests/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/prefix_highlighter.png" width="400"><br>
 <details><summary>Config</summary>
@@ -226,7 +226,7 @@ highlighter = "prefix",
 </details>
 </td>
 <td align="center">
-<strong>[13] Scrollbar</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B13%5D%20scrollbar&body=%2A%2AScreenshot%20index%3A%2A%2A%2013%0A%2A%2AConfig%20key%3A%2A%2A%20%60scrollbar%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[13]</a> Scrollbar</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :help nvim</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/scrollbar.png" width="400"><br>
 <details><summary>Config</summary>
@@ -237,7 +237,7 @@ right = { "scrollbar" },
 </details>
 </td>
 <td align="center">
-<strong>[14] Pumblend</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B14%5D%20pumblend&body=%2A%2AScreenshot%20index%3A%2A%2A%2014%0A%2A%2AConfig%20key%3A%2A%2A%20%60pumblend%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[14]</a> Pumblend</strong><br>
 <em>bordered, rounded, pumblend=30, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/pumblend.png" width="400"><br>
 <details><summary>Config</summary>
@@ -258,7 +258,7 @@ pumblend = 30,
 <table>
 <tr>
 <td align="center">
-<strong>[15] Lua Completion</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B15%5D%20lua_pipeline&body=%2A%2AScreenshot%20index%3A%2A%2A%2015%0A%2A%2AConfig%20key%3A%2A%2A%20%60lua_pipeline%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[15]</a> Lua Completion</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, lua pipeline, :lua vim.api.nvim</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/lua_pipeline.png" width="400"><br>
 <details><summary>Config</summary>
@@ -269,7 +269,7 @@ pipeline = { "lua", "cmdline_fuzzy" },
 </details>
 </td>
 <td align="center">
-<strong>[16] Help Tags</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B16%5D%20help_pipeline&body=%2A%2AScreenshot%20index%3A%2A%2A%2016%0A%2A%2AConfig%20key%3A%2A%2A%20%60help_pipeline%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[16]</a> Help Tags</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, help pipeline, :help nvim_b</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/help_pipeline.png" width="400"><br>
 <details><summary>Config</summary>
@@ -280,7 +280,7 @@ pipeline = { "help_fuzzy", "cmdline_fuzzy" },
 </details>
 </td>
 <td align="center">
-<strong>[17] History</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B17%5D%20history_pipeline&body=%2A%2AScreenshot%20index%3A%2A%2A%2017%0A%2A%2AConfig%20key%3A%2A%2A%20%60history_pipeline%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[17]</a> History</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, history pipeline, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/history_pipeline.png" width="400"><br>
 <details><summary>Config</summary>
@@ -292,7 +292,7 @@ pipeline = { "history", "cmdline_fuzzy" },
 </tr>
 <tr>
 <td align="center">
-<strong>[18] Search</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B18%5D%20search&body=%2A%2AScreenshot%20index%3A%2A%2A%2018%0A%2A%2AConfig%20key%3A%2A%2A%20%60search%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[18]</a> Search</strong><br>
 <em>auto theme, bordered, basic, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png" width="400"><br>
 <details><summary>Config</summary>
@@ -314,7 +314,7 @@ highlighter = "basic",
 <table>
 <tr>
 <td align="center">
-<strong>[19] Rounded</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B19%5D%20border_rounded&body=%2A%2AScreenshot%20index%3A%2A%2A%2019%0A%2A%2AConfig%20key%3A%2A%2A%20%60border_rounded%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[19]</a> Rounded</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_rounded.png" width="400"><br>
 <details><summary>Config</summary>
@@ -325,7 +325,7 @@ border = "rounded",
 </details>
 </td>
 <td align="center">
-<strong>[20] Single</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B20%5D%20border_single&body=%2A%2AScreenshot%20index%3A%2A%2A%2020%0A%2A%2AConfig%20key%3A%2A%2A%20%60border_single%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[20]</a> Single</strong><br>
 <em>bordered, single, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_single.png" width="400"><br>
 <details><summary>Config</summary>
@@ -336,7 +336,7 @@ border = "single",
 </details>
 </td>
 <td align="center">
-<strong>[21] Double</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B21%5D%20border_double&body=%2A%2AScreenshot%20index%3A%2A%2A%2021%0A%2A%2AConfig%20key%3A%2A%2A%20%60border_double%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[21]</a> Double</strong><br>
 <em>bordered, double, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_double.png" width="400"><br>
 <details><summary>Config</summary>
@@ -349,7 +349,7 @@ border = "double",
 </tr>
 <tr>
 <td align="center">
-<strong>[22] Solid</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B22%5D%20border_solid&body=%2A%2AScreenshot%20index%3A%2A%2A%2022%0A%2A%2AConfig%20key%3A%2A%2A%20%60border_solid%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[22]</a> Solid</strong><br>
 <em>bordered, solid, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_solid.png" width="400"><br>
 <details><summary>Config</summary>
@@ -360,7 +360,7 @@ border = "solid",
 </details>
 </td>
 <td align="center">
-<strong>[23] With Title</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B23%5D%20border_title&body=%2A%2AScreenshot%20index%3A%2A%2A%2023%0A%2A%2AConfig%20key%3A%2A%2A%20%60border_title%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[23]</a> With Title</strong><br>
 <em>bordered, rounded, title, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/border_title.png" width="400"><br>
 <details><summary>Config</summary>
@@ -382,7 +382,7 @@ title = " Completions ",
 <table>
 <tr>
 <td align="center">
-<strong>[24] Dot Separator</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B24%5D%20wildmenu_dot&body=%2A%2AScreenshot%20index%3A%2A%2A%2024%0A%2A%2AConfig%20key%3A%2A%2A%20%60wildmenu_dot%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[24]</a> Dot Separator</strong><br>
 <em>wildmenu, basic, arrows, index, separator=" · ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_dot.png" width="400"><br>
 <details><summary>Config</summary>
@@ -396,7 +396,7 @@ separator = " · ",
 </details>
 </td>
 <td align="center">
-<strong>[25] Reversed</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B25%5D%20wildmenu_reverse&body=%2A%2AScreenshot%20index%3A%2A%2A%2025%0A%2A%2AConfig%20key%3A%2A%2A%20%60wildmenu_reverse%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[25]</a> Reversed</strong><br>
 <em>wildmenu, reverse, fzy, arrows, index, separator=" | ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_reverse.png" width="400"><br>
 <details><summary>Config</summary>
@@ -411,7 +411,7 @@ reverse = true,
 </details>
 </td>
 <td align="center">
-<strong>[26] Minimal</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B26%5D%20wildmenu_minimal&body=%2A%2AScreenshot%20index%3A%2A%2A%2026%0A%2A%2AConfig%20key%3A%2A%2A%20%60wildmenu_minimal%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[26]</a> Minimal</strong><br>
 <em>wildmenu, basic, devicons, scrollbar, separator="  ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_minimal.png" width="400"><br>
 <details><summary>Config</summary>
@@ -425,7 +425,7 @@ separator = "  ",
 </tr>
 <tr>
 <td align="center">
-<strong>[27] Pipe Separator</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B27%5D%20wildmenu_pipe&body=%2A%2AScreenshot%20index%3A%2A%2A%2027%0A%2A%2AConfig%20key%3A%2A%2A%20%60wildmenu_pipe%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[27]</a> Pipe Separator</strong><br>
 <em>wildmenu, fzy, arrows, separator=" │ ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_pipe.png" width="400"><br>
 <details><summary>Config</summary>
@@ -439,7 +439,7 @@ separator = " │ ",
 </details>
 </td>
 <td align="center">
-<strong>[28] Arrows + Index</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B28%5D%20wildmenu_arrows_index&body=%2A%2AScreenshot%20index%3A%2A%2A%2028%0A%2A%2AConfig%20key%3A%2A%2A%20%60wildmenu_arrows_index%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[28]</a> Arrows + Index</strong><br>
 <em>wildmenu, basic, arrows, index, separator=" · ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_arrows_index.png" width="400"><br>
 <details><summary>Config</summary>
@@ -453,7 +453,7 @@ separator = " · ",
 </details>
 </td>
 <td align="center">
-<strong>[29] Compact</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B29%5D%20wildmenu_compact&body=%2A%2AScreenshot%20index%3A%2A%2A%2029%0A%2A%2AConfig%20key%3A%2A%2A%20%60wildmenu_compact%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[29]</a> Compact</strong><br>
 <em>wildmenu, basic, devicons, scrollbar, separator=" ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_compact.png" width="400"><br>
 <details><summary>Config</summary>
@@ -474,7 +474,7 @@ separator = " ",
 <table>
 <tr>
 <td align="center">
-<strong>[30] No Title</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B30%5D%20palette_no_title&body=%2A%2AScreenshot%20index%3A%2A%2A%2030%0A%2A%2AConfig%20key%3A%2A%2A%20%60palette_no_title%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[30]</a> No Title</strong><br>
 <em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_no_title.png" width="400"><br>
 <details><summary>Config</summary>
@@ -491,7 +491,7 @@ palette = {
 </details>
 </td>
 <td align="center">
-<strong>[31] Custom Prefix</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B31%5D%20palette_custom_prefix&body=%2A%2AScreenshot%20index%3A%2A%2A%2031%0A%2A%2AConfig%20key%3A%2A%2A%20%60palette_custom_prefix%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[31]</a> Custom Prefix</strong><br>
 <em>palette, fzy, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_custom_prefix.png" width="400"><br>
 <details><summary>Config</summary>
@@ -510,7 +510,7 @@ palette = {
 </details>
 </td>
 <td align="center">
-<strong>[32] Large</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B32%5D%20palette_large&body=%2A%2AScreenshot%20index%3A%2A%2A%2032%0A%2A%2AConfig%20key%3A%2A%2A%20%60palette_large%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[32]</a> Large</strong><br>
 <em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_large.png" width="400"><br>
 <details><summary>Config</summary>
@@ -530,7 +530,7 @@ palette = {
 </tr>
 <tr>
 <td align="center">
-<strong>[33] Compact</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B33%5D%20palette_compact&body=%2A%2AScreenshot%20index%3A%2A%2A%2033%0A%2A%2AConfig%20key%3A%2A%2A%20%60palette_compact%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[33]</a> Compact</strong><br>
 <em>palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_compact.png" width="400"><br>
 <details><summary>Config</summary>
@@ -548,7 +548,7 @@ palette = {
 </details>
 </td>
 <td align="center">
-<strong>[34] Search Mode</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B34%5D%20palette_search&body=%2A%2AScreenshot%20index%3A%2A%2A%2034%0A%2A%2AConfig%20key%3A%2A%2A%20%60palette_search%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[34]</a> Search Mode</strong><br>
 <em>palette, fzy, devicons, scrollbar, /function</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_search.png" width="400"><br>
 <details><summary>Config</summary>
@@ -578,7 +578,7 @@ palette = {
 <table>
 <tr>
 <td align="center">
-<strong>[35] max_height=8</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B35%5D%20max_height_small&body=%2A%2AScreenshot%20index%3A%2A%2A%2035%0A%2A%2AConfig%20key%3A%2A%2A%20%60max_height_small%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[35]</a> max_height=8</strong><br>
 <em>bordered, rounded, max_height=8, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_height_small.png" width="400"><br>
 <details><summary>Config</summary>
@@ -590,7 +590,7 @@ max_height = 8,
 </details>
 </td>
 <td align="center">
-<strong>[36] fixed_height=false</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B36%5D%20fixed_height_false&body=%2A%2AScreenshot%20index%3A%2A%2A%2036%0A%2A%2AConfig%20key%3A%2A%2A%20%60fixed_height_false%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[36]</a> fixed_height=false</strong><br>
 <em>bordered, rounded, fixed_height=false, fzy, devicons, scrollbar, :set wra</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fixed_height_false.png" width="400"><br>
 <details><summary>Config</summary>
@@ -603,7 +603,7 @@ fixed_height = false,
 </details>
 </td>
 <td align="center">
-<strong>[37] max_width=60</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B37%5D%20max_width_60&body=%2A%2AScreenshot%20index%3A%2A%2A%2037%0A%2A%2AConfig%20key%3A%2A%2A%20%60max_width_60%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[37]</a> max_width=60</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_width_60.png" width="400"><br>
 <details><summary>Config</summary>
@@ -617,7 +617,7 @@ max_width = 60,
 </tr>
 <tr>
 <td align="center">
-<strong>[38] min_height=5</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B38%5D%20min_height_5&body=%2A%2AScreenshot%20index%3A%2A%2A%2038%0A%2A%2AConfig%20key%3A%2A%2A%20%60min_height_5%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[38]</a> min_height=5</strong><br>
 <em>bordered, rounded, min_height=5, fzy, devicons, scrollbar, :set wra</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/min_height_5.png" width="400"><br>
 <details><summary>Config</summary>
@@ -630,7 +630,7 @@ min_height = 5,
 </details>
 </td>
 <td align="center">
-<strong>[39] max_height=20</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B39%5D%20max_height_large&body=%2A%2AScreenshot%20index%3A%2A%2A%2039%0A%2A%2AConfig%20key%3A%2A%2A%20%60max_height_large%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[39]</a> max_height=20</strong><br>
 <em>bordered, rounded, max_height=20, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_height_large.png" width="400"><br>
 <details><summary>Config</summary>
@@ -642,7 +642,7 @@ max_height = 20,
 </details>
 </td>
 <td align="center">
-<strong>[40] max_width=40</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B40%5D%20max_width_40&body=%2A%2AScreenshot%20index%3A%2A%2A%2040%0A%2A%2AConfig%20key%3A%2A%2A%20%60max_width_40%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[40]</a> max_width=40</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/max_width_40.png" width="400"><br>
 <details><summary>Config</summary>
@@ -656,7 +656,7 @@ max_width = 40,
 </tr>
 <tr>
 <td align="center">
-<strong>[41] min_width=40</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B41%5D%20min_width_40&body=%2A%2AScreenshot%20index%3A%2A%2A%2041%0A%2A%2AConfig%20key%3A%2A%2A%20%60min_width_40%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[41]</a> min_width=40</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set wra</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/min_width_40.png" width="400"><br>
 <details><summary>Config</summary>
@@ -680,7 +680,7 @@ min_width = 40,
 <table>
 <tr>
 <td align="center">
-<strong>[42] Warm</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B42%5D%20gradient_warm&body=%2A%2AScreenshot%20index%3A%2A%2A%2042%0A%2A%2AConfig%20key%3A%2A%2A%20%60gradient_warm%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[42]</a> Warm</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help nvim_b</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_warm.png" width="400"><br>
 <details><summary>Config</summary>
@@ -700,7 +700,7 @@ gradient_colors = {
 </details>
 </td>
 <td align="center">
-<strong>[43] Cool</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B43%5D%20gradient_cool&body=%2A%2AScreenshot%20index%3A%2A%2A%2043%0A%2A%2AConfig%20key%3A%2A%2A%20%60gradient_cool%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[43]</a> Cool</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help api-</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_cool.png" width="400"><br>
 <details><summary>Config</summary>
@@ -720,7 +720,7 @@ gradient_colors = {
 </details>
 </td>
 <td align="center">
-<strong>[44] Sunset</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B44%5D%20gradient_sunset&body=%2A%2AScreenshot%20index%3A%2A%2A%2044%0A%2A%2AConfig%20key%3A%2A%2A%20%60gradient_sunset%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[44]</a> Sunset</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help option-</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_sunset.png" width="400"><br>
 <details><summary>Config</summary>
@@ -742,7 +742,7 @@ gradient_colors = {
 </tr>
 <tr>
 <td align="center">
-<strong>[45] Ice</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B45%5D%20gradient_ice&body=%2A%2AScreenshot%20index%3A%2A%2A%2045%0A%2A%2AConfig%20key%3A%2A%2A%20%60gradient_ice%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[45]</a> Ice</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help vim.</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_ice.png" width="400"><br>
 <details><summary>Config</summary>
@@ -762,7 +762,7 @@ gradient_colors = {
 </details>
 </td>
 <td align="center">
-<strong>[46] Forest</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B46%5D%20gradient_forest&body=%2A%2AScreenshot%20index%3A%2A%2A%2046%0A%2A%2AConfig%20key%3A%2A%2A%20%60gradient_forest%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[46]</a> Forest</strong><br>
 <em>auto theme, bordered, gradient, devicons, scrollbar, gradient colors, :help auto</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_forest.png" width="400"><br>
 <details><summary>Config</summary>
@@ -792,7 +792,7 @@ gradient_colors = {
 <table>
 <tr>
 <td align="center">
-<strong>[47] Devicons + Kind</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B47%5D%20devicons_kind&body=%2A%2AScreenshot%20index%3A%2A%2A%2047%0A%2A%2AConfig%20key%3A%2A%2A%20%60devicons_kind%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[47]</a> Devicons + Kind</strong><br>
 <em>auto theme, bordered, fzy, devicons, kind icons, scrollbar, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons_kind.png" width="400"><br>
 <details><summary>Config</summary>
@@ -804,7 +804,7 @@ right = { "scrollbar" },
 </details>
 </td>
 <td align="center">
-<strong>[48] Reverse + Border</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B48%5D%20reverse_bordered&body=%2A%2AScreenshot%20index%3A%2A%2A%2048%0A%2A%2AConfig%20key%3A%2A%2A%20%60reverse_bordered%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[48]</a> Reverse + Border</strong><br>
 <em>bordered, rounded, reverse, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/reverse_bordered.png" width="400"><br>
 <details><summary>Config</summary>
@@ -816,7 +816,7 @@ reverse = true,
 </details>
 </td>
 <td align="center">
-<strong>[49] IncSearch Accent</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B49%5D%20accent_incsearch&body=%2A%2AScreenshot%20index%3A%2A%2A%2049%0A%2A%2AConfig%20key%3A%2A%2A%20%60accent_incsearch%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[49]</a> IncSearch Accent</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/accent_incsearch.png" width="400"><br>
 <details><summary>Config</summary>
@@ -829,7 +829,7 @@ highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
 </tr>
 <tr>
 <td align="center">
-<strong>[50] Noselect + Reverse</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B50%5D%20noselect_reverse&body=%2A%2AScreenshot%20index%3A%2A%2A%2050%0A%2A%2AConfig%20key%3A%2A%2A%20%60noselect_reverse%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[50]</a> Noselect + Reverse</strong><br>
 <em>bordered, rounded, reverse, noselect, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_reverse.png" width="400"><br>
 <details><summary>Config</summary>
@@ -842,7 +842,7 @@ reverse = true,
 </details>
 </td>
 <td align="center">
-<strong>[51] Pumblend + Border</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B51%5D%20pumblend_bordered&body=%2A%2AScreenshot%20index%3A%2A%2A%2051%0A%2A%2AConfig%20key%3A%2A%2A%20%60pumblend_bordered%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[51]</a> Pumblend + Border</strong><br>
 <em>bordered, rounded, pumblend=20, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/pumblend_bordered.png" width="400"><br>
 <details><summary>Config</summary>
@@ -854,7 +854,7 @@ pumblend = 20,
 </details>
 </td>
 <td align="center">
-<strong>[52] Devicons + Scrollbar + Border</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B52%5D%20devicons_scrollbar_border&body=%2A%2AScreenshot%20index%3A%2A%2A%2052%0A%2A%2AConfig%20key%3A%2A%2A%20%60devicons_scrollbar_border%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[52]</a> Devicons + Scrollbar + Border</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons_scrollbar_border.png" width="400"><br>
 <details><summary>Config</summary>
@@ -870,7 +870,7 @@ border = "rounded",
 </tr>
 <tr>
 <td align="center">
-<strong>[53] Gradient + Border</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B53%5D%20gradient_bordered&body=%2A%2AScreenshot%20index%3A%2A%2A%2053%0A%2A%2AConfig%20key%3A%2A%2A%20%60gradient_bordered%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[53]</a> Gradient + Border</strong><br>
 <em>bordered, rounded, gradient, devicons, scrollbar, gradient colors, :help nvim_b</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient_bordered.png" width="400"><br>
 <details><summary>Config</summary>
@@ -902,7 +902,7 @@ gradient_colors = {
 </details>
 </td>
 <td align="center">
-<strong>[54] Palette + Gradient</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B54%5D%20palette_gradient&body=%2A%2AScreenshot%20index%3A%2A%2A%2054%0A%2A%2AConfig%20key%3A%2A%2A%20%60palette_gradient%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[54]</a> Palette + Gradient</strong><br>
 <em>palette, gradient, devicons, scrollbar, gradient colors, :help api-</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_gradient.png" width="400"><br>
 <details><summary>Config</summary>
@@ -931,7 +931,7 @@ palette = {
 </details>
 </td>
 <td align="center">
-<strong>[55] Wildmenu + Fzy</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B55%5D%20wildmenu_fzy&body=%2A%2AScreenshot%20index%3A%2A%2A%2055%0A%2A%2AConfig%20key%3A%2A%2A%20%60wildmenu_fzy%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[55]</a> Wildmenu + Fzy</strong><br>
 <em>wildmenu, fzy, arrows, index, separator=" | ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu_fzy.png" width="400"><br>
 <details><summary>Config</summary>
@@ -954,7 +954,7 @@ separator = " | ",
 <table>
 <tr>
 <td align="center">
-<strong>[56] Neon</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B56%5D%20hl_neon&body=%2A%2AScreenshot%20index%3A%2A%2A%2056%0A%2A%2AConfig%20key%3A%2A%2A%20%60hl_neon%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[56]</a> Neon</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, custom highlights, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_neon.png" width="400"><br>
 <details><summary>Config</summary>
@@ -974,7 +974,7 @@ custom_highlights = {
 </details>
 </td>
 <td align="center">
-<strong>[57] Ember</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B57%5D%20hl_ember&body=%2A%2AScreenshot%20index%3A%2A%2A%2057%0A%2A%2AConfig%20key%3A%2A%2A%20%60hl_ember%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[57]</a> Ember</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, custom highlights, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ember.png" width="400"><br>
 <details><summary>Config</summary>
@@ -994,7 +994,7 @@ custom_highlights = {
 </details>
 </td>
 <td align="center">
-<strong>[58] Ocean</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B58%5D%20hl_ocean&body=%2A%2AScreenshot%20index%3A%2A%2A%2058%0A%2A%2AConfig%20key%3A%2A%2A%20%60hl_ocean%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[58]</a> Ocean</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, custom highlights, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ocean.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1023,7 +1023,7 @@ custom_highlights = {
 <table>
 <tr>
 <td align="center">
-<strong>[59] auto</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B59%5D%20theme_auto&body=%2A%2AScreenshot%20index%3A%2A%2A%2059%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_auto%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[59]</a> auto</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_auto.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1033,7 +1033,7 @@ theme = "auto",
 </details>
 </td>
 <td align="center">
-<strong>[60] default</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B60%5D%20theme_default&body=%2A%2AScreenshot%20index%3A%2A%2A%2060%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_default%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[60]</a> default</strong><br>
 <em>default theme, plain, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_default.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1043,7 +1043,7 @@ theme = "default",
 </details>
 </td>
 <td align="center">
-<strong>[61] saloon</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B61%5D%20theme_saloon&body=%2A%2AScreenshot%20index%3A%2A%2A%2061%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_saloon%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[61]</a> saloon</strong><br>
 <em>saloon theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_saloon.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1055,7 +1055,7 @@ theme = "saloon",
 </tr>
 <tr>
 <td align="center">
-<strong>[62] outlaw</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B62%5D%20theme_outlaw&body=%2A%2AScreenshot%20index%3A%2A%2A%2062%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_outlaw%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[62]</a> outlaw</strong><br>
 <em>outlaw theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_outlaw.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1065,7 +1065,7 @@ theme = "outlaw",
 </details>
 </td>
 <td align="center">
-<strong>[63] sunset</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B63%5D%20theme_sunset&body=%2A%2AScreenshot%20index%3A%2A%2A%2063%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_sunset%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[63]</a> sunset</strong><br>
 <em>sunset theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_sunset.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1075,7 +1075,7 @@ theme = "sunset",
 </details>
 </td>
 <td align="center">
-<strong>[64] prairie</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B64%5D%20theme_prairie&body=%2A%2AScreenshot%20index%3A%2A%2A%2064%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_prairie%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[64]</a> prairie</strong><br>
 <em>prairie theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_prairie.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1087,7 +1087,7 @@ theme = "prairie",
 </tr>
 <tr>
 <td align="center">
-<strong>[65] dusty</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B65%5D%20theme_dusty&body=%2A%2AScreenshot%20index%3A%2A%2A%2065%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_dusty%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[65]</a> dusty</strong><br>
 <em>dusty theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dusty.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1097,7 +1097,7 @@ theme = "dusty",
 </details>
 </td>
 <td align="center">
-<strong>[66] midnight</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B66%5D%20theme_midnight&body=%2A%2AScreenshot%20index%3A%2A%2A%2066%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_midnight%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[66]</a> midnight</strong><br>
 <em>midnight theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_midnight.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1107,7 +1107,7 @@ theme = "midnight",
 </details>
 </td>
 <td align="center">
-<strong>[67] wanted</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B67%5D%20theme_wanted&body=%2A%2AScreenshot%20index%3A%2A%2A%2067%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_wanted%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[67]</a> wanted</strong><br>
 <em>wanted theme, palette, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_wanted.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1119,7 +1119,7 @@ theme = "wanted",
 </tr>
 <tr>
 <td align="center">
-<strong>[68] cactus</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B68%5D%20theme_cactus&body=%2A%2AScreenshot%20index%3A%2A%2A%2068%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_cactus%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[68]</a> cactus</strong><br>
 <em>cactus theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_cactus.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1129,7 +1129,7 @@ theme = "cactus",
 </details>
 </td>
 <td align="center">
-<strong>[69] tumbleweed</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B69%5D%20theme_tumbleweed&body=%2A%2AScreenshot%20index%3A%2A%2A%2069%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_tumbleweed%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[69]</a> tumbleweed</strong><br>
 <em>tumbleweed theme, plain, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tumbleweed.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1139,7 +1139,7 @@ theme = "tumbleweed",
 </details>
 </td>
 <td align="center">
-<strong>[70] kanagawa</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B70%5D%20theme_kanagawa&body=%2A%2AScreenshot%20index%3A%2A%2A%2070%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_kanagawa%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[70]</a> kanagawa</strong><br>
 <em>kanagawa theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1151,7 +1151,7 @@ theme = "kanagawa",
 </tr>
 <tr>
 <td align="center">
-<strong>[71] kanagawa_dragon</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B71%5D%20theme_kanagawa_dragon&body=%2A%2AScreenshot%20index%3A%2A%2A%2071%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_kanagawa_dragon%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[71]</a> kanagawa_dragon</strong><br>
 <em>kanagawa_dragon theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_dragon.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1161,7 +1161,7 @@ theme = "kanagawa_dragon",
 </details>
 </td>
 <td align="center">
-<strong>[72] kanagawa_lotus</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B72%5D%20theme_kanagawa_lotus&body=%2A%2AScreenshot%20index%3A%2A%2A%2072%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_kanagawa_lotus%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[72]</a> kanagawa_lotus</strong><br>
 <em>kanagawa_lotus theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_lotus.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1171,7 +1171,7 @@ theme = "kanagawa_lotus",
 </details>
 </td>
 <td align="center">
-<strong>[73] catppuccin_mocha</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B73%5D%20theme_catppuccin_mocha&body=%2A%2AScreenshot%20index%3A%2A%2A%2073%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_catppuccin_mocha%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[73]</a> catppuccin_mocha</strong><br>
 <em>catppuccin_mocha theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_mocha.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1183,7 +1183,7 @@ theme = "catppuccin_mocha",
 </tr>
 <tr>
 <td align="center">
-<strong>[74] catppuccin_frappe</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B74%5D%20theme_catppuccin_frappe&body=%2A%2AScreenshot%20index%3A%2A%2A%2074%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_catppuccin_frappe%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[74]</a> catppuccin_frappe</strong><br>
 <em>catppuccin_frappe theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_frappe.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1193,7 +1193,7 @@ theme = "catppuccin_frappe",
 </details>
 </td>
 <td align="center">
-<strong>[75] catppuccin_latte</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B75%5D%20theme_catppuccin_latte&body=%2A%2AScreenshot%20index%3A%2A%2A%2075%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_catppuccin_latte%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[75]</a> catppuccin_latte</strong><br>
 <em>catppuccin_latte theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_latte.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1203,7 +1203,7 @@ theme = "catppuccin_latte",
 </details>
 </td>
 <td align="center">
-<strong>[76] tokyonight_night</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B76%5D%20theme_tokyonight_night&body=%2A%2AScreenshot%20index%3A%2A%2A%2076%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_tokyonight_night%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[76]</a> tokyonight_night</strong><br>
 <em>tokyonight_night theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_night.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1215,7 +1215,7 @@ theme = "tokyonight_night",
 </tr>
 <tr>
 <td align="center">
-<strong>[77] tokyonight_storm</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B77%5D%20theme_tokyonight_storm&body=%2A%2AScreenshot%20index%3A%2A%2A%2077%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_tokyonight_storm%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[77]</a> tokyonight_storm</strong><br>
 <em>tokyonight_storm theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_storm.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1225,7 +1225,7 @@ theme = "tokyonight_storm",
 </details>
 </td>
 <td align="center">
-<strong>[78] tokyonight_moon</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B78%5D%20theme_tokyonight_moon&body=%2A%2AScreenshot%20index%3A%2A%2A%2078%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_tokyonight_moon%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[78]</a> tokyonight_moon</strong><br>
 <em>tokyonight_moon theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_moon.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1235,7 +1235,7 @@ theme = "tokyonight_moon",
 </details>
 </td>
 <td align="center">
-<strong>[79] rose_pine</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B79%5D%20theme_rose_pine&body=%2A%2AScreenshot%20index%3A%2A%2A%2079%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_rose_pine%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[79]</a> rose_pine</strong><br>
 <em>rose_pine theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1247,7 +1247,7 @@ theme = "rose_pine",
 </tr>
 <tr>
 <td align="center">
-<strong>[80] rose_pine_moon</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B80%5D%20theme_rose_pine_moon&body=%2A%2AScreenshot%20index%3A%2A%2A%2080%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_rose_pine_moon%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[80]</a> rose_pine_moon</strong><br>
 <em>rose_pine_moon theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine_moon.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1257,7 +1257,7 @@ theme = "rose_pine_moon",
 </details>
 </td>
 <td align="center">
-<strong>[81] rose_pine_dawn</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B81%5D%20theme_rose_pine_dawn&body=%2A%2AScreenshot%20index%3A%2A%2A%2081%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_rose_pine_dawn%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[81]</a> rose_pine_dawn</strong><br>
 <em>rose_pine_dawn theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine_dawn.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1267,7 +1267,7 @@ theme = "rose_pine_dawn",
 </details>
 </td>
 <td align="center">
-<strong>[82] gruvbox_dark</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B82%5D%20theme_gruvbox_dark&body=%2A%2AScreenshot%20index%3A%2A%2A%2082%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_gruvbox_dark%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[82]</a> gruvbox_dark</strong><br>
 <em>gruvbox_dark theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_gruvbox_dark.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1279,7 +1279,7 @@ theme = "gruvbox_dark",
 </tr>
 <tr>
 <td align="center">
-<strong>[83] gruvbox_light</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B83%5D%20theme_gruvbox_light&body=%2A%2AScreenshot%20index%3A%2A%2A%2083%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_gruvbox_light%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[83]</a> gruvbox_light</strong><br>
 <em>gruvbox_light theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_gruvbox_light.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1289,7 +1289,7 @@ theme = "gruvbox_light",
 </details>
 </td>
 <td align="center">
-<strong>[84] nord</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B84%5D%20theme_nord&body=%2A%2AScreenshot%20index%3A%2A%2A%2084%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_nord%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[84]</a> nord</strong><br>
 <em>nord theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_nord.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1299,7 +1299,7 @@ theme = "nord",
 </details>
 </td>
 <td align="center">
-<strong>[85] onedark</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B85%5D%20theme_onedark&body=%2A%2AScreenshot%20index%3A%2A%2A%2085%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_onedark%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[85]</a> onedark</strong><br>
 <em>onedark theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_onedark.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1311,7 +1311,7 @@ theme = "onedark",
 </tr>
 <tr>
 <td align="center">
-<strong>[86] nightfox</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B86%5D%20theme_nightfox&body=%2A%2AScreenshot%20index%3A%2A%2A%2086%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_nightfox%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[86]</a> nightfox</strong><br>
 <em>nightfox theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_nightfox.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1321,7 +1321,7 @@ theme = "nightfox",
 </details>
 </td>
 <td align="center">
-<strong>[87] everforest_dark</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B87%5D%20theme_everforest_dark&body=%2A%2AScreenshot%20index%3A%2A%2A%2087%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_everforest_dark%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[87]</a> everforest_dark</strong><br>
 <em>everforest_dark theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_everforest_dark.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1331,7 +1331,7 @@ theme = "everforest_dark",
 </details>
 </td>
 <td align="center">
-<strong>[88] everforest_light</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B88%5D%20theme_everforest_light&body=%2A%2AScreenshot%20index%3A%2A%2A%2088%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_everforest_light%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[88]</a> everforest_light</strong><br>
 <em>everforest_light theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_everforest_light.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1343,7 +1343,7 @@ theme = "everforest_light",
 </tr>
 <tr>
 <td align="center">
-<strong>[89] dracula</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B89%5D%20theme_dracula&body=%2A%2AScreenshot%20index%3A%2A%2A%2089%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_dracula%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[89]</a> dracula</strong><br>
 <em>dracula theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dracula.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1353,7 +1353,7 @@ theme = "dracula",
 </details>
 </td>
 <td align="center">
-<strong>[90] solarized_dark</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B90%5D%20theme_solarized_dark&body=%2A%2AScreenshot%20index%3A%2A%2A%2090%0A%2A%2AConfig%20key%3A%2A%2A%20%60theme_solarized_dark%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[90]</a> solarized_dark</strong><br>
 <em>solarized_dark theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_solarized_dark.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1373,7 +1373,7 @@ theme = "solarized_dark",
 <table>
 <tr>
 <td align="center">
-<strong>[91] laststatus=0</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B91%5D%20laststatus_0&body=%2A%2AScreenshot%20index%3A%2A%2A%2091%0A%2A%2AConfig%20key%3A%2A%2A%20%60laststatus_0%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[91]</a> laststatus=0</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, laststatus=0, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_0.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1383,7 +1383,7 @@ laststatus = 0,
 </details>
 </td>
 <td align="center">
-<strong>[92] laststatus=2</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B92%5D%20laststatus_2&body=%2A%2AScreenshot%20index%3A%2A%2A%2092%0A%2A%2AConfig%20key%3A%2A%2A%20%60laststatus_2%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[92]</a> laststatus=2</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, laststatus=2, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_2.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1393,7 +1393,7 @@ laststatus = 2,
 </details>
 </td>
 <td align="center">
-<strong>[93] laststatus=3</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B93%5D%20laststatus_3&body=%2A%2AScreenshot%20index%3A%2A%2A%2093%0A%2A%2AConfig%20key%3A%2A%2A%20%60laststatus_3%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[93]</a> laststatus=3</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_3.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1405,7 +1405,7 @@ laststatus = 3,
 </tr>
 <tr>
 <td align="center">
-<strong>[94] cmdheight=0</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B94%5D%20cmdheight_0&body=%2A%2AScreenshot%20index%3A%2A%2A%2094%0A%2A%2AConfig%20key%3A%2A%2A%20%60cmdheight_0%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[94]</a> cmdheight=0</strong><br>
 <em>auto theme, bordered, fzy, devicons, scrollbar, cmdheight=0, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1415,7 +1415,7 @@ cmdheight = 0,
 </details>
 </td>
 <td align="center">
-<strong>[95] cmdheight=0 offset=1</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B95%5D%20cmdheight_0_offset_1&body=%2A%2AScreenshot%20index%3A%2A%2A%2095%0A%2A%2AConfig%20key%3A%2A%2A%20%60cmdheight_0_offset_1%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[95]</a> cmdheight=0 offset=1</strong><br>
 <em>auto theme, bordered, offset=1, fzy, devicons, scrollbar, cmdheight=0, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0_offset_1.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1426,7 +1426,7 @@ cmdheight = 0,
 </details>
 </td>
 <td align="center">
-<strong>[96] cmdheight=0 offset=2</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B96%5D%20cmdheight_0_offset_2&body=%2A%2AScreenshot%20index%3A%2A%2A%2096%0A%2A%2AConfig%20key%3A%2A%2A%20%60cmdheight_0_offset_2%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[96]</a> cmdheight=0 offset=2</strong><br>
 <em>auto theme, bordered, offset=2, fzy, devicons, scrollbar, cmdheight=0, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0_offset_2.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1439,7 +1439,7 @@ cmdheight = 0,
 </tr>
 <tr>
 <td align="center">
-<strong>[97] offset=1</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B97%5D%20offset_1&body=%2A%2AScreenshot%20index%3A%2A%2A%2097%0A%2A%2AConfig%20key%3A%2A%2A%20%60offset_1%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[97]</a> offset=1</strong><br>
 <em>auto theme, bordered, offset=1, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/offset_1.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1449,7 +1449,7 @@ offset = 1,
 </details>
 </td>
 <td align="center">
-<strong>[98] offset=2</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B98%5D%20offset_2&body=%2A%2AScreenshot%20index%3A%2A%2A%2098%0A%2A%2AConfig%20key%3A%2A%2A%20%60offset_2%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[98]</a> offset=2</strong><br>
 <em>auto theme, bordered, offset=2, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/offset_2.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1469,7 +1469,7 @@ offset = 2,
 <table>
 <tr>
 <td align="center">
-<strong>[99] noselect=false</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B99%5D%20noselect_false&body=%2A%2AScreenshot%20index%3A%2A%2A%2099%0A%2A%2AConfig%20key%3A%2A%2A%20%60noselect_false%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[99]</a> noselect=false</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_false.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1479,7 +1479,7 @@ noselect = false,
 </details>
 </td>
 <td align="center">
-<strong>[100] reverse=true</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B100%5D%20reverse&body=%2A%2AScreenshot%20index%3A%2A%2A%20100%0A%2A%2AConfig%20key%3A%2A%2A%20%60reverse%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[100]</a> reverse=true</strong><br>
 <em>auto theme, bordered, reverse, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/reverse.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1489,7 +1489,7 @@ reverse = true,
 </details>
 </td>
 <td align="center">
-<strong>[101] empty_message</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B101%5D%20empty_message&body=%2A%2AScreenshot%20index%3A%2A%2A%20101%0A%2A%2AConfig%20key%3A%2A%2A%20%60empty_message%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[101]</a> empty_message</strong><br>
 <em>bordered, rounded, empty_message, fzy, devicons, scrollbar, :zzzznotacommand</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1504,7 +1504,7 @@ empty_message = " No matches, partner ",
 </tr>
 <tr>
 <td align="center">
-<strong>[102] empty_message (popupmenu)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B102%5D%20empty_message_popupmenu&body=%2A%2AScreenshot%20index%3A%2A%2A%20102%0A%2A%2AConfig%20key%3A%2A%2A%20%60empty_message_popupmenu%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[102]</a> empty_message (popupmenu)</strong><br>
 <em>plain popupmenu, empty_message, basic, devicons, scrollbar, :zzzznotacommand</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message_popupmenu.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1517,7 +1517,7 @@ empty_message = " No matches, partner ",
 </details>
 </td>
 <td align="center">
-<strong>[103] buffer_flags</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B103%5D%20buffer_flags&body=%2A%2AScreenshot%20index%3A%2A%2A%20103%0A%2A%2AConfig%20key%3A%2A%2A%20%60buffer_flags%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[103]</a> buffer_flags</strong><br>
 <em>auto theme, bordered, fzy, buffer flags, no devicons, scrollbar, :b</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/buffer_flags.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1529,7 +1529,7 @@ left = { "buffer_flags" },
 </details>
 </td>
 <td align="center">
-<strong>[104] position=top</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B104%5D%20position_top&body=%2A%2AScreenshot%20index%3A%2A%2A%20104%0A%2A%2AConfig%20key%3A%2A%2A%20%60position_top%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[104]</a> position=top</strong><br>
 <em>bordered, rounded, position=top, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_top.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1543,7 +1543,7 @@ position = "top",
 </tr>
 <tr>
 <td align="center">
-<strong>[105] position=center</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B105%5D%20position_center&body=%2A%2AScreenshot%20index%3A%2A%2A%20105%0A%2A%2AConfig%20key%3A%2A%2A%20%60position_center%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[105]</a> position=center</strong><br>
 <em>bordered, rounded, position=center, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_center.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1555,7 +1555,7 @@ position = "center",
 </details>
 </td>
 <td align="center">
-<strong>[106] ellipsis</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B106%5D%20ellipsis&body=%2A%2AScreenshot%20index%3A%2A%2A%20106%0A%2A%2AConfig%20key%3A%2A%2A%20%60ellipsis%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[106]</a> ellipsis</strong><br>
 <em>wildmenu, ellipsis, basic, arrows, index, separator=" | ", :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/ellipsis.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1570,7 +1570,7 @@ ellipsis = "...",
 </details>
 </td>
 <td align="center">
-<strong>[107] position=top (bordered)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B107%5D%20position_top_bordered&body=%2A%2AScreenshot%20index%3A%2A%2A%20107%0A%2A%2AConfig%20key%3A%2A%2A%20%60position_top_bordered%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[107]</a> position=top (bordered)</strong><br>
 <em>bordered, rounded, title, position=top, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_top_bordered.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1585,7 +1585,7 @@ position = "top",
 </tr>
 <tr>
 <td align="center">
-<strong>[108] noselect (bordered)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B108%5D%20noselect_bordered&body=%2A%2AScreenshot%20index%3A%2A%2A%20108%0A%2A%2AConfig%20key%3A%2A%2A%20%60noselect_bordered%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[108]</a> noselect (bordered)</strong><br>
 <em>bordered, rounded, noselect, fzy, devicons, scrollbar, :set fold</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_bordered.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1597,7 +1597,7 @@ noselect = true,
 </details>
 </td>
 <td align="center">
-<strong>[109] fixed_height=true</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B109%5D%20fixed_height_true&body=%2A%2AScreenshot%20index%3A%2A%2A%20109%0A%2A%2AConfig%20key%3A%2A%2A%20%60fixed_height_true%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[109]</a> fixed_height=true</strong><br>
 <em>bordered, rounded, fzy, devicons, scrollbar, :set wra</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fixed_height_true.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1620,7 +1620,7 @@ fixed_height = true,
 <table>
 <tr>
 <td align="center">
-<strong>[110] Preview Right (Screen)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B110%5D%20preview_right_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20110%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_right_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[110]</a> Preview Right (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_right_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1637,7 +1637,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong>[111] Preview Left (Screen)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B111%5D%20preview_left_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20111%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_left_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[111]</a> Preview Left (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_left_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1654,7 +1654,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong>[112] Preview Top (Screen)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B112%5D%20preview_top_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20112%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_top_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[112]</a> Preview Top (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_top_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1673,7 +1673,7 @@ preview = {
 </tr>
 <tr>
 <td align="center">
-<strong>[113] Preview Bottom (Screen)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B113%5D%20preview_bottom_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20113%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_bottom_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[113]</a> Preview Bottom (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_bottom_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1690,7 +1690,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong>[114] Preview Right (Popup)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B114%5D%20preview_right_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20114%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_right_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[114]</a> Preview Right (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_right_popup.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1707,7 +1707,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong>[115] Preview Left (Popup)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B115%5D%20preview_left_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20115%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_left_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[115]</a> Preview Left (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_left_popup.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1726,7 +1726,7 @@ preview = {
 </tr>
 <tr>
 <td align="center">
-<strong>[116] Preview Top (Popup)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B116%5D%20preview_top_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20116%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_top_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[116]</a> Preview Top (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_top_popup.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1743,7 +1743,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong>[117] Preview Bottom (Popup)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B117%5D%20preview_bottom_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20117%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_bottom_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[117]</a> Preview Bottom (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_bottom_popup.png" width="400"><br>
 <details><summary>Config</summary>
