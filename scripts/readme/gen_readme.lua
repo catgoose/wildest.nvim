@@ -418,14 +418,17 @@ end
 
 -- ── Detailed HTML helpers ────────────────────────────────────────
 
+local detail_index = 0
+
 local function img_cell_detailed(config_name, label, width)
   width = width or 400
   label = label or config_name
+  detail_index = detail_index + 1
   local expect = gen_expect(config_name)
   local config_lua = config_to_lua(config_name)
   return string.format(
     '<td align="center">\n'
-    .. '<strong>%s</strong><br>\n'
+    .. '<strong>[%d] %s</strong><br>\n'
     .. '<em>%s</em><br>\n'
     .. '<img src="%s%s.png" width="%d"><br>\n'
     .. '<details><summary>Config</summary>\n'
@@ -434,7 +437,7 @@ local function img_cell_detailed(config_name, label, width)
     .. '</code></pre>\n'
     .. '</details>\n'
     .. '</td>',
-    label, expect, IMG_BASE, config_name, width, config_lua
+    detail_index, label, expect, IMG_BASE, config_name, width, config_lua
   )
 end
 
