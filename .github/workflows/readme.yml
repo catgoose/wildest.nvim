@@ -16,7 +16,6 @@ concurrency:
 
 permissions:
   contents: write
-  pull-requests: write
 
 jobs:
   readme:
@@ -27,7 +26,6 @@ jobs:
         run: sudo apt-get install -y lua5.4
       - name: Generate README
         run: lua5.4 scripts/readme/gen_readme.lua
-
       - name: Create Pull Request
         id: cpr
         uses: peter-evans/create-pull-request@v7
