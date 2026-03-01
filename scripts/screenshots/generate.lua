@@ -330,7 +330,7 @@ local function build_scene_tape(n)
     local wait_ms = math.random(1500, 3000)
 
     if i > 1 then
-      table.insert(parts, "Ctrl+n")
+      table.insert(parts, "Ctrl+N")
       table.insert(parts, "Sleep 300ms")
       table.insert(parts, "")
     end
@@ -349,11 +349,11 @@ end
 
 local showdown_action_keys = {
   accept          = { key = "Enter" },
-  open_tab        = { key = "Ctrl+t" },
-  open_split      = { key = "Ctrl+s" },
-  open_vsplit     = { key = "Ctrl+v" },
-  send_to_quickfix = { key = "Ctrl+q" },
-  toggle_preview  = { key = "Ctrl+p", toggle = true },
+  open_tab        = { key = "Ctrl+T" },
+  open_split      = { key = "Ctrl+S" },
+  open_vsplit     = { key = "Ctrl+V" },
+  send_to_quickfix = { key = "Ctrl+Q" },
+  toggle_preview  = { key = "Ctrl+P", toggle = true },
   search_accept   = { key = "Enter" },
 }
 
@@ -370,7 +370,7 @@ local function build_showdown_tape(n, seed)
   local parts = {}
   for i, entry in ipairs(plan) do
     if i > 1 then
-      table.insert(parts, "Ctrl+n")
+      table.insert(parts, "Ctrl+N")
       table.insert(parts, "Sleep 300ms")
       table.insert(parts, "")
     end
@@ -385,9 +385,9 @@ local function build_showdown_tape(n, seed)
       table.insert(parts, "Sleep 300ms")
       table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
       table.insert(parts, "Sleep 1500ms")
-      table.insert(parts, "Ctrl+p")
+      table.insert(parts, "Ctrl+P")
       table.insert(parts, "Sleep 1500ms")
-      table.insert(parts, "Ctrl+p")
+      table.insert(parts, "Ctrl+P")
       table.insert(parts, "Sleep 1000ms")
       table.insert(parts, "Escape")
       table.insert(parts, "Sleep 300ms")
