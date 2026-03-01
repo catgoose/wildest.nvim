@@ -880,6 +880,18 @@ M.preview_names = {
   "preview_right_popup", "preview_left_popup", "preview_top_popup", "preview_bottom_popup",
 }
 
+-- Theme configs (generated)
+M.theme_names = {
+  "auto", "default", "saloon", "outlaw", "sunset", "prairie", "dusty",
+  "midnight", "wanted", "cactus", "tumbleweed",
+  "kanagawa", "kanagawa_dragon", "kanagawa_lotus",
+  "catppuccin_mocha", "catppuccin_frappe", "catppuccin_latte",
+  "tokyonight_night", "tokyonight_storm", "tokyonight_moon",
+  "rose_pine", "rose_pine_moon", "rose_pine_dawn",
+  "gruvbox_dark", "gruvbox_light", "nord", "onedark", "nightfox",
+  "everforest_dark", "everforest_light", "dracula", "solarized_dark",
+}
+
 -- ── Categories (ordered, used by generate.lua CLI + list) ──────
 
 M.categories = {
@@ -897,18 +909,6 @@ M.categories = {
   { flag = "layouts",           display = "Layouts",           names = M.layout_names },
   { flag = "options",           display = "Options",           names = M.option_names },
   { flag = "previews",          display = "Previews",          names = M.preview_names },
-}
-
--- Theme configs (generated)
-M.theme_names = {
-  "auto", "default", "saloon", "outlaw", "sunset", "prairie", "dusty",
-  "midnight", "wanted", "cactus", "tumbleweed",
-  "kanagawa", "kanagawa_dragon", "kanagawa_lotus",
-  "catppuccin_mocha", "catppuccin_frappe", "catppuccin_latte",
-  "tokyonight_night", "tokyonight_storm", "tokyonight_moon",
-  "rose_pine", "rose_pine_moon", "rose_pine_dawn",
-  "gruvbox_dark", "gruvbox_light", "nord", "onedark", "nightfox",
-  "everforest_dark", "everforest_light", "dracula", "solarized_dark",
 }
 
 -- Theme metadata (descriptions for README generation)
