@@ -44,8 +44,6 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: docs/auto-vimdoc
 
       - name: Install Lua and LDoc
         run: |
