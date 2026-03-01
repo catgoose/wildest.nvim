@@ -115,22 +115,22 @@ separator = " | ",
 <tr>
 <td align="center">
 <strong>[6] devicons</strong><br>
-<em>auto theme, bordered, fzy, devicons, scrollbar, :e init</em><br>
+<em>auto theme, bordered, fzy, devicons, scrollbar, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e init",
+cmd = ":e lua/wildest/renderer/components/",
 left = { "devicons" },
 </code></pre>
 </details>
 </td>
 <td align="center">
 <strong>[7] fuzzy</strong><br>
-<em>auto theme, bordered, fzy, devicons, scrollbar, :e rend</em><br>
+<em>auto theme, bordered, fzy, devicons, scrollbar, :e tests/test_c</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fuzzy.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e rend",
+cmd = ":e tests/test_c",
 </code></pre>
 </details>
 </td>
@@ -216,11 +216,11 @@ left = { "kind_icon" },
 <tr>
 <td align="center">
 <strong>[12] Prefix Highlighter</strong><br>
-<em>auto theme, bordered, prefix, devicons, scrollbar, :e conf</em><br>
+<em>auto theme, bordered, prefix, devicons, scrollbar, :e tests/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/prefix_highlighter.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e conf",
+cmd = ":e tests/",
 highlighter = "prefix",
 </code></pre>
 </details>
@@ -793,11 +793,11 @@ gradient_colors = {
 <tr>
 <td align="center">
 <strong>[47] Devicons + Kind</strong><br>
-<em>auto theme, bordered, fzy, devicons, kind icons, scrollbar, :e init</em><br>
+<em>auto theme, bordered, fzy, devicons, kind icons, scrollbar, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons_kind.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e init",
+cmd = ":e lua/wildest/renderer/components/",
 left = { "devicons", "kind_icon" },
 right = { "scrollbar" },
 </code></pre>
@@ -817,11 +817,11 @@ reverse = true,
 </td>
 <td align="center">
 <strong>[49] IncSearch Accent</strong><br>
-<em>auto theme, bordered, fzy, devicons, scrollbar, :e high</em><br>
+<em>auto theme, bordered, fzy, devicons, scrollbar, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/accent_incsearch.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e high",
+cmd = ":e lua/wildest/renderer/components/",
 highlights = { accent = "IncSearch", selected_accent = "IncSearch" },
 </code></pre>
 </details>
@@ -855,11 +855,11 @@ pumblend = 20,
 </td>
 <td align="center">
 <strong>[52] Devicons + Scrollbar + Border</strong><br>
-<em>bordered, rounded, fzy, devicons, scrollbar, :e init</em><br>
+<em>bordered, rounded, fzy, devicons, scrollbar, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons_scrollbar_border.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e init",
+cmd = ":e lua/wildest/renderer/components/",
 renderer = "border_theme",
 left = { "devicons" },
 right = { "scrollbar" },
@@ -1621,11 +1621,11 @@ fixed_height = true,
 <tr>
 <td align="center">
 <strong>[110] Preview Right (Screen)</strong><br>
-<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right screen, :e conf</em><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_right_screen.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e conf",
+cmd = ":e lua/wildest/renderer/components/",
 noselect = false,
 preview = {
   anchor = "screen",
@@ -1638,11 +1638,11 @@ preview = {
 </td>
 <td align="center">
 <strong>[111] Preview Left (Screen)</strong><br>
-<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left screen, :e conf</em><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_left_screen.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e conf",
+cmd = ":e lua/wildest/renderer/components/",
 noselect = false,
 preview = {
   anchor = "screen",
@@ -1655,11 +1655,11 @@ preview = {
 </td>
 <td align="center">
 <strong>[112] Preview Top (Screen)</strong><br>
-<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top screen, :e conf</em><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_top_screen.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e conf",
+cmd = ":e lua/wildest/renderer/components/",
 noselect = false,
 preview = {
   anchor = "screen",
@@ -1674,11 +1674,11 @@ preview = {
 <tr>
 <td align="center">
 <strong>[113] Preview Bottom (Screen)</strong><br>
-<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom screen, :e conf</em><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_bottom_screen.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e conf",
+cmd = ":e lua/wildest/renderer/components/",
 noselect = false,
 preview = {
   anchor = "screen",
@@ -1691,11 +1691,11 @@ preview = {
 </td>
 <td align="center">
 <strong>[114] Preview Right (Popup)</strong><br>
-<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right popup, :e conf</em><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_right_popup.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e conf",
+cmd = ":e lua/wildest/renderer/components/",
 noselect = false,
 preview = {
   anchor = "popup",
@@ -1708,11 +1708,11 @@ preview = {
 </td>
 <td align="center">
 <strong>[115] Preview Left (Popup)</strong><br>
-<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left popup, :e conf</em><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_left_popup.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e conf",
+cmd = ":e lua/wildest/renderer/components/",
 noselect = false,
 preview = {
   anchor = "popup",
@@ -1727,11 +1727,11 @@ preview = {
 <tr>
 <td align="center">
 <strong>[116] Preview Top (Popup)</strong><br>
-<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top popup, :e conf</em><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_top_popup.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e conf",
+cmd = ":e lua/wildest/renderer/components/",
 noselect = false,
 preview = {
   anchor = "popup",
@@ -1744,11 +1744,11 @@ preview = {
 </td>
 <td align="center">
 <strong>[117] Preview Bottom (Popup)</strong><br>
-<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom popup, :e conf</em><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_bottom_popup.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
-cmd = ":e conf",
+cmd = ":e lua/wildest/renderer/components/",
 noselect = false,
 preview = {
   anchor = "popup",
