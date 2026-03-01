@@ -3,6 +3,8 @@
 ---Previous/next arrow indicators.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
+local util = require("wildest.util")
 local M = {}
 
 --- Create arrows component for wildmenu (previous/next indicators)
@@ -14,14 +16,14 @@ function M.new(opts)
   local next_arrow = opts.next or " > "
   local hl = opts.hl or "WildestArrows"
 
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
 
   --- Render left arrow (previous indicator)
   function component:render_left(ctx)
     if ctx.page_start and ctx.page_start > 0 then
       return { { prev_arrow, hl } }
     end
-    return { { string.rep(" ", vim.fn.strdisplaywidth(prev_arrow)), "" } }
+    return { { string.rep(" ", util.strdisplaywidth(prev_arrow)), "" } }
   end
 
   --- Render right arrow (next indicator)
@@ -29,15 +31,7 @@ function M.new(opts)
     if ctx.page_end and ctx.total and ctx.page_end < ctx.total - 1 then
       return { { next_arrow, hl } }
     end
-    return { { string.rep(" ", vim.fn.strdisplaywidth(next_arrow)), "" } }
-  end
-
-  --- Default render (used when added to left or right)
-  function component:render(ctx)
-    if ctx.side == "left" then
-      return self:render_left(ctx)
-    end
-    return self:render_right(ctx)
+    return { { string.rep(" ", util.strdisplaywidth(next_arrow)), "" } }
   end
 
   return component

@@ -122,26 +122,18 @@ function M.new(opts)
       return
     end
 
-    local editor_width = vim.o.columns
+    local preview = require("wildest.preview")
+    local space = preview.reserved_space()
+    local editor_width = vim.o.columns - space.left - space.right
     local sep_width = util.strdisplaywidth(state.separator)
 
-    -- Calculate space used by left/right components
     local left_width = 0
     local right_width = 0
     for _, comp in ipairs(state.left) do
-      if type(comp) == "string" then
-        left_width = left_width + util.strdisplaywidth(comp)
-      elseif type(comp) == "table" and comp.render_left then
-        -- Estimate width for arrows
-        left_width = left_width + 3
-      end
+      left_width = left_width + renderer_util.component_display_width(comp)
     end
     for _, comp in ipairs(state.right) do
-      if type(comp) == "string" then
-        right_width = right_width + util.strdisplaywidth(comp)
-      elseif type(comp) == "table" and comp.render_right then
-        right_width = right_width + 3
-      end
+      right_width = right_width + renderer_util.component_display_width(comp)
     end
 
     local avail_width = editor_width - left_width - right_width
@@ -171,25 +163,18 @@ function M.new(opts)
       page_end = page_end,
     }
 
-    -- Left components
     for _, comp in ipairs(state.left) do
-      if type(comp) == "string" then
-        table.insert(chunks, { comp, state.highlights.default })
-      elseif type(comp) == "table" and comp.render_left then
-        local parts = comp:render_left(comp_ctx)
-        if parts then
-          for _, p in ipairs(parts) do
-            table.insert(chunks, p)
-          end
-        end
-      elseif type(comp) == "table" and comp.render then
-        comp_ctx.side = "left"
-        local parts = comp:render(comp_ctx)
-        if parts then
-          for _, p in ipairs(parts) do
-            table.insert(chunks, p)
-          end
-        end
+      for _, c in
+        ipairs(
+          renderer_util.resolve_component_to_chunks(
+            comp,
+            comp_ctx,
+            "left",
+            state.highlights.default
+          )
+        )
+      do
+        table.insert(chunks, c)
       end
     end
 
@@ -232,25 +217,18 @@ function M.new(opts)
       end
     end
 
-    -- Right components
     for _, comp in ipairs(state.right) do
-      if type(comp) == "string" then
-        table.insert(chunks, { comp, state.highlights.default })
-      elseif type(comp) == "table" and comp.render_right then
-        local parts = comp:render_right(comp_ctx)
-        if parts then
-          for _, p in ipairs(parts) do
-            table.insert(chunks, p)
-          end
-        end
-      elseif type(comp) == "table" and comp.render then
-        comp_ctx.side = "right"
-        local parts = comp:render(comp_ctx)
-        if parts then
-          for _, p in ipairs(parts) do
-            table.insert(chunks, p)
-          end
-        end
+      for _, c in
+        ipairs(
+          renderer_util.resolve_component_to_chunks(
+            comp,
+            comp_ctx,
+            "right",
+            state.highlights.default
+          )
+        )
+      do
+        table.insert(chunks, c)
       end
     end
 
@@ -277,25 +255,25 @@ function M.new(opts)
     vim.api.nvim_buf_clear_namespace(state.buf, state.ns_id, 0, -1)
 
     -- Apply highlights from chunks
-    local col = 0
+    local hl_col = 0
     for _, chunk in ipairs(chunks) do
       local len = #chunk[1]
       if chunk[2] and chunk[2] ~= "" then
-        vim.api.nvim_buf_set_extmark(state.buf, state.ns_id, 0, col, {
-          end_col = col + len,
+        vim.api.nvim_buf_set_extmark(state.buf, state.ns_id, 0, hl_col, {
+          end_col = hl_col + len,
           hl_group = chunk[2],
           priority = 1000,
         })
       end
-      col = col + len
+      hl_col = hl_col + len
     end
 
     -- Position: single line above cmdline
-    local row = renderer_util.default_position(state.offset)
+    local row, col = renderer_util.default_position(state.offset)
     local win_config = {
       relative = "editor",
       row = row,
-      col = 0,
+      col = col,
       width = editor_width,
       height = 1,
       style = "minimal",

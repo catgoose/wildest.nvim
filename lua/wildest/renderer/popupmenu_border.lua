@@ -3,10 +3,15 @@
 ---Bordered floating popup menu renderer.
 ---@brief ]]
 
+local BasePopupmenu = require("wildest.renderer.base_popupmenu")
 local border_theme = require("wildest.renderer.border_theme")
 local renderer_util = require("wildest.renderer")
 
 local M = {}
+
+---@class wildest.PopupmenuBorder : wildest.BasePopupmenu
+local PopupmenuBorder = setmetatable({}, { __index = BasePopupmenu })
+PopupmenuBorder.__index = PopupmenuBorder
 
 --- Create a bordered popupmenu renderer
 ---@param opts? table
@@ -44,139 +49,86 @@ function M.new(opts)
   state.border = border_info
   renderer_util.create_accent_highlights(state)
 
-  local renderer = {}
-
-  function renderer:render(ctx, result)
-    renderer_util.ensure_buf(state, "wildest_popupmenu_border")
-
-    local candidates = result.value or {}
-    local total = #candidates
-
-    renderer_util.check_run_id(state, ctx)
-
-    local row, col, editor_width = renderer_util.default_position(state.offset)
-    local editor_lines = vim.o.lines
-
-    local max_h = renderer_util.parse_dimension(state.max_height, editor_lines)
-
-    local page_start, page_end = renderer_util.make_page(ctx.selected, total, max_h, state.page)
-    state.page = { page_start, page_end }
-
-    if page_start == -1 or total == 0 then
-      self:hide()
-      return
-    end
-
-    local max_w = state.max_width and renderer_util.parse_dimension(state.max_width, editor_width)
-      or editor_width
-    local min_w = renderer_util.parse_dimension(state.min_width, editor_width)
-    local outer_width = math.max(min_w, math.min(max_w, editor_width))
-    local content_width = outer_width
-
-    local query = renderer_util.get_query(result)
-    local lines = {}
-    local line_highlights = {}
-
-    -- Content lines
-    for i = page_start, page_end do
-      local candidate = candidates[i + 1]
-      local is_selected = (i == ctx.selected)
-      local base_hl = is_selected and state.highlights.selected or state.highlights.default
-      local accent_hl = is_selected and state.highlights.selected_accent or state.highlights.accent
-
-      local candidate_spans = renderer_util.get_candidate_spans(
-        state.highlighter,
-        query,
-        candidate,
-        accent_hl,
-        state.highlights.selected_accent,
-        is_selected
-      )
-      local left_parts, right_parts =
-        renderer_util.render_components(state, ctx, result, i, is_selected)
-
-      local line, spans = renderer_util.render_line(
-        candidate,
-        left_parts,
-        right_parts,
-        candidate_spans,
-        content_width,
-        base_hl
-      )
-
-      table.insert(lines, line)
-      table.insert(line_highlights, { spans = spans, base_hl = base_hl })
-    end
-
-    -- Pad to fixed height
-    if state.fixed_height then
-      local content_count = page_end - page_start + 1
-      for _ = content_count + 1, max_h do
-        local pad_line = string.rep(" ", content_width)
-        table.insert(lines, pad_line)
-        table.insert(line_highlights, { spans = {}, base_hl = state.highlights.default })
-      end
-    end
-
-    local height = #lines
-
-    -- Neovim 0.10+ positions the border at (row, col), not the content.
-    -- The bottom border lands at win_row + height + 1, so we must reserve
-    -- 2 extra rows (top + bottom border) when sizing and positioning.
-    local max_content = row - 2
-    if height > max_content then
-      height = math.max(1, max_content)
-      while #lines > height do
-        table.remove(lines, #lines)
-        table.remove(line_highlights, #line_highlights)
-      end
-    end
-
-    vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, lines)
-    renderer_util.apply_line_highlights(state.buf, state.ns_id, lines, line_highlights)
-
-    local win_row
-    if state.position == "top" then
-      win_row = 0
-    elseif state.position == "center" then
-      win_row = math.max(0, math.floor((row - height) / 2))
-    else
-      -- -1 so the top border sits above the content and the bottom border
-      -- stays above the statusline (border is drawn outside the content area
-      -- but positioned at win_row in Neovim 0.10+).
-      win_row = math.max(0, row - height - 1)
-    end
-
-    local win_config = {
-      relative = "editor",
-      row = win_row,
-      col = col,
-      width = outer_width,
-      height = height,
-      style = "minimal",
-      border = state.border.native_border,
-      zindex = state.zindex,
-      focusable = false,
-      noautocmd = true,
-    }
-    local title = state.title
-    if type(title) == "table" then
-      title = title[vim.fn.getcmdtype()] or title["default"]
-    elseif type(title) == "function" then
-      title = title(vim.fn.getcmdtype())
-    end
-    if title then
-      win_config.title = { { " " .. title .. " ", state.border.native_hl } }
-      win_config.title_pos = "center"
-    end
-    renderer_util.open_or_update_win(state, win_config)
-  end
-
-  function renderer:hide()
-    renderer_util.hide_win(state)
-  end
-
+  local renderer = setmetatable({ _state = state }, PopupmenuBorder)
   return renderer
+end
+
+function PopupmenuBorder:render(ctx, result)
+  local state = self._state
+  renderer_util.ensure_buf(state, "wildest_popupmenu_border")
+
+  local candidates = result.value or {}
+  local total = #candidates
+
+  renderer_util.check_run_id(state, ctx)
+
+  local row, col, editor_width, avail = renderer_util.default_position(state.offset)
+  local editor_lines = vim.o.lines
+
+  local max_h = renderer_util.parse_dimension(state.max_height, editor_lines)
+
+  local page_start, page_end = renderer_util.make_page(ctx.selected, total, max_h, state.page)
+  state.page = { page_start, page_end }
+
+  if page_start == -1 or total == 0 then
+    self:hide()
+    return
+  end
+
+  local max_w = state.max_width and renderer_util.parse_dimension(state.max_width, editor_width)
+    or editor_width
+  local min_w = renderer_util.parse_dimension(state.min_width, editor_width)
+  local outer_width = math.max(min_w, math.min(max_w, editor_width))
+  local content_width = outer_width
+
+  local lines, line_highlights =
+    self:render_candidates(result, ctx, page_start, page_end, content_width)
+
+  -- Pad to fixed height
+  if state.fixed_height then
+    self:pad_to_height(lines, line_highlights, max_h, content_width)
+  end
+
+  -- Neovim 0.10+ positions the border at (row, col), not the content.
+  -- The bottom border lands at win_row + height + 1, so we must reserve
+  -- 2 extra rows (top + bottom border) when sizing and positioning.
+  local max_content = avail - 2
+  local height = self:clamp_height(lines, line_highlights, max_content)
+
+  self:flush_buffer(lines, line_highlights)
+
+  local win_row
+  if state.position == "top" then
+    win_row = 0
+  elseif state.position == "center" then
+    win_row = math.max(0, math.floor((row - height) / 2))
+  else
+    -- -1 so the top border sits above the content and the bottom border
+    -- stays above the statusline (border is drawn outside the content area
+    -- but positioned at win_row in Neovim 0.10+).
+    win_row = math.max(0, row - height - 1)
+  end
+
+  local actual_col = renderer_util.center_col(col, outer_width, editor_width)
+
+  local win_config = {
+    relative = "editor",
+    row = win_row,
+    col = actual_col,
+    width = outer_width,
+    height = height,
+    style = "minimal",
+    border = state.border.native_border,
+    zindex = state.zindex,
+    focusable = false,
+    noautocmd = true,
+  }
+  local title = self:resolve_title()
+  if title then
+    win_config.title = { { " " .. title .. " ", state.border.native_hl } }
+    win_config.title_pos = "center"
+  end
+  renderer_util.open_or_update_win(state, win_config)
 end
 
 return M

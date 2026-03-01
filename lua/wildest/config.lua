@@ -19,6 +19,7 @@
 ---@field confirm_key? string|string[] Key(s) to accept selection and execute (default: '<C-y>')
 ---@field dismiss_key? string|string[] Key(s) to dismiss popup and restore input (default: nil)
 ---@field jump_keys? table[] Custom jump bindings: { { key, count } ... } e.g. { { "<C-n>", 5 }, { "<C-p>", -10 } }
+---@field actions? table<string, string|fun(ctx: wildest.ActionContext)> Key-to-action mappings
 ---@field interval? integer Debounce interval in ms (default: 100)
 ---@field num_workers? integer Number of async workers (default: 2)
 ---@field noselect? boolean No item selected initially (default: true)
@@ -28,6 +29,8 @@
 ---@field skip_commands? string[] Commands to skip completions for (default: {})
 ---@field min_input? integer Minimum input length before showing completions (default: 0)
 ---@field pipeline? wildest.PipelineStep|wildest.PipelineStep[] Pipeline steps or single pipeline step
+---@field preview? wildest.PreviewConfig Preview window configuration
+---@field auto_colorscheme? boolean Re-apply highlights on colorscheme change (default: true)
 ---@field renderer? wildest.Renderer Renderer instance
 
 local M = {}
@@ -45,6 +48,7 @@ local defaults = {
   confirm_key = "<C-y>",
   dismiss_key = nil,
   jump_keys = {},
+  actions = {},
   interval = 100, -- debounce interval in ms
   num_workers = 2,
 

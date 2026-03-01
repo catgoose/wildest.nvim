@@ -3,6 +3,7 @@
 ---Conditional component wrapper.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 --- Create a conditional component
@@ -11,7 +12,7 @@ local M = {}
 ---@param if_false? table|string component to render when false
 ---@return table component
 function M.new(predicate, if_true, if_false)
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
 
   function component:render(ctx)
     local target

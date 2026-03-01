@@ -3,6 +3,7 @@
 ---Merge two column components.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 --- Create a zip columns component that merges two column components
@@ -27,7 +28,7 @@ local M = {}
 ---@param col2 table component
 ---@return table component
 function M.new(merger, col1, col2)
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
 
   function component:render(ctx)
     local parts1 = {}

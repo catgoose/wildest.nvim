@@ -143,6 +143,8 @@ function M.stop()
   debounce_mod.cancel_all()
   file_finder.cancel()
 
+  require("wildest.preview").hide()
+
   local cfg = config.get()
   if cfg.renderer then
     vim.schedule(function()
@@ -436,6 +438,7 @@ function M.draw()
     if state.hidden then
       log.log("state", "draw_hidden")
       pcall(cfg.renderer.hide, cfg.renderer)
+      require("wildest.preview").hide()
       return
     end
 
@@ -444,7 +447,17 @@ function M.draw()
     if #result.value == 0 then
       log.log("state", "draw_empty")
       pcall(cfg.renderer.hide, cfg.renderer)
+      require("wildest.preview").hide()
       return
+    end
+
+    local preview = require("wildest.preview")
+    local preview_active = preview.is_active()
+
+    -- Screen anchor: update preview BEFORE the renderer so reserved_space()
+    -- reflects the preview window state and the popup positions correctly.
+    if preview_active and preview.is_screen_anchor() then
+      preview.update(ctx, result)
     end
 
     log.log("state", "draw_render_start", { num = #result.value })
@@ -452,6 +465,11 @@ function M.draw()
     if not ok then
       log.log("state", "draw_render_error", { err = tostring(err) })
     else
+      -- Popup anchor: update preview AFTER the renderer so it can use
+      -- the stored popup geometry for positioning.
+      if preview_active and not preview.is_screen_anchor() then
+        preview.update(ctx, result)
+      end
       log.log("state", "draw_render_ok")
       vim.cmd("redraw")
     end

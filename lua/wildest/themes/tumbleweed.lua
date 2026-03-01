@@ -14,8 +14,5 @@ return themes.define({
     WildestPromptCursor = { bg = "#b07830", fg = "#f5f0e8" },
     WildestSpinner = { fg = "#b07830" },
   },
-  renderer_opts = {
-    left = { " " },
-    right = { " " },
-  },
+  renderer_opts = {},
 })

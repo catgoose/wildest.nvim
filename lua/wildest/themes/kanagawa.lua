@@ -27,7 +27,5 @@ return themes.define({
   },
   renderer_opts = {
     border = "rounded",
-    left = { " " },
-    right = { " " },
   },
 })

@@ -21,7 +21,5 @@ return themes.define({
     min_width = 40,
     margin = "auto",
     prompt_position = "top",
-    left = { " " },
-    right = { " " },
   },
 })

@@ -103,8 +103,6 @@ local function build(opts)
     },
     renderer_opts = {
       border = opts.border or "rounded",
-      left = { " " },
-      right = { " " },
     },
   })
 end

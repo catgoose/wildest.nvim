@@ -143,4 +143,38 @@ T["shorten_home()"]["leaves non-home paths unchanged"] = function()
   expect.equality(util.shorten_home("/tmp/test"), "/tmp/test")
 end
 
+T["detect_expand()"] = new_set()
+
+T["detect_expand()"]["detects file from expand field"] = function()
+  expect.equality(util.detect_expand({ expand = "file" }), "file")
+  expect.equality(util.detect_expand({ expand = "file_in_path" }), "file")
+  expect.equality(util.detect_expand({ expand = "dir" }), "file")
+end
+
+T["detect_expand()"]["detects buffer from expand field"] = function()
+  expect.equality(util.detect_expand({ expand = "buffer" }), "buffer")
+end
+
+T["detect_expand()"]["detects help from expand field"] = function()
+  expect.equality(util.detect_expand({ expand = "help" }), "help")
+end
+
+T["detect_expand()"]["detects from cmd heuristic"] = function()
+  expect.equality(util.detect_expand({ cmd = "help" }), "help")
+  expect.equality(util.detect_expand({ cmd = "h" }), "help")
+  expect.equality(util.detect_expand({ cmd = "buffer" }), "buffer")
+  expect.equality(util.detect_expand({ cmd = "b" }), "buffer")
+  expect.equality(util.detect_expand({ cmd = "edit" }), "file")
+  expect.equality(util.detect_expand({ cmd = "e" }), "file")
+  expect.equality(util.detect_expand({ cmd = "split" }), "file")
+  expect.equality(util.detect_expand({ cmd = "vsplit" }), "file")
+  expect.equality(util.detect_expand({ cmd = "tabedit" }), "file")
+end
+
+T["detect_expand()"]["returns nil for unknown"] = function()
+  expect.equality(util.detect_expand({}), nil)
+  expect.equality(util.detect_expand({ cmd = "set" }), nil)
+  expect.equality(util.detect_expand({ expand = "option" }), nil)
+end
+
 return T

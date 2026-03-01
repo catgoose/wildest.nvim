@@ -4,6 +4,7 @@
 ---Shows an icon based on the completion kind or file type of each candidate.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 -- Default kind icons (LSP CompletionItemKind style)
@@ -56,7 +57,7 @@ function M.new(opts)
 
   pcall(vim.api.nvim_set_hl, 0, "WildestKindIcon", { link = "Special" })
 
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
 
   function component:render(ctx)
     local candidate = ctx.candidate or ""

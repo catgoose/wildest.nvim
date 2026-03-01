@@ -3,6 +3,7 @@
 ---Scrollbar thumb component.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 --- Create a scrollbar component for the popupmenu
@@ -15,7 +16,7 @@ function M.new(opts)
   local bar_hl = opts.hl or "WildestScrollbar"
   local thumb_hl = opts.thumb_hl or "WildestScrollbarThumb"
 
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
 
   function component:render(ctx)
     local total = ctx.total or 0

@@ -233,7 +233,7 @@ local config_field_order = {
   "noselect", "reverse", "pumblend", "offset",
   "empty_message", "laststatus", "cmdheight",
   "gradient_colors", "custom_highlights",
-  "palette", "mux",
+  "preview", "palette", "mux",
 }
 
 local config_skip_keys = { category = true, label = true }
@@ -399,6 +399,12 @@ local function gen_expect(name)
     add("cmdheight=" .. merged.cmdheight)
   end
 
+  -- Preview
+  if merged.preview then
+    local p = merged.preview
+    add("preview " .. (p.position or "right") .. " " .. (p.anchor or "screen"))
+  end
+
   -- Highlights
   if merged.custom_highlights then add("custom highlights") end
   if merged.gradient_colors then add("gradient colors") end
@@ -486,6 +492,7 @@ local gallery_sections = {
   { key = "theme",            names = configs_mod.theme_names, prefix = "theme_", label_fn = function(name) return name end },
   { key = "layout",           names = configs_mod.layout_names },
   { key = "option",           names = configs_mod.option_names },
+  { key = "preview",          names = configs_mod.preview_names },
 }
 
 -- ── One-off section generators ───────────────────────────────────────

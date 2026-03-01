@@ -50,6 +50,10 @@ function M.setup(opts)
   local cfg = config.setup(opts)
   log.log("setup", "config_done")
 
+  if cfg.preview then
+    require("wildest.preview").setup(cfg.preview)
+  end
+
   -- Clean up any stale state from previous setup() calls
   require("wildest.pipeline").clear_handlers()
   state.enable()
@@ -89,6 +93,17 @@ function M.setup(opts)
       log.flush()
     end,
   })
+
+  -- Re-apply highlights when the colorscheme changes
+  if cfg.auto_colorscheme ~= false then
+    vim.api.nvim_create_autocmd("ColorScheme", {
+      group = augroup,
+      callback = function()
+        log.log("autocmd", "ColorScheme")
+        require("wildest.renderer").setup_default_highlights()
+      end,
+    })
+  end
 
   -- Set up keybindings
   local function cmap(key, handler)
@@ -183,6 +198,18 @@ function M.setup(opts)
       bind(key, function()
         if state.is_active() and state.get().result then
           state.scroll(count)
+          return true
+        end
+      end)
+    end
+  end
+
+  if cfg.actions then
+    local actions_mod = require("wildest.actions")
+    for key, action in pairs(cfg.actions) do
+      bind(key, function()
+        if state.is_active() and state.get().result then
+          actions_mod.run(action)
           return true
         end
       end)
@@ -364,14 +391,16 @@ end
 
 ---@class wildest.PopupmenuOpts
 ---@field highlighter? table Highlighter for match accents
----@field left? table Left components (default { " " })
----@field right? table Right components (default { " " })
+---@field padding? number Inner padding spaces (default 1, clamped >= 0)
+---@field left? table Left components
+---@field right? table Right components
 ---@field max_height? integer Maximum number of visible lines (default 16)
 ---@field min_height? integer Minimum number of visible lines (default 0)
----@field max_width? integer|nil Maximum width (nil = full editor width)
----@field min_width? integer Minimum width (default 16)
+---@field max_width? integer|string|nil Maximum width, integer or percentage (nil = full editor width)
+---@field min_width? integer|string Minimum width, integer or percentage (default 16)
 ---@field reverse? boolean Reverse candidate order (default false)
 ---@field fixed_height? boolean Pad to max_height to prevent resizing (default false)
+---@field empty_message? string|nil Message shown when there are no results
 ---@field pumblend? integer Window transparency 0-100
 ---@field zindex? integer Floating window z-index (default 250)
 
@@ -379,8 +408,9 @@ end
 ---@field border? string|table Border style preset or 8-char array (default "single")
 ---@field title? string Title centered in the top border
 ---@field highlighter? table Highlighter for match accents
----@field left? table Left components (default { " " })
----@field right? table Right components (default { " " })
+---@field padding? number Inner padding spaces (default 1, clamped >= 0)
+---@field left? table Left components
+---@field right? table Right components
 ---@field max_height? integer|string Max visible lines, integer or percentage (default 16)
 ---@field min_height? integer Minimum visible lines (default 0)
 ---@field max_width? integer|string|nil Max width, integer or percentage (nil = full width)
@@ -398,8 +428,9 @@ end
 ---@field prompt_prefix? string Prefix shown before cmdline input (default " : ")
 ---@field prompt_position? string Prompt placement: "top" or "bottom" (default "top")
 ---@field highlighter? table Highlighter for match accents
----@field left? table Left components (default { " " })
----@field right? table Right components (default { " " })
+---@field padding? number Inner padding spaces (default 1, clamped >= 0)
+---@field left? table Left components
+---@field right? table Right components
 ---@field max_height? string|integer Max height, percentage or integer (default "75%")
 ---@field min_height? integer Minimum height (default 0)
 ---@field max_width? string|integer Max width, percentage or integer (default "75%")
@@ -684,6 +715,21 @@ end
 ---Clear all compiled theme bytecode caches.
 function M.clear_theme_cache()
   require("wildest.themes").clear_cache()
+end
+
+---@divider Actions
+
+---Register a named action for use in the actions config.
+---@param name string Action name
+---@param fn fun(ctx: wildest.ActionContext) Action function
+function M.register_action(name, fn)
+  require("wildest.actions").register(name, fn)
+end
+
+---List all registered action names (sorted).
+---@return string[]
+function M.list_actions()
+  return require("wildest.actions").list()
 end
 
 ---@divider State Control

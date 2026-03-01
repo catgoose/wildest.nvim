@@ -3,6 +3,7 @@
 ---Empty message with animated spinner.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 local spinner_frames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
@@ -22,7 +23,7 @@ function M.new(opts)
   local spinner_hl = opts.spinner_hl or "WildestSpinner"
   local message_hl = opts.hl or "WarningMsg"
 
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
   local frame_idx = 1
   local timer = nil
   local started_at = nil

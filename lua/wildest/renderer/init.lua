@@ -63,9 +63,9 @@ function M.parse_dimension(value, total)
     return value
   end
   if type(value) == "string" then
-    local pct = value:match("^(%d+)%%$")
-    if pct then
-      return math.floor(tonumber(pct) / 100 * total)
+    local val = util.parse_percent(value, total)
+    if val then
+      return val
     end
   end
   return total
@@ -84,12 +84,62 @@ function M.parse_margin(margin, total, content_size)
     return margin
   end
   if type(margin) == "string" then
-    local pct = margin:match("^(%d+)%%$")
-    if pct then
-      return math.floor(tonumber(pct) / 100 * total)
+    local val = util.parse_percent(margin, total)
+    if val then
+      return val
     end
   end
   return 0
+end
+
+--- Return display width estimate for a single component (for layout).
+---@param comp string|table
+---@return integer
+function M.component_display_width(comp)
+  if type(comp) == "string" then
+    return util.strdisplaywidth(comp)
+  end
+  if type(comp) == "table" and (comp.render_left or comp.render_right) then
+    return 3
+  end
+  return 0
+end
+
+--- Resolve a component to a list of { text, hl } chunks.
+---@param comp string|table
+---@param ctx table context passed to render methods
+---@param side "left"|"right"
+---@param default_hl string
+---@param fill_hl? string when set, parts with nil or empty hl use this
+---@return table[] chunks
+function M.resolve_component_to_chunks(comp, ctx, side, default_hl, fill_hl)
+  if type(comp) == "string" then
+    return { { comp, default_hl } }
+  end
+  if type(comp) ~= "table" then
+    return {}
+  end
+  local parts = nil
+  if side == "left" and comp.render_left then
+    parts = comp:render_left(ctx)
+  elseif side == "right" and comp.render_right then
+    parts = comp:render_right(ctx)
+  elseif comp.render then
+    ctx.side = side
+    parts = comp:render(ctx)
+  end
+  if not parts then
+    return {}
+  end
+  local out = {}
+  for _, p in ipairs(parts) do
+    local hl = p[2]
+    if fill_hl and (not hl or hl == "") then
+      hl = fill_hl
+    end
+    table.insert(out, { p[1], hl })
+  end
+  return out
 end
 
 local cache_mod = require("wildest.cache")
@@ -101,6 +151,29 @@ local cache_mod = require("wildest.cache")
 function M.create_base_state(opts, defaults)
   defaults = defaults or {}
   local user_hl = opts.highlights or {}
+
+  -- Compute padding (default 1, clamp >= 0)
+  local pad = math.max(0, opts.padding or defaults.padding or 1)
+  local pad_str = pad > 0 and string.rep(" ", pad) or nil
+
+  -- Build left: padding + user components
+  local left = {}
+  if pad_str then
+    table.insert(left, pad_str)
+  end
+  for _, v in ipairs(opts.left or {}) do
+    table.insert(left, v)
+  end
+
+  -- Build right: user components + padding
+  local right = {}
+  for _, v in ipairs(opts.right or {}) do
+    table.insert(right, v)
+  end
+  if pad_str then
+    table.insert(right, pad_str)
+  end
+
   return {
     highlights = {
       default = user_hl.default or opts.hl or "WildestDefault",
@@ -114,8 +187,8 @@ function M.create_base_state(opts, defaults)
     max_width = opts.max_width or defaults.max_width,
     min_width = opts.min_width or defaults.min_width or 16,
     pumblend = opts.pumblend,
-    left = opts.left or { " " },
-    right = opts.right or { " " },
+    left = left,
+    right = right,
     highlighter = opts.highlighter,
     reverse = opts.reverse or false,
     ellipsis = opts.ellipsis or "...",
@@ -343,21 +416,36 @@ function M.make_page(selected, total, max_height, current_page)
   return start, math.min(total - 1, finish)
 end
 
---- Default position: above the cmdline, left-aligned, full width.
+--- Default position: above the cmdline, accounting for preview reserved space.
 --- An optional `offset` reserves extra rows above the cmdline.
 --- Positive values move the panel up; negative values are clamped so
 --- the panel never extends past the statusline.
 ---@param offset? integer extra rows to reserve (default 0)
----@return integer row, integer col, integer width
+---@return integer row, integer col, integer width, integer avail
 function M.default_position(offset)
+  local preview = require("wildest.preview")
+  local space = preview.reserved_space()
   local height = vim.o.lines
-  local width = vim.o.columns
+  local width = vim.o.columns - space.left - space.right
   -- Account for statusline and cmdline area.
   local cmdheight = vim.o.cmdheight
   local reserved = cmdheight + (vim.o.laststatus > 0 and 1 or 0)
-  local max_row = height - reserved - 1
+  local max_row = height - reserved - 1 - space.bottom
   local row = math.max(1, math.min(max_row, max_row - (offset or 0)))
-  return row, 0, width
+  local avail = math.max(1, row - space.top)
+  return row, space.left, width, avail
+end
+
+--- Center a popup horizontally within available space
+---@param col integer left edge from default_position
+---@param content_width integer width of the popup content
+---@param editor_width integer total available width
+---@return integer centered col
+function M.center_col(col, content_width, editor_width)
+  if content_width < editor_width then
+    return col + math.floor((editor_width - content_width) / 2)
+  end
+  return col
 end
 
 --- Ensure a scratch buffer and namespace exist
@@ -389,6 +477,12 @@ function M.render_components(state, ctx, result, index, is_selected)
   local right_parts = {}
   local hl = is_selected and state.highlights.selected or state.highlights.default
 
+  local candidate = result.value[index + 1]
+  local query = ""
+  if result.data then
+    query = result.data.query or result.data.arg or result.data.input or ""
+  end
+
   local comp_ctx = {
     selected = ctx.selected,
     index = index,
@@ -397,39 +491,21 @@ function M.render_components(state, ctx, result, index, is_selected)
     page_end = state.page[2],
     is_selected = is_selected,
     result = result,
+    candidate = candidate,
+    query = query,
     default_hl = state.highlights.default,
     selected_hl = state.highlights.selected,
   }
 
   for _, comp in ipairs(state.left) do
-    if type(comp) == "string" then
-      table.insert(left_parts, { comp, hl })
-    elseif type(comp) == "table" and comp.render then
-      local parts = comp:render(comp_ctx)
-      if parts then
-        for _, p in ipairs(parts) do
-          if not p[2] or p[2] == "" then
-            p[2] = hl
-          end
-          table.insert(left_parts, p)
-        end
-      end
+    for _, p in ipairs(M.resolve_component_to_chunks(comp, comp_ctx, "left", hl, hl)) do
+      table.insert(left_parts, p)
     end
   end
 
   for _, comp in ipairs(state.right) do
-    if type(comp) == "string" then
-      table.insert(right_parts, { comp, hl })
-    elseif type(comp) == "table" and comp.render then
-      local parts = comp:render(comp_ctx)
-      if parts then
-        for _, p in ipairs(parts) do
-          if not p[2] or p[2] == "" then
-            p[2] = hl
-          end
-          table.insert(right_parts, p)
-        end
-      end
+    for _, p in ipairs(M.resolve_component_to_chunks(comp, comp_ctx, "right", hl, hl)) do
+      table.insert(right_parts, p)
     end
   end
 
@@ -485,6 +561,15 @@ function M.open_or_update_win(state, win_config)
     vim.wo[state.win].wrap = false
     vim.wo[state.win].cursorline = false
   end
+
+  -- Store popup geometry for popup-anchor preview positioning
+  M._last_popup_geometry = {
+    row = win_config.row,
+    col = win_config.col,
+    width = win_config.width,
+    height = win_config.height,
+    border = win_config.border,
+  }
 end
 
 --- Hide a floating window
@@ -496,6 +581,7 @@ function M.hide_win(state)
     state.win = -1
   end
   state.page = { -1, -1 }
+  M._last_popup_geometry = nil
 end
 
 --- Get highlight spans for a candidate
@@ -562,10 +648,10 @@ function M.check_run_id(state, ctx)
   if ctx.run_id ~= state.run_id then
     state.run_id = ctx.run_id
     if state.draw_cache then
-      state.draw_cache.clear()
+      state.draw_cache:clear()
     end
     if state.highlight_cache then
-      state.highlight_cache.clear()
+      state.highlight_cache:clear()
     end
     state.page = { -1, -1 }
   end
