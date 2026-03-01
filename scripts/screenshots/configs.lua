@@ -1055,6 +1055,12 @@ function M.random_scene(label)
   if math.random(4) == 1 then
     scene.fixed_height = pick({ true, false })
   end
+  if math.random(5) == 1 then
+    local pos = pick({ "right", "left", "top", "bottom" })
+    local anchor = pick({ "screen", "popup" })
+    local dim = (pos == "right" or pos == "left") and "width" or "height"
+    scene.preview = { position = pos, anchor = anchor, [dim] = pick({ "30%", "40%", "50%" }), border = pick(borders) }
+  end
 
   if recipe == "theme" then
     scene.renderer = "theme:" .. pick(M._random_themes)
