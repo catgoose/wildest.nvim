@@ -112,4 +112,34 @@ T["mru_cache()"]["inherits from DictCache"] = function()
   expect.equality(type(c.clear), "function")
 end
 
+T["dot syntax errors"] = new_set()
+
+T["dot syntax errors"]["dict_cache dot-syntax set errors"] = function()
+  local c = cache.dict_cache()
+  -- Dot syntax passes the key as self instead of the cache object,
+  -- causing an error when accessing self._data on a non-table value.
+  local ok = pcall(c.set, "key", "value")
+  expect.equality(ok, false)
+end
+
+T["dot syntax errors"]["dict_cache dot-syntax get errors"] = function()
+  local c = cache.dict_cache()
+  c:set("key", "value")
+  local ok = pcall(c.get, "key")
+  expect.equality(ok, false)
+end
+
+T["dot syntax errors"]["mru_cache dot-syntax set errors"] = function()
+  local c = cache.mru_cache(5)
+  local ok = pcall(c.set, "key", "value")
+  expect.equality(ok, false)
+end
+
+T["dot syntax errors"]["mru_cache dot-syntax get errors"] = function()
+  local c = cache.mru_cache(5)
+  c:set("key", "value")
+  local ok = pcall(c.get, "key")
+  expect.equality(ok, false)
+end
+
 return T
