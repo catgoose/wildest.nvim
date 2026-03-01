@@ -31,7 +31,7 @@ function M.cmdline_pipeline(opts)
     end
 
     -- Check cache
-    local cached = parse_cache.get(input)
+    local cached = parse_cache:get(input)
     if cached then
       ctx.arg = cached.arg
       ctx.cmd = cached.cmd
@@ -59,7 +59,7 @@ function M.cmdline_pipeline(opts)
     end
 
     -- Cache the result
-    parse_cache.set(input, {
+    parse_cache:set(input, {
       candidates = candidates,
       arg = parsed.arg,
       cmd = parsed.cmd,
