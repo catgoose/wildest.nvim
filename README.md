@@ -732,21 +732,19 @@ default. If no theme is active, your colorscheme's popup colors shine through.
 When a theme is applied, it overrides these with explicit colors.
 
 <!-- gen:highlight_groups:start -->
-
-| Group                   | Default Link    | Used For                      |
-| ----------------------- | --------------- | ----------------------------- |
-| `WildestDefault`        | `Pmenu`         | Popup background and text     |
-| `WildestSelected`       | `PmenuSel`      | Selected candidate            |
-| `WildestAccent`         | `PmenuMatch`    | Matched characters            |
+| Group | Default Link | Used For |
+| --- | --- | --- |
+| `WildestDefault` | `Pmenu` | Popup background and text |
+| `WildestSelected` | `PmenuSel` | Selected candidate |
+| `WildestAccent` | `PmenuMatch` | Matched characters |
 | `WildestSelectedAccent` | `PmenuMatchSel` | Matched characters (selected) |
-| `WildestBorder`         | `FloatBorder`   | Border decoration             |
-| `WildestPrompt`         | `Pmenu`         | Palette prompt area           |
-| `WildestPromptCursor`   | `Cursor`        | Palette prompt cursor         |
-| `WildestScrollbar`      | `PmenuSbar`     | Scrollbar track               |
-| `WildestScrollbarThumb` | `PmenuThumb`    | Scrollbar thumb               |
-| `WildestSpinner`        | `Special`       | Loading spinner               |
-| `WildestError`          | `ErrorMsg`      | Error messages                |
-
+| `WildestBorder` | `FloatBorder` | Border decoration |
+| `WildestPrompt` | `Pmenu` | Palette prompt area |
+| `WildestPromptCursor` | `Cursor` | Palette prompt cursor |
+| `WildestScrollbar` | `PmenuSbar` | Scrollbar track |
+| `WildestScrollbarThumb` | `PmenuThumb` | Scrollbar thumb |
+| `WildestSpinner` | `Special` | Loading spinner |
+| `WildestError` | `ErrorMsg` | Error messages |
 <!-- gen:highlight_groups:end -->
 
 Override any group in your config to customize without a theme:
@@ -789,7 +787,6 @@ w.setup({
 ```
 
 <!-- gen:theme_table:start -->
-
 | Theme               | Renderer | Description                                        |
 | ------------------- | -------- | -------------------------------------------------- |
 | `auto`              | bordered | Derives colors from your colorscheme - a chameleon |
@@ -824,7 +821,6 @@ w.setup({
 | `everforest_light`  | bordered | Soft cream with fresh greens - forest clearing     |
 | `dracula`           | bordered | Classic dark purple - the count rides at midnight  |
 | `solarized_dark`    | bordered | Precision teal and cyan - the original classic     |
-
 <!-- gen:theme_table:end -->
 
 <details>
