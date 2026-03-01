@@ -3,6 +3,7 @@
 ---Wildmenu item separator.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 --- Create a separator component for wildmenu
@@ -13,7 +14,7 @@ function M.new(opts)
   local str = opts.str or " | "
   local hl = opts.hl or "WildestSeparator"
 
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
 
   function component:render(_ctx)
     return { { str, hl } }

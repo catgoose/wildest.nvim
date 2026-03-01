@@ -3,6 +3,7 @@
 ---Buffer status flags component.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 --- Create a buffer flags component for the popupmenu
@@ -40,7 +41,7 @@ function M.new(opts)
   }
   icons = vim.tbl_extend("force", default_icons, icons)
 
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
 
   -- Cache: cleared per session
   local cache = {}

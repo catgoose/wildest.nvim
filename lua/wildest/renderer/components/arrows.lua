@@ -3,6 +3,7 @@
 ---Previous/next arrow indicators.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local util = require("wildest.util")
 local M = {}
 
@@ -15,7 +16,7 @@ function M.new(opts)
   local next_arrow = opts.next or " > "
   local hl = opts.hl or "WildestArrows"
 
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
 
   --- Render left arrow (previous indicator)
   function component:render_left(ctx)
@@ -31,14 +32,6 @@ function M.new(opts)
       return { { next_arrow, hl } }
     end
     return { { string.rep(" ", util.strdisplaywidth(next_arrow)), "" } }
-  end
-
-  --- Default render (used when added to left or right)
-  function component:render(ctx)
-    if ctx.side == "left" then
-      return self:render_left(ctx)
-    end
-    return self:render_right(ctx)
   end
 
   return component

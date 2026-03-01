@@ -3,6 +3,7 @@
 ---Position indicator component.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 --- Create an index component showing "X/Y"
@@ -13,7 +14,7 @@ function M.new(opts)
   local hl = opts.hl or "WildestIndex"
   local format = opts.format or " %d/%d "
 
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
 
   function component:render(ctx)
     local selected = (ctx.selected or -1) + 1

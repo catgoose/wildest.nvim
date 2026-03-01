@@ -164,7 +164,16 @@ function M.new(opts)
     }
 
     for _, comp in ipairs(state.left) do
-      for _, c in ipairs(renderer_util.resolve_component_to_chunks(comp, comp_ctx, "left", state.highlights.default)) do
+      for _, c in
+        ipairs(
+          renderer_util.resolve_component_to_chunks(
+            comp,
+            comp_ctx,
+            "left",
+            state.highlights.default
+          )
+        )
+      do
         table.insert(chunks, c)
       end
     end
@@ -209,7 +218,16 @@ function M.new(opts)
     end
 
     for _, comp in ipairs(state.right) do
-      for _, c in ipairs(renderer_util.resolve_component_to_chunks(comp, comp_ctx, "right", state.highlights.default)) do
+      for _, c in
+        ipairs(
+          renderer_util.resolve_component_to_chunks(
+            comp,
+            comp_ctx,
+            "right",
+            state.highlights.default
+          )
+        )
+      do
         table.insert(chunks, c)
       end
     end

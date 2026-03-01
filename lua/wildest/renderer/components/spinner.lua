@@ -3,6 +3,7 @@
 ---Loading spinner component.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 local spinner_frames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
@@ -17,7 +18,7 @@ function M.new(opts)
   local interval = opts.interval or 100
   local done_char = opts.done or " "
 
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
   local frame_idx = 1
   local timer = nil
 

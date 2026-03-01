@@ -3,6 +3,7 @@
 ---File type icon component.
 ---@brief ]]
 
+local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 --- Create a devicons component for the popupmenu
@@ -16,7 +17,7 @@ function M.new(opts)
 
   local has_devicons, devicons = pcall(require, "nvim-web-devicons")
 
-  local component = {}
+  local component = setmetatable({}, { __index = BaseComponent })
 
   function component:render(ctx)
     local candidate = ""

@@ -648,10 +648,10 @@ function M.check_run_id(state, ctx)
   if ctx.run_id ~= state.run_id then
     state.run_id = ctx.run_id
     if state.draw_cache then
-      state.draw_cache.clear()
+      state.draw_cache:clear()
     end
     if state.highlight_cache then
-      state.highlight_cache.clear()
+      state.highlight_cache:clear()
     end
     state.page = { -1, -1 }
   end
