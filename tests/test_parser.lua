@@ -147,4 +147,33 @@ T["parse()"]["user command gets custom expand"] = function()
   expect.equality(r.expand, E.CUSTOM)
 end
 
+-- EXPAND frozen enum ---------------------------------------------------------------
+
+T["EXPAND"] = new_set()
+
+T["EXPAND"]["known keys return correct values"] = function()
+  expect.equality(E.FILE, "file")
+  expect.equality(E.BUFFER, "buffer")
+  expect.equality(E.HELP, "help")
+  expect.equality(E.COMMAND, "command")
+  expect.equality(E.NOTHING, "nothing")
+  expect.equality(E.CUSTOM, "custom")
+end
+
+T["EXPAND"]["errors on unknown key"] = function()
+  local ok, err = pcall(function()
+    return E.NONEXISTENT
+  end)
+  expect.equality(ok, false)
+  expect.equality(err:find("Invalid EXPAND key") ~= nil, true)
+end
+
+T["EXPAND"]["errors on mutation"] = function()
+  local ok, err = pcall(function()
+    E.FILE = "wrong"
+  end)
+  expect.equality(ok, false)
+  expect.equality(err:find("Cannot modify frozen") ~= nil, true)
+end
+
 return T

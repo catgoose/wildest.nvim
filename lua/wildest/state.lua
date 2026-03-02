@@ -53,7 +53,13 @@ local state = {
 
 --- Cancel and close the pipeline timeout timer if active.
 local function cancel_pipeline_timer()
-  cancel_pipeline_timer()
+  if state.pipeline_timer then
+    if not state.pipeline_timer:is_closing() then
+      state.pipeline_timer:stop()
+      state.pipeline_timer:close()
+    end
+    state.pipeline_timer = nil
+  end
 end
 
 --- Zero out session-scoped fields shared between start() and stop()
