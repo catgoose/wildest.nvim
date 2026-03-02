@@ -23,8 +23,12 @@ function M.cmdline_pipeline(opts)
 
   --- Parse stage: parse cmdline and get completions
   local function parse_and_complete(ctx, input)
-    if not input or input == "" then return false end
-    if ctx.cmdtype ~= ":" then return false end
+    if not input or input == "" then
+      return false
+    end
+    if ctx.cmdtype ~= ":" then
+      return false
+    end
 
     -- Check cache
     local cached = parse_cache:get(input)
