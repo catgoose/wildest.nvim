@@ -30,12 +30,6 @@ Fuzzy Filter ·································�
 Highlight Utilities ········································ |wildest.highlight|
 Renderer Utilities ·········································· |wildest.renderer|
 
-wildest                                                                *wildest*
-
-    Fields: ~
-        {setup}  (fun(opts:wildest.Config))
-
-
                                                                  *wildest-setup*
 M.setup({opts})                                                  *wildest.setup*
     Setup wildest with user config.
@@ -994,6 +988,13 @@ M.parse_percent({str}, {total})                     *wildest.util.parse_percent*
         (integer|nil)  or nil if str is not a "N%" string
 
 
+M.reserved_chrome_rows()                     *wildest.util.reserved_chrome_rows*
+     Compute the number of rows reserved for the status area (statusline + cmdline).
+
+    Returns: ~
+        (integer)
+
+
 M.is_empty({str?})                                       *wildest.util.is_empty*
      Check if a string is empty or nil
 
@@ -1044,6 +1045,13 @@ M.detect_expand({data})                             *wildest.util.detect_expand*
 
     Returns: ~
         (string|nil)
+
+
+M._cmd_to_expand                                              *M._cmd_to_expand*
+     Lookup table mapping command names to expand types
+
+    Type: ~
+        (table<string,string>)
 
 
 ==============================================================================
