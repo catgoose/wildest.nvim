@@ -57,7 +57,9 @@ end
 ---@param haystack string
 ---@return number
 function M.score(needle, haystack)
-  if not C then return -1e9 end
+  if not C then
+    return -1e9
+  end
   return tonumber(C.fuzzy_score(needle, haystack)) or -1e9
 end
 
