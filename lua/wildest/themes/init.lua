@@ -228,7 +228,7 @@ function M.compile(name)
   local code = table.concat(lines, "\n")
 
   -- Validate the generated code
-  local func, err = loadstring(code)
+  local func, err = load(code)
   if not func then
     vim.notify(
       string.format("[wildest] Compile error for theme %s: %s", name, tostring(err)),

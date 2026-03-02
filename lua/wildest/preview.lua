@@ -84,7 +84,7 @@ end
 ---@return string|nil title
 local function load_file(path, cfg)
   local expanded = safe_expand(path)
-  if vim.fn.filereadable(expanded) ~= 1 then
+  if not vim.uv.fs_stat(expanded) then
     return nil
   end
   local lines = vim.fn.readfile(expanded, "", cfg.max_lines or 500)
@@ -95,7 +95,7 @@ local function load_file(path, cfg)
   else
     vim.bo[preview_state.buf].filetype = ""
   end
-  local title = vim.fn.fnamemodify(expanded, ":t") ---@type string
+  local title = vim.fs.basename(expanded)
   return title
 end
 
@@ -117,7 +117,7 @@ local function load_buffer(name, cfg)
   else
     vim.bo[preview_state.buf].filetype = ""
   end
-  local title = vim.fn.fnamemodify(name, ":t") ---@type string
+  local title = vim.fs.basename(name)
   return title
 end
 
@@ -139,7 +139,7 @@ local function load_help(tag)
   if ok and type(tags) == "table" then
     for _, entry in ipairs(tags) do
       local fname = entry.filename
-      if fname and vim.fn.filereadable(fname) == 1 then
+      if fname and vim.uv.fs_stat(fname) then
         local lines = vim.fn.readfile(fname, "", 500)
         vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
         vim.bo[preview_state.buf].filetype = "help"
@@ -196,14 +196,10 @@ function M.reserved_space()
     elseif pos == "left" then
       return { top = 0, right = 0, bottom = 0, left = parse_dim(cfg.width, vim.o.columns) }
     elseif pos == "top" then
-      local height = vim.o.lines
-      local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
-      local available_rows = height - reserved - 1
+      local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
       return { top = parse_dim(cfg.height, available_rows), right = 0, bottom = 0, left = 0 }
     elseif pos == "bottom" then
-      local height = vim.o.lines
-      local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
-      local available_rows = height - reserved - 1
+      local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
       return { top = 0, right = 0, bottom = parse_dim(cfg.height, available_rows), left = 0 }
     end
   end
@@ -220,14 +216,10 @@ function M.reserved_space()
   elseif pos == "left" then
     return { top = 0, right = 0, bottom = 0, left = parse_dim(cfg.width, vim.o.columns) }
   elseif pos == "top" then
-    local height = vim.o.lines
-    local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
-    local available_rows = height - reserved - 1
+    local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
     return { top = parse_dim(cfg.height, available_rows), right = 0, bottom = 0, left = 0 }
   elseif pos == "bottom" then
-    local height = vim.o.lines
-    local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
-    local available_rows = height - reserved - 1
+    local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
     return { top = 0, right = 0, bottom = parse_dim(cfg.height, available_rows), left = 0 }
   end
   return zero
@@ -400,7 +392,7 @@ function M.update(ctx, result)
   else
     -- Heuristic: try as file first
     local expanded = safe_expand(candidate)
-    if vim.fn.filereadable(expanded) == 1 then
+    if vim.uv.fs_stat(expanded) then
       title = load_file(candidate, cfg)
     else
       load_fallback(candidate)
@@ -411,8 +403,7 @@ function M.update(ctx, result)
   -- Position and show the preview window
   local editor_cols = vim.o.columns
   local editor_lines = vim.o.lines
-  local cmdheight = vim.o.cmdheight
-  local reserved_rows = cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+  local reserved_rows = util.reserved_chrome_rows()
   local available_rows = math.max(1, editor_lines - reserved_rows - 1)
   local content_lines = vim.api.nvim_buf_line_count(preview_state.buf)
 

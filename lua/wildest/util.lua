@@ -27,7 +27,7 @@ end
 ---@param str string
 ---@return integer
 function M.strdisplaywidth(str)
-  return vim.fn.strdisplaywidth(str)
+  return vim.api.nvim_strwidth(str)
 end
 
 --- Truncate string to fit within max display width
@@ -49,7 +49,7 @@ function M.truncate(str, max_width, suffix)
   end
 
   -- Truncate by characters, checking display width
-  local result = ""
+  local parts = {}
   local cur_width = 0
   for _, char in utf8.codes(str) do
     local c = utf8.char(char)
@@ -57,11 +57,11 @@ function M.truncate(str, max_width, suffix)
     if cur_width + cw > target then
       break
     end
-    result = result .. c
+    parts[#parts + 1] = c
     cur_width = cur_width + cw
   end
 
-  return string.format("%s%s", result, suffix)
+  return string.format("%s%s", table.concat(parts), suffix)
 end
 
 --- Normalize path separators and expand ~
@@ -100,6 +100,12 @@ function M.parse_percent(str, total)
     return math.floor(tonumber(pct) / 100 * total)
   end
   return nil
+end
+
+--- Compute the number of rows reserved for the status area (statusline + cmdline).
+---@return integer
+function M.reserved_chrome_rows()
+  return vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
 end
 
 --- Check if a string is empty or nil
@@ -147,7 +153,7 @@ local project_root_cache = {}
 ---@return string root path, or '' if not found
 function M.project_root(markers, path)
   markers = markers or { ".git", ".hg" }
-  path = path or vim.fn.getcwd()
+  path = path or vim.uv.cwd()
 
   -- Check cache
   local cache_key = string.format("%s:%s", path, table.concat(markers, ","))
@@ -200,27 +206,28 @@ function M.detect_expand(data)
     return nil
   end
   if data.cmd then
-    local cmd = data.cmd:lower()
-    if cmd == "help" or cmd == "h" then
-      return "help"
-    end
-    if cmd == "buffer" or cmd == "b" or cmd == "sbuffer" or cmd == "sb" then
-      return "buffer"
-    end
-    if
-      cmd == "edit"
-      or cmd == "e"
-      or cmd == "split"
-      or cmd == "sp"
-      or cmd == "vsplit"
-      or cmd == "vs"
-      or cmd == "tabedit"
-      or cmd == "tabe"
-    then
-      return "file"
-    end
+    return M._cmd_to_expand[data.cmd:lower()]
   end
   return nil
 end
+
+--- Lookup table mapping command names to expand types
+---@type table<string, string>
+M._cmd_to_expand = {
+  help = "help",
+  h = "help",
+  buffer = "buffer",
+  b = "buffer",
+  sbuffer = "buffer",
+  sb = "buffer",
+  edit = "file",
+  e = "file",
+  split = "file",
+  sp = "file",
+  vsplit = "file",
+  vs = "file",
+  tabedit = "file",
+  tabe = "file",
+}
 
 return M

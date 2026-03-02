@@ -205,7 +205,6 @@ function M.create_base_state(opts, defaults)
     page = { -1, -1 },
     run_id = -1,
     draw_cache = cache_mod.dict_cache(),
-    highlight_cache = cache_mod.dict_cache(),
   }
 end
 
@@ -263,7 +262,7 @@ function M.truncate_with_spans(text, spans, max_width, ellipsis)
   end
 
   -- Truncate text
-  local result = ""
+  local parts = {}
   local cur_width = 0
   local byte_pos = 0
 
@@ -273,10 +272,11 @@ function M.truncate_with_spans(text, spans, max_width, ellipsis)
     if cur_width + cw > target then
       break
     end
-    result = result .. c
+    parts[#parts + 1] = c
     cur_width = cur_width + cw
     byte_pos = p + #c - 1
   end
+  local result = table.concat(parts)
 
   -- Adjust spans to fit truncated text
   local adjusted = {}
@@ -309,18 +309,20 @@ end
 function M.render_line(candidate, left_parts, right_parts, candidate_spans, max_width, default_hl)
   -- Calculate widths
   local left_width = 0
-  local left_text = ""
-  for _, part in ipairs(left_parts) do
+  local left_text_parts = {}
+  for i, part in ipairs(left_parts) do
     left_width = left_width + util.strdisplaywidth(part[1])
-    left_text = left_text .. part[1]
+    left_text_parts[i] = part[1]
   end
+  local left_text = table.concat(left_text_parts)
 
   local right_width = 0
-  local right_text = ""
-  for _, part in ipairs(right_parts) do
+  local right_text_parts = {}
+  for i, part in ipairs(right_parts) do
     right_width = right_width + util.strdisplaywidth(part[1])
-    right_text = right_text .. part[1]
+    right_text_parts[i] = part[1]
   end
+  local right_text = table.concat(right_text_parts)
 
   -- Available width for the candidate
   local avail = max_width - left_width - right_width
@@ -431,8 +433,7 @@ function M.default_position(offset)
   local height = vim.o.lines
   local width = vim.o.columns - space.left - space.right
   -- Account for statusline and cmdline area.
-  local cmdheight = vim.o.cmdheight
-  local reserved = cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+  local reserved = util.reserved_chrome_rows()
   local max_row = height - reserved - 1 - space.bottom
   local row = math.max(1, math.min(max_row, max_row - (offset or 0)))
   local avail = math.max(1, row - space.top)
@@ -481,10 +482,7 @@ function M.render_components(state, ctx, result, index, is_selected)
   local hl = is_selected and state.highlights.selected or state.highlights.default
 
   local candidate = result.value[index + 1]
-  local query = ""
-  if result.data then
-    query = result.data.query or result.data.arg or result.data.input or ""
-  end
+  local query = M.get_query(result)
 
   local comp_ctx = {
     selected = ctx.selected,
@@ -653,9 +651,6 @@ function M.check_run_id(state, ctx)
     state.run_id = ctx.run_id
     if state.draw_cache then
       state.draw_cache:clear()
-    end
-    if state.highlight_cache then
-      state.highlight_cache:clear()
     end
     state.page = { -1, -1 }
   end

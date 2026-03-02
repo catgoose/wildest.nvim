@@ -51,6 +51,11 @@ local state = {
   pipeline_timer = nil,
 }
 
+--- Cancel and close the pipeline timeout timer if active.
+local function cancel_pipeline_timer()
+  cancel_pipeline_timer()
+end
+
 --- Zero out session-scoped fields shared between start() and stop()
 local function reset_session_fields()
   state.hidden = false
@@ -131,13 +136,7 @@ function M.stop()
     state._saved_wildoptions = nil
   end
 
-  if state.pipeline_timer then
-    if not state.pipeline_timer:is_closing() then
-      state.pipeline_timer:stop()
-      state.pipeline_timer:close()
-    end
-    state.pipeline_timer = nil
-  end
+  cancel_pipeline_timer()
 
   pipeline_mod.clear_handlers()
   debounce_mod.cancel_all()
@@ -273,13 +272,7 @@ function M.run_pipeline(input)
     pipeline = { pipeline }
   end
 
-  if state.pipeline_timer then
-    if not state.pipeline_timer:is_closing() then
-      state.pipeline_timer:stop()
-      state.pipeline_timer:close()
-    end
-    state.pipeline_timer = nil
-  end
+  cancel_pipeline_timer()
 
   if cfg.pipeline_timeout and cfg.pipeline_timeout > 0 then
     state.pipeline_timer = vim.uv.new_timer() ---@type uv.uv_timer_t

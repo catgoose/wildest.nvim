@@ -127,66 +127,78 @@ end
 
 local detect_expand = util.detect_expand
 
-M.register("open_split", function(ctx)
-  if not ctx.candidate then
-    return
-  end
-  local candidate = ctx.candidate --[[@as string]]
-  local escaped = vim.fn.fnameescape(candidate) ---@type string
-  local expand = detect_expand(ctx.data)
-  leave_cmdline_and_run(function()
-    if expand == "buffer" then
-      vim.cmd.sbuffer(escaped)
-    elseif expand == "help" then
-      vim.cmd.help(escaped)
-    else
-      vim.cmd.split(escaped)
+--- Factory for open-in-split/vsplit/tab actions
+---@param cmds { buffer: fun(escaped: string), help: fun(escaped: string), file: fun(escaped: string) }
+local function make_open_action(cmds)
+  return function(ctx)
+    if not ctx.candidate then
+      return
     end
-  end)
-end)
-
-M.register("open_vsplit", function(ctx)
-  if not ctx.candidate then
-    return
+    local candidate = ctx.candidate --[[@as string]]
+    local escaped = vim.fn.fnameescape(candidate) ---@type string
+    local expand = detect_expand(ctx.data)
+    leave_cmdline_and_run(function()
+      if expand == "buffer" then
+        cmds.buffer(escaped)
+      elseif expand == "help" then
+        cmds.help(escaped)
+      else
+        cmds.file(escaped)
+      end
+    end)
   end
-  local candidate = ctx.candidate --[[@as string]]
-  local escaped = vim.fn.fnameescape(candidate) ---@type string
-  local expand = detect_expand(ctx.data)
-  leave_cmdline_and_run(function()
-    if expand == "buffer" then
-      vim.api.nvim_cmd({ cmd = "sbuffer", args = { escaped }, mods = { vertical = true } }, {})
-    elseif expand == "help" then
-      vim.api.nvim_cmd({ cmd = "help", args = { escaped }, mods = { vertical = true } }, {})
-    else
-      vim.cmd.vsplit(escaped)
-    end
-  end)
-end)
+end
 
-M.register("open_tab", function(ctx)
-  if not ctx.candidate then
-    return
-  end
-  local candidate = ctx.candidate --[[@as string]]
-  local escaped = vim.fn.fnameescape(candidate) ---@type string
-  local expand = detect_expand(ctx.data)
-  leave_cmdline_and_run(function()
-    if expand == "buffer" then
-      vim.api.nvim_cmd({ cmd = "sbuffer", args = { escaped }, mods = { tab = 1 } }, {})
-    elseif expand == "help" then
-      vim.api.nvim_cmd({ cmd = "help", args = { escaped }, mods = { tab = 1 } }, {})
-    else
-      vim.cmd.tabedit(escaped)
-    end
-  end)
-end)
+M.register(
+  "open_split",
+  make_open_action({
+    buffer = function(e)
+      vim.cmd.sbuffer(e)
+    end,
+    help = function(e)
+      vim.cmd.help(e)
+    end,
+    file = function(e)
+      vim.cmd.split(e)
+    end,
+  })
+)
 
-M.register("send_to_quickfix", function(ctx)
-  local candidates = ctx.candidates
-  if #candidates == 0 then
-    return
-  end
-  local expand = detect_expand(ctx.data)
+M.register(
+  "open_vsplit",
+  make_open_action({
+    buffer = function(e)
+      vim.api.nvim_cmd({ cmd = "sbuffer", args = { e }, mods = { vertical = true } }, {})
+    end,
+    help = function(e)
+      vim.api.nvim_cmd({ cmd = "help", args = { e }, mods = { vertical = true } }, {})
+    end,
+    file = function(e)
+      vim.cmd.vsplit(e)
+    end,
+  })
+)
+
+M.register(
+  "open_tab",
+  make_open_action({
+    buffer = function(e)
+      vim.api.nvim_cmd({ cmd = "sbuffer", args = { e }, mods = { tab = 1 } }, {})
+    end,
+    help = function(e)
+      vim.api.nvim_cmd({ cmd = "help", args = { e }, mods = { tab = 1 } }, {})
+    end,
+    file = function(e)
+      vim.cmd.tabedit(e)
+    end,
+  })
+)
+
+--- Build quickfix/loclist items from candidates
+---@param candidates string[]
+---@param expand string|nil
+---@return table[]
+local function build_list_items(candidates, expand)
   local items = {}
   for _, c in ipairs(candidates) do
     if expand == "file" then
@@ -202,6 +214,14 @@ M.register("send_to_quickfix", function(ctx)
       items[#items + 1] = { text = c }
     end
   end
+  return items
+end
+
+M.register("send_to_quickfix", function(ctx)
+  if #ctx.candidates == 0 then
+    return
+  end
+  local items = build_list_items(ctx.candidates, detect_expand(ctx.data))
   leave_cmdline_and_run(function()
     vim.fn.setqflist(items, "r")
     vim.cmd.copen()
@@ -209,26 +229,10 @@ M.register("send_to_quickfix", function(ctx)
 end)
 
 M.register("send_to_loclist", function(ctx)
-  local candidates = ctx.candidates
-  if #candidates == 0 then
+  if #ctx.candidates == 0 then
     return
   end
-  local expand = detect_expand(ctx.data)
-  local items = {}
-  for _, c in ipairs(candidates) do
-    if expand == "file" then
-      items[#items + 1] = { filename = c }
-    elseif expand == "buffer" then
-      local bufnr = vim.fn.bufnr(c)
-      if bufnr ~= -1 then
-        items[#items + 1] = { bufnr = bufnr }
-      else
-        items[#items + 1] = { text = c }
-      end
-    else
-      items[#items + 1] = { text = c }
-    end
-  end
+  local items = build_list_items(ctx.candidates, detect_expand(ctx.data))
   leave_cmdline_and_run(function()
     vim.fn.setloclist(0, items, "r")
     vim.cmd.lopen()

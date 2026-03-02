@@ -30,8 +30,8 @@ function M.new(opts)
     end
 
     -- Extract filename/extension
-    local filename = vim.fn.fnamemodify(candidate, ":t") ---@type string
-    local ext = vim.fn.fnamemodify(candidate, ":e") ---@type string
+    local filename = vim.fs.basename(candidate)
+    local ext = filename:match("%.([^%.]+)$") or ""
 
     local icon, icon_hl = devicons.get_icon(filename, ext, { default = true })
     if not icon then

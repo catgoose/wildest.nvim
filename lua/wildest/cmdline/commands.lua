@@ -33,7 +33,6 @@ M.EXPAND = {
   SIGN = "sign",
   MESSAGES = "messages",
   HISTORY = "history",
-  MAPCLEAR = "mapclear",
   ARGLIST = "arglist",
   CHECKHEALTH = "checkhealth",
   SYNTAX = "syntax",

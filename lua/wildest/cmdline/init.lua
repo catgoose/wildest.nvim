@@ -112,25 +112,13 @@ function M.cmdline_pipeline(opts)
       data = data,
     }
 
-    if ctx.expand == E.FILE or ctx.expand == E.DIR or ctx.expand == E.FILE_IN_PATH then
-      -- For file completions, construct the full cmdline replacement
-      result.output = function(rdata, candidate)
-        local input = rdata.input or ""
-        local arg = rdata.arg or ""
-        -- Replace the arg portion of the input with the candidate
-        if arg ~= "" then
-          local prefix = input:sub(1, #input - #arg)
-          return string.format("%s%s", prefix, candidate)
-        end
-        return string.format("%s%s", input, candidate)
-      end
-    elseif ctx.expand == E.COMMAND then
+    if ctx.expand == E.COMMAND then
       -- For command completions, just use the command name
       result.output = function(_rdata, candidate)
         return candidate
       end
     else
-      -- For other completions, replace the arg part
+      -- For file, arg, and other completions, replace the arg portion
       result.output = function(rdata, candidate)
         local input = rdata.input or ""
         local arg = rdata.arg or ""

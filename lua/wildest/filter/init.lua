@@ -173,7 +173,7 @@ function M.fuzzy_filter(opts)
       for i, c in ipairs(candidates) do
         keys[i] = key_fn(c)
       end
-      local filtered_keys, scores = M.filter_sort(query, keys)
+      local filtered_keys = M.filter_sort(query, keys)
       -- Map back to original candidates
       local result = {}
       -- Build key→index mapping

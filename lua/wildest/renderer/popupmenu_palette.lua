@@ -212,7 +212,7 @@ function PopupmenuPalette:render(ctx, result)
   -- Account for border rows and reserved lines (statusline + cmdline) so
   -- the bottom border never overlaps the statusline.
   local border_rows = 2 -- top + bottom border
-  local reserved = math.max(vim.o.cmdheight, 1) + (vim.o.laststatus > 0 and 1 or 0)
+  local reserved = util.reserved_chrome_rows()
   local usable_lines = editor_lines - reserved - space.top - space.bottom
   local max_content_height = usable_lines - border_rows
   local height = self:clamp_height(lines, line_highlights, max_content_height)

@@ -115,7 +115,7 @@ function M.file_finder_pipeline(opts)
     local query = parsed.arg
 
     return function(finder_ctx)
-      local job_cwd = cwd or vim.fn.getcwd()
+      local job_cwd = cwd or vim.uv.cwd()
       local cmd = build_cmd(base_cmd, query)
 
       active_job = vim.system(cmd, { cwd = job_cwd, text = true }, function(res)
