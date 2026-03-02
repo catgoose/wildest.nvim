@@ -359,14 +359,15 @@ local showdown_action_keys = {
 }
 
 --- Build the VHS tape body for showdown scenes (preview + actions).
+---
+--- Each scene: dump command instantly → browse several candidates (preview
+--- updates on each) → settle on one → execute action → brief result → cleanup.
+--- The focus is on preview variety across selections and configs, not the action.
 ---@param n number  how many scenes to emit
 ---@param seed number  deterministic seed (shared with configs.lua)
 ---@return string   VHS tape fragment (no preamble / postamble)
 local function build_showdown_tape(n, seed)
   local plan = configs_mod.showdown_scene_plan(n, seed)
-
-  -- Independent random source for typing speed (doesn't need to match configs)
-  math.randomseed(seed + 99)
 
   local parts = {}
   for i, entry in ipairs(plan) do
@@ -386,39 +387,37 @@ local function build_showdown_tape(n, seed)
     end
 
     local s = entry.vhs_cmd
-    local speed = math.random(30, 120)
     local act = showdown_action_keys[entry.action]
 
+    -- Dump command instantly and let popup + preview appear
+    table.insert(parts, string.format('Type "%s"', s.mode))
+    table.insert(parts, "Sleep 200ms")
+    table.insert(parts, string.format('Type@1ms "%s"', s.typed))
+    table.insert(parts, "Sleep 1500ms")
+
+    -- Browse through candidates so the viewer sees preview updating
+    for _ = 1, entry.browse_count do
+      table.insert(parts, "Tab")
+      table.insert(parts, "Sleep 1200ms")
+    end
+
+    -- Settle on the final selection
+    table.insert(parts, "Sleep 800ms")
+
+    -- Execute the action
     if entry.action == "toggle_preview" then
-      -- Toggle preview: show with preview, toggle off, toggle on, escape
-      table.insert(parts, string.format('Type "%s"', s.mode))
-      table.insert(parts, "Sleep 300ms")
-      table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
-      table.insert(parts, "Sleep 2500ms")
       table.insert(parts, "Ctrl+P")
-      table.insert(parts, "Sleep 2500ms")
+      table.insert(parts, "Sleep 2000ms")
       table.insert(parts, "Ctrl+P")
-      table.insert(parts, "Sleep 1500ms")
+      table.insert(parts, "Sleep 1000ms")
       table.insert(parts, "Escape")
       table.insert(parts, "Sleep 300ms")
     elseif entry.action == "search_accept" then
-      -- Search: show results + preview, accept
-      table.insert(parts, string.format('Type "%s"', s.mode))
-      table.insert(parts, "Sleep 300ms")
-      table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
-      table.insert(parts, "Sleep 2500ms")
       table.insert(parts, "Enter")
-      table.insert(parts, "Sleep 2500ms")
+      table.insert(parts, "Sleep 2000ms")
     else
-      -- File action: show popup + preview, select, execute action, show result
-      table.insert(parts, string.format('Type "%s"', s.mode))
-      table.insert(parts, "Sleep 300ms")
-      table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
-      table.insert(parts, "Sleep 2500ms")
-      table.insert(parts, "Tab")
-      table.insert(parts, "Sleep 500ms")
       table.insert(parts, act.key)
-      table.insert(parts, "Sleep 2500ms")
+      table.insert(parts, "Sleep 2000ms")
     end
 
     table.insert(parts, "")

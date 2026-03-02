@@ -1161,7 +1161,8 @@ local showdown_search_cmds = {
   { mode = "/", typed = "require" },
 }
 
--- Deterministic cycle: each action type gets showcased in order, then repeats.
+-- Actions cycle deterministically so every type gets showcased; the action
+-- itself is secondary — the star of showdown is the preview + config variety.
 local showdown_action_cycle = {
   "accept",
   "open_split",
@@ -1173,11 +1174,13 @@ local showdown_action_cycle = {
   "search_accept",
 }
 
---- Generate a deterministic showdown scene plan (lightweight: vhs_cmd + action only).
---- Both generate.lua (VHS tape) and gif_init (config) use the same seed to stay in sync.
+--- Generate a deterministic showdown scene plan.
+--- Each entry has the VHS command, action, and how many candidates to browse
+--- before settling (so the viewer sees the preview updating across selections).
+--- Both generate.lua (VHS tape) and gif_init (config) use the same seed.
 ---@param n number
 ---@param seed number  deterministic seed for math.random
----@return table[]  list of { vhs_cmd = {mode, typed}, action = string }
+---@return table[]  list of { vhs_cmd, action, browse_count }
 function M.showdown_scene_plan(n, seed)
   math.randomseed(seed)
   local plan = {}
@@ -1189,7 +1192,8 @@ function M.showdown_scene_plan(n, seed)
     else
       vhs_cmd = pick(showdown_file_cmds)
     end
-    table.insert(plan, { vhs_cmd = vhs_cmd, action = action })
+    local browse_count = math.random(2, 5)
+    table.insert(plan, { vhs_cmd = vhs_cmd, action = action, browse_count = browse_count })
   end
   return plan
 end
