@@ -37,6 +37,7 @@ jobs:
 
       - name: Create Pull Request
         id: cpr
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: peter-evans/create-pull-request@v7
         with:
           branch: docs/auto-vimdoc
@@ -55,6 +56,7 @@ jobs:
   html-docs:
     runs-on: ubuntu-latest
     needs: vimdoc
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
