@@ -23,10 +23,14 @@
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/gifs/gunsmoke.gif" alt="wildest.nvim gunsmoke" width="800">
+  <br>
+  <em>Gunsmoke — get the hell out of Dodge!</em>
 </p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/gifs/showdown.gif" alt="wildest.nvim showdown" width="800">
+  <br>
+  <em>Showdown — don't blink pardner</em>
 </p>
 
 **[Wanted Posters](SCREENSHOTS.md)** — every config combination, pinned up for inspection.
