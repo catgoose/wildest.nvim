@@ -49,6 +49,11 @@ end
 
 local detect_expand = util.detect_expand
 
+-- Minimum space required to show a preview (including border).
+-- 3 cols = 1 col content + 2 border cols; 1 row = 1 row content.
+local MIN_PREVIEW_COLS = 3
+local MIN_PREVIEW_ROWS = 1
+
 --- Ensure preview buffer and namespace exist.
 local function ensure_buf()
   if not vim.api.nvim_buf_is_valid(preview_state.buf) then
@@ -167,22 +172,37 @@ function M.setup(opts)
 end
 
 --- Returns space reserved on each edge `{top, right, bottom, left}`.
---- Only non-zero for screen anchor when the preview window is visible.
+--- Non-zero for screen anchor (when window visible) and popup anchor
+--- with left/right position (so drawer-style popups shrink to fit).
 ---@return {top: integer, right: integer, bottom: integer, left: integer}
 function M.reserved_space()
   local zero = { top = 0, right = 0, bottom = 0, left = 0 }
   if not preview_state.config or not preview_state.enabled then
     return zero
   end
-  if preview_state.config.anchor ~= "screen" then
+
+  local cfg = preview_state.config
+  local pos = cfg.position
+
+  -- Popup anchor + left/right: reserve horizontal space so the popup
+  -- shrinks to make room (e.g. full-width drawer menus).
+  -- Skip window-validity check: popup-anchor preview is drawn AFTER the
+  -- renderer, so the window doesn't exist yet when this is called.
+  if cfg.anchor == "popup" and (pos == "left" or pos == "right") then
+    if pos == "right" then
+      return { top = 0, right = parse_dim(cfg.width, vim.o.columns), bottom = 0, left = 0 }
+    else
+      return { top = 0, right = 0, bottom = 0, left = parse_dim(cfg.width, vim.o.columns) }
+    end
+  end
+
+  -- Screen anchor: require visible window before reserving
+  if cfg.anchor ~= "screen" then
     return zero
   end
   if not vim.api.nvim_win_is_valid(preview_state.win) then
     return zero
   end
-
-  local cfg = preview_state.config
-  local pos = cfg.position
   if pos == "right" then
     return { top = 0, right = parse_dim(cfg.width, vim.o.columns), bottom = 0, left = 0 }
   elseif pos == "left" then
@@ -248,14 +268,19 @@ function M._compute_win_config(params)
     local border_size = has_border and 1 or 0
 
     if position == "right" then
-      local w = parse_dim(cfg_width, editor_cols)
+      local start_col = geom.col + geom.width + border_size
+      local avail = editor_cols - start_col
+      if avail < MIN_PREVIEW_COLS then return nil end
+      local w = math.min(parse_dim(cfg_width, editor_cols), avail)
       local h = math.max(1, math.min(geom.height, content_lines))
-      result.col = geom.col + geom.width + border_size
+      result.col = start_col
       result.row = geom.row
       result.width = math.max(1, w - 2)
       result.height = h
     elseif position == "left" then
-      local w = parse_dim(cfg_width, editor_cols)
+      local avail = geom.col - border_size
+      if avail < MIN_PREVIEW_COLS then return nil end
+      local w = math.min(parse_dim(cfg_width, editor_cols), avail)
       local h = math.max(1, math.min(geom.height, content_lines))
       result.col = geom.col - w - border_size
       result.row = geom.row
@@ -263,16 +288,21 @@ function M._compute_win_config(params)
       result.height = h
     elseif position == "top" then
       local h = parse_dim(cfg_height, available_rows)
-      h = math.max(1, math.min(h, content_lines))
+      local avail = geom.row - 2
+      if avail < MIN_PREVIEW_ROWS then return nil end
+      h = math.max(1, math.min(h, content_lines, avail))
       result.col = geom.col
       result.row = geom.row - h - 2
       result.width = math.max(1, geom.width)
       result.height = h
     elseif position == "bottom" then
       local h = parse_dim(cfg_height, available_rows)
-      h = math.max(1, math.min(h, content_lines))
+      local start_row = geom.row + geom.height + border_size + 1
+      local avail = available_rows - start_row - 2
+      if avail < MIN_PREVIEW_ROWS then return nil end
+      h = math.max(1, math.min(h, content_lines, avail))
       result.col = geom.col
-      result.row = geom.row + geom.height + border_size + 1
+      result.row = start_row
       result.width = math.max(1, geom.width)
       result.height = h
     end

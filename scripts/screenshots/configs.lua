@@ -846,6 +846,41 @@ M.configs = {
     noselect = false,
     preview = { position = "bottom", anchor = "popup", height = "40%", border = "rounded" },
   },
+
+  -- Wanted-poster preview configs: palette renderer + popup anchor + wide preview
+  -- that exercises dynamic clamping (preview shrinks to fit remaining space).
+  preview_wanted_right = {
+    category = "preview",
+    label = "Wanted Right",
+    theme = "wanted",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    preview = { position = "right", anchor = "popup", width = "60%", border = "rounded" },
+  },
+  preview_wanted_left = {
+    category = "preview",
+    label = "Wanted Left",
+    theme = "wanted",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    preview = { position = "left", anchor = "popup", width = "60%", border = "rounded" },
+  },
+  preview_wanted_top = {
+    category = "preview",
+    label = "Wanted Top",
+    theme = "wanted",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    preview = { position = "top", anchor = "popup", height = "60%", border = "rounded" },
+  },
+  preview_wanted_bottom = {
+    category = "preview",
+    label = "Wanted Bottom",
+    theme = "wanted",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    preview = { position = "bottom", anchor = "popup", height = "60%", border = "rounded" },
+  },
 }
 
 -- Default VHS command for configs that don't specify one
@@ -878,6 +913,7 @@ M.option_names = {
 M.preview_names = {
   "preview_right_screen", "preview_left_screen", "preview_top_screen", "preview_bottom_screen",
   "preview_right_popup", "preview_left_popup", "preview_top_popup", "preview_bottom_popup",
+  "preview_wanted_right", "preview_wanted_left", "preview_wanted_top", "preview_wanted_bottom",
 }
 
 -- Theme configs (generated)

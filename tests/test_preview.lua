@@ -125,9 +125,38 @@ T["reserved_space()"]["returns all zeros when window not visible"] = function()
   expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
 end
 
-T["reserved_space()"]["returns all zeros for popup anchor"] = function()
+T["reserved_space()"]["popup anchor + right reserves right space"] = function()
   local preview = get_preview()
-  preview.setup({ position = "right", anchor = "popup" })
+  preview.setup({ position = "right", anchor = "popup", width = "50%" })
+  local s = preview.reserved_space()
+  local expected_width = preview._parse_dim("50%", vim.o.columns)
+  expect.equality(s.right, expected_width)
+  expect.equality(s.top, 0)
+  expect.equality(s.bottom, 0)
+  expect.equality(s.left, 0)
+end
+
+T["reserved_space()"]["popup anchor + left reserves left space"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "left", anchor = "popup", width = "50%" })
+  local s = preview.reserved_space()
+  local expected_width = preview._parse_dim("50%", vim.o.columns)
+  expect.equality(s.left, expected_width)
+  expect.equality(s.top, 0)
+  expect.equality(s.bottom, 0)
+  expect.equality(s.right, 0)
+end
+
+T["reserved_space()"]["popup anchor + top returns zeros"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "top", anchor = "popup" })
+  local s = preview.reserved_space()
+  expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
+end
+
+T["reserved_space()"]["popup anchor + bottom returns zeros"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "bottom", anchor = "popup" })
   local s = preview.reserved_space()
   expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
 end
@@ -423,14 +452,14 @@ end
 
 -- ─── Popup anchor: left ────────────────────────────────────────────────────
 
-T["_compute_win_config()"]["popup left: positions before popup"] = function()
+T["_compute_win_config()"]["popup left: width clamped to available space"] = function()
   local preview = get_preview()
   local geom = popup_geom() -- col=30, border=rounded
   local p = preview._compute_win_config(popup_params("left", { geom = geom }))
-  -- w=80, border_size=1, col = 30 - 80 - 1 = -51
-  expect.equality(p.col, -51)
+  -- available = 30 - 1 = 29, w = min(80, 29) = 29
+  expect.equality(p.col, 0) -- 30 - 29 - 1 = 0
   expect.equality(p.row, 20)
-  expect.equality(p.width, 78) -- 80 - 2
+  expect.equality(p.width, 27) -- 29 - 2
 end
 
 T["_compute_win_config()"]["popup left: height shrinks to content"] = function()
@@ -523,11 +552,11 @@ T["_compute_win_config()"]["popup right: 1-line content gets height 1"] = functi
   expect.equality(p.height, 1)
 end
 
-T["_compute_win_config()"]["popup top: content-aware capped by config height"] = function()
+T["_compute_win_config()"]["popup top: content-aware capped by available space"] = function()
   local preview = get_preview()
-  -- height "40%" of 50 available = 20, content = 100
+  -- height "40%" of 50 = 20, content = 100, available = 20 - 2 = 18
   local p = preview._compute_win_config(popup_params("top", { content_lines = 100 }))
-  expect.equality(p.height, 20)
+  expect.equality(p.height, 18) -- clamped to available=18
 end
 
 T["_compute_win_config()"]["popup top: content fewer than config height"] = function()
@@ -675,29 +704,29 @@ T["_compute_win_config()"]["popup right: popup at col 0"] = function()
   expect.equality(p.row, 20)
 end
 
-T["_compute_win_config()"]["popup left: popup at col 0 gives negative col"] = function()
+T["_compute_win_config()"]["popup left: returns nil when popup at col 0"] = function()
   local preview = get_preview()
   local geom = popup_geom({ col = 0, width = 40 })
   local p = preview._compute_win_config(popup_params("left", { geom = geom }))
-  -- col = 0 - 80 - 1 = -81 (Neovim clamps this)
-  expect.equality(p.col < 0, true)
+  -- available = 0 - 1 = -1 < MIN_PREVIEW_COLS → nil
+  expect.equality(p, nil)
 end
 
-T["_compute_win_config()"]["popup top: popup at row 0 gives negative row"] = function()
+T["_compute_win_config()"]["popup top: returns nil when popup at row 0"] = function()
   local preview = get_preview()
   local geom = popup_geom({ row = 0 })
   local p = preview._compute_win_config(popup_params("top", { geom = geom, content_lines = 10 }))
-  -- row = 0 - 10 - 2 = -12
-  expect.equality(p.row < 0, true)
+  -- available = 0 - 2 = -2 < MIN_PREVIEW_ROWS → nil
+  expect.equality(p, nil)
 end
 
-T["_compute_win_config()"]["popup bottom: popup near bottom of screen"] = function()
+T["_compute_win_config()"]["popup bottom: height clamped near bottom of screen"] = function()
   local preview = get_preview()
   local geom = popup_geom({ row = 40, height = 5 })
   local p = preview._compute_win_config(popup_params("bottom", { geom = geom, content_lines = 3 }))
-  -- row = 40 + 5 + 1 + 1 = 47
+  -- start_row = 40 + 5 + 1 + 1 = 47, available = 50 - 47 - 2 = 1
   expect.equality(p.row, 47)
-  expect.equality(p.height, 3)
+  expect.equality(p.height, 1) -- clamped from 3 to available=1
 end
 
 -- ─── _compute_win_config(): popup anchor borderless all positions ───────────
@@ -746,11 +775,98 @@ T["_compute_win_config()"]["popup right: content 0 lines gives height 1"] = func
   expect.equality(p.height, 1) -- math.max(1, min(15, 0))
 end
 
-T["_compute_win_config()"]["popup bottom: content capped by config height"] = function()
+T["_compute_win_config()"]["popup bottom: content capped by available space"] = function()
   local preview = get_preview()
-  -- height "40%" of 50 = 20, content = 500
+  -- height "40%" of 50 = 20, content = 500, start_row = 37, available = 50 - 37 - 2 = 11
   local p = preview._compute_win_config(popup_params("bottom", { content_lines = 500 }))
-  expect.equality(p.height, 20) -- capped at parsed height
+  expect.equality(p.height, 11) -- clamped to available=11
+end
+
+-- ─── Popup anchor: clamping to available screen space ─────────────────────
+
+T["_compute_win_config()"]["popup right: width clamped near right edge"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 170, width = 20 }) -- border=rounded
+  local p = preview._compute_win_config(popup_params("right", { geom = geom }))
+  -- start_col = 170 + 20 + 1 = 191, available = 200 - 191 = 9
+  expect.equality(p.col, 191)
+  expect.equality(p.width, 7) -- min(80, 9) - 2 = 7
+end
+
+T["_compute_win_config()"]["popup right: returns nil when no space"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 180, width = 20 }) -- border=rounded
+  local p = preview._compute_win_config(popup_params("right", { geom = geom }))
+  -- start_col = 180 + 20 + 1 = 201, available = 200 - 201 = -1 < 3 → nil
+  expect.equality(p, nil)
+end
+
+T["_compute_win_config()"]["popup right: exact minimum (3 cols) still shows"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 176, width = 20 }) -- border=rounded
+  local p = preview._compute_win_config(popup_params("right", { geom = geom }))
+  -- start_col = 176 + 20 + 1 = 197, available = 200 - 197 = 3 = MIN_PREVIEW_COLS
+  expect.equality(p.col, 197)
+  expect.equality(p.width, 1) -- min(80, 3) - 2 = 1
+end
+
+T["_compute_win_config()"]["popup right: 2 cols available returns nil"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 177, width = 20 }) -- border=rounded
+  local p = preview._compute_win_config(popup_params("right", { geom = geom }))
+  -- start_col = 177 + 20 + 1 = 198, available = 200 - 198 = 2 < 3 → nil
+  expect.equality(p, nil)
+end
+
+T["_compute_win_config()"]["popup left: moderate space clamped"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 50 }) -- border=rounded
+  local p = preview._compute_win_config(popup_params("left", { geom = geom }))
+  -- available = 50 - 1 = 49, w = min(80, 49) = 49
+  expect.equality(p.col, 0) -- 50 - 49 - 1 = 0
+  expect.equality(p.width, 47) -- 49 - 2
+end
+
+T["_compute_win_config()"]["popup left: exact minimum (3 cols) still shows"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 4 }) -- border=rounded, available = 4 - 1 = 3
+  local p = preview._compute_win_config(popup_params("left", { geom = geom }))
+  expect.equality(p.col, 0) -- 4 - 3 - 1 = 0
+  expect.equality(p.width, 1) -- min(80, 3) - 2 = 1
+end
+
+T["_compute_win_config()"]["popup top: returns nil when popup at row 1"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ row = 1 })
+  local p = preview._compute_win_config(popup_params("top", { geom = geom, content_lines = 10 }))
+  -- available = 1 - 2 = -1 < MIN_PREVIEW_ROWS → nil
+  expect.equality(p, nil)
+end
+
+T["_compute_win_config()"]["popup top: exact minimum (1 row) still shows"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ row = 3 })
+  local p = preview._compute_win_config(popup_params("top", { geom = geom, content_lines = 100 }))
+  -- available = 3 - 2 = 1 = MIN_PREVIEW_ROWS
+  expect.equality(p.row, 0) -- 3 - 1 - 2 = 0
+  expect.equality(p.height, 1) -- min(20, 100, 1) = 1
+end
+
+T["_compute_win_config()"]["popup bottom: returns nil when no space"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ row = 45, height = 3 }) -- border=rounded
+  local p = preview._compute_win_config(popup_params("bottom", { geom = geom, content_lines = 5 }))
+  -- start_row = 45 + 3 + 1 + 1 = 50, available = 50 - 50 - 2 = -2 < 1 → nil
+  expect.equality(p, nil)
+end
+
+T["_compute_win_config()"]["popup bottom: exact minimum (1 row) still shows"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ row = 40, height = 5 }) -- border=rounded
+  -- start_row = 40 + 5 + 1 + 1 = 47, available = 50 - 47 - 2 = 1
+  local p = preview._compute_win_config(popup_params("bottom", { geom = geom, content_lines = 100 }))
+  expect.equality(p.row, 47)
+  expect.equality(p.height, 1) -- min(20, 100, 1) = 1
 end
 
 T["_compute_win_config()"]["popup left: content exactly matches popup height"] = function()

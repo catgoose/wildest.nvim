@@ -1759,7 +1759,80 @@ preview = {
 </code></pre>
 </details>
 </td>
-<td></td>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B118%5D%20preview_wanted_right&body=%2A%2AScreenshot%20index%3A%2A%2A%20118%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_right%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[118]</a> Wanted Right</strong><br>
+<em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview right popup, :e lua/wildest/renderer/components/</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_wanted_right.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e lua/wildest/renderer/components/",
+theme = "wanted",
+noselect = false,
+preview = {
+  anchor = "popup",
+  border = "rounded",
+  position = "right",
+  width = "60%",
+},
+</code></pre>
+</details>
+</td>
+</tr>
+<tr>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B119%5D%20preview_wanted_left&body=%2A%2AScreenshot%20index%3A%2A%2A%20119%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_left%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[119]</a> Wanted Left</strong><br>
+<em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview left popup, :e lua/wildest/renderer/components/</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_wanted_left.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e lua/wildest/renderer/components/",
+theme = "wanted",
+noselect = false,
+preview = {
+  anchor = "popup",
+  border = "rounded",
+  position = "left",
+  width = "60%",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B120%5D%20preview_wanted_top&body=%2A%2AScreenshot%20index%3A%2A%2A%20120%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_top%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[120]</a> Wanted Top</strong><br>
+<em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview top popup, :e lua/wildest/renderer/components/</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_wanted_top.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e lua/wildest/renderer/components/",
+theme = "wanted",
+noselect = false,
+preview = {
+  anchor = "popup",
+  border = "rounded",
+  height = "60%",
+  position = "top",
+},
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B121%5D%20preview_wanted_bottom&body=%2A%2AScreenshot%20index%3A%2A%2A%20121%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_bottom%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[121]</a> Wanted Bottom</strong><br>
+<em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview bottom popup, :e lua/wildest/renderer/components/</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/preview_wanted_bottom.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e lua/wildest/renderer/components/",
+theme = "wanted",
+noselect = false,
+preview = {
+  anchor = "popup",
+  border = "rounded",
+  height = "60%",
+  position = "bottom",
+},
+</code></pre>
+</details>
+</td>
 </tr>
 </table>
 <!-- gen:preview_gallery_test:end -->
