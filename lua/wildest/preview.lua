@@ -173,7 +173,7 @@ end
 
 --- Returns space reserved on each edge `{top, right, bottom, left}`.
 --- Non-zero for screen anchor (when window visible) and popup anchor
---- with left/right position (so drawer-style popups shrink to fit).
+--- (so popups shrink to fit the preview).
 ---@return {top: integer, right: integer, bottom: integer, left: integer}
 function M.reserved_space()
   local zero = { top = 0, right = 0, bottom = 0, left = 0 }
@@ -184,15 +184,24 @@ function M.reserved_space()
   local cfg = preview_state.config
   local pos = cfg.position
 
-  -- Popup anchor + left/right: reserve horizontal space so the popup
-  -- shrinks to make room (e.g. full-width drawer menus).
+  -- Popup anchor: reserve space so the popup shrinks to make room.
   -- Skip window-validity check: popup-anchor preview is drawn AFTER the
   -- renderer, so the window doesn't exist yet when this is called.
-  if cfg.anchor == "popup" and (pos == "left" or pos == "right") then
+  if cfg.anchor == "popup" then
     if pos == "right" then
       return { top = 0, right = parse_dim(cfg.width, vim.o.columns), bottom = 0, left = 0 }
-    else
+    elseif pos == "left" then
       return { top = 0, right = 0, bottom = 0, left = parse_dim(cfg.width, vim.o.columns) }
+    elseif pos == "top" then
+      local height = vim.o.lines
+      local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+      local available_rows = height - reserved - 1
+      return { top = parse_dim(cfg.height, available_rows), right = 0, bottom = 0, left = 0 }
+    elseif pos == "bottom" then
+      local height = vim.o.lines
+      local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+      local available_rows = height - reserved - 1
+      return { top = 0, right = 0, bottom = parse_dim(cfg.height, available_rows), left = 0 }
     end
   end
 

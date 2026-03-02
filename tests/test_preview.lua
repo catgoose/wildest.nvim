@@ -147,18 +147,32 @@ T["reserved_space()"]["popup anchor + left reserves left space"] = function()
   expect.equality(s.right, 0)
 end
 
-T["reserved_space()"]["popup anchor + top returns zeros"] = function()
+T["reserved_space()"]["popup anchor + top reserves top space"] = function()
   local preview = get_preview()
-  preview.setup({ position = "top", anchor = "popup" })
+  preview.setup({ position = "top", anchor = "popup", height = "40%" })
   local s = preview.reserved_space()
-  expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
+  local height = vim.o.lines
+  local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+  local available_rows = height - reserved - 1
+  local expected_height = preview._parse_dim("40%", available_rows)
+  expect.equality(s.top, expected_height)
+  expect.equality(s.right, 0)
+  expect.equality(s.bottom, 0)
+  expect.equality(s.left, 0)
 end
 
-T["reserved_space()"]["popup anchor + bottom returns zeros"] = function()
+T["reserved_space()"]["popup anchor + bottom reserves bottom space"] = function()
   local preview = get_preview()
-  preview.setup({ position = "bottom", anchor = "popup" })
+  preview.setup({ position = "bottom", anchor = "popup", height = "40%" })
   local s = preview.reserved_space()
-  expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
+  local height = vim.o.lines
+  local reserved = vim.o.cmdheight + (vim.o.laststatus > 0 and 1 or 0)
+  local available_rows = height - reserved - 1
+  local expected_height = preview._parse_dim("40%", available_rows)
+  expect.equality(s.bottom, expected_height)
+  expect.equality(s.top, 0)
+  expect.equality(s.right, 0)
+  expect.equality(s.left, 0)
 end
 
 T["reserved_space()"]["returns all zeros when toggled off"] = function()
