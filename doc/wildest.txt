@@ -1385,6 +1385,19 @@ M.parse_margin({margin}, {total}, {content_size})
         (integer)
 
 
+                                              *wildest.renderer.calculate_width*
+M.calculate_width({max_width}, {min_width}, {available})
+     Calculate clamped content width from max/min/available dimensions.
+
+    Parameters: ~
+        {max_width}  (any)      max_width option (int, percent string, or nil)
+        {min_width}  (any)      min_width option (int, percent string)
+        {available}  (integer)  available editor width
+
+    Returns: ~
+        (integer)
+
+
 M.component_display_width({comp})     *wildest.renderer.component_display_width*
      Return display width estimate for a single component (for layout).
 
