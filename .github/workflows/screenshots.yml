@@ -4,14 +4,6 @@ on:
   workflow_dispatch:
   push:
     branches: [main]
-    paths:
-      - "scripts/screenshots/**"
-      - "lua/wildest/themes/**"
-  pull_request:
-    branches: [main]
-    paths:
-      - "scripts/screenshots/**"
-      - "lua/wildest/themes/**"
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
