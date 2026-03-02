@@ -126,10 +126,7 @@ function M.new(opts)
     end
 
     -- Get the candidate
-    local candidate = ""
-    if ctx.result and ctx.result.value and ctx.index ~= nil then
-      candidate = ctx.result.value[ctx.index + 1] or ""
-    end
+    local candidate = BaseComponent.get_candidate(ctx)
 
     if candidate == "" then
       return { { "", hl } }
