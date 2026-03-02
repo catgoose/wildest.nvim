@@ -95,6 +95,17 @@ function M.parse_margin(margin, total, content_size)
   return 0
 end
 
+--- Calculate clamped content width from max/min/available dimensions.
+---@param max_width any max_width option (int, percent string, or nil)
+---@param min_width any min_width option (int, percent string)
+---@param available integer available editor width
+---@return integer
+function M.calculate_width(max_width, min_width, available)
+  local max_w = max_width and M.parse_dimension(max_width, available) or available
+  local min_w = M.parse_dimension(min_width, available)
+  return math.max(min_w, math.min(max_w, available))
+end
+
 --- Return display width estimate for a single component (for layout).
 ---@param comp string|table
 ---@return integer

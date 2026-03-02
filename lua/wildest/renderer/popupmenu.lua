@@ -30,40 +30,23 @@ function Popupmenu:render(ctx, result)
   local state = self._state
   renderer_util.ensure_buf(state, "wildest_popupmenu")
 
-  local candidates = result.value or {}
-  local total = #candidates
+  local total = #(result.value or {})
 
   renderer_util.check_run_id(state, ctx)
 
-  local page_start, page_end =
-    renderer_util.make_page(ctx.selected, total, state.max_height, state.page)
-  state.page = { page_start, page_end }
-
-  local show_empty = total == 0 and state.empty_message
-  if not show_empty and (page_start == -1 or total == 0) then
-    self:hide()
+  local page_start, page_end, show_empty = self:paginate(ctx, total, state.max_height)
+  if not page_start then
     return
   end
 
   local row, col, editor_width, avail = renderer_util.default_position(state.offset)
-  local max_w = state.max_width and renderer_util.parse_dimension(state.max_width, editor_width)
-    or editor_width
-  local min_w = renderer_util.parse_dimension(state.min_width, editor_width)
-  local width = math.max(min_w, math.min(max_w, editor_width))
+  local width = renderer_util.calculate_width(state.max_width, state.min_width, editor_width)
 
   local lines = {}
   local line_highlights = {}
 
   if show_empty then
-    local msg = state.empty_message
-    local msg_w = vim.api.nvim_strwidth(msg)
-    local pad_w = width - msg_w
-    if pad_w < 0 then
-      pad_w = 0
-    end
-    local empty_line = msg .. string.rep(" ", pad_w)
-    table.insert(lines, empty_line)
-    table.insert(line_highlights, { spans = {}, base_hl = state.highlights.default })
+    lines, line_highlights = self:render_empty_message(width)
   end
 
   local cand_lines, cand_hls = self:render_candidates(result, ctx, page_start, page_end, width)

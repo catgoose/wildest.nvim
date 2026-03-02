@@ -17,6 +17,37 @@ function BasePopupmenu:hide()
   renderer_util.hide_win(self._state)
 end
 
+--- Paginate candidates and determine whether to show the empty message.
+--- Returns nil for page_start/page_end when the renderer should hide and return.
+---@param ctx table render context
+---@param total integer number of candidates
+---@param max_height integer maximum visible lines
+---@return integer|nil page_start, integer|nil page_end, boolean show_empty
+function BasePopupmenu:paginate(ctx, total, max_height)
+  local state = self._state
+  local page_start, page_end = renderer_util.make_page(ctx.selected, total, max_height, state.page)
+  state.page = { page_start, page_end }
+
+  local show_empty = total == 0 and state.empty_message
+  if not show_empty and (page_start == -1 or total == 0) then
+    self:hide()
+    return nil, nil, false
+  end
+  return page_start, page_end, show_empty
+end
+
+--- Render the empty_message line (padded to width).
+---@param width integer content width
+---@return string[] lines, table[] line_highlights
+function BasePopupmenu:render_empty_message(width)
+  local state = self._state
+  local msg = state.empty_message
+  local msg_w = vim.api.nvim_strwidth(msg)
+  local pad_w = math.max(0, width - msg_w)
+  local line = msg .. string.rep(" ", pad_w)
+  return { line }, { { spans = {}, base_hl = state.highlights.default } }
+end
+
 --- Render candidates into lines and line_highlights arrays
 ---@param result table pipeline result
 ---@param ctx table render context
@@ -116,6 +147,16 @@ function BasePopupmenu:resolve_title()
     title = title(vim.fn.getcmdtype())
   end
   return title
+end
+
+--- Apply a resolved title to a win_config table (for bordered renderers).
+---@param win_config table floating window config
+function BasePopupmenu:apply_title(win_config)
+  local title = self:resolve_title()
+  if title then
+    win_config.title = { { string.format(" %s ", title), self._state.border.native_hl } }
+    win_config.title_pos = "center"
+  end
 end
 
 return BasePopupmenu

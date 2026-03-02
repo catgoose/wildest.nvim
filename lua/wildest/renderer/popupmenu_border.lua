@@ -42,44 +42,24 @@ function PopupmenuBorder:render(ctx, result)
   local state = self._state
   renderer_util.ensure_buf(state, "wildest_popupmenu_border")
 
-  local candidates = result.value or {}
-  local total = #candidates
+  local total = #(result.value or {})
 
   renderer_util.check_run_id(state, ctx)
 
   local row, col, editor_width, avail = renderer_util.default_position(state.offset)
-  local editor_lines = vim.o.lines
+  local max_h = renderer_util.parse_dimension(state.max_height, vim.o.lines)
 
-  local max_h = renderer_util.parse_dimension(state.max_height, editor_lines)
-
-  local page_start, page_end = renderer_util.make_page(ctx.selected, total, max_h, state.page)
-  state.page = { page_start, page_end }
-
-  local show_empty = total == 0 and state.empty_message
-  if not show_empty and (page_start == -1 or total == 0) then
-    self:hide()
+  local page_start, page_end, show_empty = self:paginate(ctx, total, max_h)
+  if not page_start then
     return
   end
 
-  local max_w = state.max_width and renderer_util.parse_dimension(state.max_width, editor_width)
-    or editor_width
-  local min_w = renderer_util.parse_dimension(state.min_width, editor_width)
-  local outer_width = math.max(min_w, math.min(max_w, editor_width))
+  local outer_width = renderer_util.calculate_width(state.max_width, state.min_width, editor_width)
   local content_width = outer_width
 
   local lines, line_highlights
   if show_empty then
-    lines = {}
-    line_highlights = {}
-    local msg = state.empty_message
-    local msg_w = vim.api.nvim_strwidth(msg)
-    local pad_w = content_width - msg_w
-    if pad_w < 0 then
-      pad_w = 0
-    end
-    local empty_line = msg .. string.rep(" ", pad_w)
-    table.insert(lines, empty_line)
-    table.insert(line_highlights, { spans = {}, base_hl = state.highlights.default })
+    lines, line_highlights = self:render_empty_message(content_width)
   else
     lines, line_highlights =
       self:render_candidates(result, ctx, page_start, page_end, content_width)
@@ -124,11 +104,7 @@ function PopupmenuBorder:render(ctx, result)
     focusable = false,
     noautocmd = true,
   }
-  local title = self:resolve_title()
-  if title then
-    win_config.title = { { string.format(" %s ", title), state.border.native_hl } }
-    win_config.title_pos = "center"
-  end
+  self:apply_title(win_config)
   renderer_util.open_or_update_win(state, win_config)
 end
 

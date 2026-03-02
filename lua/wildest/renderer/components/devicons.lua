@@ -20,10 +20,7 @@ function M.new(opts)
   local component = setmetatable({}, { __index = BaseComponent })
 
   function component:render(ctx)
-    local candidate = ""
-    if ctx.result and ctx.result.value and ctx.index ~= nil then
-      candidate = ctx.result.value[ctx.index + 1] or ""
-    end
+    local candidate = BaseComponent.get_candidate(ctx)
 
     if not has_devicons then
       return { { string.format("%s ", default_icon), default_hl } }
