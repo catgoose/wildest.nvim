@@ -3,7 +3,6 @@
 ---Horizontal wildmenu renderer.
 ---@brief ]]
 
-local cache_mod = require("wildest.cache")
 local hl_mod = require("wildest.highlight")
 local renderer_util = require("wildest.renderer")
 local util = require("wildest.util")
@@ -18,7 +17,7 @@ local M = {}
 ---@param sep_width integer
 ---@param current_page table
 ---@return integer start, integer finish
-local function make_page(selected, total, candidates, avail_width, sep_width, current_page)
+local function make_page(selected, total, candidates, avail_width, sep_width)
   if total == 0 then
     return -1, -1
   end
@@ -97,7 +96,6 @@ function M.new(opts)
     ns_id = -1,
     page = { -1, -1 },
     run_id = -1,
-    draw_cache = cache_mod.dict_cache(),
   }
 
   -- Create accent highlights
@@ -139,8 +137,7 @@ function M.new(opts)
     local avail_width = editor_width - left_width - right_width
 
     -- Compute page
-    local page_start, page_end =
-      make_page(ctx.selected, total, candidates, avail_width, sep_width, state.page)
+    local page_start, page_end = make_page(ctx.selected, total, candidates, avail_width, sep_width)
     state.page = { page_start, page_end }
 
     if page_start == -1 then
@@ -149,10 +146,7 @@ function M.new(opts)
     end
 
     -- Get query for highlighting
-    local query = ""
-    if result.data then
-      query = result.data.query or result.data.arg or result.data.input or ""
-    end
+    local query = renderer_util.get_query(result)
 
     -- Build the line as chunks
     local chunks = {}
@@ -245,10 +239,11 @@ function M.new(opts)
     end
 
     -- Build single line from chunks
-    local line = ""
-    for _, chunk in ipairs(chunks) do
-      line = line .. chunk[1]
+    local line_parts = {}
+    for i, chunk in ipairs(chunks) do
+      line_parts[i] = chunk[1]
     end
+    local line = table.concat(line_parts)
 
     -- Set buffer
     vim.api.nvim_buf_set_lines(state.buf, 0, -1, false, { line })

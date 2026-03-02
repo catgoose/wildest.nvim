@@ -19,8 +19,6 @@
 
 ---@toc wildest-contents
 
----@class wildest
----@field setup fun(opts: wildest.Config)
 local branch_mod = require("wildest.pipeline.branch")
 local check_mod = require("wildest.pipeline.check")
 local config = require("wildest.config")
@@ -669,7 +667,7 @@ function M.theme(name)
   local themes = require("wildest.themes")
   local t = themes[name]
   if not t then
-    vim.notify("[wildest] Unknown theme: " .. name, vim.log.levels.WARN)
+    vim.notify(string.format("[wildest] Unknown theme: %s", name), vim.log.levels.WARN)
     return themes.default
   end
   return t

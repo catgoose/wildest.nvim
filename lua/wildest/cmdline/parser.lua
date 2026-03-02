@@ -142,13 +142,7 @@ local function resolve_expand_type(cmd)
   end
 
   -- User-defined commands (start with uppercase)
-  -- Use Vim's command-complete attribute to determine the type (#159)
   if cmd:sub(1, 1):match("[A-Z]") then
-    -- Try to get the command's completion type from Vim
-    local ok, info = pcall(vim.api.nvim_parse_cmd, cmd .. " ", {})
-    if ok and info and info.nargs then
-      -- Fall through to file completion as a sensible default
-    end
     return commands.EXPAND.CUSTOM
   end
 

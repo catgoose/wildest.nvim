@@ -19,7 +19,8 @@ local default_weights = {
 --- Get the data file path
 ---@return string
 function M.path()
-  return vim.fn.stdpath("data") .. "/wildest_frecency.json"
+  local dir = vim.fn.stdpath("data") ---@type string
+  return string.format("%s/wildest_frecency.json", dir)
 end
 
 --- Load frecency data from disk

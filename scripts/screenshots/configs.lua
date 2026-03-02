@@ -41,9 +41,9 @@ function M.setup(root)
   vim.o.incsearch = true
   vim.o.hlsearch = true
 
-  local ok = pcall(vim.cmd, "colorscheme kanagawa")
+  local ok = pcall(vim.cmd.colorscheme, "kanagawa")
   if not ok then
-    vim.cmd("colorscheme habamax")
+    vim.cmd.colorscheme("habamax")
   end
 
   M._has_devicons = pcall(require, "nvim-web-devicons")
@@ -1315,9 +1315,8 @@ end
 
 --- Emit the `require('wildest').setup({...})` body for a config table.
 ---@param cfg table  scene or resolved config
----@param lines string[]
 ---@param add fun(s: string)
-local function setup_block_lines(cfg, lines, add)
+local function setup_block_lines(cfg, add)
   add("require('wildest').setup({")
 
   -- Core fields
@@ -1434,7 +1433,7 @@ function M.scene_to_lines(scene, index, total)
   add("-- " .. string.rep("─", 50))
   add("")
 
-  setup_block_lines(scene, lines, add)
+  setup_block_lines(scene, add)
 
   for _, line in ipairs(sample_lua_lines) do
     add(line)
@@ -1605,7 +1604,7 @@ function M.config_to_lines(name)
   add("-- " .. string.rep("─", 50))
   add("")
 
-  setup_block_lines(cfg, lines, add)
+  setup_block_lines(cfg, add)
 
   for _, line in ipairs(sample_lua_lines) do
     add(line)
@@ -1809,8 +1808,8 @@ function M.build(name_or_cfg, w)
 
   -- Randomize theme for GIF scenes (no category) that inherit theme:auto
   if not merged.category and merged.renderer == "theme:auto" then
-    local pick = M._random_themes[math.random(#M._random_themes)]
-    merged.renderer = "theme:" .. pick
+    local theme = M._random_themes[math.random(#M._random_themes)]
+    merged.renderer = "theme:" .. theme
   end
 
   -- Custom highlights: apply them, skip accent highlights
@@ -1916,7 +1915,7 @@ function M.screenshot_init(config_name)
       "tests/test_cache.lua",
     }
     for _, name in ipairs(dummy_names) do
-      vim.cmd("badd " .. name)
+      vim.cmd.badd(name)
     end
   end
 

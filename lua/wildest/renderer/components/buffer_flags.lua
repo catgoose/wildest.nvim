@@ -61,7 +61,7 @@ function M.new(opts)
     end
 
     if flag == "%" then
-      if bufnr == vim.fn.bufnr("%") then
+      if bufnr == vim.api.nvim_get_current_buf() then
         return icons["%"]
       end
       return " "
@@ -141,7 +141,7 @@ function M.new(opts)
     end
 
     -- Try to find the buffer
-    local expanded = vim.fn.fnamemodify(candidate, ":p")
+    local expanded = vim.fn.fnamemodify(candidate, ":p") ---@type string
     local bufnr = vim.fn.bufnr(expanded)
 
     if bufnr == -1 then
@@ -156,11 +156,11 @@ function M.new(opts)
     end
 
     -- Build flags string
-    local result = ""
+    local flag_parts = {}
     for i = 1, #flags_str do
-      local flag = flags_str:sub(i, i)
-      result = result .. get_flag(flag, bufnr)
+      flag_parts[i] = get_flag(flags_str:sub(i, i), bufnr)
     end
+    local result = table.concat(flag_parts)
 
     cache[candidate] = result
     return { { result, hl } }

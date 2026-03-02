@@ -23,10 +23,19 @@ function M.log(source, event, data)
 
   -- Auto-flush periodically via timer (works during cmdline mode)
   if not _flush_timer then
-    _flush_timer = vim.fn.timer_start(500, function()
-      _flush_timer = nil
-      M.flush()
-    end)
+    _flush_timer = vim.uv.new_timer() ---@type uv.uv_timer_t
+    _flush_timer:start(
+      500,
+      0,
+      vim.schedule_wrap(function()
+        if _flush_timer and not _flush_timer:is_closing() then
+          _flush_timer:stop()
+          _flush_timer:close()
+        end
+        _flush_timer = nil
+        M.flush()
+      end)
+    )
   end
 end
 
@@ -63,7 +72,8 @@ end
 --- Get the log file path
 ---@return string
 function M.path()
-  return vim.fn.stdpath("log") .. "/wildest.jsonl"
+  local dir = vim.fn.stdpath("log") ---@type string
+  return string.format("%s/wildest.jsonl", dir)
 end
 
 return M

@@ -67,7 +67,7 @@ function M.format()
   for _, p in ipairs(_profiles) do
     local line = string.format("  %-30s %6.2f ms", p.name, p.elapsed_ms)
     if p.input_count and p.output_count then
-      line = line .. string.format("  (%d → %d)", p.input_count, p.output_count)
+      line = string.format("%s  (%d → %d)", line, p.input_count, p.output_count)
     end
     table.insert(lines, line)
     total = total + p.elapsed_ms

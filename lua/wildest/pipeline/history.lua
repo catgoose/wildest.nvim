@@ -3,8 +3,6 @@
 ---Command and search history completion.
 ---@brief ]]
 
-local util = require("wildest.util")
-
 local M = {}
 
 --- Create a command/search history pipeline step

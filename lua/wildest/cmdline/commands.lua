@@ -4,8 +4,28 @@
 
 local M = {}
 
--- Expand type constants
-M.EXPAND = {
+--- Freeze a table: read-only with error on unknown key access.
+--- Used for enum-style constant tables where every access should hit a known key.
+---@param t table
+---@param name string table name for error messages
+---@return table frozen proxy
+local function freeze(t, name)
+  return setmetatable({}, {
+    __index = function(_, k)
+      local v = t[k]
+      if v == nil then
+        error(string.format("[wildest] Invalid %s key: %s", name, tostring(k)), 2)
+      end
+      return v
+    end,
+    __newindex = function(_, k)
+      error(string.format("[wildest] Cannot modify frozen %s (key: %s)", name, tostring(k)), 2)
+    end,
+  })
+end
+
+-- Expand type constants (frozen: errors on typos and prevents mutation)
+M.EXPAND = freeze({
   NOTHING = "nothing",
   COMMAND = "command",
   FILE = "file",
@@ -33,12 +53,11 @@ M.EXPAND = {
   SIGN = "sign",
   MESSAGES = "messages",
   HISTORY = "history",
-  MAPCLEAR = "mapclear",
   ARGLIST = "arglist",
   CHECKHEALTH = "checkhealth",
   SYNTAX = "syntax",
   CUSTOM = "custom",
-}
+}, "EXPAND")
 
 local E = M.EXPAND
 

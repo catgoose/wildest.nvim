@@ -45,7 +45,7 @@ function M.lua_pipeline(opts)
       local base = expr:match("^(.*%.)") or ""
       if base ~= "" then
         for i, r in ipairs(results) do
-          results[i] = base .. r
+          results[i] = string.format("%s%s", base, r)
         end
       end
       return util.take(results, max_results)
@@ -78,7 +78,7 @@ function M.lua_pipeline(opts)
           if base == "_G" then
             table.insert(completions, key)
           else
-            table.insert(completions, base .. "." .. key)
+            table.insert(completions, string.format("%s.%s", base, key))
           end
         end
       end

@@ -40,7 +40,7 @@ function M.debounce(interval)
         end
       end
 
-      timer = vim.uv.new_timer()
+      timer = vim.uv.new_timer() ---@type uv.uv_timer_t
       active_timers[timer] = true
       timer:start(
         interval,

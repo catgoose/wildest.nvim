@@ -96,7 +96,10 @@ function M.setup(opts)
   -- Validate modes
   for _, mode in ipairs(M._config.modes) do
     if mode ~= ":" and mode ~= "/" and mode ~= "?" then
-      vim.notify("[wildest] Invalid mode: " .. mode .. ". Must be :, / or ?", vim.log.levels.WARN)
+      vim.notify(
+        string.format("[wildest] Invalid mode: %s. Must be :, / or ?", mode),
+        vim.log.levels.WARN
+      )
     end
   end
 
