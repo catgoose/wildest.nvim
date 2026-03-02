@@ -34,7 +34,7 @@ function M.new(opts)
     end
     frame_idx = 1
     started_at = vim.uv.now()
-    timer = vim.uv.new_timer()
+    timer = vim.uv.new_timer() ---@type uv.uv_timer_t
     timer:start(
       delay,
       interval,

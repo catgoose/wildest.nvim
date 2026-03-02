@@ -13,19 +13,7 @@ local Popupmenu = setmetatable({}, { __index = BasePopupmenu })
 Popupmenu.__index = Popupmenu
 
 --- Create a new popupmenu renderer
----@param opts? table
----@field highlighter? table Highlighter for match accents
----@field left? table Left components (default { " " })
----@field right? table Right components (default { " " })
----@field max_height? integer Maximum number of visible lines (default 16)
----@field min_height? integer Minimum number of visible lines (default 0)
----@field max_width? integer|string|nil Maximum width, integer or percentage (default nil = full width)
----@field min_width? integer|string Minimum width, integer or percentage (default 16)
----@field reverse? boolean Reverse candidate order (default false)
----@field fixed_height? boolean Pad to max_height to prevent resizing (default true)
----@field empty_message? string Message shown when there are no results
----@field pumblend? integer Window transparency 0-100
----@field zindex? integer Floating window z-index (default 250)
+---@param opts? wildest.PopupmenuOpts
 ---@return table renderer object
 function M.new(opts)
   opts = opts or {}

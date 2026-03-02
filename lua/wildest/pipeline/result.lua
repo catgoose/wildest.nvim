@@ -8,7 +8,7 @@ local M = {}
 --- Wrap pipeline output into a result table
 --- The result table has { value = candidates, data = metadata }
 ---@param opts? table { data?: table, output?: fun(ctx,x,data):string }
----@return fun(ctx: table, x: any): table
+---@return fun(ctx: table, x: any): table|false
 function M.result(opts)
   opts = opts or {}
 
@@ -40,7 +40,7 @@ function M.result(opts)
     elseif data.arg ~= nil then
       result.output = function(d, candidate)
         local prefix = d.input:sub(1, #d.input - #d.arg)
-        return prefix .. candidate
+        return string.format("%s%s", prefix, candidate)
       end
     end
 

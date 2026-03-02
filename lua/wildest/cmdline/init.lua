@@ -7,7 +7,6 @@ local cache = require("wildest.cache")
 local commands = require("wildest.cmdline.commands")
 local completions = require("wildest.cmdline.completions")
 local parser = require("wildest.cmdline.parser")
-local pipeline_mod = require("wildest.pipeline")
 
 local M = {}
 
@@ -121,9 +120,9 @@ function M.cmdline_pipeline(opts)
         -- Replace the arg portion of the input with the candidate
         if arg ~= "" then
           local prefix = input:sub(1, #input - #arg)
-          return prefix .. candidate
+          return string.format("%s%s", prefix, candidate)
         end
-        return input .. candidate
+        return string.format("%s%s", input, candidate)
       end
     elseif ctx.expand == E.COMMAND then
       -- For command completions, just use the command name
@@ -137,9 +136,9 @@ function M.cmdline_pipeline(opts)
         local arg = rdata.arg or ""
         if arg ~= "" then
           local prefix = input:sub(1, #input - #arg)
-          return prefix .. candidate
+          return string.format("%s%s", prefix, candidate)
         end
-        return input .. candidate
+        return string.format("%s%s", input, candidate)
       end
     end
 

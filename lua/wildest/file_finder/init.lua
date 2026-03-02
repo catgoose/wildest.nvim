@@ -39,7 +39,7 @@ local function build_cmd(base_cmd, query)
       table.insert(cmd, query)
     elseif cmd[1] == "find" then
       -- Replace the default find args with a name filter
-      cmd = { "find", ".", "-type", "f", "-name", "*" .. query .. "*" }
+      cmd = { "find", ".", "-type", "f", "-name", string.format("*%s*", query) }
     end
     -- rg --files doesn't support a filename filter; post-filter handles it
   end
@@ -128,7 +128,10 @@ function M.file_finder_pipeline(opts)
           end
 
           if res.code ~= 0 and res.code ~= 1 then
-            pipeline_mod.reject(finder_ctx, "file finder failed: " .. (res.stderr or ""))
+            pipeline_mod.reject(
+              finder_ctx,
+              string.format("file finder failed: %s", res.stderr or "")
+            )
             return
           end
 

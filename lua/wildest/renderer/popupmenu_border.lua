@@ -14,22 +14,7 @@ local PopupmenuBorder = setmetatable({}, { __index = BasePopupmenu })
 PopupmenuBorder.__index = PopupmenuBorder
 
 --- Create a bordered popupmenu renderer
----@param opts? table
----@field border? string|table Border style preset or 8-char array (default "single")
----@field title? string Title centered in the top border
----@field highlighter? table Highlighter for match accents
----@field left? table Left components (default { " " })
----@field right? table Right components (default { " " })
----@field max_height? integer|string Max visible lines, integer or percentage (default 16)
----@field min_height? integer Minimum visible lines (default 0)
----@field max_width? integer|string|nil Max width, integer or percentage (default nil = full width)
----@field min_width? integer|string Minimum width, integer or percentage (default 16)
----@field reverse? boolean Reverse candidate order (default false)
----@field fixed_height? boolean Pad to max_height to prevent resizing (default true)
----@field position? string Vertical placement: "top", "center", or "bottom" (default "bottom")
----@field empty_message? string Message shown when there are no results
----@field pumblend? integer Window transparency 0-100
----@field zindex? integer Floating window z-index (default 250)
+---@param opts? wildest.PopupmenuBorderOpts
 ---@return table renderer object
 function M.new(opts)
   opts = opts or {}
@@ -141,7 +126,7 @@ function PopupmenuBorder:render(ctx, result)
   }
   local title = self:resolve_title()
   if title then
-    win_config.title = { { " " .. title .. " ", state.border.native_hl } }
+    win_config.title = { { string.format(" %s ", title), state.border.native_hl } }
     win_config.title_pos = "center"
   end
   renderer_util.open_or_update_win(state, win_config)

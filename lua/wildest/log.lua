@@ -63,7 +63,8 @@ end
 --- Get the log file path
 ---@return string
 function M.path()
-  return vim.fn.stdpath("log") .. "/wildest.jsonl"
+  local dir = vim.fn.stdpath("log") ---@type string
+  return string.format("%s/wildest.jsonl", dir)
 end
 
 return M

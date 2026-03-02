@@ -26,12 +26,12 @@ function M.new(opts)
     end
 
     if not has_devicons then
-      return { { default_icon .. " ", default_hl } }
+      return { { string.format("%s ", default_icon), default_hl } }
     end
 
     -- Extract filename/extension
-    local filename = vim.fn.fnamemodify(candidate, ":t")
-    local ext = vim.fn.fnamemodify(candidate, ":e")
+    local filename = vim.fn.fnamemodify(candidate, ":t") ---@type string
+    local ext = vim.fn.fnamemodify(candidate, ":e") ---@type string
 
     local icon, icon_hl = devicons.get_icon(filename, ext, { default = true })
     if not icon then
@@ -39,7 +39,7 @@ function M.new(opts)
       icon_hl = default_hl
     end
 
-    return { { icon .. " ", icon_hl or default_hl } }
+    return { { string.format("%s ", icon), icon_hl or default_hl } }
   end
 
   return component

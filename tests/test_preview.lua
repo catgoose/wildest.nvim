@@ -1,3 +1,4 @@
+---@diagnostic disable: need-check-nil
 local MiniTest = require("mini.test")
 local new_set = MiniTest.new_set
 local expect = MiniTest.expect

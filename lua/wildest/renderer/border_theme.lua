@@ -59,9 +59,9 @@ local function make_border_line(chars, width, which, title)
       local right_fill = string.rep(mid_char, right_count)
       local remaining = right_fill_w - (right_count * mid_w)
       if remaining > 0 then
-        right_fill = right_fill .. string.rep(" ", remaining)
+        right_fill = string.format("%s%s", right_fill, string.rep(" ", remaining))
       end
-      return left_char .. left_fill .. padded_title .. right_fill .. right_char
+      return string.format("%s%s%s%s%s", left_char, left_fill, padded_title, right_fill, right_char)
     end
   end
 
@@ -69,10 +69,10 @@ local function make_border_line(chars, width, which, title)
   local mid_str = string.rep(mid_char, mid_count)
   local remaining = fill_width - (mid_count * mid_w)
   if remaining > 0 then
-    mid_str = mid_str .. string.rep(" ", remaining)
+    mid_str = string.format("%s%s", mid_str, string.rep(" ", remaining))
   end
 
-  return left_char .. mid_str .. right_char
+  return string.format("%s%s%s", left_char, mid_str, right_char)
 end
 
 --- Build a prompt border line (separator between prompt and results)
@@ -97,10 +97,10 @@ local function make_prompt_border_line(prompt_border, width)
   local mid_str = string.rep(mid_char, mid_count)
   local remaining = fill_width - (mid_count * mid_w)
   if remaining > 0 then
-    mid_str = mid_str .. string.rep(" ", remaining)
+    mid_str = string.format("%s%s", mid_str, string.rep(" ", remaining))
   end
 
-  return left_char .. mid_str .. right_char
+  return string.format("%s%s%s", left_char, mid_str, right_char)
 end
 
 --- Wrap a popupmenu renderer with border decorations

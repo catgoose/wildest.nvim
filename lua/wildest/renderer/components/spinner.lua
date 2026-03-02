@@ -27,7 +27,7 @@ function M.new(opts)
       return
     end
     frame_idx = 1
-    timer = vim.uv.new_timer()
+    timer = vim.uv.new_timer() ---@type uv.uv_timer_t
     timer:start(
       0,
       interval,

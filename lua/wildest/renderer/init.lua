@@ -26,6 +26,9 @@
 ---@field highlighter? wildest.Highlighter
 ---@field output? fun(data: table, candidate: any): string
 
+---@diagnostic disable-next-line: undefined-global
+local utf8 = utf8 ---@type {codes: fun(s: string): fun(): integer, integer, char: fun(code: integer): string}
+
 local hl_mod = require("wildest.highlight")
 local log = require("wildest.log")
 local util = require("wildest.util")
@@ -291,7 +294,7 @@ function M.truncate_with_spans(text, spans, max_width, ellipsis)
     end
   end
 
-  return result .. ellipsis, adjusted
+  return string.format("%s%s", result, ellipsis), adjusted
 end
 
 --- Render a line with left/right components
@@ -336,7 +339,7 @@ function M.render_line(candidate, left_parts, right_parts, candidate_spans, max_
   end
 
   -- Build the full line
-  local line = left_text .. display_candidate .. padding .. right_text
+  local line = string.format("%s%s%s%s", left_text, display_candidate, padding, right_text)
 
   -- Build spans for the full line
   local all_spans = {}
@@ -556,7 +559,8 @@ function M.open_or_update_win(state, win_config)
       vim.wo[state.win].winblend = state.pumblend
     end
     local default_hl = state.highlights.default or "WildestDefault"
-    vim.wo[state.win].winhighlight = "Normal:" .. default_hl .. ",NormalFloat:" .. default_hl
+    vim.wo[state.win].winhighlight =
+      string.format("Normal:%s,NormalFloat:%s", default_hl, default_hl)
     vim.wo[state.win].foldenable = false
     vim.wo[state.win].wrap = false
     vim.wo[state.win].cursorline = false

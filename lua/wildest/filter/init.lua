@@ -31,14 +31,14 @@ local function load_lib()
   local source = debug.getinfo(1, "S").source:sub(2)
   local dir = source:match("(.*/)")
   -- fuzzy.so is in the parent directory (lua/wildest/)
-  local so_path = dir .. "../fuzzy.so"
+  local so_path = string.format("%s../fuzzy.so", dir)
   return ffi.load(so_path)
 end
 
 local ok, C = pcall(load_lib)
 if not ok then
   vim.notify("[wildest] Failed to load fuzzy.so — run make in csrc/", vim.log.levels.ERROR)
-  C = nil
+  C = nil ---@diagnostic disable-line: cast-local-type
 end
 
 --- Check if needle fuzzy-matches haystack

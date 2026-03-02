@@ -16,24 +16,7 @@ local PopupmenuPalette = setmetatable({}, { __index = BasePopupmenu })
 PopupmenuPalette.__index = PopupmenuPalette
 
 --- Create a palette-themed popupmenu renderer
----@param opts? table
----@field border? string|table Border style preset or 8-char array (default "rounded")
----@field title? string Title centered in the top border
----@field prompt_prefix? string Prefix shown before cmdline input (default " : ")
----@field prompt_position? string Prompt placement: "top" or "bottom" (default "top")
----@field highlighter? table Highlighter for match accents
----@field left? table Left components (default { " " })
----@field right? table Right components (default { " " })
----@field max_height? string|integer Max height, percentage or integer (default "75%")
----@field min_height? integer Minimum height (default 0)
----@field max_width? string|integer Max width, percentage or integer (default "75%")
----@field min_width? integer|string Minimum width (default 30)
----@field margin? string|integer Horizontal margin: "auto", percentage, or integer (default "auto")
----@field reverse? boolean Reverse candidate order (default false)
----@field fixed_height? boolean Pad to max_height to prevent resizing (default true)
----@field empty_message? string Message shown when there are no results
----@field pumblend? integer Window transparency 0-100
----@field zindex? integer Floating window z-index (default 250)
+---@param opts? wildest.PopupmenuPaletteOpts
 ---@return table renderer object
 function M.new(opts)
   opts = opts or {}
@@ -91,7 +74,9 @@ local function build_prompt_line(self, content_width)
 
   local prompt_prefix = state.prompt_prefix
   if type(prompt_prefix) == "table" then
-    prompt_prefix = prompt_prefix[cmdtype] or prompt_prefix["default"] or (" " .. cmdtype)
+    prompt_prefix = prompt_prefix[cmdtype]
+      or prompt_prefix["default"]
+      or string.format(" %s", cmdtype)
   elseif type(prompt_prefix) == "function" then
     prompt_prefix = prompt_prefix(cmdtype)
   end
@@ -109,7 +94,7 @@ local function build_prompt_line(self, content_width)
     pad = string.rep(" ", content_width - display_w - prefix_width)
   end
 
-  local line = prompt_prefix .. display .. pad
+  local line = string.format("%s%s%s", prompt_prefix, display, pad)
 
   local spans = {}
   if cmdpos >= 1 and cmdpos <= #cmdline + 1 then
@@ -257,7 +242,7 @@ function PopupmenuPalette:render(ctx, result)
   }
   local title = self:resolve_title()
   if title then
-    win_config.title = { { " " .. title .. " ", state.border.native_hl } }
+    win_config.title = { { string.format(" %s ", title), state.border.native_hl } }
     win_config.title_pos = "center"
   end
   renderer_util.open_or_update_win(state, win_config)

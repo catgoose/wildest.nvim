@@ -56,7 +56,7 @@ function M.get_completions(parsed)
   -- User-defined commands: use cmdline completion which handles
   -- multi-arg user commands properly (#159)
   if expand == E.CUSTOM then
-    local full_cmdline = parsed.cmd .. " " .. arg
+    local full_cmdline = string.format("%s %s", parsed.cmd, arg)
     local ok, results = pcall(vim.fn.getcompletion, full_cmdline, "cmdline")
     if ok and results and #results > 0 then
       return results
@@ -89,7 +89,7 @@ function M.get_completions(parsed)
     local base = arg:match("^(.*%.)") or ""
     if base ~= "" then
       for i, r in ipairs(results) do
-        results[i] = base .. r
+        results[i] = string.format("%s%s", base, r)
       end
     end
   end

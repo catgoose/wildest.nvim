@@ -3,8 +3,6 @@
 ---Theme system and compilation.
 ---@brief ]]
 
-local hl_mod = require("wildest.highlight")
-
 local M = {}
 
 --- Canonical list of built-in theme names
@@ -46,15 +44,15 @@ M.theme_names = {
 --- Get the compile cache directory
 ---@return string
 local function get_cache_dir()
-  local state = vim.fn.stdpath("state")
-  return state .. "/wildest"
+  local state = vim.fn.stdpath("state") ---@type string
+  return string.format("%s/wildest", state)
 end
 
 --- Get the compiled file path for a theme
 ---@param name string theme name
 ---@return string
 local function get_compiled_path(name)
-  return get_cache_dir() .. "/" .. name .. "_compiled"
+  return string.format("%s/%s_compiled", get_cache_dir(), name)
 end
 
 --- Apply a set of highlight definitions
@@ -83,14 +81,14 @@ local function serialize_hl_attrs(attrs)
   for _, k in ipairs(keys) do
     local v = attrs[k]
     if type(v) == "string" then
-      table.insert(parts, k .. '="' .. v .. '"')
+      table.insert(parts, string.format('%s="%s"', k, v))
     elseif type(v) == "boolean" then
-      table.insert(parts, k .. "=" .. tostring(v))
+      table.insert(parts, string.format("%s=%s", k, tostring(v)))
     elseif type(v) == "number" then
-      table.insert(parts, k .. "=" .. tostring(v))
+      table.insert(parts, string.format("%s=%s", k, tostring(v)))
     end
   end
-  return "{" .. table.concat(parts, ",") .. "}"
+  return string.format("{%s}", table.concat(parts, ","))
 end
 
 --- Create a renderer by type name
@@ -186,9 +184,9 @@ end
 ---@param name string theme name (e.g., 'saloon', 'auto', 'kanagawa')
 function M.compile(name)
   -- Load the theme
-  local ok, theme = pcall(require, "wildest.themes." .. name)
+  local ok, theme = pcall(require, string.format("wildest.themes.%s", name))
   if not ok or not theme then
-    vim.notify("[wildest] Unknown theme: " .. name, vim.log.levels.ERROR)
+    vim.notify(string.format("[wildest] Unknown theme: %s", name), vim.log.levels.ERROR)
     return
   end
 
@@ -203,7 +201,10 @@ function M.compile(name)
   end
 
   if not def or not def.highlights then
-    vim.notify("[wildest] Theme has no highlights to compile: " .. name, vim.log.levels.WARN)
+    vim.notify(
+      string.format("[wildest] Theme has no highlights to compile: %s", name),
+      vim.log.levels.WARN
+    )
     return
   end
 
@@ -221,7 +222,7 @@ function M.compile(name)
 
   for _, group_name in ipairs(groups) do
     local attrs = def.highlights[group_name]
-    table.insert(lines, 'S(0,"' .. group_name .. '",' .. serialize_hl_attrs(attrs) .. ")")
+    table.insert(lines, string.format('S(0,"%s",%s)', group_name, serialize_hl_attrs(attrs)))
   end
 
   local code = table.concat(lines, "\n")
@@ -230,7 +231,7 @@ function M.compile(name)
   local func, err = loadstring(code)
   if not func then
     vim.notify(
-      "[wildest] Compile error for theme " .. name .. ": " .. tostring(err),
+      string.format("[wildest] Compile error for theme %s: %s", name, tostring(err)),
       vim.log.levels.ERROR
     )
     return
@@ -247,13 +248,16 @@ function M.compile(name)
   local path = get_compiled_path(name)
   local file = io.open(path, "wb")
   if not file then
-    vim.notify("[wildest] Failed to write compiled theme: " .. path, vim.log.levels.ERROR)
+    vim.notify(
+      string.format("[wildest] Failed to write compiled theme: %s", path),
+      vim.log.levels.ERROR
+    )
     return
   end
   file:write(bytecode)
   file:close()
 
-  vim.notify("[wildest] Compiled theme: " .. name .. " -> " .. path)
+  vim.notify(string.format("[wildest] Compiled theme: %s -> %s", name, path))
 end
 
 --- Load a compiled theme from bytecode cache
@@ -269,7 +273,10 @@ function M.load_compiled(name)
 
   local ok, err = pcall(func)
   if not ok then
-    vim.notify("[wildest] Error loading compiled theme: " .. tostring(err), vim.log.levels.WARN)
+    vim.notify(
+      string.format("[wildest] Error loading compiled theme: %s", tostring(err)),
+      vim.log.levels.WARN
+    )
     return false
   end
 
@@ -293,7 +300,7 @@ function M.clear_cache()
 
   for _, entry in ipairs(entries) do
     if entry:match("_compiled$") then
-      os.remove(cache_dir .. "/" .. entry)
+      os.remove(string.format("%s/%s", cache_dir, entry))
     end
   end
   vim.notify("[wildest] Cleared compiled theme cache")
@@ -302,7 +309,7 @@ end
 -- Load built-in themes lazily
 setmetatable(M, {
   __index = function(_, key)
-    local ok, theme = pcall(require, "wildest.themes." .. key)
+    local ok, theme = pcall(require, string.format("wildest.themes.%s", key))
     if ok then
       return theme
     end

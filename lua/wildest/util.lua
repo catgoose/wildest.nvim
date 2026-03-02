@@ -4,6 +4,9 @@
 ---Includes string manipulation, path handling, and project root detection.
 ---@brief ]]
 
+---@diagnostic disable-next-line: undefined-global
+local utf8 = utf8 ---@type {codes: fun(s: string): fun(): integer, integer, char: fun(code: integer): string}
+
 local M = {}
 
 ---Escape special characters in a Vim pattern.
@@ -58,7 +61,7 @@ function M.truncate(str, max_width, suffix)
     cur_width = cur_width + cw
   end
 
-  return result .. suffix
+  return string.format("%s%s", result, suffix)
 end
 
 --- Normalize path separators and expand ~
@@ -68,7 +71,7 @@ function M.normalize_path(path)
   path = path:gsub("\\", "/")
   if path:sub(1, 1) == "~" then
     local home = vim.env.HOME or vim.fn.expand("~")
-    path = home .. path:sub(2)
+    path = string.format("%s%s", home, path:sub(2))
   end
   return path
 end
@@ -79,7 +82,7 @@ end
 function M.shorten_home(path)
   local home = vim.env.HOME or vim.fn.expand("~")
   if home and path:sub(1, #home) == home then
-    return "~" .. path:sub(#home + 1)
+    return string.format("~%s", path:sub(#home + 1))
   end
   return path
 end
@@ -147,13 +150,13 @@ function M.project_root(markers, path)
   path = path or vim.fn.getcwd()
 
   -- Check cache
-  local cache_key = path .. ":" .. table.concat(markers, ",")
+  local cache_key = string.format("%s:%s", path, table.concat(markers, ","))
   if project_root_cache[cache_key] then
     return project_root_cache[cache_key]
   end
 
-  local home = vim.fn.expand("~")
-  local find_path = path .. ";" .. home
+  local home = vim.fn.expand("~") ---@type string
+  local find_path = string.format("%s;%s", path, home)
 
   for _, marker in ipairs(markers) do
     -- Try as file first, then as directory
@@ -163,7 +166,7 @@ function M.project_root(markers, path)
     end
 
     if result ~= "" then
-      local root = vim.fn.fnamemodify(result, ":~:h")
+      local root = vim.fn.fnamemodify(result, ":~:h") ---@type string
       project_root_cache[cache_key] = root
       return root
     end

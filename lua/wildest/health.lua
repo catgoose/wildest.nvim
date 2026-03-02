@@ -47,7 +47,7 @@ function M.check()
 
   -- Log file
   local log = require("wildest.log")
-  vim.health.info("Log file: " .. log.path())
+  vim.health.info(string.format("Log file: %s", log.path()))
 end
 
 return M

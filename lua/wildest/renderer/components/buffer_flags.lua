@@ -141,7 +141,7 @@ function M.new(opts)
     end
 
     -- Try to find the buffer
-    local expanded = vim.fn.fnamemodify(candidate, ":p")
+    local expanded = vim.fn.fnamemodify(candidate, ":p") ---@type string
     local bufnr = vim.fn.bufnr(expanded)
 
     if bufnr == -1 then

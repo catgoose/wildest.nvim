@@ -10,14 +10,14 @@ local util = require("wildest.util")
 local M = {}
 
 ---@class wildest.PreviewConfig
----@field enabled? boolean Show preview (default: true)
----@field position? string Position: "left"|"right"|"top"|"bottom" (default: "right")
----@field anchor? string Anchor: "screen"|"popup" (default: "screen")
----@field width? integer|string Panel width for left/right (default: '50%')
----@field height? integer|string Panel height for top/bottom (default: '50%')
----@field border? string|table Border style (default: 'single')
----@field max_lines? integer Max lines to read (default: 500)
----@field title? boolean Show filename in title (default: true)
+---@field enabled boolean Show preview (default: true)
+---@field position string Position: "left"|"right"|"top"|"bottom" (default: "right")
+---@field anchor string Anchor: "screen"|"popup" (default: "screen")
+---@field width integer|string Panel width for left/right (default: '50%')
+---@field height integer|string Panel height for top/bottom (default: '50%')
+---@field border string|table Border style (default: 'single')
+---@field max_lines integer Max lines to read (default: 500)
+---@field title boolean Show filename in title (default: true)
 
 local preview_state = {
   enabled = false,
@@ -95,7 +95,8 @@ local function load_file(path, cfg)
   else
     vim.bo[preview_state.buf].filetype = ""
   end
-  return vim.fn.fnamemodify(expanded, ":t")
+  local title = vim.fn.fnamemodify(expanded, ":t") ---@type string
+  return title
 end
 
 --- Load buffer content into the preview buffer.
@@ -116,7 +117,8 @@ local function load_buffer(name, cfg)
   else
     vim.bo[preview_state.buf].filetype = ""
   end
-  return vim.fn.fnamemodify(name, ":t")
+  local title = vim.fn.fnamemodify(name, ":t") ---@type string
+  return title
 end
 
 --- Load help content into the preview buffer.
@@ -124,7 +126,8 @@ end
 ---@return string|nil title
 local function load_help(tag)
   -- Try direct file lookup first
-  local help_file = vim.fn.findfile("doc/" .. tag .. ".txt", vim.o.runtimepath)
+  local rtp = vim.o.runtimepath ---@type string
+  local help_file = vim.fn.findfile(string.format("doc/%s.txt", tag), rtp)
   if help_file ~= "" then
     local lines = vim.fn.readfile(help_file, "", 500)
     vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
@@ -132,7 +135,7 @@ local function load_help(tag)
     return tag
   end
   -- Fall back to taglist to locate the help file without opening a window
-  local ok, tags = pcall(vim.fn.taglist, "^" .. vim.fn.escape(tag, "\\") .. "$")
+  local ok, tags = pcall(vim.fn.taglist, string.format("^%s$", vim.fn.escape(tag, "\\")))
   if ok and type(tags) == "table" then
     for _, entry in ipairs(tags) do
       local fname = entry.filename
@@ -250,7 +253,7 @@ end
 --- Returns true if preview is configured and enabled.
 ---@return boolean
 function M.is_active()
-  return preview_state.config ~= nil and preview_state.enabled
+  return preview_state.config ~= nil and preview_state.enabled or false
 end
 
 --- Compute the floating window position/size for the preview panel.
@@ -441,7 +444,7 @@ function M.update(ctx, result)
   }
 
   if cfg.title and title then
-    win_config.title = { { " " .. title .. " ", "FloatTitle" } }
+    win_config.title = { { string.format(" %s ", title), "FloatTitle" } }
     win_config.title_pos = "center"
   end
 

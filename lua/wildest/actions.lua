@@ -49,11 +49,13 @@ function M.resolve(name_or_fn)
   if type(name_or_fn) == "string" then
     local fn = registry[name_or_fn]
     if not fn then
-      error("[wildest] Unknown action: " .. name_or_fn)
+      error(string.format("[wildest] Unknown action: %s", name_or_fn))
     end
     return fn
   end
-  error("[wildest] Action must be a string name or function, got " .. type(name_or_fn))
+  error(
+    string.format("[wildest] Action must be a string name or function, got %s", type(name_or_fn))
+  )
 end
 
 --- List all registered action names (sorted).
@@ -115,7 +117,7 @@ function M.run(name_or_fn)
 
   local ok, err = pcall(fn, ctx)
   if not ok then
-    vim.notify("[wildest] Action error: " .. tostring(err), vim.log.levels.ERROR)
+    vim.notify(string.format("[wildest] Action error: %s", tostring(err)), vim.log.levels.ERROR)
   end
 end
 
@@ -129,15 +131,16 @@ M.register("open_split", function(ctx)
   if not ctx.candidate then
     return
   end
-  local candidate = ctx.candidate
+  local candidate = ctx.candidate --[[@as string]]
+  local escaped = vim.fn.fnameescape(candidate) ---@type string
   local expand = detect_expand(ctx.data)
   leave_cmdline_and_run(function()
     if expand == "buffer" then
-      vim.cmd("sbuffer " .. vim.fn.fnameescape(candidate))
+      vim.cmd.sbuffer(escaped)
     elseif expand == "help" then
-      vim.cmd("help " .. vim.fn.fnameescape(candidate))
+      vim.cmd.help(escaped)
     else
-      vim.cmd("split " .. vim.fn.fnameescape(candidate))
+      vim.cmd.split(escaped)
     end
   end)
 end)
@@ -146,15 +149,16 @@ M.register("open_vsplit", function(ctx)
   if not ctx.candidate then
     return
   end
-  local candidate = ctx.candidate
+  local candidate = ctx.candidate --[[@as string]]
+  local escaped = vim.fn.fnameescape(candidate) ---@type string
   local expand = detect_expand(ctx.data)
   leave_cmdline_and_run(function()
     if expand == "buffer" then
-      vim.cmd("vert sbuffer " .. vim.fn.fnameescape(candidate))
+      vim.api.nvim_cmd({ cmd = "sbuffer", args = { escaped }, mods = { vertical = true } }, {})
     elseif expand == "help" then
-      vim.cmd("vert help " .. vim.fn.fnameescape(candidate))
+      vim.api.nvim_cmd({ cmd = "help", args = { escaped }, mods = { vertical = true } }, {})
     else
-      vim.cmd("vsplit " .. vim.fn.fnameescape(candidate))
+      vim.cmd.vsplit(escaped)
     end
   end)
 end)
@@ -163,15 +167,16 @@ M.register("open_tab", function(ctx)
   if not ctx.candidate then
     return
   end
-  local candidate = ctx.candidate
+  local candidate = ctx.candidate --[[@as string]]
+  local escaped = vim.fn.fnameescape(candidate) ---@type string
   local expand = detect_expand(ctx.data)
   leave_cmdline_and_run(function()
     if expand == "buffer" then
-      vim.cmd("tab sbuffer " .. vim.fn.fnameescape(candidate))
+      vim.api.nvim_cmd({ cmd = "sbuffer", args = { escaped }, mods = { tab = 1 } }, {})
     elseif expand == "help" then
-      vim.cmd("tab help " .. vim.fn.fnameescape(candidate))
+      vim.api.nvim_cmd({ cmd = "help", args = { escaped }, mods = { tab = 1 } }, {})
     else
-      vim.cmd("tabedit " .. vim.fn.fnameescape(candidate))
+      vim.cmd.tabedit(escaped)
     end
   end)
 end)
@@ -199,7 +204,7 @@ M.register("send_to_quickfix", function(ctx)
   end
   leave_cmdline_and_run(function()
     vim.fn.setqflist(items, "r")
-    vim.cmd("copen")
+    vim.cmd.copen()
   end)
 end)
 
@@ -226,7 +231,7 @@ M.register("send_to_loclist", function(ctx)
   end
   leave_cmdline_and_run(function()
     vim.fn.setloclist(0, items, "r")
-    vim.cmd("lopen")
+    vim.cmd.lopen()
   end)
 end)
 
@@ -238,7 +243,7 @@ M.register("yank", function(ctx)
   vim.fn.setreg("+", ctx.candidate)
 end)
 
-M.register("toggle_preview", function(_ctx)
+M.register("toggle_preview", function(_)
   local preview = require("wildest.preview")
   preview.toggle()
   require("wildest.state").draw()

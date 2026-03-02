@@ -1,3 +1,4 @@
+---@diagnostic disable: need-check-nil, undefined-global
 local MiniTest = require("mini.test")
 local new_set = MiniTest.new_set
 local expect = MiniTest.expect
@@ -83,7 +84,7 @@ end
 T["truncate()"]["truncates long strings with suffix"] = function()
   -- utf8 module may not be available in LuaJIT; skip if so
   if not pcall(function()
-    return utf8.codes("a")
+    return _G.utf8.codes("a")
   end) then
     return
   end
@@ -95,7 +96,7 @@ end
 
 T["truncate()"]["uses custom suffix"] = function()
   if not pcall(function()
-    return utf8.codes("a")
+    return _G.utf8.codes("a")
   end) then
     return
   end

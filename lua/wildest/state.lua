@@ -282,7 +282,7 @@ function M.run_pipeline(input)
   end
 
   if cfg.pipeline_timeout and cfg.pipeline_timeout > 0 then
-    state.pipeline_timer = vim.uv.new_timer()
+    state.pipeline_timer = vim.uv.new_timer() ---@type uv.uv_timer_t
     state.pipeline_timer:start(
       cfg.pipeline_timeout,
       0,
@@ -471,7 +471,7 @@ function M.draw()
         preview.update(ctx, result)
       end
       log.log("state", "draw_render_ok")
-      vim.cmd("redraw")
+      vim.cmd.redraw()
     end
   end)
 end
