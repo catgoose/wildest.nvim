@@ -36,6 +36,7 @@ jobs:
         run: lua5.4 scripts/readme/gen_readme.lua
       - name: Create Pull Request
         id: cpr
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         uses: peter-evans/create-pull-request@v7
         with:
           branch: docs/auto-readme

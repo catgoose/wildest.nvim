@@ -34,6 +34,7 @@ jobs:
         run: make format
 
       - name: Open format PR if needed
+        id: format-pr
         run: |
           if ! git diff --quiet lua plugin; then
             git config user.name "github-actions[bot]"
@@ -43,32 +44,15 @@ jobs:
             git add lua plugin
             git commit -m "stylua format"
             git push origin "$branch"
-            gh pr create --base main --head "$branch" --title "stylua format" --body "Auto-generated format PR. Merges when lint passes."
+            pr_url=$(gh pr create --base main --head "$branch" --title "stylua format" --body "Auto-generated format PR.")
+            echo "pr-url=$pr_url" >> "$GITHUB_OUTPUT"
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  lint:
-    runs-on: ubuntu-latest
-    if: github.event_name == 'pull_request' && (startsWith(github.head_ref, 'format/') || github.head_ref == 'stylua-format')
-    steps:
-      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
-
-      - uses: JohnnyMorganz/stylua-action@479972f01e665acfcba96ada452c36608bdbbb5e
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          version: latest
-          args: false
-
-      - name: Lint
-        run: make lint
-
-  merge-format-pr:
-    runs-on: ubuntu-latest
-    needs: lint
-    if: github.event_name == 'pull_request' && (startsWith(github.head_ref, 'format/') || github.head_ref == 'stylua-format')
-    steps:
-      - run: gh pr merge ${{ github.event.pull_request.number }} --squash
+      - name: Enable auto-merge
+        if: steps.format-pr.outputs.pr-url
+        run: gh pr merge ${{ steps.format-pr.outputs.pr-url }} --auto --squash
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
