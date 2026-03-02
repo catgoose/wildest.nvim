@@ -443,15 +443,23 @@ function M.draw()
 
     local result = state.result or { value = {}, data = {} }
 
-    if #result.value == 0 then
-      log.log("state", "draw_empty")
-      pcall(cfg.renderer.hide, cfg.renderer)
-      require("wildest.preview").hide()
-      return
-    end
-
     local preview = require("wildest.preview")
     local preview_active = preview.is_active()
+
+    if #result.value == 0 then
+      -- No candidates — hide preview but let the renderer decide whether
+      -- to show an empty_message or hide itself.
+      log.log("state", "draw_empty")
+      preview.hide()
+      local ok, err = pcall(cfg.renderer.render, cfg.renderer, ctx, result)
+      if not ok then
+        log.log("state", "draw_render_error", { err = tostring(err) })
+      else
+        log.log("state", "draw_render_ok")
+        vim.cmd.redraw()
+      end
+      return
+    end
 
     -- Screen anchor: update preview BEFORE the renderer so reserved_space()
     -- reflects the preview window state and the popup positions correctly.
