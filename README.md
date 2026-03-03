@@ -258,8 +258,8 @@ drive - input goes in one end, completions come out the other.
 </tr>
 <tr>
 <td align="center"><strong>Shell Commands</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/shell_pipeline.png" width="400"></td>
+<td align="center"><strong>Substitute</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/substitute_pipeline.png" width="400"></td>
 <td align="center"><strong>Search</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/search.png" width="400"></td>
-<td></td>
 </tr>
 </table>
 <!-- gen:pipeline_gallery:end -->
