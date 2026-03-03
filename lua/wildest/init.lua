@@ -384,6 +384,13 @@ function M.help_pipeline(opts)
   return require("wildest.pipeline.help").help_pipeline(opts)
 end
 
+---Shell command pipeline — history, executables, file args, env vars.
+---@param opts? wildest.ShellPipelineOpts
+---@return wildest.PipelineStep[] pipeline
+function M.shell_pipeline(opts)
+  return require("wildest.shell").shell_pipeline(opts)
+end
+
 ---@tag wildest-renderers
 ---@divider Renderer Constructors
 

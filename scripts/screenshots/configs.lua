@@ -252,6 +252,13 @@ M.configs = {
     pipeline = { "history", "cmdline_fuzzy" },
   },
 
+  shell_pipeline = {
+    category = "pipeline",
+    label = "Shell Commands",
+    cmd = ":!gi",
+    pipeline = { "shell_fuzzy", "cmdline_fuzzy" },
+  },
+
   -- Layout configs (statusline / offset variations)
   laststatus_0 = {
     category = "layout",
@@ -941,7 +948,7 @@ M.feature_names = {
   "devicons", "fuzzy", "gradient", "search", "renderer_mux", "kind_icons",
   "prefix_highlighter", "scrollbar", "pumblend",
 }
-M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline" }
+M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
 M.border_names = { "border_rounded", "border_single", "border_double", "border_solid", "border_title" }
 M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal", "wildmenu_pipe", "wildmenu_arrows_index", "wildmenu_compact" }
@@ -1069,6 +1076,7 @@ function M.random_scene(label)
     { "lua", "cmdline_fuzzy", "search" },
     { "help_fuzzy", "cmdline_fuzzy", "search" },
     { "history", "cmdline_fuzzy", "search" },
+    { "shell_fuzzy", "cmdline_fuzzy", "search" },
   }
   local lefts = {
     {},
@@ -1614,6 +1622,7 @@ function M.scene_to_description(cfg)
       if p == "lua" then add("lua pipeline") end
       if p == "help_fuzzy" then add("help pipeline") end
       if p == "history" then add("history pipeline") end
+      if p == "shell" or p == "shell_fuzzy" then add("shell pipeline") end
     end
   end
 
@@ -1683,6 +1692,10 @@ local function resolve_pipeline(list, w)
       table.insert(branches, w.help_pipeline({ fuzzy = true }))
     elseif name == "history" then
       table.insert(branches, w.history_pipeline())
+    elseif name == "shell" then
+      table.insert(branches, w.shell_pipeline())
+    elseif name == "shell_fuzzy" then
+      table.insert(branches, w.shell_pipeline({ fuzzy = true }))
     end
   end
   return w.branch(unpack(branches))
@@ -2021,6 +2034,7 @@ function M.gif_init(name, n)
 
     -- Write scene config as buffer content
     local lines = M.scene_to_lines(scene, index, #scenes)
+    vim.bo.readonly = false
     vim.bo.modifiable = true
     vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
     vim.bo.filetype = "lua"

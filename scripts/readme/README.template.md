@@ -210,6 +210,8 @@ w.setup({
   skip_commands = { "Man" }, -- skip completions for ornery commands
 
   pipeline = w.branch(
+    -- Shell history + executables + file args for :!
+    w.shell_pipeline({ fuzzy = true }),
     -- Lua expression completion for :lua and :=
     w.lua_pipeline(),
     -- Fuzzy help tag completion for :help
@@ -259,6 +261,7 @@ drive - input goes in one end, completions come out the other.
 | `history_pipeline()`     | Command and search history                            |
 | `lua_pipeline()`         | Lua expression completion for `:lua` and `:=`         |
 | `help_pipeline()`        | Help tags with fuzzy matching                         |
+| `shell_pipeline()`       | Shell history, executables, file args, env vars for `:!` |
 
 ### Pipeline Combinators
 
@@ -288,6 +291,7 @@ return candidates wins — like checking every saloon until you find one open:
 
 ```lua
 w.branch(
+  w.shell_pipeline(), -- shell commands for :!
   w.lua_pipeline(), -- try lua completion first
   w.help_pipeline(), -- then help tags
   w.cmdline_pipeline(), -- catch-all
@@ -494,6 +498,40 @@ w.branch(
 The pattern is always the same: guard with `check`, produce candidates,
 optionally `fuzzy_filter`, then `result()`. The `cmdline_pipeline` catch-all
 handles everything else.
+
+### Shell Pipeline
+
+The `shell_pipeline()` gives `:!` commands the same rich completion as the rest
+of your cmdline. It reads your actual shell history, completes executables,
+file arguments, and environment variables:
+
+```lua
+w.branch(
+  w.shell_pipeline({ history = true, fuzzy = true, frecency = true }),
+  w.cmdline_pipeline({ fuzzy = true }),
+  w.search_pipeline()
+)
+```
+
+| Option           | Type                        | Default  | Description                                  |
+| ---------------- | --------------------------- | -------- | -------------------------------------------- |
+| `history`        | boolean                     | `true`   | Include shell history file entries            |
+| `history_file`   | string                      | `"auto"` | Path to history file (`"auto"` = detect)     |
+| `history_max`    | integer                     | `100`    | Max shell history entries                    |
+| `vim_history`    | boolean                     | `true`   | Include Vim's `:!` command history           |
+| `vim_history_max`| integer                     | `50`     | Max Vim history entries                      |
+| `complete_args`  | `"file"`\|`"none"`\|`false` | `"file"` | Argument completion strategy                 |
+| `env_vars`       | boolean                     | `true`   | Complete `$VAR` environment variable names   |
+| `fuzzy`          | boolean                     | `false`  | Apply fuzzy filtering                        |
+| `frecency`       | boolean                     | `false`  | Apply frecency boosting                      |
+| `frecency_blend` | number                      | `0.5`    | Frecency blend factor                        |
+
+**Completion phases:**
+- **Command name** (no spaces yet): shell history + Vim `:!` history + executables
+- **Arguments** (after first space): file paths, or `$VAR` environment variables
+
+Shell history is auto-detected from `vim.o.shell` — bash, zsh, and fish are
+supported. The history file is read once per cmdline session and cached.
 
 ## Brandin' Iron (Renderers)
 
@@ -1006,7 +1044,8 @@ w.setup({
 
 The preview auto-detects content type from the pipeline's `expand` metadata:
 files get syntax highlighting, buffers show their contents, and help tags
-display the relevant help page.
+display the relevant help page. Shell commands and environment variables
+automatically hide the preview (no content to show without executing).
 
 Default: `preview = nil` (disabled unless configured).
 
