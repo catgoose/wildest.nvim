@@ -476,6 +476,9 @@ function M.update(ctx, result)
     title = load_buffer(candidate, cfg)
   elseif expand == "help" then
     title = load_help(candidate)
+  elseif expand == "shellcmd" or expand == "environment" then
+    M.hide()
+    return
   else
     -- Heuristic: try as file first
     local expanded = safe_expand(candidate)

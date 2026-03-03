@@ -203,6 +203,12 @@ function M.detect_expand(data)
     if e == "help" then
       return "help"
     end
+    if e == "shellcmd" then
+      return "shellcmd"
+    end
+    if e == "environment" then
+      return "environment"
+    end
     return nil
   end
   if data.cmd then

@@ -17,6 +17,7 @@ local valid_pipelines = {
   ["lua"] = true,
   ["help_fuzzy"] = true,
   ["history"] = true,
+  ["shell_fuzzy"] = true,
 }
 
 local valid_renderers_prefix = {
