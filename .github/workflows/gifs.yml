@@ -101,14 +101,35 @@ jobs:
           name: gunsmoke
           path: output
 
-      - name: Push to gifs branch
+      - name: Checkout screenshots repo
+        uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
+        with:
+          repository: catgoose/screenshots
+          token: ${{ secrets.SCREENSHOTS_REPO_TOKEN }}
+          path: screenshots-repo
+
+      - name: Copy GIFs into screenshots repo
         run: |
-          cd output
-          git init -b gifs
-          git add *.gif *.json
-          git -c user.name="github-actions[bot]" \
-              -c user.email="github-actions[bot]@users.noreply.github.com" \
-              commit -m "Update GIFs [skip ci]"
-          git push --force \
-            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
-            gifs
+          mkdir -p screenshots-repo/wildest.nvim/showcase
+          cp output/*.gif output/*.json screenshots-repo/wildest.nvim/showcase/
+
+      - name: Create PR with GIFs
+        run: |
+          cd screenshots-repo
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add wildest.nvim
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+            exit 0
+          fi
+          branch="wildest-nvim/gifs-$(date +%Y%m%d-%H%M%S)"
+          git checkout -b "$branch"
+          git commit -m "Update wildest.nvim GIFs"
+          git push origin "$branch"
+          pr_url=$(gh pr create --repo catgoose/screenshots --base main --head "$branch" \
+            --title "Update wildest.nvim GIFs" --body "Auto-generated from wildest.nvim CI.")
+          gh pr review "$pr_url" --repo catgoose/screenshots --approve
+          gh pr merge "$pr_url" --repo catgoose/screenshots --squash
+        env:
+          GH_TOKEN: ${{ secrets.SCREENSHOTS_REPO_TOKEN }}
