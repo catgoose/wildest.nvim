@@ -740,8 +740,7 @@ wildest.Config                                                  *wildest.Config*
         {min_input?}         (integer)                                              Minimum input length before showing completions (default: 0)
         {pipeline?}          (wildest.PipelineStep|wildest.PipelineStep[])          Pipeline steps or single pipeline step
         {preview?}           (wildest.PreviewConfig)                                Preview window configuration
-        {auto_colorscheme?}  (boolean)                                              Re-apply highlights on colorscheme change (default: true)
-        {renderer?}          (wildest.Renderer)                                     Renderer instance
+        {layout?}            (fun(geometry:table):table)
 
 
 M.setup({opts?})                                          *wildest.config.setup*
@@ -1536,6 +1535,20 @@ M.check_run_id({state}, {ctx})                   *wildest.renderer.check_run_id*
     Parameters: ~
         {state}  (table)  renderer state
         {ctx}    (table)  render context
+
+
+M.get_popup_geometry()                     *wildest.renderer.get_popup_geometry*
+     Return stored popup geometry as a layout-compatible table, or a visible=false stub.
+
+    Returns: ~
+        ({row:number,col:number,width:number,height:number,border:any,visible:boolean})
+
+
+M.get_popup_win()                               *wildest.renderer.get_popup_win*
+     Return the valid popup window handle, or nil.
+
+    Returns: ~
+        (integer|nil)
 
 
 vim:tw=78:ts=8:noet:ft=help:norl:
