@@ -106,7 +106,7 @@ M.search_pipeline({opts?})                             *wildest.search_pipeline*
     Search pipeline — completes search patterns from buffer lines and history.
 
     Parameters: ~
-        {opts?}  (wildest.SearchPipelineOpts)
+        {opts?}  (table)  { max_results?: integer, fuzzy?: boolean, fuzzy_filter?: function }
 
     Returns: ~
         (wildest.PipelineStep[])  pipeline
@@ -267,7 +267,7 @@ M.substitute_pipeline({opts?})                     *wildest.substitute_pipeline*
     Substitute/global pipeline — shows matching buffer lines for :s/ and :g/ commands.
 
     Parameters: ~
-        {opts?}  (table)  { max_results?: integer }
+        {opts?}  (table)  { max_results?: integer, fuzzy?: boolean, fuzzy_filter?: function }
 
     Returns: ~
         (wildest.PipelineStep[])  pipeline
