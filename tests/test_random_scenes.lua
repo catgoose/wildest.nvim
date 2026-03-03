@@ -14,10 +14,12 @@ math.randomseed(12345)
 local valid_pipelines = {
   ["cmdline_fuzzy"] = true,
   ["search"] = true,
+  ["search_fuzzy"] = true,
   ["lua"] = true,
   ["help_fuzzy"] = true,
   ["history"] = true,
   ["shell_fuzzy"] = true,
+  ["substitute"] = true,
 }
 
 local valid_renderers_prefix = {
