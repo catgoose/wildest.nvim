@@ -15,9 +15,9 @@ function M.new(routes)
   local active_renderer = nil
 
   function renderer:render(ctx, result)
-    local cmdtype = ctx.cmdtype or ":"
-    local target = routes[cmdtype]
-    log.log("mux", "render", { cmdtype = cmdtype, has_target = (target ~= nil) })
+    local route_key = ctx.route or ctx.cmdtype or ":"
+    local target = routes[route_key] or routes[ctx.cmdtype or ":"]
+    log.log("mux", "render", { route_key = route_key, has_target = (target ~= nil) })
 
     if active_renderer and active_renderer ~= target then
       pcall(active_renderer.hide, active_renderer)

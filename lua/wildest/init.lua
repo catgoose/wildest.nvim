@@ -391,6 +391,13 @@ function M.shell_pipeline(opts)
   return require("wildest.shell").shell_pipeline(opts)
 end
 
+---Substitute/global pipeline — shows matching buffer lines for :s/ and :g/ commands.
+---@param opts? table { max_results?: integer }
+---@return wildest.PipelineStep[] pipeline
+function M.substitute_pipeline(opts)
+  return require("wildest.substitute").substitute_pipeline(opts)
+end
+
 ---@tag wildest-renderers
 ---@divider Renderer Constructors
 
