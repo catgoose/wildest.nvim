@@ -217,15 +217,35 @@ function M.reserved_space()
   -- renderer, so the window doesn't exist yet when this is called.
   if cfg.anchor == "popup" then
     if pos == "right" then
-      return { top = gap.top, right = parse_dim(cfg.width, vim.o.columns) + gap.right + gap.between, bottom = gap.bottom, left = gap.left }
+      return {
+        top = gap.top,
+        right = parse_dim(cfg.width, vim.o.columns) + gap.right + gap.between,
+        bottom = gap.bottom,
+        left = gap.left,
+      }
     elseif pos == "left" then
-      return { top = gap.top, right = gap.right, bottom = gap.bottom, left = parse_dim(cfg.width, vim.o.columns) + gap.left + gap.between }
+      return {
+        top = gap.top,
+        right = gap.right,
+        bottom = gap.bottom,
+        left = parse_dim(cfg.width, vim.o.columns) + gap.left + gap.between,
+      }
     elseif pos == "top" then
       local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
-      return { top = parse_dim(cfg.height, available_rows) + gap.top + gap.between, right = gap.right, bottom = gap.bottom, left = gap.left }
+      return {
+        top = parse_dim(cfg.height, available_rows) + gap.top + gap.between,
+        right = gap.right,
+        bottom = gap.bottom,
+        left = gap.left,
+      }
     elseif pos == "bottom" then
       local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
-      return { top = gap.top, right = gap.right, bottom = parse_dim(cfg.height, available_rows) + gap.bottom + gap.between, left = gap.left }
+      return {
+        top = gap.top,
+        right = gap.right,
+        bottom = parse_dim(cfg.height, available_rows) + gap.bottom + gap.between,
+        left = gap.left,
+      }
     end
   end
 
@@ -238,15 +258,35 @@ function M.reserved_space()
     return zero
   end
   if pos == "right" then
-    return { top = gap.top, right = parse_dim(cfg.width, vim.o.columns) + gap.right, bottom = gap.bottom, left = gap.left }
+    return {
+      top = gap.top,
+      right = parse_dim(cfg.width, vim.o.columns) + gap.right,
+      bottom = gap.bottom,
+      left = gap.left,
+    }
   elseif pos == "left" then
-    return { top = gap.top, right = gap.right, bottom = gap.bottom, left = parse_dim(cfg.width, vim.o.columns) + gap.left }
+    return {
+      top = gap.top,
+      right = gap.right,
+      bottom = gap.bottom,
+      left = parse_dim(cfg.width, vim.o.columns) + gap.left,
+    }
   elseif pos == "top" then
     local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
-    return { top = parse_dim(cfg.height, available_rows) + gap.top, right = gap.right, bottom = gap.bottom, left = gap.left }
+    return {
+      top = parse_dim(cfg.height, available_rows) + gap.top,
+      right = gap.right,
+      bottom = gap.bottom,
+      left = gap.left,
+    }
   elseif pos == "bottom" then
     local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
-    return { top = gap.top, right = gap.right, bottom = parse_dim(cfg.height, available_rows) + gap.bottom, left = gap.left }
+    return {
+      top = gap.top,
+      right = gap.right,
+      bottom = parse_dim(cfg.height, available_rows) + gap.bottom,
+      left = gap.left,
+    }
   end
   return zero
 end
