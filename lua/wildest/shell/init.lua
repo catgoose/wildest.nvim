@@ -202,7 +202,10 @@ function M.shell_pipeline(opts)
 
   -- Optional frecency boost
   if opts.frecency then
-    table.insert(pipeline, require("wildest.frecency").boost({ blend = opts.frecency_blend or 0.5 }))
+    table.insert(
+      pipeline,
+      require("wildest.frecency").boost({ blend = opts.frecency_blend or 0.5 })
+    )
   end
 
   --- Result wrapper stage
