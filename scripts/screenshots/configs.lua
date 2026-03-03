@@ -259,6 +259,13 @@ M.configs = {
     pipeline = { "shell_fuzzy", "cmdline_fuzzy" },
   },
 
+  substitute_pipeline = {
+    category = "pipeline",
+    label = "Substitute",
+    cmd = ":%s/func",
+    pipeline = { "substitute", "cmdline_fuzzy" },
+  },
+
   -- Layout configs (statusline / offset variations)
   laststatus_0 = {
     category = "layout",
@@ -948,7 +955,7 @@ M.feature_names = {
   "devicons", "fuzzy", "gradient", "search", "renderer_mux", "kind_icons",
   "prefix_highlighter", "scrollbar", "pumblend",
 }
-M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline" }
+M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
 M.border_names = { "border_rounded", "border_single", "border_double", "border_solid", "border_title" }
 M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal", "wildmenu_pipe", "wildmenu_arrows_index", "wildmenu_compact" }
@@ -1077,6 +1084,7 @@ function M.random_scene(label)
     { "help_fuzzy", "cmdline_fuzzy", "search" },
     { "history", "cmdline_fuzzy", "search" },
     { "shell_fuzzy", "cmdline_fuzzy", "search" },
+    { "substitute", "cmdline_fuzzy", "search" },
   }
   local lefts = {
     {},
@@ -1623,6 +1631,7 @@ function M.scene_to_description(cfg)
       if p == "help_fuzzy" then add("help pipeline") end
       if p == "history" then add("history pipeline") end
       if p == "shell" or p == "shell_fuzzy" then add("shell pipeline") end
+      if p == "substitute" then add("substitute pipeline") end
     end
   end
 
@@ -1696,6 +1705,8 @@ local function resolve_pipeline(list, w)
       table.insert(branches, w.shell_pipeline())
     elseif name == "shell_fuzzy" then
       table.insert(branches, w.shell_pipeline({ fuzzy = true }))
+    elseif name == "substitute" then
+      table.insert(branches, w.substitute_pipeline())
     end
   end
   return w.branch(unpack(branches))

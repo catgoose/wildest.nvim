@@ -243,18 +243,6 @@ function M.run_pipeline(input)
     return
   end
 
-  if state.cmdtype == ":" and vim.o.inccommand ~= "" then
-    local is_sub = input:match("^[%%%d%.,';/$?]*%s*s[^a-z]")
-      or input:match("^[%%%d%.,';/$?]*%s*su[bp]")
-    if is_sub then
-      log.log("state", "run_pipeline_inccommand_skip")
-      state.result = nil
-      state.hidden = true
-      M.draw()
-      return
-    end
-  end
-
   state.run_id = state.run_id + 1
   local run_id = state.run_id
   local session_id = state.session_id
@@ -433,6 +421,10 @@ function M.draw()
       done = true,
       input = state.previous_cmdline,
     }
+
+    if state.result and state.result.data and state.result.data.route then
+      ctx.route = state.result.data.route
+    end
 
     if state.hidden then
       log.log("state", "draw_hidden")
