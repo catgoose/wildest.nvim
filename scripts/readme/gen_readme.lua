@@ -1,11 +1,11 @@
 #!/usr/bin/env lua
--- Generate README.md and SCREENSHOTS.md from templates + runtime data.
+-- Generate README.md and WANTED_POSTERS.md from templates + runtime data.
 -- Usage:
---   lua scripts/readme/gen_readme.lua            -- write README.md + SCREENSHOTS.md
+--   lua scripts/readme/gen_readme.lua            -- write README.md + WANTED_POSTERS.md
 --   lua scripts/readme/gen_readme.lua --check    -- exit 1 if any output is stale
 --   lua scripts/readme/gen_readme.lua --output X -- write README to X instead
 
-local IMG_BASE = "https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/"
+local IMG_BASE = "https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/"
 
 -- ── CLI args ───────────────────────────────────────────────────────
 
@@ -506,7 +506,7 @@ end
 -- Files to generate: { template_path, output_path }
 local targets = {
   { template = "scripts/readme/README.template.md", output = output_path },
-  { template = "scripts/readme/SCREENSHOTS.template.md", output = "SCREENSHOTS.md" },
+  { template = "scripts/readme/WANTED_POSTERS.template.md", output = "WANTED_POSTERS.md" },
 }
 
 local all_ok = true
