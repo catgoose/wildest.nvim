@@ -477,6 +477,37 @@ function M.draw()
       if preview_active and not preview.is_screen_anchor() then
         preview.update(ctx, result)
       end
+
+      -- Layout callback: let user adjust both window positions/sizes
+      -- before the screen redraws. Since Neovim batches updates within
+      -- vim.schedule(), there's no flicker.
+      local layout_fn = cfg.layout
+      if layout_fn and preview_active then
+        local renderer_util = require("wildest.renderer")
+        local geom = {
+          menu = renderer_util.get_popup_geometry(),
+          preview = preview.get_geometry(),
+        }
+        local layout_ok, adjusted = pcall(layout_fn, geom)
+        if layout_ok and adjusted then
+          if adjusted.menu then
+            local win = renderer_util.get_popup_win()
+            if win then
+              vim.api.nvim_win_set_config(win, {
+                relative = "editor",
+                row = math.max(0, adjusted.menu.row),
+                col = math.max(0, adjusted.menu.col),
+                width = math.max(1, adjusted.menu.width),
+                height = math.max(1, adjusted.menu.height),
+              })
+            end
+          end
+          if adjusted.preview then
+            preview.apply_geometry(adjusted.preview)
+          end
+        end
+      end
+
       log.log("state", "draw_render_ok")
       vim.cmd.redraw()
     end

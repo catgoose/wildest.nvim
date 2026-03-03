@@ -30,6 +30,7 @@
 ---@field min_input? integer Minimum input length before showing completions (default: 0)
 ---@field pipeline? wildest.PipelineStep|wildest.PipelineStep[] Pipeline steps or single pipeline step
 ---@field preview? wildest.PreviewConfig Preview window configuration
+---@field layout? fun(geometry: table): table? Layout adjustment callback
 ---@field auto_colorscheme? boolean Re-apply highlights on colorscheme change (default: true)
 ---@field renderer? wildest.Renderer Renderer instance
 

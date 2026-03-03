@@ -127,4 +127,45 @@ T["check_run_id()"]["preserves page on same run_id"] = function()
   expect.equality(state.page[2], 10)
 end
 
+T["get_popup_geometry()"] = new_set()
+
+T["get_popup_geometry()"]["returns visible=false when no geometry stored"] = function()
+  renderer_util._last_popup_geometry = nil
+  local g = renderer_util.get_popup_geometry()
+  expect.equality(g.visible, false)
+  expect.equality(g.row, 0)
+  expect.equality(g.col, 0)
+  expect.equality(g.width, 0)
+  expect.equality(g.height, 0)
+  expect.equality(g.border, nil)
+end
+
+T["get_popup_geometry()"]["returns stored geometry with visible=true"] = function()
+  renderer_util._last_popup_geometry = {
+    row = 5, col = 10, width = 40, height = 12, border = "rounded",
+  }
+  local g = renderer_util.get_popup_geometry()
+  expect.equality(g.visible, true)
+  expect.equality(g.row, 5)
+  expect.equality(g.col, 10)
+  expect.equality(g.width, 40)
+  expect.equality(g.height, 12)
+  expect.equality(g.border, "rounded")
+  -- Clean up
+  renderer_util._last_popup_geometry = nil
+end
+
+T["get_popup_win()"] = new_set()
+
+T["get_popup_win()"]["returns nil when no window stored"] = function()
+  renderer_util._last_popup_win = nil
+  expect.equality(renderer_util.get_popup_win(), nil)
+end
+
+T["get_popup_win()"]["returns nil for invalid window handle"] = function()
+  renderer_util._last_popup_win = -1
+  expect.equality(renderer_util.get_popup_win(), nil)
+  renderer_util._last_popup_win = nil
+end
+
 return T

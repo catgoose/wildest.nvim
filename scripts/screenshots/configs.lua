@@ -855,7 +855,7 @@ M.configs = {
     theme = "wanted",
     cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
-    preview = { position = "right", anchor = "popup", width = "60%", border = "rounded" },
+    preview = { position = "right", anchor = "popup", width = "60%", border = "rounded", gap = 1 },
   },
   preview_wanted_left = {
     category = "preview",
@@ -863,7 +863,7 @@ M.configs = {
     theme = "wanted",
     cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
-    preview = { position = "left", anchor = "popup", width = "60%", border = "rounded" },
+    preview = { position = "left", anchor = "popup", width = "60%", border = "rounded", gap = 1 },
   },
   preview_wanted_top = {
     category = "preview",
@@ -871,7 +871,7 @@ M.configs = {
     theme = "wanted",
     cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
-    preview = { position = "top", anchor = "popup", height = "60%", border = "rounded" },
+    preview = { position = "top", anchor = "popup", height = "60%", border = "rounded", gap = 1 },
   },
   preview_wanted_bottom = {
     category = "preview",
@@ -879,7 +879,56 @@ M.configs = {
     theme = "wanted",
     cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
-    preview = { position = "bottom", anchor = "popup", height = "60%", border = "rounded" },
+    preview = { position = "bottom", anchor = "popup", height = "60%", border = "rounded", gap = 1 },
+  },
+
+  -- Gap configs: showcase gap spacing between preview, popup, and screen edges.
+  preview_gap_right = {
+    category = "preview",
+    label = "Gap Right",
+    theme = "wanted",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    preview = { position = "right", anchor = "popup", width = "50%", border = "rounded", gap = 2 },
+  },
+  preview_gap_left = {
+    category = "preview",
+    label = "Gap Left",
+    theme = "wanted",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    preview = { position = "left", anchor = "popup", width = "50%", border = "rounded", gap = 2 },
+  },
+  preview_gap_screen_right = {
+    category = "preview",
+    label = "Gap Screen Right",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    preview = { position = "right", anchor = "screen", width = "40%", border = "rounded", gap = 2 },
+  },
+  preview_gap_screen_left = {
+    category = "preview",
+    label = "Gap Screen Left",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    preview = { position = "left", anchor = "screen", width = "40%", border = "rounded", gap = 2 },
+  },
+
+  -- Priority configs: preview gets full configured size, menu adapts.
+  preview_priority_right = {
+    category = "preview",
+    label = "Priority Right",
+    theme = "wanted",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    preview = { position = "right", anchor = "popup", width = "60%", border = "rounded", gap = 1, priority = "preview" },
+  },
+  preview_priority_screen = {
+    category = "preview",
+    label = "Priority Screen",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    preview = { position = "right", anchor = "screen", width = "40%", border = "rounded", priority = "preview" },
   },
 }
 
@@ -914,6 +963,8 @@ M.preview_names = {
   "preview_right_screen", "preview_left_screen", "preview_top_screen", "preview_bottom_screen",
   "preview_right_popup", "preview_left_popup", "preview_top_popup", "preview_bottom_popup",
   "preview_wanted_right", "preview_wanted_left", "preview_wanted_top", "preview_wanted_bottom",
+  "preview_gap_right", "preview_gap_left", "preview_gap_screen_right", "preview_gap_screen_left",
+  "preview_priority_right", "preview_priority_screen",
 }
 
 -- Theme configs (generated)
@@ -1575,7 +1626,11 @@ function M.scene_to_description(cfg)
 
   if merged.preview then
     local p = merged.preview
-    add("preview " .. (p.position or "right") .. " " .. (p.anchor or "screen"))
+    local desc = "preview " .. (p.position or "right") .. " " .. (p.anchor or "screen")
+    if p.gap then
+      desc = desc .. " gap=" .. (type(p.gap) == "number" and p.gap or "table")
+    end
+    add(desc)
   end
 
   if merged.action then add("action: " .. merged.action) end
