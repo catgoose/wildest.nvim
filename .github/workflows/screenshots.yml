@@ -15,6 +15,24 @@ permissions:
 jobs:
   screenshots:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        category:
+          - renderers
+          - themes
+          - features
+          - pipelines
+          - highlights
+          - borders
+          - wildmenu-variants
+          - palette-variants
+          - dimensions
+          - gradients
+          - combinations
+          - layouts
+          - options
+          - previews
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
 
@@ -40,12 +58,12 @@ jobs:
           skip-build: ${{ steps.cache-csrc.outputs.cache-hit == 'true' }}
           skip-deps: ${{ steps.cache-deps.outputs.cache-hit == 'true' }}
 
-      - name: Generate screenshots
-        run: nvim --headless -l scripts/screenshots/generate.lua
+      - name: Generate ${{ matrix.category }} screenshots
+        run: nvim --headless -l scripts/screenshots/generate.lua --${{ matrix.category }}
 
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
-          name: screenshots
+          name: screenshots-${{ matrix.category }}
           path: scripts/screenshots/output/*.png
 
   publish:
@@ -54,8 +72,9 @@ jobs:
     steps:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: screenshots
+          pattern: screenshots-*
           path: output
+          merge-multiple: true
 
       - name: Checkout screenshots repo
         uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
