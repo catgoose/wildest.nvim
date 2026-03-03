@@ -14,12 +14,11 @@ concurrency:
 permissions:
   contents: write
   pull-requests: write
-  issues: write
 
 jobs:
   format:
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && github.actor != 'github-actions[bot]'
     steps:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
@@ -63,7 +62,7 @@ jobs:
 
       - name: Enable auto-merge
         if: steps.cpr.outputs.pull-request-number
-        run: gh pr merge --auto --squash ${{ steps.cpr.outputs.pull-request-number }}
+        run: gh pr merge --auto --squash --delete-branch ${{ steps.cpr.outputs.pull-request-number }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
