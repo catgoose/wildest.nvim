@@ -575,7 +575,8 @@ function M.open_or_update_win(state, win_config)
     vim.wo[state.win].cursorline = false
   end
 
-  -- Store popup geometry for popup-anchor preview positioning
+  -- Store popup geometry and window handle for popup-anchor preview positioning
+  -- and layout callback access.
   M._last_popup_geometry = {
     row = win_config.row,
     col = win_config.col,
@@ -583,6 +584,7 @@ function M.open_or_update_win(state, win_config)
     height = win_config.height,
     border = win_config.border,
   }
+  M._last_popup_win = state.win
 end
 
 --- Hide a floating window
@@ -595,6 +597,7 @@ function M.hide_win(state)
   end
   state.page = { -1, -1 }
   M._last_popup_geometry = nil
+  M._last_popup_win = nil
 end
 
 --- Get highlight spans for a candidate
@@ -665,6 +668,32 @@ function M.check_run_id(state, ctx)
     end
     state.page = { -1, -1 }
   end
+end
+
+--- Return stored popup geometry as a layout-compatible table, or a visible=false stub.
+---@return {row: number, col: number, width: number, height: number, border: any, visible: boolean}
+function M.get_popup_geometry()
+  local g = M._last_popup_geometry
+  if g then
+    return {
+      row = g.row,
+      col = g.col,
+      width = g.width,
+      height = g.height,
+      border = g.border,
+      visible = true,
+    }
+  end
+  return { row = 0, col = 0, width = 0, height = 0, border = nil, visible = false }
+end
+
+--- Return the valid popup window handle, or nil.
+---@return integer|nil
+function M.get_popup_win()
+  if M._last_popup_win and vim.api.nvim_win_is_valid(M._last_popup_win) then
+    return M._last_popup_win
+  end
+  return nil
 end
 
 return M

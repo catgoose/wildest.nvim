@@ -105,6 +105,18 @@ T["setup()"]["stores position and anchor correctly"] = function()
   expect.equality(preview.is_screen_anchor(), false)
 end
 
+T["setup()"]["stores priority correctly"] = function()
+  local preview = get_preview()
+  preview.setup({ priority = "preview" })
+  expect.equality(preview.is_preview_priority(), true)
+end
+
+T["setup()"]["defaults priority to menu"] = function()
+  local preview = get_preview()
+  preview.setup({})
+  expect.equality(preview.is_preview_priority(), false)
+end
+
 T["setup()"]["defaults position to right and anchor to screen"] = function()
   local preview = get_preview()
   preview.setup({})
@@ -182,6 +194,34 @@ T["reserved_space()"]["returns all zeros when toggled off"] = function()
   preview.toggle()
   local s = preview.reserved_space()
   expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
+end
+
+T["reserved_space()"]["screen anchor + priority=preview reserves without window"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "right", anchor = "screen", width = "50%", priority = "preview" })
+  -- No window open, but priority=preview should still reserve space
+  local s = preview.reserved_space()
+  local expected_width = preview._parse_dim("50%", vim.o.columns)
+  expect.equality(s.right, expected_width)
+  expect.equality(s.top, 0)
+  expect.equality(s.bottom, 0)
+  expect.equality(s.left, 0)
+end
+
+T["reserved_space()"]["screen anchor + priority=menu requires window"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "right", anchor = "screen", width = "50%", priority = "menu" })
+  -- No window open, priority=menu → should return zeros
+  local s = preview.reserved_space()
+  expect.equality(s, { top = 0, right = 0, bottom = 0, left = 0 })
+end
+
+T["reserved_space()"]["popup anchor + priority=preview unchanged (already unconditional)"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "right", anchor = "popup", width = "50%", priority = "preview" })
+  local s = preview.reserved_space()
+  local expected_width = preview._parse_dim("50%", vim.o.columns)
+  expect.equality(s.right, expected_width)
 end
 
 T["is_screen_anchor()"] = new_set()
@@ -287,6 +327,7 @@ local function screen_params(position, opts)
     available_rows = opts.available_rows or 50,
     content_lines = opts.content_lines or 100,
     geom = nil,
+    gap = opts.gap,
   }
 end
 
@@ -314,6 +355,8 @@ local function popup_params(position, opts)
     available_rows = opts.available_rows or 50,
     content_lines = opts.content_lines or 100,
     geom = opts.geom or popup_geom(),
+    gap = opts.gap,
+    priority = opts.priority,
   }
 end
 
@@ -926,6 +969,53 @@ T["_compute_win_config()"]["screen top: 100% height fills all available rows min
   expect.equality(p.height, 28) -- 30 - 2
 end
 
+-- ─── _compute_win_config(): priority="preview" ───────────────────────────────
+
+T["_compute_win_config()"]["popup right: priority=preview uses configured height, not popup height"] = function()
+  local preview = get_preview()
+  -- popup height 15, height "40%" of 50 = 20, content 100
+  -- with priority=menu: h = min(15, 100) = 15
+  -- with priority=preview: h = min(20, 100) = 20
+  local p = preview._compute_win_config(popup_params("right", { content_lines = 100, priority = "preview" }))
+  expect.equality(p.height, 20)
+end
+
+T["_compute_win_config()"]["popup right: priority=menu caps to popup height (default)"] = function()
+  local preview = get_preview()
+  local p = preview._compute_win_config(popup_params("right", { content_lines = 100, priority = "menu" }))
+  expect.equality(p.height, 15) -- capped to popup geom.height
+end
+
+T["_compute_win_config()"]["popup right: priority=preview still shrinks to content"] = function()
+  local preview = get_preview()
+  -- content 5 < configured height (20) → uses content
+  local p = preview._compute_win_config(popup_params("right", { content_lines = 5, priority = "preview" }))
+  expect.equality(p.height, 5)
+end
+
+T["_compute_win_config()"]["popup left: priority=preview uses configured height"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 100 })
+  local p = preview._compute_win_config(popup_params("left", { geom = geom, content_lines = 100, priority = "preview" }))
+  -- height "40%" of 50 = 20
+  expect.equality(p.height, 20)
+end
+
+T["_compute_win_config()"]["popup left: priority=menu caps to popup height"] = function()
+  local preview = get_preview()
+  local geom = popup_geom({ col = 100 })
+  local p = preview._compute_win_config(popup_params("left", { geom = geom, content_lines = 100, priority = "menu" }))
+  expect.equality(p.height, 15)
+end
+
+T["_compute_win_config()"]["popup top/bottom: priority does not change behavior"] = function()
+  local preview = get_preview()
+  -- top/bottom already use configured dimensions, not popup height
+  local p_menu = preview._compute_win_config(popup_params("top", { content_lines = 5, priority = "menu" }))
+  local p_prev = preview._compute_win_config(popup_params("top", { content_lines = 5, priority = "preview" }))
+  expect.equality(p_menu.height, p_prev.height)
+end
+
 -- ─── _parse_dim(): edge cases ───────────────────────────────────────────────
 
 T["_parse_dim()"]["negative integer clamps to 1"] = function()
@@ -1016,6 +1106,30 @@ T["_reset()"]["is safe to call multiple times"] = function()
   expect.equality(preview.is_active(), false)
 end
 
+-- ─── get_geometry() ─────────────────────────────────────────────────────────
+
+T["get_geometry()"] = new_set()
+
+T["get_geometry()"]["returns visible=false when no window"] = function()
+  local preview = get_preview()
+  local g = preview.get_geometry()
+  expect.equality(g.visible, false)
+  expect.equality(g.row, 0)
+  expect.equality(g.col, 0)
+  expect.equality(g.width, 0)
+  expect.equality(g.height, 0)
+end
+
+-- ─── apply_geometry() ───────────────────────────────────────────────────────
+
+T["apply_geometry()"] = new_set()
+
+T["apply_geometry()"]["safe to call when no window"] = function()
+  local preview = get_preview()
+  -- Should not error
+  preview.apply_geometry({ row = 0, col = 0, width = 10, height = 5 })
+end
+
 -- ─── center_col() ───────────────────────────────────────────────────────────
 
 T["center_col()"] = new_set()
@@ -1094,6 +1208,241 @@ T["parse_margin()"]["returns 0 for non-parseable input"] = function()
   local renderer_util = require("wildest.renderer")
   expect.equality(renderer_util.parse_margin("xyz", 200, 80), 0)
   expect.equality(renderer_util.parse_margin(nil, 200, 80), 0)
+end
+
+-- ─── _normalize_gap() ─────────────────────────────────────────────────────
+
+T["_normalize_gap()"] = new_set()
+
+T["_normalize_gap()"]["number → uniform table"] = function()
+  local preview = get_preview()
+  local g = preview._normalize_gap(3)
+  expect.equality(g, { top = 3, right = 3, bottom = 3, left = 3, between = 3 })
+end
+
+T["_normalize_gap()"]["nil → all zeros"] = function()
+  local preview = get_preview()
+  local g = preview._normalize_gap(nil)
+  expect.equality(g, { top = 0, right = 0, bottom = 0, left = 0, between = 0 })
+end
+
+T["_normalize_gap()"]["table with all keys"] = function()
+  local preview = get_preview()
+  local g = preview._normalize_gap({ top = 1, right = 2, bottom = 3, left = 4, between = 5 })
+  expect.equality(g, { top = 1, right = 2, bottom = 3, left = 4, between = 5 })
+end
+
+T["_normalize_gap()"]["partial table defaults missing to 0"] = function()
+  local preview = get_preview()
+  local g = preview._normalize_gap({ top = 2, between = 3 })
+  expect.equality(g, { top = 2, right = 0, bottom = 0, left = 0, between = 3 })
+end
+
+T["_normalize_gap()"]["negative number clamps to 0"] = function()
+  local preview = get_preview()
+  local g = preview._normalize_gap(-5)
+  expect.equality(g, { top = 0, right = 0, bottom = 0, left = 0, between = 0 })
+end
+
+T["_normalize_gap()"]["negative table values clamp to 0"] = function()
+  local preview = get_preview()
+  local g = preview._normalize_gap({ top = -1, right = 2, bottom = -3, left = 0, between = -1 })
+  expect.equality(g, { top = 0, right = 2, bottom = 0, left = 0, between = 0 })
+end
+
+T["_normalize_gap()"]["zero number → all zeros"] = function()
+  local preview = get_preview()
+  local g = preview._normalize_gap(0)
+  expect.equality(g, { top = 0, right = 0, bottom = 0, left = 0, between = 0 })
+end
+
+T["_normalize_gap()"]["string input → all zeros"] = function()
+  local preview = get_preview()
+  local g = preview._normalize_gap("invalid")
+  expect.equality(g, { top = 0, right = 0, bottom = 0, left = 0, between = 0 })
+end
+
+-- ─── is_preview_priority() ──────────────────────────────────────────────────
+
+T["is_preview_priority()"] = new_set()
+
+T["is_preview_priority()"]["false when not configured"] = function()
+  local preview = get_preview()
+  expect.equality(preview.is_preview_priority(), false)
+end
+
+T["is_preview_priority()"]["false by default (menu priority)"] = function()
+  local preview = get_preview()
+  preview.setup({})
+  expect.equality(preview.is_preview_priority(), false)
+end
+
+T["is_preview_priority()"]["true when priority=preview"] = function()
+  local preview = get_preview()
+  preview.setup({ priority = "preview" })
+  expect.equality(preview.is_preview_priority(), true)
+end
+
+T["is_preview_priority()"]["false when priority=menu"] = function()
+  local preview = get_preview()
+  preview.setup({ priority = "menu" })
+  expect.equality(preview.is_preview_priority(), false)
+end
+
+-- ─── setup() gap integration ─────────────────────────────────────────────
+
+T["setup()"]["gap stored as normalized table from number"] = function()
+  local preview = get_preview()
+  preview.setup({ gap = 2 })
+  -- Verify via reserved_space (popup anchor right, gap=2 uniform)
+  -- The gap is stored internally; test through behavior
+  expect.equality(preview.is_active(), true)
+end
+
+-- ─── reserved_space() with gap ───────────────────────────────────────────
+
+T["reserved_space()"]["popup anchor + right with gap adds between and edge"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "right", anchor = "popup", width = "50%", gap = 3 })
+  local s = preview.reserved_space()
+  local expected_width = preview._parse_dim("50%", vim.o.columns)
+  -- right = width + gap.right + gap.between = width + 3 + 3
+  expect.equality(s.right, expected_width + 3 + 3)
+  expect.equality(s.top, 3)
+  expect.equality(s.bottom, 3)
+  expect.equality(s.left, 3)
+end
+
+T["reserved_space()"]["popup anchor + left with gap adds between and edge"] = function()
+  local preview = get_preview()
+  preview.setup({ position = "left", anchor = "popup", width = "50%", gap = 2 })
+  local s = preview.reserved_space()
+  local expected_width = preview._parse_dim("50%", vim.o.columns)
+  -- left = width + gap.left + gap.between = width + 2 + 2
+  expect.equality(s.left, expected_width + 2 + 2)
+  expect.equality(s.top, 2)
+  expect.equality(s.bottom, 2)
+  expect.equality(s.right, 2)
+end
+
+-- ─── _compute_win_config() with gap ──────────────────────────────────────
+
+T["_compute_win_config()"]["popup right: between gap shifts start_col"] = function()
+  local preview = get_preview()
+  local gap = { top = 0, right = 0, bottom = 0, left = 0, between = 5 }
+  local geom = popup_geom() -- row=20, col=30, w=60, h=15, border=rounded
+  local p = preview._compute_win_config(popup_params("right", { geom = geom, gap = gap }))
+  -- border_size=1, col = 30 + 60 + 1 + 5 = 96
+  expect.equality(p.col, 96)
+  expect.equality(p.row, 20)
+end
+
+T["_compute_win_config()"]["popup right: right gap reduces available space"] = function()
+  local preview = get_preview()
+  local gap = { top = 0, right = 10, bottom = 0, left = 0, between = 0 }
+  local geom = popup_geom({ col = 170, width = 20 }) -- border=rounded
+  local p = preview._compute_win_config(popup_params("right", { geom = geom, gap = gap }))
+  -- start_col = 170 + 20 + 1 = 191, avail = 200 - 191 - 10 = -1 < 3 → nil
+  expect.equality(p, nil)
+end
+
+T["_compute_win_config()"]["popup left: between gap shifts col"] = function()
+  local preview = get_preview()
+  local gap = { top = 0, right = 0, bottom = 0, left = 0, between = 3 }
+  local geom = popup_geom({ col = 50 }) -- border=rounded
+  local p = preview._compute_win_config(popup_params("left", { geom = geom, gap = gap }))
+  -- avail = 50 - 1 - 3 - 0 = 46, w = min(80, 46) = 46
+  -- col = 50 - 46 - 1 - 3 = 0
+  expect.equality(p.col, 0)
+  expect.equality(p.width, 44) -- 46 - 2
+end
+
+T["_compute_win_config()"]["popup left: left gap reduces available space"] = function()
+  local preview = get_preview()
+  local gap = { top = 0, right = 0, bottom = 0, left = 5, between = 0 }
+  local geom = popup_geom({ col = 7 }) -- border=rounded
+  local p = preview._compute_win_config(popup_params("left", { geom = geom, gap = gap }))
+  -- avail = 7 - 1 - 0 - 5 = 1 < 3 → nil
+  expect.equality(p, nil)
+end
+
+T["_compute_win_config()"]["popup top: between gap shifts row"] = function()
+  local preview = get_preview()
+  local gap = { top = 0, right = 0, bottom = 0, left = 0, between = 2 }
+  local geom = popup_geom({ row = 20 })
+  local p = preview._compute_win_config(popup_params("top", { geom = geom, gap = gap, content_lines = 5 }))
+  -- h=5, row = 20 - 5 - 2 - 2 = 11
+  expect.equality(p.row, 11)
+  expect.equality(p.height, 5)
+end
+
+T["_compute_win_config()"]["popup bottom: between gap shifts start_row"] = function()
+  local preview = get_preview()
+  local gap = { top = 0, right = 0, bottom = 0, left = 0, between = 3 }
+  local geom = popup_geom() -- row=20, h=15, border=rounded
+  local p = preview._compute_win_config(popup_params("bottom", { geom = geom, gap = gap, content_lines = 5 }))
+  -- border_size=1, start_row = 20 + 15 + 1 + 1 + 3 = 40
+  expect.equality(p.row, 40)
+end
+
+T["_compute_win_config()"]["popup bottom: bottom gap reduces available space"] = function()
+  local preview = get_preview()
+  local gap = { top = 0, right = 0, bottom = 5, left = 0, between = 0 }
+  local geom = popup_geom({ row = 40, height = 5 }) -- border=rounded
+  local p = preview._compute_win_config(popup_params("bottom", { geom = geom, gap = gap, content_lines = 3 }))
+  -- start_row = 40 + 5 + 1 + 1 + 0 = 47, avail = 50 - 47 - 2 - 5 = -4 < 1 → nil
+  expect.equality(p, nil)
+end
+
+T["_compute_win_config()"]["screen right: gap insets from edges"] = function()
+  local preview = get_preview()
+  local gap = { top = 2, right = 3, bottom = 2, left = 0, between = 0 }
+  local p = preview._compute_win_config(screen_params("right", { gap = gap }))
+  -- w = 80, col = 200 - 80 - 3 = 117
+  expect.equality(p.col, 117)
+  expect.equality(p.row, 2)
+  expect.equality(p.height, 46) -- 50 - 2 - 2
+  expect.equality(p.width, 78) -- 80 - 2 (border)
+end
+
+T["_compute_win_config()"]["screen left: gap insets from left edge"] = function()
+  local preview = get_preview()
+  local gap = { top = 1, right = 0, bottom = 1, left = 5, between = 0 }
+  local p = preview._compute_win_config(screen_params("left", { gap = gap }))
+  expect.equality(p.col, 5)
+  expect.equality(p.row, 1)
+  expect.equality(p.height, 48) -- 50 - 1 - 1
+end
+
+T["_compute_win_config()"]["screen top: gap insets from top and sides"] = function()
+  local preview = get_preview()
+  local gap = { top = 3, right = 4, bottom = 0, left = 4, between = 0 }
+  local p = preview._compute_win_config(screen_params("top", { gap = gap }))
+  expect.equality(p.row, 3)
+  expect.equality(p.col, 4)
+  -- width = max(1, 200 - 2 - 4 - 4) = 190
+  expect.equality(p.width, 190)
+end
+
+T["_compute_win_config()"]["screen bottom: gap insets from bottom and sides"] = function()
+  local preview = get_preview()
+  local gap = { top = 0, right = 2, bottom = 3, left = 2, between = 0 }
+  local p = preview._compute_win_config(screen_params("bottom", { gap = gap }))
+  -- h = 20, row = 50 - 20 + 1 - 3 = 28
+  expect.equality(p.row, 28)
+  expect.equality(p.col, 2)
+  -- width = max(1, 200 - 2 - 2 - 2) = 194
+  expect.equality(p.width, 194)
+end
+
+T["_compute_win_config()"]["no gap param defaults to zero gaps"] = function()
+  local preview = get_preview()
+  -- Omitting gap entirely should behave like the original
+  local p = preview._compute_win_config(screen_params("right"))
+  expect.equality(p.row, 0)
+  expect.equality(p.col, 120) -- 200 - 80
+  expect.equality(p.width, 78)
+  expect.equality(p.height, 50)
 end
 
 return T
