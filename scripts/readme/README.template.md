@@ -22,18 +22,18 @@
 > [open a PR](https://github.com/catgoose/wildest.nvim/pulls) — new hands are always welcome.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/gifs/gunsmoke.gif" alt="wildest.nvim gunsmoke" width="800">
+  <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/showcase/gunsmoke.gif" alt="wildest.nvim gunsmoke" width="800">
   <br>
   <em>Gunsmoke — get the hell out of Dodge!</em>
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/gifs/showdown.gif" alt="wildest.nvim showdown" width="800">
+  <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/showcase/showdown.gif" alt="wildest.nvim showdown" width="800">
   <br>
   <em>Showdown — don't blink pardner</em>
 </p>
 
-**[Wanted Posters](SCREENSHOTS.md)** — every config combination, pinned up for inspection.
+**[Wanted Posters](WANTED_POSTERS.md)** — every config combination, pinned up for inspection.
 
 <!--toc:start-->
 
@@ -243,7 +243,7 @@ drive - input goes in one end, completions come out the other.
 
 ### Built-in Pipelines
 
-![Search Pipeline](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png)
+![Search Pipeline](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/search.png)
 
 <details>
 <summary>Pipeline Gallery</summary>
@@ -502,7 +502,7 @@ handles everything else.
 
 ### Plain Popupmenu
 
-![Plain Popupmenu](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu.png)
+![Plain Popupmenu](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/popupmenu.png)
 
 ```lua
 w.popupmenu_renderer({
@@ -528,7 +528,7 @@ w.popupmenu_renderer({
 
 ### Bordered Popupmenu
 
-![Bordered Popupmenu](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_border.png)
+![Bordered Popupmenu](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/popupmenu_border.png)
 
 Now we're talkin'. Put a fence around that menu:
 
@@ -564,7 +564,7 @@ w.popupmenu_border_theme({
 
 ### Palette
 
-![Palette](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_palette.png)
+![Palette](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/popupmenu_palette.png)
 
 A centered floating palette, like a wanted poster in the middle of town:
 
@@ -606,7 +606,7 @@ w.popupmenu_palette_theme({
 
 ### Wildmenu
 
-![Wildmenu](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu.png)
+![Wildmenu](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/wildmenu.png)
 
 Horizontal suggestions above the cmdline, like a dusty trail of options:
 
@@ -622,7 +622,7 @@ w.wildmenu_renderer({
 
 Different renderers for different modes. A cowboy needs the right tool for the job:
 
-![Renderer Mux](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/renderer_mux.png)
+![Renderer Mux](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/renderer_mux.png)
 
 ```lua
 w.renderer_mux({
@@ -634,7 +634,7 @@ w.renderer_mux({
 
 ## Tin Stars (Components)
 
-![Devicons](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons.png)
+![Devicons](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/devicons.png)
 
 Decorate your popupmenu and wildmenu with components:
 
@@ -678,7 +678,7 @@ Flag characters: `1` (bufnr), `%` (current), `#` (alternate), `+` (modified),
 
 ## Highlighters
 
-![Fuzzy Highlighting](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fuzzy.png)
+![Fuzzy Highlighting](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/fuzzy.png)
 
 Make them matched characters glow like campfire embers:
 
@@ -691,7 +691,7 @@ Make them matched characters glow like campfire embers:
 
 ### Gradient Highlighting
 
-![Gradient Highlighting](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient.png)
+![Gradient Highlighting](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/gradient.png)
 
 ```lua
 local gradient = {}
@@ -827,7 +827,7 @@ Stored in `~/.local/state/nvim/wildest/`.
 
 ## Kind Icons
 
-![Kind Icons](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/kind_icons.png)
+![Kind Icons](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/kind_icons.png)
 
 Show LSP-style icons next to your candidates. Knows about functions, classes,
 variables, files, and more:

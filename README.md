@@ -22,18 +22,18 @@
 > [open a PR](https://github.com/catgoose/wildest.nvim/pulls) — new hands are always welcome.
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/gifs/gunsmoke.gif" alt="wildest.nvim gunsmoke" width="800">
+  <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/showcase/gunsmoke.gif" alt="wildest.nvim gunsmoke" width="800">
   <br>
   <em>Gunsmoke — get the hell out of Dodge!</em>
 </p>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/gifs/showdown.gif" alt="wildest.nvim showdown" width="800">
+  <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/showcase/showdown.gif" alt="wildest.nvim showdown" width="800">
   <br>
   <em>Showdown — don't blink pardner</em>
 </p>
 
-**[Wanted Posters](SCREENSHOTS.md)** — every config combination, pinned up for inspection.
+**[Wanted Posters](WANTED_POSTERS.md)** — every config combination, pinned up for inspection.
 
 <!--toc:start-->
 
@@ -243,19 +243,19 @@ drive - input goes in one end, completions come out the other.
 
 ### Built-in Pipelines
 
-![Search Pipeline](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png)
+![Search Pipeline](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/search.png)
 
 <details>
 <summary>Pipeline Gallery</summary>
 <!-- gen:pipeline_gallery:start -->
 <table>
 <tr>
-<td align="center"><strong>Lua Completion</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/lua_pipeline.png" width="400"></td>
-<td align="center"><strong>Help Tags</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/help_pipeline.png" width="400"></td>
-<td align="center"><strong>History</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/history_pipeline.png" width="400"></td>
+<td align="center"><strong>Lua Completion</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/lua_pipeline.png" width="400"></td>
+<td align="center"><strong>Help Tags</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/help_pipeline.png" width="400"></td>
+<td align="center"><strong>History</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/history_pipeline.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>Search</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/search.png" width="400"></td>
+<td align="center"><strong>Search</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/search.png" width="400"></td>
 <td></td>
 <td></td>
 </tr>
@@ -512,13 +512,13 @@ handles everything else.
 <!-- gen:renderer_gallery:start -->
 <table>
 <tr>
-<td align="center"><strong>Popupmenu</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu.png" width="400"></td>
-<td align="center"><strong>Bordered</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_border.png" width="400"></td>
-<td align="center"><strong>Palette</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_palette.png" width="400"></td>
+<td align="center"><strong>Popupmenu</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/popupmenu.png" width="400"></td>
+<td align="center"><strong>Bordered</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/popupmenu_border.png" width="400"></td>
+<td align="center"><strong>Palette</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/popupmenu_palette.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>Palette (Bottom Prompt)</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/palette_prompt_bottom.png" width="400"></td>
-<td align="center"><strong>Wildmenu</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu.png" width="400"></td>
+<td align="center"><strong>Palette (Bottom Prompt)</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/palette_prompt_bottom.png" width="400"></td>
+<td align="center"><strong>Wildmenu</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/wildmenu.png" width="400"></td>
 <td></td>
 </tr>
 </table>
@@ -526,7 +526,7 @@ handles everything else.
 
 ### Plain Popupmenu
 
-![Plain Popupmenu](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu.png)
+![Plain Popupmenu](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/popupmenu.png)
 
 ```lua
 w.popupmenu_renderer({
@@ -552,7 +552,7 @@ w.popupmenu_renderer({
 
 ### Bordered Popupmenu
 
-![Bordered Popupmenu](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_border.png)
+![Bordered Popupmenu](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/popupmenu_border.png)
 
 Now we're talkin'. Put a fence around that menu:
 
@@ -588,7 +588,7 @@ w.popupmenu_border_theme({
 
 ### Palette
 
-![Palette](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/popupmenu_palette.png)
+![Palette](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/popupmenu_palette.png)
 
 A centered floating palette, like a wanted poster in the middle of town:
 
@@ -630,7 +630,7 @@ w.popupmenu_palette_theme({
 
 ### Wildmenu
 
-![Wildmenu](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/wildmenu.png)
+![Wildmenu](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/wildmenu.png)
 
 Horizontal suggestions above the cmdline, like a dusty trail of options:
 
@@ -646,7 +646,7 @@ w.wildmenu_renderer({
 
 Different renderers for different modes. A cowboy needs the right tool for the job:
 
-![Renderer Mux](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/renderer_mux.png)
+![Renderer Mux](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/renderer_mux.png)
 
 ```lua
 w.renderer_mux({
@@ -658,7 +658,7 @@ w.renderer_mux({
 
 ## Tin Stars (Components)
 
-![Devicons](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/devicons.png)
+![Devicons](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/devicons.png)
 
 Decorate your popupmenu and wildmenu with components:
 
@@ -702,7 +702,7 @@ Flag characters: `1` (bufnr), `%` (current), `#` (alternate), `+` (modified),
 
 ## Highlighters
 
-![Fuzzy Highlighting](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fuzzy.png)
+![Fuzzy Highlighting](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/fuzzy.png)
 
 Make them matched characters glow like campfire embers:
 
@@ -715,7 +715,7 @@ Make them matched characters glow like campfire embers:
 
 ### Gradient Highlighting
 
-![Gradient Highlighting](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/gradient.png)
+![Gradient Highlighting](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/gradient.png)
 
 ```lua
 local gradient = {}
@@ -764,9 +764,9 @@ vim.api.nvim_set_hl(0, "WildestAccent", { fg = "#ff6600", bold = true })
 <!-- gen:highlight_gallery:start -->
 <table>
 <tr>
-<td align="center"><strong>Neon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_neon.png" width="400"></td>
-<td align="center"><strong>Ember</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ember.png" width="400"></td>
-<td align="center"><strong>Ocean</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/hl_ocean.png" width="400"></td>
+<td align="center"><strong>Neon</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/hl_neon.png" width="400"></td>
+<td align="center"><strong>Ember</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/hl_ember.png" width="400"></td>
+<td align="center"><strong>Ocean</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/hl_ocean.png" width="400"></td>
 </tr>
 </table>
 <!-- gen:highlight_gallery:end -->
@@ -833,58 +833,58 @@ w.setup({
 <!-- gen:theme_gallery:start -->
 <table>
 <tr>
-<td align="center"><strong>auto</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_auto.png" width="400"></td>
-<td align="center"><strong>default</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_default.png" width="400"></td>
-<td align="center"><strong>saloon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_saloon.png" width="400"></td>
+<td align="center"><strong>auto</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_auto.png" width="400"></td>
+<td align="center"><strong>default</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_default.png" width="400"></td>
+<td align="center"><strong>saloon</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_saloon.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>outlaw</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_outlaw.png" width="400"></td>
-<td align="center"><strong>sunset</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_sunset.png" width="400"></td>
-<td align="center"><strong>prairie</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_prairie.png" width="400"></td>
+<td align="center"><strong>outlaw</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_outlaw.png" width="400"></td>
+<td align="center"><strong>sunset</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_sunset.png" width="400"></td>
+<td align="center"><strong>prairie</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_prairie.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>dusty</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dusty.png" width="400"></td>
-<td align="center"><strong>midnight</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_midnight.png" width="400"></td>
-<td align="center"><strong>wanted</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_wanted.png" width="400"></td>
+<td align="center"><strong>dusty</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_dusty.png" width="400"></td>
+<td align="center"><strong>midnight</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_midnight.png" width="400"></td>
+<td align="center"><strong>wanted</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_wanted.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>cactus</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_cactus.png" width="400"></td>
-<td align="center"><strong>tumbleweed</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tumbleweed.png" width="400"></td>
-<td align="center"><strong>kanagawa</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa.png" width="400"></td>
+<td align="center"><strong>cactus</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_cactus.png" width="400"></td>
+<td align="center"><strong>tumbleweed</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_tumbleweed.png" width="400"></td>
+<td align="center"><strong>kanagawa</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_kanagawa.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>kanagawa_dragon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_dragon.png" width="400"></td>
-<td align="center"><strong>kanagawa_lotus</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_kanagawa_lotus.png" width="400"></td>
-<td align="center"><strong>catppuccin_mocha</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_mocha.png" width="400"></td>
+<td align="center"><strong>kanagawa_dragon</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_kanagawa_dragon.png" width="400"></td>
+<td align="center"><strong>kanagawa_lotus</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_kanagawa_lotus.png" width="400"></td>
+<td align="center"><strong>catppuccin_mocha</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_catppuccin_mocha.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>catppuccin_frappe</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_frappe.png" width="400"></td>
-<td align="center"><strong>catppuccin_latte</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_catppuccin_latte.png" width="400"></td>
-<td align="center"><strong>tokyonight_night</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_night.png" width="400"></td>
+<td align="center"><strong>catppuccin_frappe</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_catppuccin_frappe.png" width="400"></td>
+<td align="center"><strong>catppuccin_latte</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_catppuccin_latte.png" width="400"></td>
+<td align="center"><strong>tokyonight_night</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_tokyonight_night.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>tokyonight_storm</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_storm.png" width="400"></td>
-<td align="center"><strong>tokyonight_moon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_tokyonight_moon.png" width="400"></td>
-<td align="center"><strong>rose_pine</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine.png" width="400"></td>
+<td align="center"><strong>tokyonight_storm</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_tokyonight_storm.png" width="400"></td>
+<td align="center"><strong>tokyonight_moon</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_tokyonight_moon.png" width="400"></td>
+<td align="center"><strong>rose_pine</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_rose_pine.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>rose_pine_moon</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine_moon.png" width="400"></td>
-<td align="center"><strong>rose_pine_dawn</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_rose_pine_dawn.png" width="400"></td>
-<td align="center"><strong>gruvbox_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_gruvbox_dark.png" width="400"></td>
+<td align="center"><strong>rose_pine_moon</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_rose_pine_moon.png" width="400"></td>
+<td align="center"><strong>rose_pine_dawn</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_rose_pine_dawn.png" width="400"></td>
+<td align="center"><strong>gruvbox_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_gruvbox_dark.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>gruvbox_light</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_gruvbox_light.png" width="400"></td>
-<td align="center"><strong>nord</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_nord.png" width="400"></td>
-<td align="center"><strong>onedark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_onedark.png" width="400"></td>
+<td align="center"><strong>gruvbox_light</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_gruvbox_light.png" width="400"></td>
+<td align="center"><strong>nord</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_nord.png" width="400"></td>
+<td align="center"><strong>onedark</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_onedark.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>nightfox</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_nightfox.png" width="400"></td>
-<td align="center"><strong>everforest_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_everforest_dark.png" width="400"></td>
-<td align="center"><strong>everforest_light</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_everforest_light.png" width="400"></td>
+<td align="center"><strong>nightfox</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_nightfox.png" width="400"></td>
+<td align="center"><strong>everforest_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_everforest_dark.png" width="400"></td>
+<td align="center"><strong>everforest_light</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_everforest_light.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>dracula</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_dracula.png" width="400"></td>
-<td align="center"><strong>solarized_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/theme_solarized_dark.png" width="400"></td>
+<td align="center"><strong>dracula</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_dracula.png" width="400"></td>
+<td align="center"><strong>solarized_dark</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/theme_solarized_dark.png" width="400"></td>
 <td></td>
 </tr>
 </table>
@@ -962,7 +962,7 @@ Stored in `~/.local/state/nvim/wildest/`.
 
 ## Kind Icons
 
-![Kind Icons](https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/kind_icons.png)
+![Kind Icons](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/kind_icons.png)
 
 Show LSP-style icons next to your candidates. Knows about functions, classes,
 variables, files, and more:
@@ -1091,18 +1091,18 @@ The popup adapts to your `laststatus`, `cmdheight`, and renderer `offset` settin
 <!-- gen:layout_gallery:start -->
 <table>
 <tr>
-<td align="center"><strong>laststatus=0</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_0.png" width="400"></td>
-<td align="center"><strong>laststatus=2</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_2.png" width="400"></td>
-<td align="center"><strong>laststatus=3</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/laststatus_3.png" width="400"></td>
+<td align="center"><strong>laststatus=0</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/laststatus_0.png" width="400"></td>
+<td align="center"><strong>laststatus=2</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/laststatus_2.png" width="400"></td>
+<td align="center"><strong>laststatus=3</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/laststatus_3.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>cmdheight=0</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0.png" width="400"></td>
-<td align="center"><strong>cmdheight=0 offset=1</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0_offset_1.png" width="400"></td>
-<td align="center"><strong>cmdheight=0 offset=2</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/cmdheight_0_offset_2.png" width="400"></td>
+<td align="center"><strong>cmdheight=0</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/cmdheight_0.png" width="400"></td>
+<td align="center"><strong>cmdheight=0 offset=1</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/cmdheight_0_offset_1.png" width="400"></td>
+<td align="center"><strong>cmdheight=0 offset=2</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/cmdheight_0_offset_2.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>offset=1</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/offset_1.png" width="400"></td>
-<td align="center"><strong>offset=2</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/offset_2.png" width="400"></td>
+<td align="center"><strong>offset=1</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/offset_1.png" width="400"></td>
+<td align="center"><strong>offset=2</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/offset_2.png" width="400"></td>
 <td></td>
 </tr>
 </table>
@@ -1116,23 +1116,23 @@ The popup adapts to your `laststatus`, `cmdheight`, and renderer `offset` settin
 <!-- gen:option_gallery:start -->
 <table>
 <tr>
-<td align="center"><strong>noselect=false</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_false.png" width="400"></td>
-<td align="center"><strong>reverse=true</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/reverse.png" width="400"></td>
-<td align="center"><strong>empty_message</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message.png" width="400"></td>
+<td align="center"><strong>noselect=false</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/noselect_false.png" width="400"></td>
+<td align="center"><strong>reverse=true</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/reverse.png" width="400"></td>
+<td align="center"><strong>empty_message</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/empty_message.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>empty_message (popupmenu)</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/empty_message_popupmenu.png" width="400"></td>
-<td align="center"><strong>buffer_flags</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/buffer_flags.png" width="400"></td>
-<td align="center"><strong>position=top</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_top.png" width="400"></td>
+<td align="center"><strong>empty_message (popupmenu)</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/empty_message_popupmenu.png" width="400"></td>
+<td align="center"><strong>buffer_flags</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/buffer_flags.png" width="400"></td>
+<td align="center"><strong>position=top</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/position_top.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>position=center</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_center.png" width="400"></td>
-<td align="center"><strong>ellipsis</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/ellipsis.png" width="400"></td>
-<td align="center"><strong>position=top (bordered)</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/position_top_bordered.png" width="400"></td>
+<td align="center"><strong>position=center</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/position_center.png" width="400"></td>
+<td align="center"><strong>ellipsis</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/ellipsis.png" width="400"></td>
+<td align="center"><strong>position=top (bordered)</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/position_top_bordered.png" width="400"></td>
 </tr>
 <tr>
-<td align="center"><strong>noselect (bordered)</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/noselect_bordered.png" width="400"></td>
-<td align="center"><strong>fixed_height=true</strong><br><img src="https://raw.githubusercontent.com/catgoose/wildest.nvim/screenshots/fixed_height_true.png" width="400"></td>
+<td align="center"><strong>noselect (bordered)</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/noselect_bordered.png" width="400"></td>
+<td align="center"><strong>fixed_height=true</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/fixed_height_true.png" width="400"></td>
 <td></td>
 </tr>
 </table>
