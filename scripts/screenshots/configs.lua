@@ -184,6 +184,13 @@ M.configs = {
     highlighter = "basic",
   },
 
+  fuzzy_search = {
+    category = "feature",
+    cmd = "/fnctn",
+    highlighter = "basic",
+    pipeline = { "cmdline_fuzzy", "search_fuzzy" },
+  },
+
   renderer_mux = {
     category = "feature",
     renderer = "mux",
@@ -952,8 +959,8 @@ M.default_cmd = ":set fold"
 -- Ordered name lists (single source of truth for README generation + generate.sh)
 M.renderer_names = { "popupmenu", "popupmenu_border", "popupmenu_palette", "palette_prompt_bottom", "wildmenu" }
 M.feature_names = {
-  "devicons", "fuzzy", "gradient", "search", "renderer_mux", "kind_icons",
-  "prefix_highlighter", "scrollbar", "pumblend",
+  "devicons", "fuzzy", "gradient", "search", "fuzzy_search", "renderer_mux",
+  "kind_icons", "prefix_highlighter", "scrollbar", "pumblend",
 }
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
@@ -1080,11 +1087,13 @@ end
 function M.random_scene(label)
   local pipelines = {
     { "cmdline_fuzzy", "search" },
+    { "cmdline_fuzzy", "search_fuzzy" },
     { "lua", "cmdline_fuzzy", "search" },
-    { "help_fuzzy", "cmdline_fuzzy", "search" },
+    { "help_fuzzy", "cmdline_fuzzy", "search_fuzzy" },
     { "history", "cmdline_fuzzy", "search" },
     { "shell_fuzzy", "cmdline_fuzzy", "search" },
     { "substitute", "cmdline_fuzzy", "search" },
+    { "substitute", "cmdline_fuzzy", "search_fuzzy" },
   }
   local lefts = {
     {},
@@ -1632,6 +1641,7 @@ function M.scene_to_description(cfg)
       if p == "history" then add("history pipeline") end
       if p == "shell" or p == "shell_fuzzy" then add("shell pipeline") end
       if p == "substitute" then add("substitute pipeline") end
+      if p == "search_fuzzy" then add("fuzzy search") end
     end
   end
 
@@ -1695,6 +1705,8 @@ local function resolve_pipeline(list, w)
       table.insert(branches, w.cmdline_pipeline({ fuzzy = true }))
     elseif name == "search" then
       table.insert(branches, w.search_pipeline())
+    elseif name == "search_fuzzy" then
+      table.insert(branches, w.search_pipeline({ fuzzy = true }))
     elseif name == "lua" then
       table.insert(branches, w.lua_pipeline())
     elseif name == "help_fuzzy" then
