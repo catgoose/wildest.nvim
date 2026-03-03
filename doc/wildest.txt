@@ -253,6 +253,16 @@ M.help_pipeline({opts?})                                 *wildest.help_pipeline*
         (wildest.PipelineStep[])  pipeline
 
 
+M.shell_pipeline({opts?})                               *wildest.shell_pipeline*
+    Shell command pipeline — history, executables, file args, env vars.
+
+    Parameters: ~
+        {opts?}  (wildest.ShellPipelineOpts)
+
+    Returns: ~
+        (wildest.PipelineStep[])  pipeline
+
+
                                                              *wildest-renderers*
 RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 
