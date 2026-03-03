@@ -263,6 +263,16 @@ M.shell_pipeline({opts?})                               *wildest.shell_pipeline*
         (wildest.PipelineStep[])  pipeline
 
 
+M.substitute_pipeline({opts?})                     *wildest.substitute_pipeline*
+    Substitute/global pipeline — shows matching buffer lines for :s/ and :g/ commands.
+
+    Parameters: ~
+        {opts?}  (table)  { max_results?: integer }
+
+    Returns: ~
+        (wildest.PipelineStep[])  pipeline
+
+
                                                              *wildest-renderers*
 RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 
