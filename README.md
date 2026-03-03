@@ -1079,6 +1079,7 @@ Checks for:
 | `min_input`        | `0`                 | Min chars before showing (0 = on enter)      |
 | `auto_colorscheme` | `true`              | Re-apply highlights on `:colorscheme` change |
 | `preview`          | `nil`               | Preview window config (see Preview section)  |
+| `layout`           | `nil`               | Layout callback (see Layout section)         |
 | `pipeline`         | `nil`               | Your pipeline (required)                     |
 | `renderer`         | `nil`               | Your renderer (required)                     |
 
@@ -1155,6 +1156,8 @@ w.setup({
     border = "single", -- border style for preview window
     max_lines = 500, -- max lines to read from files
     title = true, -- show filename in border title
+    gap = 2, -- spacing between preview and edges/popup
+    priority = "menu", -- "menu" (default) or "preview"
   },
   actions = {
     ["<C-p>"] = "toggle_preview",
@@ -1162,22 +1165,87 @@ w.setup({
 })
 ```
 
-| Option      | Type            | Default    | Description                                              |
-| ----------- | --------------- | ---------- | -------------------------------------------------------- |
-| `enabled`   | boolean         | `true`     | Show preview window                                      |
-| `position`  | string          | `"right"`  | Side: `"left"`, `"right"`, `"top"`, `"bottom"`           |
-| `anchor`    | string          | `"screen"` | `"screen"` (fills edge) or `"popup"` (adjacent to popup) |
-| `width`     | integer\|string | `"50%"`    | Panel width for left/right positions                     |
-| `height`    | integer\|string | `"50%"`    | Panel height for top/bottom positions                    |
-| `border`    | string\|table   | `"single"` | Border style                                             |
-| `max_lines` | integer         | `500`      | Max lines to read from files                             |
-| `title`     | boolean         | `true`     | Show filename in border title                            |
+| Option     | Type                  | Default    | Description                                              |
+| ---------- | --------------------- | ---------- | -------------------------------------------------------- |
+| `enabled`  | boolean               | `true`     | Show preview window                                      |
+| `position` | string                | `"right"`  | Side: `"left"`, `"right"`, `"top"`, `"bottom"`           |
+| `anchor`   | string                | `"screen"` | `"screen"` (fills edge) or `"popup"` (adjacent to popup) |
+| `width`    | integer\|string       | `"50%"`    | Panel width for left/right positions                     |
+| `height`   | integer\|string       | `"50%"`    | Panel height for top/bottom positions                    |
+| `border`   | string\|table         | `"single"` | Border style                                             |
+| `max_lines`| integer               | `500`      | Max lines to read from files                             |
+| `title`    | boolean               | `true`     | Show filename in border title                            |
+| `gap`      | integer\|table\|nil   | `nil`      | Gap between preview and edges/popup (see below)          |
+| `priority` | string                | `"menu"`   | `"menu"` or `"preview"` (see below)                      |
 
 The preview auto-detects content type from the pipeline's `expand` metadata:
 files get syntax highlighting, buffers show their contents, and help tags
 display the relevant help page.
 
 Default: `preview = nil` (disabled unless configured).
+
+### Gap
+
+Control spacing between the preview window, the popup, and screen edges.
+A number applies uniform spacing on all sides. A table gives fine-grained control:
+
+```lua
+preview = {
+  gap = { top = 1, right = 2, bottom = 1, left = 2, between = 3 },
+}
+```
+
+| Key       | Description                           |
+| --------- | ------------------------------------- |
+| `top`     | Gap from top edge of screen           |
+| `right`   | Gap from right edge of screen         |
+| `bottom`  | Gap from bottom edge of screen        |
+| `left`    | Gap from left edge of screen          |
+| `between` | Gap between popup and preview windows |
+
+### Priority
+
+Controls which window gets its full configured size when space is limited:
+
+- **`"menu"` (default):** The menu draws at its full size. The preview adapts
+  to remaining space (popup anchor caps preview height to popup height).
+- **`"preview"`:** The preview gets its full configured dimensions. The menu
+  shrinks to fit the remaining space. With screen anchor, space is reserved
+  for the preview even before it opens.
+
+## Layout
+
+The `layout` callback gives full control over both window positions and sizes
+after they've been computed. It runs after both windows draw but before the
+screen redraws, so there's no flicker.
+
+```lua
+w.setup({
+  layout = function(geometry)
+    -- geometry.menu    = { row, col, width, height, border, visible }
+    -- geometry.preview = { row, col, width, height, border, visible }
+    -- Return adjusted geometry, or nil for no change
+    return geometry
+  end,
+})
+```
+
+For example, to always pin the preview to the top-right corner:
+
+```lua
+w.setup({
+  layout = function(g)
+    if g.preview.visible then
+      g.preview.row = 0
+      g.preview.col = vim.o.columns - g.preview.width - 2
+    end
+    return g
+  end,
+})
+```
+
+Only returned fields are applied. If the callback returns `nil` or errors,
+the original positions are kept.
 
 ## Actions
 
