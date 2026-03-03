@@ -106,7 +106,8 @@ end
 ---@return string|nil title
 local function load_file(path, cfg)
   local expanded = safe_expand(path)
-  if not vim.uv.fs_stat(expanded) then
+  local stat = vim.uv.fs_stat(expanded)
+  if not stat or stat.type == "directory" then
     return nil
   end
   local lines = vim.fn.readfile(expanded, "", cfg.max_lines or 500)
@@ -478,7 +479,8 @@ function M.update(ctx, result)
   else
     -- Heuristic: try as file first
     local expanded = safe_expand(candidate)
-    if vim.uv.fs_stat(expanded) then
+    local st = vim.uv.fs_stat(expanded)
+    if st and st.type ~= "directory" then
       title = load_file(candidate, cfg)
     else
       load_fallback(candidate)
