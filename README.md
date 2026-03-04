@@ -1171,6 +1171,11 @@ The popup adapts to your `laststatus`, `cmdheight`, and renderer `offset` settin
 <tr>
 <td align="center"><strong>noselect (bordered)</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/noselect_bordered.png" width="400"></td>
 <td align="center"><strong>fixed_height=true</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/fixed_height_true.png" width="400"></td>
+<td align="center"><strong>top component</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/top_component.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>bottom component</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/bottom_component.png" width="400"></td>
+<td align="center"><strong>top + bottom</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/top_bottom_components.png" width="400"></td>
 <td></td>
 </tr>
 </table>
