@@ -65,12 +65,12 @@ function Popupmenu:render(ctx, result)
       lines[#lines + 1] = line
       line_highlights[#line_highlights + 1] = empty_hls[i]
     end
-  end
-
-  local cand_lines, cand_hls = self:render_candidates(result, ctx, page_start, page_end, width)
-  for i, line in ipairs(cand_lines) do
-    lines[#lines + 1] = line
-    line_highlights[#line_highlights + 1] = cand_hls[i]
+  else
+    local cand_lines, cand_hls = self:render_candidates(result, ctx, page_start, page_end, width)
+    for i, line in ipairs(cand_lines) do
+      lines[#lines + 1] = line
+      line_highlights[#line_highlights + 1] = cand_hls[i]
+    end
   end
 
   -- Pad candidate area to target height (chrome excluded from padding target)

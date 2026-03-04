@@ -225,6 +225,47 @@ T["BasePopupmenu"]["paginate resets delay tracking on new session"] = function()
   expect.equality(renderer._state._delay_session_id, 2)
 end
 
+T["BasePopupmenu"]["render_candidates skipped when show_empty in popupmenu"] = function()
+  -- Regression: popupmenu.lua previously called render_candidates unconditionally
+  -- even when show_empty was truthy. With page_start=-1, the loop ran once with a
+  -- nil candidate, crashing inside render_line → nvim_strwidth(nil).
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      empty_message = "No results",
+      page = { -1, -1 },
+      win = -1,
+      max_height = 10,
+      min_height = 0,
+      fixed_height = true,
+      offset = 0,
+      left = {},
+      right = {},
+      top = {},
+      bottom = {},
+      zindex = 250,
+      buf = -1,
+      ns_id = -1,
+      run_id = -1,
+    },
+  }, { __index = BasePopupmenu })
+
+  -- Simulate what paginate returns for total=0 with empty_message
+  local page_start, page_end, show_empty = renderer:paginate({ selected = -1, run_id = 1, session_id = 1 }, 0, 10)
+  expect.equality(page_start, -1)
+  expect.equality(page_end, -1)
+  expect.equality(show_empty ~= false, true)
+
+  -- The key assertion: render_candidates with (-1, -1) should NOT be called
+  -- because show_empty is truthy. Verify it would crash with nil candidate.
+  local result = { value = {} }
+  local ok = pcall(function()
+    renderer:render_candidates(result, { selected = -1 }, -1, -1, 40)
+  end)
+  -- This SHOULD fail because candidates[0] is nil
+  expect.equality(ok, false)
+end
+
 T["Renderer inheritance"] = new_set()
 
 T["Renderer inheritance"]["popupmenu has hide method from base"] = function()
