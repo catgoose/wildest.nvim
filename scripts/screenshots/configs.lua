@@ -187,7 +187,7 @@ M.configs = {
   fuzzy_search = {
     category = "feature",
     cmd = "/fnctn",
-    highlighter = "basic",
+    highlighter = "fzy",
     pipeline = { "cmdline_fuzzy", "search_fuzzy" },
   },
 
