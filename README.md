@@ -1176,6 +1176,11 @@ The popup adapts to your `laststatus`, `cmdheight`, and renderer `offset` settin
 <tr>
 <td align="center"><strong>bottom component</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/bottom_component.png" width="400"></td>
 <td align="center"><strong>top + bottom</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/top_bottom_components.png" width="400"></td>
+<td align="center"><strong>before_cursor</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/before_cursor.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>sort_buffers_lastused</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/sort_buffers_lastused.png" width="400"></td>
+<td></td>
 <td></td>
 </tr>
 </table>

@@ -244,6 +244,13 @@ M.configs = {
     highlighter = "chain",
   },
 
+  scrollbar_collapse = {
+    category = "feature",
+    label = "Scrollbar (collapse)",
+    cmd = ":set wra",
+    right = { "scrollbar_collapse" },
+  },
+
   -- Pipeline configs
   lua_pipeline = {
     category = "pipeline",
@@ -443,6 +450,20 @@ M.configs = {
     border = "rounded",
     top = { " Completions" },
     bottom = { " <Tab>/<S-Tab> to navigate " },
+  },
+
+  before_cursor = {
+    category = "option",
+    label = "before_cursor",
+    cmd = ":edit lua/wildest/init remaining_text",
+    pipeline = { "cmdline_fuzzy_before_cursor" },
+  },
+
+  sort_buffers_lastused = {
+    category = "option",
+    label = "sort_buffers_lastused",
+    cmd = ":b ",
+    pipeline = { "cmdline_buffers_lastused" },
   },
 
   -- Border style configs
@@ -1000,6 +1021,7 @@ M.renderer_names = { "popupmenu", "popupmenu_border", "popupmenu_palette", "pale
 M.feature_names = {
   "devicons", "fuzzy", "gradient", "search", "fuzzy_search", "renderer_mux",
   "kind_icons", "prefix_highlighter", "scrollbar", "pumblend", "chain_highlighter",
+  "scrollbar_collapse",
 }
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
@@ -1019,6 +1041,7 @@ M.option_names = {
   "buffer_flags", "position_top", "position_center", "ellipsis",
   "position_top_bordered", "noselect_bordered", "fixed_height_true",
   "top_component", "bottom_component", "top_bottom_components",
+  "before_cursor", "sort_buffers_lastused",
 }
 M.preview_names = {
   "preview_right_screen", "preview_left_screen", "preview_top_screen", "preview_bottom_screen",
@@ -1699,6 +1722,8 @@ function M.scene_to_description(cfg)
       if p == "shell" or p == "shell_fuzzy" then add("shell pipeline") end
       if p == "substitute" then add("substitute pipeline") end
       if p == "search_fuzzy" then add("fuzzy search") end
+      if p == "cmdline_fuzzy_before_cursor" then add("before_cursor") end
+      if p == "cmdline_buffers_lastused" then add("sort_buffers_lastused") end
     end
   end
 
@@ -1776,6 +1801,10 @@ local function resolve_pipeline(list, w)
       table.insert(branches, w.shell_pipeline({ fuzzy = true }))
     elseif name == "substitute" then
       table.insert(branches, w.substitute_pipeline())
+    elseif name == "cmdline_fuzzy_before_cursor" then
+      table.insert(branches, w.cmdline_pipeline({ fuzzy = true, before_cursor = true }))
+    elseif name == "cmdline_buffers_lastused" then
+      table.insert(branches, w.cmdline_pipeline({ fuzzy = true, sort_buffers_lastused = true }))
     end
   end
   return w.branch(unpack(branches))
