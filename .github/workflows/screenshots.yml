@@ -84,13 +84,10 @@ jobs:
           token: ${{ secrets.SCREENSHOTS_REPO_TOKEN }}
           path: screenshots-repo
 
-      - name: Copy screenshots into screenshots repo
+      - name: Copy and push screenshots
         run: |
           mkdir -p screenshots-repo/wildest.nvim/wanted_posters
           cp output/*.png screenshots-repo/wildest.nvim/wanted_posters/
-
-      - name: Create PR with screenshots
-        run: |
           cd screenshots-repo
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -99,12 +96,7 @@ jobs:
             echo "No changes to commit"
             exit 0
           fi
-          branch="wildest-nvim/screenshots-$(date +%Y%m%d-%H%M%S)"
-          git checkout -b "$branch"
           git commit -m "Update wildest.nvim screenshots"
-          git push origin "$branch"
-          pr_url=$(gh pr create --repo catgoose/screenshots --base main --head "$branch" \
-            --title "Update wildest.nvim screenshots" --body "Auto-generated from wildest.nvim CI.")
-          gh pr merge "$pr_url" --repo catgoose/screenshots --squash --admin --delete-branch
+          git push
         env:
           GH_TOKEN: ${{ secrets.SCREENSHOTS_REPO_TOKEN }}
