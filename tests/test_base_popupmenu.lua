@@ -145,6 +145,48 @@ T["BasePopupmenu"]["render_chrome resolves string components"] = function()
   expect.equality(hls[1].base_hl, "Normal")
 end
 
+T["BasePopupmenu"]["paginate suppresses empty_message during delay"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal" },
+      empty_message = "No results",
+      empty_message_first_draw_delay = 500,
+      page = { -1, -1 },
+      win = -1,
+    },
+  }, { __index = BasePopupmenu })
+
+  -- First call within delay window should suppress empty_message
+  local ctx = { selected = -1, session_id = 1 }
+  local ps, pe, show_empty = renderer:paginate(ctx, 0, 10)
+  -- show_empty is suppressed, so renderer hides (ps=nil)
+  expect.equality(ps, nil)
+  expect.equality(show_empty, false)
+end
+
+T["BasePopupmenu"]["paginate resets delay tracking on new session"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal" },
+      empty_message = "No results",
+      empty_message_first_draw_delay = 500,
+      page = { -1, -1 },
+      win = -1,
+      _delay_session_id = 1,
+      _first_draw_time = 0, -- long ago
+    },
+  }, { __index = BasePopupmenu })
+
+  -- New session_id resets tracking
+  local ctx = { selected = -1, session_id = 2 }
+  local ps, pe, show_empty = renderer:paginate(ctx, 0, 10)
+  -- New session, first draw time is reset, within delay window = suppress
+  expect.equality(ps, nil)
+  expect.equality(show_empty, false)
+  -- Session ID should be updated
+  expect.equality(renderer._state._delay_session_id, 2)
+end
+
 T["Renderer inheritance"] = new_set()
 
 T["Renderer inheritance"]["popupmenu has hide method from base"] = function()

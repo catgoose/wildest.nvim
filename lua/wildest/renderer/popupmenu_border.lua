@@ -29,6 +29,7 @@ function M.new(opts)
   state.highlights.border = border_info.border_hl
   state.highlights.bottom_border = border_info.bottom_border_hl
   state.empty_message = opts.empty_message
+  state.empty_message_first_draw_delay = opts.empty_message_first_draw_delay
   state.title = opts.title
   state.position = opts.position or "bottom"
   state.border = border_info

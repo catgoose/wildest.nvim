@@ -380,6 +380,24 @@ function M.on_error(ctx, err)
   M.draw()
 end
 
+--- Force Neovim to re-evaluate the incsearch pattern after a redraw.
+--- When the popup is shown during / or ? search, the incsearch highlight
+--- disappears. This feeds a harmless <C-\>e getcmdline()<CR> sequence
+--- that makes Neovim re-apply the pattern without changing the cmdline.
+local function apply_incsearch_fix_if_needed()
+  local cfg = config.get()
+  if not cfg.apply_incsearch_fix then
+    return
+  end
+  local cmdtype = state.cmdtype
+  if cmdtype ~= "/" and cmdtype ~= "?" then
+    return
+  end
+  state.suppress_change = true
+  local keys = vim.api.nvim_replace_termcodes("<C-\\>e getcmdline()<CR>", true, false, true)
+  vim.api.nvim_feedkeys(keys, "n", false)
+end
+
 --- Draw the current state using the configured renderer
 function M.draw()
   if not state.active then
@@ -449,6 +467,7 @@ function M.draw()
       else
         log.log("state", "draw_render_ok")
         vim.cmd.redraw()
+        apply_incsearch_fix_if_needed()
       end
       return
     end
@@ -502,6 +521,7 @@ function M.draw()
 
       log.log("state", "draw_render_ok")
       vim.cmd.redraw()
+      apply_incsearch_fix_if_needed()
     end
   end)
 end

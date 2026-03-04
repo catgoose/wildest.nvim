@@ -13,7 +13,7 @@ local M = {}
 local E = commands.EXPAND
 
 --- Create a cmdline completion pipeline
----@param opts? table { fuzzy?: boolean, fuzzy_filter?: function }
+---@param opts? table { fuzzy?: boolean, fuzzy_filter?: function, sort_buffers_lastused?: boolean, before_cursor?: boolean }
 ---@return table pipeline array
 function M.cmdline_pipeline(opts)
   opts = opts or {}
@@ -27,7 +27,21 @@ function M.cmdline_pipeline(opts)
     end
     if ctx.cmdtype ~= ":" then
       return false
-    end -- Check cache
+    end
+
+    -- before_cursor: complete only text before cursor position
+    if opts.before_cursor then
+      local pos = vim.fn.getcmdpos()
+      if pos and pos > 0 then
+        ctx._full_cmdline = input
+        input = input:sub(1, pos - 1)
+        if input == "" then
+          return false
+        end
+      end
+    end
+
+    -- Check cache
     local cached = parse_cache:get(input)
     if cached then
       ctx.arg = cached.arg
@@ -73,7 +87,7 @@ function M.cmdline_pipeline(opts)
     end
 
     local data = {
-      input = ctx.input or "",
+      input = ctx._full_cmdline or ctx.input or "",
       arg = ctx.arg or "",
       cmd = ctx.cmd or "",
       expand = ctx.expand or "",
@@ -131,7 +145,30 @@ function M.cmdline_pipeline(opts)
     return result
   end
 
-  local pipeline = { parse_and_complete, require("wildest.filter.uniq").uniq_filter() }
+  local pipeline = { parse_and_complete }
+
+  -- Sort buffer candidates by last-used timestamp
+  if opts.sort_buffers_lastused then
+    table.insert(pipeline, function(ctx, candidates)
+      if type(candidates) ~= "table" or ctx.expand ~= E.BUFFER then
+        return candidates
+      end
+      local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+      local lastused = {}
+      for _, b in ipairs(bufs) do
+        local name = b.name or ""
+        local tail = vim.fn.fnamemodify(name, ":t")
+        lastused[tail] = math.max(lastused[tail] or 0, b.lastused or 0)
+        lastused[name] = math.max(lastused[name] or 0, b.lastused or 0)
+      end
+      table.sort(candidates, function(a, b)
+        return (lastused[a] or 0) > (lastused[b] or 0)
+      end)
+      return candidates
+    end)
+  end
+
+  table.insert(pipeline, require("wildest.filter.uniq").uniq_filter())
 
   -- Add fuzzy filter if requested
   if opts.fuzzy then

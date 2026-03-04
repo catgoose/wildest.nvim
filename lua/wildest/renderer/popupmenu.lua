@@ -20,6 +20,7 @@ function M.new(opts)
 
   local state = renderer_util.create_base_state(opts)
   state.empty_message = opts.empty_message
+  state.empty_message_first_draw_delay = opts.empty_message_first_draw_delay
   renderer_util.create_accent_highlights(state)
 
   local renderer = setmetatable({ _state = state }, Popupmenu)

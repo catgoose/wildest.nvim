@@ -540,6 +540,14 @@ M.configs = {
     separator = " ",
   },
 
+  wildmenu_powerline = {
+    category = "wildmenu_variant",
+    label = "Powerline",
+    renderer = "wildmenu",
+    highlighter = "basic",
+    separator = "powerline",
+  },
+
   -- Palette variant configs
   palette_no_title = {
     category = "palette_variant",
@@ -996,7 +1004,7 @@ M.feature_names = {
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
 M.border_names = { "border_rounded", "border_single", "border_double", "border_solid", "border_title" }
-M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal", "wildmenu_pipe", "wildmenu_arrows_index", "wildmenu_compact" }
+M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal", "wildmenu_pipe", "wildmenu_arrows_index", "wildmenu_compact", "wildmenu_powerline" }
 M.palette_variant_names = { "palette_no_title", "palette_custom_prefix", "palette_large", "palette_compact", "palette_search" }
 M.dimension_names = { "max_height_small", "fixed_height_false", "max_width_60", "min_height_5", "max_height_large", "max_width_40", "min_width_40" }
 M.gradient_names = { "gradient_warm", "gradient_cool", "gradient_sunset", "gradient_ice", "gradient_forest" }
@@ -1664,7 +1672,11 @@ function M.scene_to_description(cfg)
       end
     end
     if merged.separator then
-      add('separator="' .. merged.separator .. '"')
+      if type(merged.separator) == "string" then
+        add('separator="' .. merged.separator .. '"')
+      else
+        add("separator=powerline")
+      end
     end
   end
 
@@ -1842,7 +1854,11 @@ local function build_renderer_opts(cfg, w)
     opts.padding = cfg.padding
   end
   if cfg.separator then
-    opts.separator = cfg.separator
+    if cfg.separator == "powerline" then
+      opts.separator = w.wildmenu_powerline_separator()
+    else
+      opts.separator = cfg.separator
+    end
   end
   if cfg.border then
     opts.border = cfg.border

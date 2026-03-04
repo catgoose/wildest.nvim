@@ -93,4 +93,12 @@ T["Component inheritance"]["condition inherits from BaseComponent"] = function()
   expect.equality(type(comp.render_left), "function")
 end
 
+T["Component inheritance"]["powerline_separator inherits from BaseComponent"] = function()
+  local powerline = require("wildest.renderer.components.powerline_separator")
+  local comp = powerline.new()
+  expect.equality(type(comp.render), "function")
+  expect.equality(type(comp.render_left), "function")
+  expect.equality(type(comp.render_right), "function")
+end
+
 return T

@@ -57,6 +57,23 @@ T["parse_dimension()"]["returns total for unrecognized input"] = function()
   expect.equality(renderer_util.parse_dimension(nil, 80), 80)
 end
 
+T["parse_dimension()"]["handles function returning number"] = function()
+  expect.equality(renderer_util.parse_dimension(function() return 42 end, 100), 42)
+end
+
+T["parse_dimension()"]["handles function returning percentage string"] = function()
+  expect.equality(renderer_util.parse_dimension(function() return "50%" end, 200), 100)
+end
+
+T["parse_dimension()"]["passes ctx to function"] = function()
+  local received_ctx = nil
+  renderer_util.parse_dimension(function(ctx)
+    received_ctx = ctx
+    return 10
+  end, 100, { total = 5 })
+  expect.equality(received_ctx.total, 5)
+end
+
 T["parse_margin()"] = new_set()
 
 T["parse_margin()"]["centers with auto"] = function()

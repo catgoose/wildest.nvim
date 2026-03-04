@@ -252,8 +252,8 @@ function M.debounce(interval)
   return debounce_mod.debounce(interval)
 end
 
----Wrap pipeline output with metadata (highlighter, output transform, etc.).
----@param opts wildest.ResultOpts Result options
+---Wrap pipeline output with metadata (highlighter, output/draw transforms, etc.).
+---@param opts wildest.ResultOpts Result options { output?: fun, draw?: fun, data?: table }
 ---@return wildest.PipelineStep
 function M.result(opts)
   return result_mod.result(opts)
@@ -267,7 +267,7 @@ function M.subpipeline(factory)
 end
 
 ---Cmdline pipeline — completes commands, files, buffers, help tags, etc.
----@param opts? wildest.CmdlinePipelineOpts
+---@param opts? wildest.CmdlinePipelineOpts { fuzzy?: boolean, fuzzy_filter?: function, sort_buffers_lastused?: boolean, before_cursor?: boolean }
 ---@return wildest.PipelineStep[] pipeline
 function M.cmdline_pipeline(opts)
   return require("wildest.cmdline").cmdline_pipeline(opts)
@@ -408,13 +408,14 @@ end
 ---@field right? table Right components
 ---@field top? (string|function|table)[] Header lines rendered above candidates
 ---@field bottom? (string|function|table)[] Footer lines rendered below candidates
----@field max_height? integer Maximum number of visible lines (default 16)
----@field min_height? integer Minimum number of visible lines (default 0)
----@field max_width? integer|string|nil Maximum width, integer or percentage (nil = full editor width)
----@field min_width? integer|string Minimum width, integer or percentage (default 16)
+---@field max_height? integer|string|fun(ctx):integer|string Maximum visible lines (default 16)
+---@field min_height? integer|string|fun(ctx):integer|string Minimum visible lines (default 0)
+---@field max_width? integer|string|fun(ctx):integer|string|nil Maximum width (nil = full editor width)
+---@field min_width? integer|string|fun(ctx):integer|string Minimum width (default 16)
 ---@field reverse? boolean Reverse candidate order (default false)
 ---@field fixed_height? boolean Pad to max_height to prevent resizing (default false)
 ---@field empty_message? string|nil Message shown when there are no results
+---@field empty_message_first_draw_delay? integer Delay (ms) before showing empty message on first draw
 ---@field pumblend? integer Window transparency 0-100
 ---@field zindex? integer Floating window z-index (default 250)
 
@@ -427,14 +428,15 @@ end
 ---@field right? table Right components
 ---@field top? (string|function|table)[] Header lines rendered above candidates
 ---@field bottom? (string|function|table)[] Footer lines rendered below candidates
----@field max_height? integer|string Max visible lines, integer or percentage (default 16)
----@field min_height? integer Minimum visible lines (default 0)
----@field max_width? integer|string|nil Max width, integer or percentage (nil = full width)
----@field min_width? integer|string Minimum width, integer or percentage (default 16)
+---@field max_height? integer|string|fun(ctx):integer|string Max visible lines (default 16)
+---@field min_height? integer|string|fun(ctx):integer|string Minimum visible lines (default 0)
+---@field max_width? integer|string|fun(ctx):integer|string|nil Max width (nil = full width)
+---@field min_width? integer|string|fun(ctx):integer|string Minimum width (default 16)
 ---@field reverse? boolean Reverse candidate order (default false)
 ---@field fixed_height? boolean Pad to max_height to prevent resizing (default false)
 ---@field position? string Vertical placement: "top", "center", or "bottom" (default "bottom")
 ---@field empty_message? string Message shown when there are no results
+---@field empty_message_first_draw_delay? integer Delay (ms) before showing empty message on first draw
 ---@field pumblend? integer Window transparency 0-100
 ---@field zindex? integer Floating window z-index (default 250)
 
@@ -447,14 +449,15 @@ end
 ---@field padding? number Inner padding spaces (default 1, clamped >= 0)
 ---@field left? table Left components
 ---@field right? table Right components
----@field max_height? string|integer Max height, percentage or integer (default "75%")
----@field min_height? integer Minimum height (default 0)
----@field max_width? string|integer Max width, percentage or integer (default "75%")
----@field min_width? integer|string Minimum width (default 30)
+---@field max_height? string|integer|fun(ctx):integer|string Max height (default "75%")
+---@field min_height? integer|string|fun(ctx):integer|string Minimum height (default 0)
+---@field max_width? string|integer|fun(ctx):integer|string Max width (default "75%")
+---@field min_width? integer|string|fun(ctx):integer|string Minimum width (default 30)
 ---@field margin? string|integer Horizontal margin: "auto", percentage, or integer (default "auto")
 ---@field reverse? boolean Reverse candidate order (default false)
 ---@field fixed_height? boolean Pad to max_height to prevent resizing (default false)
 ---@field empty_message? string Message shown when there are no results
+---@field empty_message_first_draw_delay? integer Delay (ms) before showing empty message on first draw
 ---@field pumblend? integer Window transparency 0-100
 ---@field zindex? integer Floating window z-index (default 250)
 
@@ -486,8 +489,8 @@ function M.wildmenu_renderer(opts)
   return require("wildest.renderer.wildmenu").new(opts)
 end
 
----Renderer mux — route to different renderers by cmdtype.
----@param routes table<string, wildest.Renderer> Map of cmdtype to renderer
+---Renderer mux — route to different renderers by cmdtype or predicate list.
+---@param routes table<string, wildest.Renderer>|{[1]: fun(ctx):boolean, [2]: wildest.Renderer}[] Routes
 ---@return wildest.Renderer
 function M.renderer_mux(routes)
   return require("wildest.renderer.mux").new(routes)
@@ -537,7 +540,7 @@ end
 ---@divider Component Constructors
 
 ---Scrollbar component for popupmenu renderers.
----@param opts? table
+---@param opts? table { thumb?: string, bar?: string, hl?: string, thumb_hl?: string, collapse?: boolean }
 ---@return wildest.Component
 function M.popupmenu_scrollbar(opts)
   return require("wildest.renderer.components.scrollbar").new(opts)
@@ -578,6 +581,13 @@ end
 ---@return wildest.Component
 function M.popupmenu_zip_columns(merger, col1, col2)
   return require("wildest.renderer.components.zip_columns").new(merger, col1, col2)
+end
+
+---Powerline-style triangle separator component for wildmenu renderers.
+---@param opts? table { hl?: string, selected_hl?: string }
+---@return wildest.Component
+function M.wildmenu_powerline_separator(opts)
+  return require("wildest.renderer.components.powerline_separator").new(opts)
 end
 
 ---Previous/next arrow indicators for wildmenu.
