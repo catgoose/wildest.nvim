@@ -359,7 +359,7 @@ function M._compute_win_config(params)
     end
 
     if position == "right" then
-      local start_col = geom.col + geom.width + border_size + gap.between
+      local start_col = geom.col + geom.width + 2 * border_size + gap.between
       local avail = editor_cols - start_col - gap.right
       if avail < MIN_PREVIEW_COLS then
         return nil
@@ -371,13 +371,13 @@ function M._compute_win_config(params)
       result.width = math.max(1, w - 2)
       result.height = h
     elseif position == "left" then
-      local avail = geom.col - border_size - gap.between - gap.left
+      local avail = geom.col - gap.between - gap.left
       if avail < MIN_PREVIEW_COLS then
         return nil
       end
       local w = math.min(parse_dim(cfg_width, editor_cols), avail)
       local h = compute_height()
-      result.col = geom.col - w - border_size - gap.between
+      result.col = geom.col - w - gap.between
       result.row = geom.row
       result.width = math.max(1, w - 2)
       result.height = h
@@ -394,7 +394,7 @@ function M._compute_win_config(params)
       result.height = h
     elseif position == "bottom" then
       local h = parse_dim(cfg_height, available_rows)
-      local start_row = geom.row + geom.height + border_size + 1 + gap.between
+      local start_row = geom.row + geom.height + 2 * border_size + gap.between
       local avail = available_rows - start_row - 2 - gap.bottom
       if avail < MIN_PREVIEW_ROWS then
         return nil
