@@ -1714,8 +1714,8 @@ bottom = { " Press <Tab> to navigate " },
 <pre><code class="language-lua">
 renderer = "border_theme",
 border = "rounded",
-top = { " Completions" },
 bottom = { " <Tab>/<S-Tab> to navigate " },
+top = { " Completions" },
 </code></pre>
 </details>
 </td>
