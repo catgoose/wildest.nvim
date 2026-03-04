@@ -179,13 +179,13 @@ highlighter = "basic",
 </td>
 <td align="center">
 <strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B10%5D%20fuzzy_search&body=%2A%2AScreenshot%20index%3A%2A%2A%2010%0A%2A%2AConfig%20key%3A%2A%2A%20%60fuzzy_search%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[10]</a> fuzzy_search</strong><br>
-<em>auto theme, bordered, basic, devicons, scrollbar, fuzzy search, /fnctn</em><br>
+<em>auto theme, bordered, fzy, devicons, scrollbar, fuzzy search, /fnctn</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/fuzzy_search.png" width="400"><br>
 <details><summary>Config</summary>
 <pre><code class="language-lua">
 cmd = "/fnctn",
 pipeline = { "cmdline_fuzzy", "search_fuzzy" },
-highlighter = "basic",
+highlighter = "fzy",
 </code></pre>
 </details>
 </td>
@@ -1704,8 +1704,8 @@ bottom = { " Press <Tab> to navigate " },
 <pre><code class="language-lua">
 renderer = "border_theme",
 border = "rounded",
-bottom = { " <Tab>/<S-Tab> to navigate " },
 top = { " Completions" },
+bottom = { " <Tab>/<S-Tab> to navigate " },
 </code></pre>
 </details>
 </td>
