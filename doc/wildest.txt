@@ -279,40 +279,44 @@ RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR
 wildest.PopupmenuOpts                                    *wildest.PopupmenuOpts*
 
     Fields: ~
-        {highlighter?}    (table)               Highlighter for match accents
-        {padding?}        (number)              Inner padding spaces (default 1, clamped >= 0)
-        {left?}           (table)               Left components
-        {right?}          (table)               Right components
-        {max_height?}     (integer)             Maximum number of visible lines (default 16)
-        {min_height?}     (integer)             Minimum number of visible lines (default 0)
-        {max_width?}      (integer|string|nil)  Maximum width, integer or percentage (nil = full editor width)
-        {min_width?}      (integer|string)      Minimum width, integer or percentage (default 16)
-        {reverse?}        (boolean)             Reverse candidate order (default false)
-        {fixed_height?}   (boolean)             Pad to max_height to prevent resizing (default false)
-        {empty_message?}  (string|nil)          Message shown when there are no results
-        {pumblend?}       (integer)             Window transparency 0-100
-        {zindex?}         (integer)             Floating window z-index (default 250)
+        {highlighter?}    (table)                    Highlighter for match accents
+        {padding?}        (number)                   Inner padding spaces (default 1, clamped >= 0)
+        {left?}           (table)                    Left components
+        {right?}          (table)                    Right components
+        {top?}            (string|function|table[])  Header lines rendered above candidates
+        {bottom?}         (string|function|table[])  Footer lines rendered below candidates
+        {max_height?}     (integer)                  Maximum number of visible lines (default 16)
+        {min_height?}     (integer)                  Minimum number of visible lines (default 0)
+        {max_width?}      (integer|string|nil)       Maximum width, integer or percentage (nil = full editor width)
+        {min_width?}      (integer|string)           Minimum width, integer or percentage (default 16)
+        {reverse?}        (boolean)                  Reverse candidate order (default false)
+        {fixed_height?}   (boolean)                  Pad to max_height to prevent resizing (default false)
+        {empty_message?}  (string|nil)               Message shown when there are no results
+        {pumblend?}       (integer)                  Window transparency 0-100
+        {zindex?}         (integer)                  Floating window z-index (default 250)
 
 
 wildest.PopupmenuBorderOpts                        *wildest.PopupmenuBorderOpts*
 
     Fields: ~
-        {border?}         (string|table)        Border style preset or 8-char array (default "single")
-        {title?}          (string)              Title centered in the top border
-        {highlighter?}    (table)               Highlighter for match accents
-        {padding?}        (number)              Inner padding spaces (default 1, clamped >= 0)
-        {left?}           (table)               Left components
-        {right?}          (table)               Right components
-        {max_height?}     (integer|string)      Max visible lines, integer or percentage (default 16)
-        {min_height?}     (integer)             Minimum visible lines (default 0)
-        {max_width?}      (integer|string|nil)  Max width, integer or percentage (nil = full width)
-        {min_width?}      (integer|string)      Minimum width, integer or percentage (default 16)
-        {reverse?}        (boolean)             Reverse candidate order (default false)
-        {fixed_height?}   (boolean)             Pad to max_height to prevent resizing (default false)
-        {position?}       (string)              Vertical placement: "top", "center", or "bottom" (default "bottom")
-        {empty_message?}  (string)              Message shown when there are no results
-        {pumblend?}       (integer)             Window transparency 0-100
-        {zindex?}         (integer)             Floating window z-index (default 250)
+        {border?}         (string|table)             Border style preset or 8-char array (default "single")
+        {title?}          (string)                   Title centered in the top border
+        {highlighter?}    (table)                    Highlighter for match accents
+        {padding?}        (number)                   Inner padding spaces (default 1, clamped >= 0)
+        {left?}           (table)                    Left components
+        {right?}          (table)                    Right components
+        {top?}            (string|function|table[])  Header lines rendered above candidates
+        {bottom?}         (string|function|table[])  Footer lines rendered below candidates
+        {max_height?}     (integer|string)           Max visible lines, integer or percentage (default 16)
+        {min_height?}     (integer)                  Minimum visible lines (default 0)
+        {max_width?}      (integer|string|nil)       Max width, integer or percentage (nil = full width)
+        {min_width?}      (integer|string)           Minimum width, integer or percentage (default 16)
+        {reverse?}        (boolean)                  Reverse candidate order (default false)
+        {fixed_height?}   (boolean)                  Pad to max_height to prevent resizing (default false)
+        {position?}       (string)                   Vertical placement: "top", "center", or "bottom" (default "bottom")
+        {empty_message?}  (string)                   Message shown when there are no results
+        {pumblend?}       (integer)                  Window transparency 0-100
+        {zindex?}         (integer)                  Floating window z-index (default 250)
 
 
 wildest.PopupmenuPaletteOpts                      *wildest.PopupmenuPaletteOpts*
