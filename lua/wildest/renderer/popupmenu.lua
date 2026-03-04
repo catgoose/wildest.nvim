@@ -34,7 +34,11 @@ function Popupmenu:render(ctx, result)
 
   renderer_util.check_run_id(state, ctx)
 
-  local page_start, page_end, show_empty = self:paginate(ctx, total, state.max_height)
+  -- Reserve space for chrome lines
+  local chrome_lines = self:chrome_line_count("top") + self:chrome_line_count("bottom")
+  local content_max_h = math.max(1, state.max_height - chrome_lines)
+
+  local page_start, page_end, show_empty = self:paginate(ctx, total, content_max_h)
   if not page_start then
     return
   end
@@ -42,22 +46,42 @@ function Popupmenu:render(ctx, result)
   local row, col, editor_width, avail = renderer_util.default_position(state.offset)
   local width = renderer_util.calculate_width(state.max_width, state.min_width, editor_width)
 
+  -- Top chrome
+  local top_lines, top_hls = self:render_chrome("top", ctx, result, page_start, page_end, total, width)
+
   local lines = {}
   local line_highlights = {}
 
+  for i, line in ipairs(top_lines) do
+    lines[#lines + 1] = line
+    line_highlights[#line_highlights + 1] = top_hls[i]
+  end
+
   if show_empty then
-    lines, line_highlights = self:render_empty_message(width)
+    local empty_lines, empty_hls = self:render_empty_message(width)
+    for i, line in ipairs(empty_lines) do
+      lines[#lines + 1] = line
+      line_highlights[#line_highlights + 1] = empty_hls[i]
+    end
   end
 
   local cand_lines, cand_hls = self:render_candidates(result, ctx, page_start, page_end, width)
   for i, line in ipairs(cand_lines) do
-    table.insert(lines, line)
-    table.insert(line_highlights, cand_hls[i])
+    lines[#lines + 1] = line
+    line_highlights[#line_highlights + 1] = cand_hls[i]
   end
 
-  -- Pad to min_height (or max_height when fixed_height)
-  local target_height = state.fixed_height and state.max_height or state.min_height
-  self:pad_to_height(lines, line_highlights, target_height, width)
+  -- Pad candidate area to target height (chrome excluded from padding target)
+  local content_target = state.fixed_height and content_max_h or state.min_height
+  local actual_top = #top_lines
+  self:pad_to_height(lines, line_highlights, actual_top + content_target, width)
+
+  -- Bottom chrome
+  local bottom_lines, bottom_hls = self:render_chrome("bottom", ctx, result, page_start, page_end, total, width)
+  for i, line in ipairs(bottom_lines) do
+    lines[#lines + 1] = line
+    line_highlights[#line_highlights + 1] = bottom_hls[i]
+  end
 
   -- Clamp height to available space (accounts for preview reserved space)
   local height = self:clamp_height(lines, line_highlights, avail)

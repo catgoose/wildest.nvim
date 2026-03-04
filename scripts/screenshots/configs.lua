@@ -414,6 +414,31 @@ M.configs = {
     fixed_height = true,
   },
 
+  top_component = {
+    category = "option",
+    label = "top component",
+    renderer = "border_theme",
+    border = "rounded",
+    top = { " Matches:" },
+  },
+
+  bottom_component = {
+    category = "option",
+    label = "bottom component",
+    renderer = "border_theme",
+    border = "rounded",
+    bottom = { " Press <Tab> to navigate " },
+  },
+
+  top_bottom_components = {
+    category = "option",
+    label = "top + bottom",
+    renderer = "border_theme",
+    border = "rounded",
+    top = { " Completions" },
+    bottom = { " <Tab>/<S-Tab> to navigate " },
+  },
+
   -- Border style configs
   border_rounded = {
     category = "border",
@@ -979,6 +1004,7 @@ M.option_names = {
   "noselect_false", "reverse", "empty_message", "empty_message_popupmenu",
   "buffer_flags", "position_top", "position_center", "ellipsis",
   "position_top_bordered", "noselect_bordered", "fixed_height_true",
+  "top_component", "bottom_component", "top_bottom_components",
 }
 M.preview_names = {
   "preview_right_screen", "preview_left_screen", "preview_top_screen", "preview_bottom_screen",
@@ -1398,7 +1424,7 @@ local function setup_block_lines(cfg, add)
   -- Core fields
   local field_order = {
     "renderer", "pipeline", "highlighter",
-    "padding", "left", "right", "separator", "ellipsis",
+    "padding", "left", "right", "top", "bottom", "separator", "ellipsis",
     "border", "title", "position",
     "max_height", "min_height", "max_width", "min_width", "fixed_height",
     "noselect", "reverse", "pumblend", "offset",
@@ -1571,6 +1597,8 @@ function M.scene_to_description(cfg)
   if merged.fixed_height == false then add("fixed_height=false") end
   if merged.empty_message then add("empty_message") end
   if merged.ellipsis then add("ellipsis") end
+  if merged.top and #merged.top > 0 then add("top") end
+  if merged.bottom and #merged.bottom > 0 then add("bottom") end
 
   add(merged.highlighter or "fzy")
 
@@ -1846,6 +1874,12 @@ local function build_renderer_opts(cfg, w)
   end
   if cfg.fixed_height ~= nil then
     opts.fixed_height = cfg.fixed_height
+  end
+  if cfg.top then
+    opts.top = cfg.top
+  end
+  if cfg.bottom then
+    opts.bottom = cfg.bottom
   end
   return opts
 end

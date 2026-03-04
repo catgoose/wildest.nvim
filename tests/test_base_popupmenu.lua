@@ -92,6 +92,59 @@ T["BasePopupmenu"]["resolve_title handles nil"] = function()
   expect.equality(renderer:resolve_title(), nil)
 end
 
+T["BasePopupmenu"]["chrome_line_count returns 0 for empty"] = function()
+  local renderer = setmetatable({
+    _state = { top = {}, bottom = {} },
+  }, { __index = BasePopupmenu })
+
+  expect.equality(renderer:chrome_line_count("top"), 0)
+  expect.equality(renderer:chrome_line_count("bottom"), 0)
+end
+
+T["BasePopupmenu"]["chrome_line_count returns correct count"] = function()
+  local renderer = setmetatable({
+    _state = { top = { "a", "b" }, bottom = { "c" } },
+  }, { __index = BasePopupmenu })
+
+  expect.equality(renderer:chrome_line_count("top"), 2)
+  expect.equality(renderer:chrome_line_count("bottom"), 1)
+end
+
+T["BasePopupmenu"]["chrome_line_count returns 0 for nil components"] = function()
+  local renderer = setmetatable({
+    _state = {},
+  }, { __index = BasePopupmenu })
+
+  expect.equality(renderer:chrome_line_count("top"), 0)
+  expect.equality(renderer:chrome_line_count("bottom"), 0)
+end
+
+T["BasePopupmenu"]["render_chrome returns empty for no components"] = function()
+  local renderer = setmetatable({
+    _state = { top = {}, bottom = {}, highlights = { default = "Normal" } },
+  }, { __index = BasePopupmenu })
+
+  local ctx = { selected = -1 }
+  local result = { value = {} }
+  local lines, hls, count = renderer:render_chrome("top", ctx, result, 0, 0, 0, 40)
+  expect.equality(count, 0)
+  expect.equality(#lines, 0)
+  expect.equality(#hls, 0)
+end
+
+T["BasePopupmenu"]["render_chrome resolves string components"] = function()
+  local renderer = setmetatable({
+    _state = { top = { "header" }, bottom = {}, highlights = { default = "Normal" } },
+  }, { __index = BasePopupmenu })
+
+  local ctx = { selected = -1 }
+  local result = { value = {} }
+  local lines, hls, count = renderer:render_chrome("top", ctx, result, 0, 0, 0, 20)
+  expect.equality(count, 1)
+  expect.equality(lines[1]:sub(1, 6), "header")
+  expect.equality(hls[1].base_hl, "Normal")
+end
+
 T["Renderer inheritance"] = new_set()
 
 T["Renderer inheritance"]["popupmenu has hide method from base"] = function()
@@ -104,6 +157,8 @@ T["Renderer inheritance"]["popupmenu has hide method from base"] = function()
   expect.equality(type(renderer.clamp_height), "function")
   expect.equality(type(renderer.flush_buffer), "function")
   expect.equality(type(renderer.resolve_title), "function")
+  expect.equality(type(renderer.render_chrome), "function")
+  expect.equality(type(renderer.chrome_line_count), "function")
 end
 
 T["Renderer inheritance"]["popupmenu_border has hide method from base"] = function()
@@ -112,6 +167,8 @@ T["Renderer inheritance"]["popupmenu_border has hide method from base"] = functi
   expect.equality(type(renderer.hide), "function")
   expect.equality(type(renderer.render), "function")
   expect.equality(type(renderer.render_candidates), "function")
+  expect.equality(type(renderer.render_chrome), "function")
+  expect.equality(type(renderer.chrome_line_count), "function")
 end
 
 T["Renderer inheritance"]["popupmenu_palette has hide method from base"] = function()
@@ -120,6 +177,8 @@ T["Renderer inheritance"]["popupmenu_palette has hide method from base"] = funct
   expect.equality(type(renderer.hide), "function")
   expect.equality(type(renderer.render), "function")
   expect.equality(type(renderer.render_candidates), "function")
+  expect.equality(type(renderer.render_chrome), "function")
+  expect.equality(type(renderer.chrome_line_count), "function")
 end
 
 return T

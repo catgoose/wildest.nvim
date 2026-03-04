@@ -1645,6 +1645,45 @@ fixed_height = true,
 </code></pre>
 </details>
 </td>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B113%5D%20top_component&body=%2A%2AScreenshot%20index%3A%2A%2A%20113%0A%2A%2AConfig%20key%3A%2A%2A%20%60top_component%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[113]</a> top component</strong><br>
+<em>bordered, rounded, top, fzy, devicons, scrollbar, :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/top_component.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "border_theme",
+border = "rounded",
+top = { " Matches:" },
+</code></pre>
+</details>
+</td>
+</tr>
+<tr>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B114%5D%20bottom_component&body=%2A%2AScreenshot%20index%3A%2A%2A%20114%0A%2A%2AConfig%20key%3A%2A%2A%20%60bottom_component%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[114]</a> bottom component</strong><br>
+<em>bordered, rounded, bottom, fzy, devicons, scrollbar, :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/bottom_component.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "border_theme",
+border = "rounded",
+bottom = { " Press <Tab> to navigate " },
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B115%5D%20top_bottom_components&body=%2A%2AScreenshot%20index%3A%2A%2A%20115%0A%2A%2AConfig%20key%3A%2A%2A%20%60top_bottom_components%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[115]</a> top + bottom</strong><br>
+<em>bordered, rounded, top, bottom, fzy, devicons, scrollbar, :set fold</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/top_bottom_components.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+renderer = "border_theme",
+border = "rounded",
+top = { " Completions" },
+bottom = { " <Tab>/<S-Tab> to navigate " },
+</code></pre>
+</details>
+</td>
 <td></td>
 </tr>
 </table>
@@ -1656,7 +1695,7 @@ fixed_height = true,
 <table>
 <tr>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B113%5D%20preview_right_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20113%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_right_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[113]</a> Preview Right (Screen)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B116%5D%20preview_right_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20116%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_right_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[116]</a> Preview Right (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_right_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1673,7 +1712,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B114%5D%20preview_left_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20114%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_left_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[114]</a> Preview Left (Screen)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B117%5D%20preview_left_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20117%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_left_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[117]</a> Preview Left (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_left_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1690,7 +1729,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B115%5D%20preview_top_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20115%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_top_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[115]</a> Preview Top (Screen)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B118%5D%20preview_top_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20118%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_top_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[118]</a> Preview Top (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_top_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1709,7 +1748,7 @@ preview = {
 </tr>
 <tr>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B116%5D%20preview_bottom_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20116%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_bottom_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[116]</a> Preview Bottom (Screen)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B119%5D%20preview_bottom_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20119%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_bottom_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[119]</a> Preview Bottom (Screen)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_bottom_screen.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1726,7 +1765,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B117%5D%20preview_right_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20117%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_right_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[117]</a> Preview Right (Popup)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B120%5D%20preview_right_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20120%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_right_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[120]</a> Preview Right (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_right_popup.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1743,7 +1782,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B118%5D%20preview_left_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20118%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_left_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[118]</a> Preview Left (Popup)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B121%5D%20preview_left_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20121%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_left_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[121]</a> Preview Left (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_left_popup.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1762,7 +1801,7 @@ preview = {
 </tr>
 <tr>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B119%5D%20preview_top_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20119%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_top_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[119]</a> Preview Top (Popup)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B122%5D%20preview_top_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20122%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_top_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[122]</a> Preview Top (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview top popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_top_popup.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1779,7 +1818,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B120%5D%20preview_bottom_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20120%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_bottom_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[120]</a> Preview Bottom (Popup)</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B123%5D%20preview_bottom_popup&body=%2A%2AScreenshot%20index%3A%2A%2A%20123%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_bottom_popup%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[123]</a> Preview Bottom (Popup)</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview bottom popup, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_bottom_popup.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1796,7 +1835,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B121%5D%20preview_wanted_right&body=%2A%2AScreenshot%20index%3A%2A%2A%20121%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_right%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[121]</a> Wanted Right</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B124%5D%20preview_wanted_right&body=%2A%2AScreenshot%20index%3A%2A%2A%20124%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_right%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[124]</a> Wanted Right</strong><br>
 <em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview right popup gap=1, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_wanted_right.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1817,7 +1856,7 @@ preview = {
 </tr>
 <tr>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B122%5D%20preview_wanted_left&body=%2A%2AScreenshot%20index%3A%2A%2A%20122%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_left%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[122]</a> Wanted Left</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B125%5D%20preview_wanted_left&body=%2A%2AScreenshot%20index%3A%2A%2A%20125%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_left%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[125]</a> Wanted Left</strong><br>
 <em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview left popup gap=1, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_wanted_left.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1836,7 +1875,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B123%5D%20preview_wanted_top&body=%2A%2AScreenshot%20index%3A%2A%2A%20123%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_top%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[123]</a> Wanted Top</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B126%5D%20preview_wanted_top&body=%2A%2AScreenshot%20index%3A%2A%2A%20126%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_top%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[126]</a> Wanted Top</strong><br>
 <em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview top popup gap=1, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_wanted_top.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1855,7 +1894,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B124%5D%20preview_wanted_bottom&body=%2A%2AScreenshot%20index%3A%2A%2A%20124%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_bottom%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[124]</a> Wanted Bottom</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B127%5D%20preview_wanted_bottom&body=%2A%2AScreenshot%20index%3A%2A%2A%20127%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_wanted_bottom%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[127]</a> Wanted Bottom</strong><br>
 <em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview bottom popup gap=1, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_wanted_bottom.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1876,7 +1915,7 @@ preview = {
 </tr>
 <tr>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B125%5D%20preview_gap_right&body=%2A%2AScreenshot%20index%3A%2A%2A%20125%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_gap_right%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[125]</a> Gap Right</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B128%5D%20preview_gap_right&body=%2A%2AScreenshot%20index%3A%2A%2A%20128%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_gap_right%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[128]</a> Gap Right</strong><br>
 <em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview right popup gap=2, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_gap_right.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1895,7 +1934,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B126%5D%20preview_gap_left&body=%2A%2AScreenshot%20index%3A%2A%2A%20126%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_gap_left%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[126]</a> Gap Left</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B129%5D%20preview_gap_left&body=%2A%2AScreenshot%20index%3A%2A%2A%20129%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_gap_left%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[129]</a> Gap Left</strong><br>
 <em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview left popup gap=2, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_gap_left.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1914,7 +1953,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B127%5D%20preview_gap_screen_right&body=%2A%2AScreenshot%20index%3A%2A%2A%20127%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_gap_screen_right%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[127]</a> Gap Screen Right</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B130%5D%20preview_gap_screen_right&body=%2A%2AScreenshot%20index%3A%2A%2A%20130%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_gap_screen_right%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[130]</a> Gap Screen Right</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right screen gap=2, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_gap_screen_right.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1934,7 +1973,7 @@ preview = {
 </tr>
 <tr>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B128%5D%20preview_gap_screen_left&body=%2A%2AScreenshot%20index%3A%2A%2A%20128%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_gap_screen_left%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[128]</a> Gap Screen Left</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B131%5D%20preview_gap_screen_left&body=%2A%2AScreenshot%20index%3A%2A%2A%20131%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_gap_screen_left%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[131]</a> Gap Screen Left</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview left screen gap=2, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_gap_screen_left.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1952,7 +1991,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B129%5D%20preview_priority_right&body=%2A%2AScreenshot%20index%3A%2A%2A%20129%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_priority_right%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[129]</a> Priority Right</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B132%5D%20preview_priority_right&body=%2A%2AScreenshot%20index%3A%2A%2A%20132%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_priority_right%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[132]</a> Priority Right</strong><br>
 <em>wanted theme, palette, noselect=false, fzy, devicons, scrollbar, preview right popup gap=1, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_priority_right.png" width="400"><br>
 <details><summary>Config</summary>
@@ -1972,7 +2011,7 @@ preview = {
 </details>
 </td>
 <td align="center">
-<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B130%5D%20preview_priority_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20130%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_priority_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[130]</a> Priority Screen</strong><br>
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B133%5D%20preview_priority_screen&body=%2A%2AScreenshot%20index%3A%2A%2A%20133%0A%2A%2AConfig%20key%3A%2A%2A%20%60preview_priority_screen%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[133]</a> Priority Screen</strong><br>
 <em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, preview right screen, :e lua/wildest/renderer/components/</em><br>
 <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/preview_priority_screen.png" width="400"><br>
 <details><summary>Config</summary>

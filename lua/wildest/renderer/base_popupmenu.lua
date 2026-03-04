@@ -5,6 +5,7 @@
 ---buffer flushing, title resolution, and hiding.
 ---@brief ]]
 
+local chrome = require("wildest.renderer.chrome")
 local renderer_util = require("wildest.renderer")
 
 ---@class wildest.BasePopupmenu
@@ -157,6 +158,45 @@ function BasePopupmenu:apply_title(win_config)
     win_config.title = { { string.format(" %s ", title), self._state.border.native_hl } }
     win_config.title_pos = "center"
   end
+end
+
+--- Return the number of chrome components for a position (upper bound for height accounting).
+---@param position "top"|"bottom"
+---@return integer
+function BasePopupmenu:chrome_line_count(position)
+  local components = self._state[position]
+  if not components then
+    return 0
+  end
+  return #components
+end
+
+--- Render chrome lines for a position.
+---@param position "top"|"bottom"
+---@param ctx table render context
+---@param result table pipeline result
+---@param page_start integer
+---@param page_end integer
+---@param total integer
+---@param width integer content width
+---@return string[] lines, table[] line_highlights, integer count
+function BasePopupmenu:render_chrome(position, ctx, result, page_start, page_end, total, width)
+  local state = self._state
+  local components = state[position]
+  if not components or #components == 0 then
+    return {}, {}, 0
+  end
+
+  local chrome_ctx = {
+    width = width,
+    selected = ctx.selected,
+    total = total,
+    page_start = page_start,
+    page_end = page_end,
+    result = result,
+  }
+
+  return chrome.resolve_chrome_lines(components, chrome_ctx, width, state.highlights.default)
 end
 
 return BasePopupmenu

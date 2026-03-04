@@ -406,6 +406,8 @@ end
 ---@field padding? number Inner padding spaces (default 1, clamped >= 0)
 ---@field left? table Left components
 ---@field right? table Right components
+---@field top? (string|function|table)[] Header lines rendered above candidates
+---@field bottom? (string|function|table)[] Footer lines rendered below candidates
 ---@field max_height? integer Maximum number of visible lines (default 16)
 ---@field min_height? integer Minimum number of visible lines (default 0)
 ---@field max_width? integer|string|nil Maximum width, integer or percentage (nil = full editor width)
@@ -423,6 +425,8 @@ end
 ---@field padding? number Inner padding spaces (default 1, clamped >= 0)
 ---@field left? table Left components
 ---@field right? table Right components
+---@field top? (string|function|table)[] Header lines rendered above candidates
+---@field bottom? (string|function|table)[] Footer lines rendered below candidates
 ---@field max_height? integer|string Max visible lines, integer or percentage (default 16)
 ---@field min_height? integer Minimum visible lines (default 0)
 ---@field max_width? integer|string|nil Max width, integer or percentage (nil = full width)
