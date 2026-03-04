@@ -28,6 +28,7 @@
 ---@field pipeline_timeout? integer Timeout in ms for pipeline steps, 0 = no timeout (default: 0)
 ---@field skip_commands? string[] Commands to skip completions for (default: {})
 ---@field min_input? integer Minimum input length before showing completions (default: 0)
+---@field apply_incsearch_fix? boolean Fix incsearch highlighting for / and ? (default: false)
 ---@field pipeline? wildest.PipelineStep|wildest.PipelineStep[] Pipeline steps or single pipeline step
 ---@field preview? wildest.PreviewConfig Preview window configuration
 ---@field layout? fun(geometry: table): table? Layout adjustment callback
@@ -79,6 +80,11 @@ local defaults = {
   --   1 = after first character
   --   2+ = after N characters
   min_input = 0,
+
+  -- Fix incsearch highlighting disappearing when the popup is shown during
+  -- / and ? search modes. When enabled, forces Neovim to re-evaluate the
+  -- incsearch pattern after each redraw.
+  apply_incsearch_fix = false,
 
   pipeline = nil, -- must be set by user
   renderer = nil, -- must be set by user

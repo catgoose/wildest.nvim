@@ -25,6 +25,7 @@
 ---@class wildest.ResultOpts
 ---@field highlighter? wildest.Highlighter
 ---@field output? fun(data: table, candidate: any): string
+---@field draw? fun(data: table, candidate: any): string
 
 ---@diagnostic disable-next-line: undefined-global
 local utf8 = utf8 ---@type {codes: fun(s: string): fun(): integer, integer, char: fun(code: integer): string}
@@ -57,11 +58,15 @@ function M.setup_default_highlights()
   end
 end
 
---- Parse a dimension value: integer, percentage string, or 'auto'
+--- Parse a dimension value: integer, percentage string, function, or 'auto'
 ---@param value any
 ---@param total integer
+---@param ctx? table optional context passed to function values
 ---@return integer
-function M.parse_dimension(value, total)
+function M.parse_dimension(value, total, ctx)
+  if type(value) == "function" then
+    return M.parse_dimension(value(ctx or {}), total, ctx)
+  end
   if type(value) == "number" then
     return value
   end
@@ -96,13 +101,14 @@ function M.parse_margin(margin, total, content_size)
 end
 
 --- Calculate clamped content width from max/min/available dimensions.
----@param max_width any max_width option (int, percent string, or nil)
----@param min_width any min_width option (int, percent string)
+---@param max_width any max_width option (int, percent string, function, or nil)
+---@param min_width any min_width option (int, percent string, or function)
 ---@param available integer available editor width
+---@param ctx? table optional context passed to function values
 ---@return integer
-function M.calculate_width(max_width, min_width, available)
-  local max_w = max_width and M.parse_dimension(max_width, available) or available
-  local min_w = M.parse_dimension(min_width, available)
+function M.calculate_width(max_width, min_width, available, ctx)
+  local max_w = max_width and M.parse_dimension(max_width, available, ctx) or available
+  local min_w = M.parse_dimension(min_width, available, ctx)
   return math.max(min_w, math.min(max_w, available))
 end
 
@@ -500,7 +506,11 @@ function M.render_components(state, ctx, result, index, is_selected)
   local right_parts = {}
   local hl = is_selected and state.highlights.selected or state.highlights.default
 
-  local candidate = result.value[index + 1]
+  local raw_candidate = result.value[index + 1]
+  local candidate = raw_candidate
+  if result.draw then
+    candidate = result.draw(result.data, raw_candidate) or raw_candidate
+  end
   local query = M.get_query(result)
 
   local comp_ctx = {

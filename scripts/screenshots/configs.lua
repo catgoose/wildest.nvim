@@ -540,6 +540,14 @@ M.configs = {
     separator = " ",
   },
 
+  wildmenu_powerline = {
+    category = "wildmenu_variant",
+    label = "Powerline",
+    renderer = "wildmenu",
+    highlighter = "basic",
+    separator = "powerline",
+  },
+
   -- Palette variant configs
   palette_no_title = {
     category = "palette_variant",
@@ -996,7 +1004,7 @@ M.feature_names = {
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
 M.border_names = { "border_rounded", "border_single", "border_double", "border_solid", "border_title" }
-M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal", "wildmenu_pipe", "wildmenu_arrows_index", "wildmenu_compact" }
+M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal", "wildmenu_pipe", "wildmenu_arrows_index", "wildmenu_compact", "wildmenu_powerline" }
 M.palette_variant_names = { "palette_no_title", "palette_custom_prefix", "palette_large", "palette_compact", "palette_search" }
 M.dimension_names = { "max_height_small", "fixed_height_false", "max_width_60", "min_height_5", "max_height_large", "max_width_40", "min_width_40" }
 M.gradient_names = { "gradient_warm", "gradient_cool", "gradient_sunset", "gradient_ice", "gradient_forest" }
@@ -1136,6 +1144,7 @@ function M.random_scene(label)
   }
   local rights = {
     { "scrollbar" },
+    { "scrollbar_collapse" },
     {},
   }
   local highlighters = { "fzy", "basic", "prefix" }
@@ -1190,6 +1199,9 @@ function M.random_scene(label)
   if math.random(8) == 1 then
     scene.empty_message = pick({ " No matches ", " Nothing found ", " ∅ " })
   end
+  if math.random(6) == 1 then
+    scene.empty_message_first_draw_delay = pick({ 100, 200, 500 })
+  end
   if math.random(4) == 1 then
     scene.max_height = pick({ 8, 10, 12, 20 })
   end
@@ -1208,7 +1220,7 @@ function M.random_scene(label)
   elseif recipe == "wildmenu" then
     scene.renderer = "wildmenu"
     scene.highlighter = pick(highlighters)
-    scene.separator = pick({ " | ", "  ", " · " })
+    scene.separator = pick({ " | ", "  ", " · ", "powerline" })
     scene.ellipsis = pick({ "...", "…", " >" })
     scene.left = pick({ { "arrows" }, {} })
     scene.right = pick({ { "arrows_right", " ", "index" }, { "index" }, {} })
@@ -1602,6 +1614,7 @@ function M.scene_to_description(cfg)
   if merged.min_height then add("min_height=" .. merged.min_height) end
   if merged.fixed_height == false then add("fixed_height=false") end
   if merged.empty_message then add("empty_message") end
+  if merged.empty_message_first_draw_delay then add("empty_delay=" .. merged.empty_message_first_draw_delay .. "ms") end
   if merged.ellipsis then add("ellipsis") end
   if merged.top and #merged.top > 0 then add("top") end
   if merged.bottom and #merged.bottom > 0 then add("bottom") end
@@ -1628,12 +1641,18 @@ function M.scene_to_description(cfg)
   end
 
   local has_scrollbar = false
+  local has_scrollbar_collapse = false
   if type(merged.right) == "table" then
     for _, item in ipairs(merged.right) do
       if item == "scrollbar" then has_scrollbar = true end
+      if item == "scrollbar_collapse" then has_scrollbar_collapse = true; has_scrollbar = true end
     end
   end
-  if has_scrollbar then add("scrollbar") end
+  if has_scrollbar_collapse then
+    add("scrollbar(collapse)")
+  elseif has_scrollbar then
+    add("scrollbar")
+  end
   local default_has_scrollbar = false
   if type(M.defaults.right) == "table" then
     for _, item in ipairs(M.defaults.right) do
@@ -1664,7 +1683,11 @@ function M.scene_to_description(cfg)
       end
     end
     if merged.separator then
-      add('separator="' .. merged.separator .. '"')
+      if type(merged.separator) == "string" then
+        add('separator="' .. merged.separator .. '"')
+      else
+        add("separator=powerline")
+      end
     end
   end
 
@@ -1766,6 +1789,8 @@ local function resolve_component(name, w)
     return nil
   elseif name == "scrollbar" then
     return w.popupmenu_scrollbar()
+  elseif name == "scrollbar_collapse" then
+    return w.popupmenu_scrollbar({ collapse = true })
   elseif name == "arrows" then
     return w.wildmenu_arrows()
   elseif name == "arrows_right" then
@@ -1842,7 +1867,11 @@ local function build_renderer_opts(cfg, w)
     opts.padding = cfg.padding
   end
   if cfg.separator then
-    opts.separator = cfg.separator
+    if cfg.separator == "powerline" then
+      opts.separator = w.wildmenu_powerline_separator()
+    else
+      opts.separator = cfg.separator
+    end
   end
   if cfg.border then
     opts.border = cfg.border
@@ -1858,6 +1887,9 @@ local function build_renderer_opts(cfg, w)
   end
   if cfg.empty_message then
     opts.empty_message = cfg.empty_message
+  end
+  if cfg.empty_message_first_draw_delay then
+    opts.empty_message_first_draw_delay = cfg.empty_message_first_draw_delay
   end
   if cfg.pumblend then
     opts.pumblend = cfg.pumblend

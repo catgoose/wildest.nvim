@@ -30,6 +30,24 @@ function BasePopupmenu:paginate(ctx, total, max_height)
   state.page = { page_start, page_end }
 
   local show_empty = total == 0 and state.empty_message
+
+  -- Apply empty_message_first_draw_delay: suppress empty message if within
+  -- the delay window at the start of a new session.
+  if show_empty and state.empty_message_first_draw_delay and state.empty_message_first_draw_delay > 0 then
+    local now = vim.uv.hrtime() / 1e6 -- ms
+    -- Reset tracking on new session
+    if ctx.session_id ~= state._delay_session_id then
+      state._delay_session_id = ctx.session_id
+      state._first_draw_time = nil
+    end
+    if not state._first_draw_time then
+      state._first_draw_time = now
+    end
+    if (now - state._first_draw_time) < state.empty_message_first_draw_delay then
+      show_empty = false
+    end
+  end
+
   if not show_empty and (page_start == -1 or total == 0) then
     self:hide()
     return nil, nil, false
@@ -73,7 +91,11 @@ function BasePopupmenu:render_candidates(result, ctx, page_start, page_end, widt
   end
 
   for i = start, finish, step do
-    local candidate = candidates[i + 1]
+    local raw_candidate = candidates[i + 1]
+    local candidate = raw_candidate
+    if result.draw then
+      candidate = result.draw(result.data, raw_candidate) or raw_candidate
+    end
     local is_selected = (i == ctx.selected)
     local base_hl = is_selected and state.highlights.selected or state.highlights.default
     local accent_hl = is_selected and state.highlights.selected_accent or state.highlights.accent

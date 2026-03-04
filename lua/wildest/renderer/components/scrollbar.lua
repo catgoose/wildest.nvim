@@ -7,7 +7,7 @@ local BaseComponent = require("wildest.renderer.components.base")
 local M = {}
 
 --- Create a scrollbar component for the popupmenu
----@param opts? table { thumb?: string, bar?: string, hl?: string, thumb_hl?: string }
+---@param opts? table { thumb?: string, bar?: string, hl?: string, thumb_hl?: string, collapse?: boolean }
 ---@return table component
 function M.new(opts)
   opts = opts or {}
@@ -15,6 +15,7 @@ function M.new(opts)
   local bar_char = opts.bar or " "
   local bar_hl = opts.hl or "WildestScrollbar"
   local thumb_hl = opts.thumb_hl or "WildestScrollbarThumb"
+  local collapse = opts.collapse or false
 
   local component = setmetatable({}, { __index = BaseComponent })
 
@@ -25,11 +26,17 @@ function M.new(opts)
     local index = ctx.index or 0
 
     if total <= 0 then
+      if collapse then
+        return {}
+      end
       return { { bar_char, bar_hl } }
     end
 
     local page_size = page_end - page_start + 1
     if page_size >= total then
+      if collapse then
+        return {}
+      end
       return { { bar_char, bar_hl } }
     end
 

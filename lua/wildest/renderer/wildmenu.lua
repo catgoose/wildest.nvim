@@ -136,8 +136,22 @@ function M.new(opts)
 
     local avail_width = editor_width - left_width - right_width
 
-    -- Compute page
-    local page_start, page_end = make_page(ctx.selected, total, candidates, avail_width, sep_width)
+    -- Compute page — for component separators, width is always 1
+    local is_component_sep = type(state.separator) == "table" and state.separator.render
+    if is_component_sep then
+      sep_width = 1
+    end
+
+    -- Pre-transform candidates for width calculation when draw is present
+    local display_candidates = candidates
+    if result.draw then
+      display_candidates = {}
+      for idx = 1, total do
+        display_candidates[idx] = result.draw(result.data, candidates[idx]) or candidates[idx]
+      end
+    end
+
+    local page_start, page_end = make_page(ctx.selected, total, display_candidates, avail_width, sep_width)
     state.page = { page_start, page_end }
 
     if page_start == -1 then
@@ -175,10 +189,27 @@ function M.new(opts)
     -- Candidates
     for i = page_start, page_end do
       if i > page_start then
-        table.insert(chunks, { state.separator, state.highlights.default })
+        if is_component_sep then
+          local sep_ctx = {
+            is_left_selected = ((i - 1) == ctx.selected),
+            is_right_selected = (i == ctx.selected),
+            default_hl = state.highlights.default,
+            selected_hl = state.highlights.selected,
+          }
+          local sep_chunks = state.separator:render(sep_ctx)
+          for _, sc in ipairs(sep_chunks or {}) do
+            table.insert(chunks, sc)
+          end
+        else
+          table.insert(chunks, { state.separator, state.highlights.default })
+        end
       end
 
-      local candidate = candidates[i + 1]
+      local raw_candidate = candidates[i + 1]
+      local candidate = raw_candidate
+      if result.draw then
+        candidate = result.draw(result.data, raw_candidate) or raw_candidate
+      end
       local is_selected = (i == ctx.selected)
       local base_hl = is_selected and state.highlights.selected or state.highlights.default
       local accent_hl = is_selected and state.highlights.selected_accent or state.highlights.accent

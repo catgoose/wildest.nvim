@@ -145,6 +145,127 @@ T["BasePopupmenu"]["render_chrome resolves string components"] = function()
   expect.equality(hls[1].base_hl, "Normal")
 end
 
+T["BasePopupmenu"]["paginate suppresses empty_message during delay"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal" },
+      empty_message = "No results",
+      empty_message_first_draw_delay = 500,
+      page = { -1, -1 },
+      win = -1,
+    },
+  }, { __index = BasePopupmenu })
+
+  -- First call within delay window should suppress empty_message
+  local ctx = { selected = -1, session_id = 1 }
+  local ps, pe, show_empty = renderer:paginate(ctx, 0, 10)
+  -- show_empty is suppressed, so renderer hides (ps=nil)
+  expect.equality(ps, nil)
+  expect.equality(show_empty, false)
+end
+
+T["BasePopupmenu"]["paginate shows empty_message after delay expires"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal" },
+      empty_message = "No results",
+      empty_message_first_draw_delay = 1, -- 1ms delay
+      page = { -1, -1 },
+      win = -1,
+      _delay_session_id = 1,
+      _first_draw_time = 0, -- epoch — long past the 1ms delay
+    },
+  }, { __index = BasePopupmenu })
+
+  -- Delay has long expired, so show_empty should be truthy (the message string)
+  local ctx = { selected = -1, session_id = 1 }
+  local ps, pe, show_empty = renderer:paginate(ctx, 0, 10)
+  expect.equality(show_empty ~= false, true)
+  -- page_start/page_end are -1 (not nil) since we're showing empty message
+  expect.equality(ps, -1)
+end
+
+T["BasePopupmenu"]["paginate without delay always shows empty_message"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal" },
+      empty_message = "No results",
+      page = { -1, -1 },
+      win = -1,
+    },
+  }, { __index = BasePopupmenu })
+
+  local ctx = { selected = -1, session_id = 1 }
+  local ps, pe, show_empty = renderer:paginate(ctx, 0, 10)
+  -- show_empty is the message string (truthy), not boolean true
+  expect.equality(show_empty ~= false, true)
+  expect.equality(ps, -1)
+end
+
+T["BasePopupmenu"]["paginate resets delay tracking on new session"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal" },
+      empty_message = "No results",
+      empty_message_first_draw_delay = 500,
+      page = { -1, -1 },
+      win = -1,
+      _delay_session_id = 1,
+      _first_draw_time = 0, -- long ago
+    },
+  }, { __index = BasePopupmenu })
+
+  -- New session_id resets tracking
+  local ctx = { selected = -1, session_id = 2 }
+  local ps, pe, show_empty = renderer:paginate(ctx, 0, 10)
+  -- New session, first draw time is reset, within delay window = suppress
+  expect.equality(ps, nil)
+  expect.equality(show_empty, false)
+  -- Session ID should be updated
+  expect.equality(renderer._state._delay_session_id, 2)
+end
+
+T["BasePopupmenu"]["render_candidates skipped when show_empty in popupmenu"] = function()
+  -- Regression: popupmenu.lua previously called render_candidates unconditionally
+  -- even when show_empty was truthy. With page_start=-1, the loop ran once with a
+  -- nil candidate, crashing inside render_line → nvim_strwidth(nil).
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      empty_message = "No results",
+      page = { -1, -1 },
+      win = -1,
+      max_height = 10,
+      min_height = 0,
+      fixed_height = true,
+      offset = 0,
+      left = {},
+      right = {},
+      top = {},
+      bottom = {},
+      zindex = 250,
+      buf = -1,
+      ns_id = -1,
+      run_id = -1,
+    },
+  }, { __index = BasePopupmenu })
+
+  -- Simulate what paginate returns for total=0 with empty_message
+  local page_start, page_end, show_empty = renderer:paginate({ selected = -1, run_id = 1, session_id = 1 }, 0, 10)
+  expect.equality(page_start, -1)
+  expect.equality(page_end, -1)
+  expect.equality(show_empty ~= false, true)
+
+  -- The key assertion: render_candidates with (-1, -1) should NOT be called
+  -- because show_empty is truthy. Verify it would crash with nil candidate.
+  local result = { value = {} }
+  local ok = pcall(function()
+    renderer:render_candidates(result, { selected = -1 }, -1, -1, 40)
+  end)
+  -- This SHOULD fail because candidates[0] is nil
+  expect.equality(ok, false)
+end
+
 T["Renderer inheritance"] = new_set()
 
 T["Renderer inheritance"]["popupmenu has hide method from base"] = function()

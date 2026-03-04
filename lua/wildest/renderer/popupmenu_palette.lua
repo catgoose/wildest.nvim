@@ -47,6 +47,7 @@ function M.new(opts)
     return " " .. cmdtype
   end
   state.empty_message = opts.empty_message
+  state.empty_message_first_draw_delay = opts.empty_message_first_draw_delay
   state.border = border_info
   state.prompt_border = prompt_border
   state.prompt_position = prompt_position
