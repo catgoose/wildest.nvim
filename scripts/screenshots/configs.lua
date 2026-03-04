@@ -238,6 +238,12 @@ M.configs = {
     pumblend = 30,
   },
 
+  chain_highlighter = {
+    category = "feature",
+    label = "Chain Highlighter",
+    highlighter = "chain",
+  },
+
   -- Pipeline configs
   lua_pipeline = {
     category = "pipeline",
@@ -985,7 +991,7 @@ M.default_cmd = ":set fold"
 M.renderer_names = { "popupmenu", "popupmenu_border", "popupmenu_palette", "palette_prompt_bottom", "wildmenu" }
 M.feature_names = {
   "devicons", "fuzzy", "gradient", "search", "fuzzy_search", "renderer_mux",
-  "kind_icons", "prefix_highlighter", "scrollbar", "pumblend",
+  "kind_icons", "prefix_highlighter", "scrollbar", "pumblend", "chain_highlighter",
 }
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
@@ -1811,6 +1817,8 @@ local function resolve_highlighter(cfg, w)
       table.insert(gradient, hl_name)
     end
     return w.gradient_highlighter(w.fzy_highlighter(), gradient)
+  elseif name == "chain" then
+    return w.chain_highlighter({ w.fzy_highlighter(), w.basic_highlighter() })
   else
     return w.fzy_highlighter()
   end
