@@ -438,6 +438,16 @@ M.gradient_highlighter({base_highlighter}, {gradient}, {opts?})
         (wildest.Highlighter)
 
 
+M.chain_highlighter({highlighters})                  *wildest.chain_highlighter*
+    Chain highlighter — tries each highlighter in order, first non-empty result wins.
+
+    Parameters: ~
+        {highlighters}  (wildest.Highlighter[])  Array of highlighters to try in order
+
+    Returns: ~
+        (wildest.Highlighter)
+
+
                                                             *wildest-components*
 CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
 
