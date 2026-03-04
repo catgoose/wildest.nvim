@@ -74,6 +74,34 @@ T["parse_dimension()"]["passes ctx to function"] = function()
   expect.equality(received_ctx.total, 5)
 end
 
+T["calculate_width()"] = new_set()
+
+T["calculate_width()"]["clamps between min and max"] = function()
+  expect.equality(renderer_util.calculate_width(50, 10, 100), 50)
+  expect.equality(renderer_util.calculate_width(200, 10, 100), 100)
+  expect.equality(renderer_util.calculate_width(5, 10, 100), 10)
+end
+
+T["calculate_width()"]["nil max_width uses full available"] = function()
+  expect.equality(renderer_util.calculate_width(nil, 10, 80), 80)
+end
+
+T["calculate_width()"]["accepts function values"] = function()
+  local max_fn = function() return 50 end
+  local min_fn = function() return 20 end
+  expect.equality(renderer_util.calculate_width(max_fn, min_fn, 100), 50)
+end
+
+T["calculate_width()"]["passes ctx to function values"] = function()
+  local seen_ctx = nil
+  local max_fn = function(ctx)
+    seen_ctx = ctx
+    return 60
+  end
+  renderer_util.calculate_width(max_fn, 10, 100, { total = 42 })
+  expect.equality(seen_ctx.total, 42)
+end
+
 T["parse_margin()"] = new_set()
 
 T["parse_margin()"]["centers with auto"] = function()

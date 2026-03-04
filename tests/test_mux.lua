@@ -77,4 +77,46 @@ T["list routing"]["no match returns nil gracefully"] = function()
   expect.equality(r1.rendered, false)
 end
 
+T["active renderer switching"] = new_set()
+
+T["active renderer switching"]["hides previous renderer when switching"] = function()
+  local r1 = mock_renderer()
+  local r2 = mock_renderer()
+  local m = mux.new({ [":"] = r1, ["/"] = r2 })
+  -- First render activates r1
+  m:render({ cmdtype = ":" }, { value = {} })
+  expect.equality(r1.rendered, true)
+  expect.equality(r1.hidden, false)
+  -- Second render switches to r2, should hide r1
+  m:render({ cmdtype = "/" }, { value = {} })
+  expect.equality(r1.hidden, true)
+  expect.equality(r2.rendered, true)
+end
+
+T["active renderer switching"]["shared renderer in list is hidden only once"] = function()
+  local shared = mock_renderer()
+  local hide_count = 0
+  local orig_hide = shared.hide
+  function shared:hide()
+    hide_count = hide_count + 1
+    orig_hide(self)
+  end
+  local m = mux.new({
+    { function() return true end, shared },
+    { function() return true end, shared },
+  })
+  m:hide()
+  -- shared is used in two entries but should only be hidden once (dedup)
+  expect.equality(hide_count, 1)
+end
+
+T["dict routing"]["uses ctx.route over ctx.cmdtype"] = function()
+  local r1 = mock_renderer()
+  local r2 = mock_renderer()
+  local m = mux.new({ [":"] = r1, ["substitute"] = r2 })
+  m:render({ cmdtype = ":", route = "substitute" }, { value = {} })
+  expect.equality(r1.rendered, false)
+  expect.equality(r2.rendered, true)
+end
+
 return T

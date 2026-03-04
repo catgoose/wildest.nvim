@@ -164,6 +164,44 @@ T["BasePopupmenu"]["paginate suppresses empty_message during delay"] = function(
   expect.equality(show_empty, false)
 end
 
+T["BasePopupmenu"]["paginate shows empty_message after delay expires"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal" },
+      empty_message = "No results",
+      empty_message_first_draw_delay = 1, -- 1ms delay
+      page = { -1, -1 },
+      win = -1,
+      _delay_session_id = 1,
+      _first_draw_time = 0, -- epoch — long past the 1ms delay
+    },
+  }, { __index = BasePopupmenu })
+
+  -- Delay has long expired, so show_empty should be truthy (the message string)
+  local ctx = { selected = -1, session_id = 1 }
+  local ps, pe, show_empty = renderer:paginate(ctx, 0, 10)
+  expect.equality(show_empty ~= false, true)
+  -- page_start/page_end are -1 (not nil) since we're showing empty message
+  expect.equality(ps, -1)
+end
+
+T["BasePopupmenu"]["paginate without delay always shows empty_message"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal" },
+      empty_message = "No results",
+      page = { -1, -1 },
+      win = -1,
+    },
+  }, { __index = BasePopupmenu })
+
+  local ctx = { selected = -1, session_id = 1 }
+  local ps, pe, show_empty = renderer:paginate(ctx, 0, 10)
+  -- show_empty is the message string (truthy), not boolean true
+  expect.equality(show_empty ~= false, true)
+  expect.equality(ps, -1)
+end
+
 T["BasePopupmenu"]["paginate resets delay tracking on new session"] = function()
   local renderer = setmetatable({
     _state = {

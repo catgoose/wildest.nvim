@@ -32,4 +32,35 @@ T["scrollbar collapse"]["collapse=true returns thumb when not all fit"] = functi
   expect.equality(result[1][1] ~= nil, true)
 end
 
+T["scrollbar collapse"]["collapse=true returns empty when total <= 0"] = function()
+  local comp = scrollbar.new({ collapse = true })
+  local ctx = { total = 0, page_start = 0, page_end = 0, index = 0 }
+  local result = comp:render(ctx)
+  expect.equality(#result, 0)
+end
+
+T["scrollbar thumb position"] = new_set()
+
+T["scrollbar thumb position"]["thumb shown at correct line in page"] = function()
+  local comp = scrollbar.new()
+  -- 20 items, page 0-4, index at thumb start should show thumb
+  local ctx_thumb = { total = 20, page_start = 0, page_end = 4, index = 0 }
+  local result = comp:render(ctx_thumb)
+  expect.equality(result[1][1], "█")
+  expect.equality(result[1][2], "WildestScrollbarThumb")
+
+  -- index outside thumb range should show bar
+  local ctx_bar = { total = 20, page_start = 0, page_end = 4, index = 4 }
+  local result2 = comp:render(ctx_bar)
+  expect.equality(result2[1][1], " ")
+  expect.equality(result2[1][2], "WildestScrollbar")
+end
+
+T["scrollbar thumb position"]["custom characters are used"] = function()
+  local comp = scrollbar.new({ thumb = "▓", bar = "░" })
+  local ctx = { total = 20, page_start = 0, page_end = 4, index = 0 }
+  local result = comp:render(ctx)
+  expect.equality(result[1][1], "▓")
+end
+
 return T

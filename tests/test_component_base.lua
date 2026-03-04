@@ -101,4 +101,58 @@ T["Component inheritance"]["powerline_separator inherits from BaseComponent"] = 
   expect.equality(type(comp.render_right), "function")
 end
 
+T["powerline_separator"] = new_set()
+
+T["powerline_separator"]["renders powerline character"] = function()
+  local powerline = require("wildest.renderer.components.powerline_separator")
+  local comp = powerline.new()
+  local ctx = {
+    is_left_selected = false,
+    is_right_selected = false,
+    default_hl = "StatusLine",
+    selected_hl = "WildMenu",
+  }
+  local result = comp:render(ctx)
+  expect.equality(#result, 1)
+  expect.equality(result[1][1], "\u{e0b0}")
+  -- Should have a transition highlight group name
+  expect.equality(type(result[1][2]), "string")
+end
+
+T["powerline_separator"]["caches transition highlights"] = function()
+  local powerline = require("wildest.renderer.components.powerline_separator")
+  local comp = powerline.new()
+  local ctx = {
+    is_left_selected = false,
+    is_right_selected = false,
+    default_hl = "StatusLine",
+    selected_hl = "WildMenu",
+  }
+  local r1 = comp:render(ctx)
+  local r2 = comp:render(ctx)
+  -- Same context should produce same highlight group name (cached)
+  expect.equality(r1[1][2], r2[1][2])
+end
+
+T["powerline_separator"]["uses selected_hl when adjacent is selected"] = function()
+  local powerline = require("wildest.renderer.components.powerline_separator")
+  local comp = powerline.new()
+  local ctx_left_sel = {
+    is_left_selected = true,
+    is_right_selected = false,
+    default_hl = "StatusLine",
+    selected_hl = "WildMenu",
+  }
+  local ctx_neither = {
+    is_left_selected = false,
+    is_right_selected = false,
+    default_hl = "StatusLine",
+    selected_hl = "WildMenu",
+  }
+  local r1 = comp:render(ctx_left_sel)
+  local r2 = comp:render(ctx_neither)
+  -- Different selection states should produce different transition highlights
+  expect.equality(r1[1][2] ~= r2[1][2], true)
+end
+
 return T
