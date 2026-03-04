@@ -151,7 +151,8 @@ function M.new(opts)
       end
     end
 
-    local page_start, page_end = make_page(ctx.selected, total, display_candidates, avail_width, sep_width)
+    local page_start, page_end =
+      make_page(ctx.selected, total, display_candidates, avail_width, sep_width)
     state.page = { page_start, page_end }
 
     if page_start == -1 then
