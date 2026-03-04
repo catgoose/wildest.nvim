@@ -33,7 +33,11 @@ function BasePopupmenu:paginate(ctx, total, max_height)
 
   -- Apply empty_message_first_draw_delay: suppress empty message if within
   -- the delay window at the start of a new session.
-  if show_empty and state.empty_message_first_draw_delay and state.empty_message_first_draw_delay > 0 then
+  if
+    show_empty
+    and state.empty_message_first_draw_delay
+    and state.empty_message_first_draw_delay > 0
+  then
     local now = vim.uv.hrtime() / 1e6 -- ms
     -- Reset tracking on new session
     if ctx.session_id ~= state._delay_session_id then
