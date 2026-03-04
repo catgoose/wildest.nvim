@@ -47,7 +47,8 @@ function Popupmenu:render(ctx, result)
   local width = renderer_util.calculate_width(state.max_width, state.min_width, editor_width)
 
   -- Top chrome
-  local top_lines, top_hls = self:render_chrome("top", ctx, result, page_start, page_end, total, width)
+  local top_lines, top_hls =
+    self:render_chrome("top", ctx, result, page_start, page_end, total, width)
 
   local lines = {}
   local line_highlights = {}
@@ -77,7 +78,8 @@ function Popupmenu:render(ctx, result)
   self:pad_to_height(lines, line_highlights, actual_top + content_target, width)
 
   -- Bottom chrome
-  local bottom_lines, bottom_hls = self:render_chrome("bottom", ctx, result, page_start, page_end, total, width)
+  local bottom_lines, bottom_hls =
+    self:render_chrome("bottom", ctx, result, page_start, page_end, total, width)
   for i, line in ipairs(bottom_lines) do
     lines[#lines + 1] = line
     line_highlights[#line_highlights + 1] = bottom_hls[i]
