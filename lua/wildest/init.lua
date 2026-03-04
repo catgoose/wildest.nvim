@@ -526,6 +526,13 @@ function M.gradient_highlighter(base_highlighter, gradient, opts)
   return require("wildest.highlight.gradient").new(base_highlighter, gradient, opts)
 end
 
+---Chain highlighter — tries each highlighter in order, first non-empty result wins.
+---@param highlighters wildest.Highlighter[] Array of highlighters to try in order
+---@return wildest.Highlighter
+function M.chain_highlighter(highlighters)
+  return require("wildest.highlight.chain").new(highlighters)
+end
+
 ---@tag wildest-components
 ---@divider Component Constructors
 

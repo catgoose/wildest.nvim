@@ -155,6 +155,30 @@ T["get_popup_geometry()"]["returns stored geometry with visible=true"] = functio
   renderer_util._last_popup_geometry = nil
 end
 
+T["create_base_state()"] = new_set()
+
+T["create_base_state()"]["auto-wraps list of highlighters into chain highlighter"] = function()
+  local h1 = { highlight = function() return {} end }
+  local h2 = { highlight = function() return { { 0, 1, "hl" } } end }
+  local state = renderer_util.create_base_state({ highlighter = { h1, h2 } })
+  -- The wrapped highlighter should have a .highlight method
+  expect.equality(type(state.highlighter.highlight), "function")
+  -- It should chain: h1 returns empty, so h2's result wins
+  local spans = state.highlighter.highlight("a", "abc")
+  expect.equality(spans, { { 0, 1, "hl" } })
+end
+
+T["create_base_state()"]["passes single highlighter through unchanged"] = function()
+  local h = { highlight = function() return { { 0, 2, "hl" } } end }
+  local state = renderer_util.create_base_state({ highlighter = h })
+  expect.equality(state.highlighter, h)
+end
+
+T["create_base_state()"]["passes nil highlighter through"] = function()
+  local state = renderer_util.create_base_state({})
+  expect.equality(state.highlighter, nil)
+end
+
 T["get_popup_win()"] = new_set()
 
 T["get_popup_win()"]["returns nil when no window stored"] = function()

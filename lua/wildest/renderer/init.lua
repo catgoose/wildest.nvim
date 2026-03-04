@@ -188,6 +188,12 @@ function M.create_base_state(opts, defaults)
     table.insert(right, pad_str)
   end
 
+  -- Auto-wrap a list of highlighters into a chain highlighter
+  local highlighter = opts.highlighter
+  if type(highlighter) == "table" and highlighter[1] ~= nil and not highlighter.highlight then
+    highlighter = require("wildest.highlight.chain").new(highlighter)
+  end
+
   return {
     highlights = {
       default = user_hl.default or opts.hl or "WildestDefault",
@@ -203,7 +209,7 @@ function M.create_base_state(opts, defaults)
     pumblend = opts.pumblend,
     left = left,
     right = right,
-    highlighter = opts.highlighter,
+    highlighter = highlighter,
     reverse = opts.reverse or false,
     ellipsis = opts.ellipsis or "...",
     zindex = opts.zindex or 250,
