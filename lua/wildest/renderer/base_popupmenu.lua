@@ -26,7 +26,10 @@ end
 ---@return integer|nil page_start, integer|nil page_end, boolean show_empty
 function BasePopupmenu:paginate(ctx, total, max_height)
   local state = self._state
-  local page_start, page_end = renderer_util.make_page(ctx.selected, total, max_height, state.page)
+  local ncols = state.columns or 1
+  local effective_page_size = max_height * ncols
+  local page_start, page_end =
+    renderer_util.make_page(ctx.selected, total, effective_page_size, state.page)
   state.page = { page_start, page_end }
 
   local show_empty = total == 0 and state.empty_message
@@ -71,6 +74,42 @@ function BasePopupmenu:render_empty_message(width)
   return { line }, { { spans = {}, base_hl = state.highlights.default } }
 end
 
+--- Render a single candidate into a line + highlight data.
+---@param result table pipeline result
+---@param ctx table render context
+---@param state table renderer state
+---@param query string highlight query
+---@param i integer 0-indexed candidate index
+---@param width integer content width for this candidate
+---@return string line, table[] spans, string base_hl
+function BasePopupmenu:render_one_candidate(result, ctx, state, query, i, width)
+  local candidates = result.value or {}
+  local raw_candidate = candidates[i + 1]
+  local candidate = raw_candidate
+  if result.draw then
+    candidate = result.draw(result.data, raw_candidate) or raw_candidate
+  end
+  local is_selected = (i == ctx.selected)
+  local base_hl = is_selected and state.highlights.selected or state.highlights.default
+  local accent_hl = is_selected and state.highlights.selected_accent or state.highlights.accent
+
+  local candidate_spans = renderer_util.get_candidate_spans(
+    state.highlighter,
+    query,
+    candidate,
+    accent_hl,
+    state.highlights.selected_accent,
+    is_selected
+  )
+  local left_parts, right_parts =
+    renderer_util.render_components(state, ctx, result, i, is_selected)
+
+  local line, spans =
+    renderer_util.render_line(candidate, left_parts, right_parts, candidate_spans, width, base_hl)
+
+  return line, spans, base_hl
+end
+
 --- Render candidates into lines and line_highlights arrays
 ---@param result table pipeline result
 ---@param ctx table render context
@@ -82,8 +121,13 @@ end
 function BasePopupmenu:render_candidates(result, ctx, page_start, page_end, width, opts)
   opts = opts or {}
   local state = self._state
+  local ncols = state.columns or 1
+
+  if ncols > 1 then
+    return self:render_candidates_grid(result, ctx, page_start, page_end, width, opts)
+  end
+
   local query = renderer_util.get_query(result)
-  local candidates = result.value or {}
   local lines = {}
   local line_highlights = {}
 
@@ -95,31 +139,116 @@ function BasePopupmenu:render_candidates(result, ctx, page_start, page_end, widt
   end
 
   for i = start, finish, step do
-    local raw_candidate = candidates[i + 1]
-    local candidate = raw_candidate
-    if result.draw then
-      candidate = result.draw(result.data, raw_candidate) or raw_candidate
-    end
-    local is_selected = (i == ctx.selected)
-    local base_hl = is_selected and state.highlights.selected or state.highlights.default
-    local accent_hl = is_selected and state.highlights.selected_accent or state.highlights.accent
-
-    local candidate_spans = renderer_util.get_candidate_spans(
-      state.highlighter,
-      query,
-      candidate,
-      accent_hl,
-      state.highlights.selected_accent,
-      is_selected
-    )
-    local left_parts, right_parts =
-      renderer_util.render_components(state, ctx, result, i, is_selected)
-
-    local line, spans =
-      renderer_util.render_line(candidate, left_parts, right_parts, candidate_spans, width, base_hl)
-
+    local line, spans, base_hl = self:render_one_candidate(result, ctx, state, query, i, width)
     table.insert(lines, line)
     table.insert(line_highlights, { spans = spans, base_hl = base_hl })
+  end
+
+  return lines, line_highlights
+end
+
+--- Render candidates in a multi-column grid layout.
+---@param result table pipeline result
+---@param ctx table render context
+---@param page_start integer 0-indexed start
+---@param page_end integer 0-indexed end (inclusive)
+---@param width integer total content width
+---@param opts? table { reverse?: boolean }
+---@return string[] lines, table[] line_highlights
+function BasePopupmenu:render_candidates_grid(result, ctx, page_start, page_end, width, opts)
+  opts = opts or {}
+  local state = self._state
+  local ncols = state.columns or 1
+  local query = renderer_util.get_query(result)
+  local util = require("wildest.util")
+  local col_width = math.floor(width / ncols)
+
+  local indices = {}
+  if opts.reverse then
+    for i = page_end, page_start, -1 do
+      indices[#indices + 1] = i
+    end
+  else
+    for i = page_start, page_end do
+      indices[#indices + 1] = i
+    end
+  end
+
+  local lines = {}
+  local line_highlights = {}
+  local idx = 1
+
+  while idx <= #indices do
+    local row_text = ""
+    local row_spans = {}
+    local row_base_hl = state.highlights.default
+    local byte_offset = 0
+
+    for c = 1, ncols do
+      if idx > #indices then
+        -- Pad remaining columns with spaces
+        local pad = width - util.strdisplaywidth(row_text)
+        if pad > 0 then
+          row_text = row_text .. string.rep(" ", pad)
+        end
+        break
+      end
+
+      local i = indices[idx]
+      local cell_line, cell_spans, cell_base_hl =
+        self:render_one_candidate(result, ctx, state, query, i, col_width)
+
+      -- Truncate or pad cell to exact col_width
+      local cell_display_w = util.strdisplaywidth(cell_line)
+      if cell_display_w > col_width then
+        -- Truncate: find byte position for col_width display chars
+        local truncated = ""
+        local dw = 0
+        for _, ch in vim.iter(vim.fn.split(cell_line, "\\zs")):enumerate() do
+          local chw = util.strdisplaywidth(ch)
+          if dw + chw > col_width then
+            break
+          end
+          truncated = truncated .. ch
+          dw = dw + chw
+        end
+        cell_line = truncated .. string.rep(" ", col_width - util.strdisplaywidth(truncated))
+      elseif cell_display_w < col_width then
+        cell_line = cell_line .. string.rep(" ", col_width - cell_display_w)
+      end
+
+      -- If this cell is selected, it drives the base_hl for highlights
+      if i == ctx.selected then
+        row_base_hl = cell_base_hl
+      end
+
+      -- Offset cell spans to their position in the row
+      for _, span in ipairs(cell_spans) do
+        -- Only include spans that fall within the cell byte length
+        if span[1] + span[2] <= #cell_line then
+          row_spans[#row_spans + 1] = { span[1] + byte_offset, span[2], span[3] }
+        end
+      end
+
+      -- Apply cell base_hl across the entire cell area (for selection background)
+      if cell_base_hl ~= state.highlights.default then
+        row_spans[#row_spans + 1] = { byte_offset, #cell_line, cell_base_hl }
+      end
+
+      byte_offset = byte_offset + #cell_line
+      row_text = row_text .. cell_line
+      idx = idx + 1
+    end
+
+    -- Pad row to full width
+    local row_display_w = util.strdisplaywidth(row_text)
+    if row_display_w < width then
+      row_text = row_text .. string.rep(" ", width - row_display_w)
+    end
+
+    lines[#lines + 1] = row_text
+    line_highlights[#line_highlights + 1] =
+      { spans = row_spans, base_hl = state.highlights.default }
   end
 
   return lines, line_highlights

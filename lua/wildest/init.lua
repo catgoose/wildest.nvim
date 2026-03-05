@@ -412,6 +412,7 @@ end
 ---@field min_height? integer|string|fun(ctx):integer|string Minimum visible lines (default 0)
 ---@field max_width? integer|string|fun(ctx):integer|string|nil Maximum width (nil = full editor width)
 ---@field min_width? integer|string|fun(ctx):integer|string Minimum width (default 16)
+---@field columns? integer Number of columns for grid layout (default 1)
 ---@field reverse? boolean Reverse candidate order (default false)
 ---@field fixed_height? boolean Pad to max_height to prevent resizing (default false)
 ---@field empty_message? string|nil Message shown when there are no results
@@ -432,6 +433,7 @@ end
 ---@field min_height? integer|string|fun(ctx):integer|string Minimum visible lines (default 0)
 ---@field max_width? integer|string|fun(ctx):integer|string|nil Max width (nil = full width)
 ---@field min_width? integer|string|fun(ctx):integer|string Minimum width (default 16)
+---@field columns? integer Number of columns for grid layout (default 1)
 ---@field reverse? boolean Reverse candidate order (default false)
 ---@field fixed_height? boolean Pad to max_height to prevent resizing (default false)
 ---@field position? string Vertical placement: "top", "center", or "bottom" (default "bottom")

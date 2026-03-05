@@ -259,6 +259,28 @@ M.configs = {
     highlighter = "chain",
   },
 
+  columns_3 = {
+    category = "feature",
+    label = "Columns (3)",
+    cmd = ":set ",
+    renderer = "border_theme",
+    border = "rounded",
+    columns = 3,
+    left = {},
+    right = {},
+  },
+
+  columns_4 = {
+    category = "feature",
+    label = "Columns (4)",
+    cmd = ":colorscheme ",
+    renderer = "border_theme",
+    border = "rounded",
+    columns = 4,
+    left = {},
+    right = {},
+  },
+
   scrollbar_collapse = {
     category = "feature",
     label = "Scrollbar (collapse)",
@@ -1043,6 +1065,7 @@ M.feature_names = {
   "devicons", "fuzzy", "gradient", "search", "fuzzy_search", "renderer_mux",
   "kind_icons", "cmdline_icon", "cmdline_icon_help", "prefix_highlighter",
   "scrollbar", "pumblend", "chain_highlighter", "scrollbar_collapse",
+  "columns_3", "columns_4",
 }
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline", "history_prefix_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
@@ -1257,6 +1280,9 @@ function M.random_scene(label)
   end
   if math.random(4) == 1 then
     scene.fixed_height = pick({ true, false })
+  end
+  if math.random(6) == 1 then
+    scene.columns = pick({ 2, 3, 4 })
   end
   if math.random(6) == 1 then
     scene.hooks = pick({ "enter", "leave", "draw", "enter+leave", "enter+draw", "results", "select", "select+accept" })
@@ -1497,6 +1523,7 @@ local function setup_block_lines(cfg, add)
     "padding", "left", "right", "top", "bottom", "separator", "ellipsis",
     "border", "title", "position",
     "max_height", "min_height", "max_width", "min_width", "fixed_height",
+    "columns",
     "noselect", "reverse", "pumblend", "offset",
     "empty_message",
     "highlights", "gradient_colors",
@@ -1701,6 +1728,7 @@ function M.scene_to_description(cfg)
   if merged.max_height then add("max_height=" .. merged.max_height) end
   if merged.min_height then add("min_height=" .. merged.min_height) end
   if merged.fixed_height == false then add("fixed_height=false") end
+  if merged.columns and merged.columns > 1 then add("columns=" .. merged.columns) end
   if merged.empty_message then add("empty_message") end
   if merged.empty_message_first_draw_delay then add("empty_delay=" .. merged.empty_message_first_draw_delay .. "ms") end
   if merged.ellipsis then add("ellipsis") end

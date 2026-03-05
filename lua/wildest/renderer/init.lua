@@ -221,6 +221,7 @@ function M.create_base_state(opts, defaults)
     zindex = opts.zindex or 250,
     fixed_height = opts.fixed_height ~= false,
     offset = opts.offset or 0,
+    columns = opts.columns or 1,
     top = opts.top or {},
     bottom = opts.bottom or {},
 

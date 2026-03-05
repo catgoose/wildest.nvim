@@ -80,6 +80,7 @@
     - [Compile](#compile)
   - [Kind Icons](#kind-icons)
   - [Cmdline Icon](#cmdline-icon)
+  - [Grid Layout](#grid-layout)
   - [Frecency](#frecency)
   - [Commands](#commands)
   - [Health Check](#health-check)
@@ -611,6 +612,7 @@ w.popupmenu_renderer({
 | `min_width`     | integer\|string      | `16`      | Minimum width (or `"25%"`)                      |
 | `reverse`       | boolean              | `false`   | Reverse candidate order                         |
 | `fixed_height`  | boolean              | `true`    | Pad to `max_height` so the window never resizes |
+| `columns`       | integer              | `1`       | Number of columns for grid layout               |
 | `empty_message` | string\|nil          | `nil`     | Message shown when there are no results         |
 | `pumblend`      | integer\|nil         | `nil`     | Window transparency (0-100)                     |
 | `zindex`        | integer              | `250`     | Floating window z-index                         |
@@ -647,6 +649,7 @@ w.popupmenu_border_theme({
 | `reverse`       | boolean              | `false`    | Reverse candidate order                                |
 | `fixed_height`  | boolean              | `true`     | Pad to `max_height` so the window never resizes        |
 | `position`      | string               | `"bottom"` | Vertical placement: `"top"`, `"center"`, or `"bottom"` |
+| `columns`       | integer              | `1`        | Number of columns for grid layout                      |
 | `empty_message` | string\|nil          | `nil`      | Message shown when there are no results                |
 | `pumblend`      | integer\|nil         | `nil`      | Window transparency (0-100)                            |
 | `zindex`        | integer              | `250`      | Floating window z-index                                |
@@ -689,6 +692,7 @@ w.popupmenu_palette_theme({
 | `margin`          | string\|integer | `"auto"`    | Horizontal margin (`"auto"`, `"15%"`, or integer) |
 | `reverse`         | boolean         | `false`     | Reverse candidate order                           |
 | `fixed_height`    | boolean         | `true`      | Pad to `max_height` so the window never resizes   |
+| `columns`         | integer         | `1`         | Number of columns for grid layout                 |
 | `empty_message`   | string\|nil     | `nil`       | Message shown when there are no results           |
 | `pumblend`        | integer\|nil    | `nil`       | Window transparency (0-100)                       |
 | `zindex`          | integer         | `250`       | Floating window z-index                           |
@@ -1092,6 +1096,27 @@ w.popupmenu_cmdline_icon({
 | `shell`       | `:!` shell commands                    | ` `    |
 | `command`     | Command name completions               | ` `    |
 | `default`     | Fallback for unrecognized contexts     | ` `    |
+
+## Grid Layout
+
+![Columns (3)](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/columns_3.png)
+
+Display short completions in a multi-column grid instead of a single column.
+Great for colorschemes, filetypes, highlights, and other compact values:
+
+```lua
+w.popupmenu_border_theme({
+  border = "rounded",
+  columns = 3,
+  left = {},
+  right = {},
+  highlighter = w.fzy_highlighter(),
+})
+```
+
+Set `columns` to `2`, `3`, or `4`. Selection highlighting applies per-cell.
+Left/right components render within each cell column, so keeping them minimal
+(or empty) works best with grid layouts.
 
 ## Frecency
 
