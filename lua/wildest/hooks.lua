@@ -22,10 +22,7 @@ local valid_events = {
 ---@param fn fun(...) Callback
 function M.on(event, fn)
   if not valid_events[event] then
-    vim.notify(
-      string.format("[wildest] Unknown hook event: %s", event),
-      vim.log.levels.WARN
-    )
+    vim.notify(string.format("[wildest] Unknown hook event: %s", event), vim.log.levels.WARN)
     return
   end
   if not listeners[event] then

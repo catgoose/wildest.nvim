@@ -626,7 +626,12 @@ function M.step(n)
       state.replaced_cmdline = candidate
       M.feedkeys_cmdline(candidate)
     end
-    hooks.fire("select", { cmdtype = state.cmdtype, input = state.previous_cmdline }, candidate, state.selected)
+    hooks.fire(
+      "select",
+      { cmdtype = state.cmdtype, input = state.previous_cmdline },
+      candidate,
+      state.selected
+    )
   end
 
   M.draw()
@@ -673,7 +678,12 @@ function M.scroll(n)
     state.replaced_cmdline = candidate
     M.feedkeys_cmdline(candidate)
   end
-  hooks.fire("select", { cmdtype = state.cmdtype, input = state.previous_cmdline }, candidate, state.selected)
+  hooks.fire(
+    "select",
+    { cmdtype = state.cmdtype, input = state.previous_cmdline },
+    candidate,
+    state.selected
+  )
 
   M.draw()
 end
