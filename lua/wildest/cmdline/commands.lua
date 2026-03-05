@@ -1,6 +1,9 @@
--- Command table: maps command names to their expand types
--- Based on Vim's internal command table. Only commands with special
--- expand types are listed; unlisted commands default to flag-based detection.
+---@mod wildest.cmdline.commands Command Expand Table
+---@brief [[
+---Command table: maps command names to their expand types.
+---Based on Vim's internal command table. Only commands with special
+---expand types are listed; unlisted commands default to flag-based detection.
+---@brief ]]
 
 local M = {}
 
