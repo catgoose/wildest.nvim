@@ -11,11 +11,26 @@ local M = {}
 --- Create a help tag completion pipeline
 --- Completes help tags for `:help` commands with fuzzy matching.
 ---
----@param opts? table { fuzzy?: boolean, max_results?: integer }
+---@param opts? table { fuzzy?: boolean, max_results?: integer, help_cache?: boolean, engine?: "fast"|"vim"|table }
 ---@return table pipeline array
 function M.help_pipeline(opts)
   opts = opts or {}
   local max_results = opts.max_results or 200
+
+  -- Resolve help_cache from engine or legacy option
+  local use_cache = opts.help_cache or false
+  if not use_cache and opts.engine then
+    if opts.engine == "fast" then
+      use_cache = true
+    elseif type(opts.engine) == "table" and opts.engine.help then
+      use_cache = true
+      -- Configure help_cache with custom command if provided
+      local hc_opts = require("wildest.engine").to_help_cache_opts(opts.engine.help)
+      if hc_opts and next(hc_opts) then
+        require("wildest.pipeline.help_cache").configure(hc_opts)
+      end
+    end
+  end
 
   local function help_complete(ctx, input)
     if not input or input == "" then
@@ -31,8 +46,17 @@ function M.help_pipeline(opts)
       return false
     end
 
-    local ok, results = pcall(vim.fn.getcompletion, arg, "help")
-    if not ok or not results or #results == 0 then
+    local results
+    if use_cache then
+      results = require("wildest.pipeline.help_cache").filter(arg)
+    else
+      local ok, tags = pcall(vim.fn.getcompletion, arg, "help")
+      if ok then
+        results = tags
+      end
+    end
+
+    if not results or #results == 0 then
       return false
     end
 

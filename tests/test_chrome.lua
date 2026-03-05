@@ -66,16 +66,22 @@ T["resolve_chrome_lines"]["function returning chunk array builds spans"] = funct
 end
 
 T["resolve_chrome_lines"]["table with value string works"] = function()
-  local lines, _, count = chrome.resolve_chrome_lines(
-    { { value = "test" } }, make_ctx(), 10, "Normal"
-  )
+  local lines, _, count =
+    chrome.resolve_chrome_lines({ { value = "test" } }, make_ctx(), 10, "Normal")
   expect.equality(count, 1)
   expect.equality(lines[1]:sub(1, 4), "test")
 end
 
 T["resolve_chrome_lines"]["table with value function works"] = function()
   local lines, _, count = chrome.resolve_chrome_lines(
-    { { value = function() return "dynamic" end } }, make_ctx(), 10, "Normal"
+    { {
+      value = function()
+        return "dynamic"
+      end,
+    } },
+    make_ctx(),
+    10,
+    "Normal"
   )
   expect.equality(count, 1)
   expect.equality(lines[1]:sub(1, 7), "dynamic")
@@ -85,8 +91,12 @@ T["resolve_chrome_lines"]["pre_hook and post_hook called"] = function()
   local called = { pre = false, post = false }
   local comp = {
     value = "test",
-    pre_hook = function() called.pre = true end,
-    post_hook = function() called.post = true end,
+    pre_hook = function()
+      called.pre = true
+    end,
+    post_hook = function()
+      called.post = true
+    end,
   }
   chrome.resolve_chrome_lines({ comp }, make_ctx(), 10, "Normal")
   expect.equality(called.pre, true)
@@ -96,8 +106,12 @@ end
 T["resolve_chrome_lines"]["post_hook called even when value is nil"] = function()
   local called = { post = false }
   local comp = {
-    value = function() return nil end,
-    post_hook = function() called.post = true end,
+    value = function()
+      return nil
+    end,
+    post_hook = function()
+      called.post = true
+    end,
   }
   chrome.resolve_chrome_lines({ comp }, make_ctx(), 10, "Normal")
   expect.equality(called.post, true)
@@ -118,17 +132,20 @@ T["resolve_chrome_lines"]["nil components returns 0 lines"] = function()
 end
 
 T["resolve_chrome_lines"]["multiple components correct count"] = function()
-  local lines, _, count = chrome.resolve_chrome_lines(
-    { "line1", "line2", "line3" }, make_ctx(), 10, "Normal"
-  )
+  local lines, _, count =
+    chrome.resolve_chrome_lines({ "line1", "line2", "line3" }, make_ctx(), 10, "Normal")
   expect.equality(count, 3)
   expect.equality(#lines, 3)
 end
 
 T["resolve_chrome_lines"]["skipped components reduce count"] = function()
-  local lines, _, count = chrome.resolve_chrome_lines(
-    { "line1", function() return nil end, "line3" }, make_ctx(), 10, "Normal"
-  )
+  local lines, _, count = chrome.resolve_chrome_lines({
+    "line1",
+    function()
+      return nil
+    end,
+    "line3",
+  }, make_ctx(), 10, "Normal")
   expect.equality(count, 2)
   expect.equality(#lines, 2)
   expect.equality(lines[1]:sub(1, 5), "line1")

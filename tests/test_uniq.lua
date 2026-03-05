@@ -47,7 +47,11 @@ T["uniq_filter()"]["single item"] = function()
 end
 
 T["uniq_filter()"]["uses custom key function"] = function()
-  local filter = uniq.uniq_filter({ key = function(s) return s:lower() end })
+  local filter = uniq.uniq_filter({
+    key = function(s)
+      return s:lower()
+    end,
+  })
   local result = filter({}, { "Foo", "foo", "FOO", "Bar", "bar" })
   expect.equality(result, { "Foo", "Bar" })
 end

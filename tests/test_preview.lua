@@ -922,7 +922,8 @@ T["_compute_win_config()"]["popup bottom: exact minimum (1 row) still shows"] = 
   local preview = get_preview()
   local geom = popup_geom({ row = 40, height = 5 }) -- border=rounded
   -- start_row = 40 + 5 + 2 = 47, available = 50 - 47 - 2 = 1
-  local p = preview._compute_win_config(popup_params("bottom", { geom = geom, content_lines = 100 }))
+  local p =
+    preview._compute_win_config(popup_params("bottom", { geom = geom, content_lines = 100 }))
   expect.equality(p.row, 47)
   expect.equality(p.height, 1) -- min(20, 100, 1) = 1
 end
@@ -976,27 +977,33 @@ T["_compute_win_config()"]["popup right: priority=preview uses configured height
   -- popup height 15, height "40%" of 50 = 20, content 100
   -- with priority=menu: h = min(15, 100) = 15
   -- with priority=preview: h = min(20, 100) = 20
-  local p = preview._compute_win_config(popup_params("right", { content_lines = 100, priority = "preview" }))
+  local p = preview._compute_win_config(
+    popup_params("right", { content_lines = 100, priority = "preview" })
+  )
   expect.equality(p.height, 20)
 end
 
 T["_compute_win_config()"]["popup right: priority=menu caps to popup height (default)"] = function()
   local preview = get_preview()
-  local p = preview._compute_win_config(popup_params("right", { content_lines = 100, priority = "menu" }))
+  local p =
+    preview._compute_win_config(popup_params("right", { content_lines = 100, priority = "menu" }))
   expect.equality(p.height, 15) -- capped to popup geom.height
 end
 
 T["_compute_win_config()"]["popup right: priority=preview still shrinks to content"] = function()
   local preview = get_preview()
   -- content 5 < configured height (20) → uses content
-  local p = preview._compute_win_config(popup_params("right", { content_lines = 5, priority = "preview" }))
+  local p =
+    preview._compute_win_config(popup_params("right", { content_lines = 5, priority = "preview" }))
   expect.equality(p.height, 5)
 end
 
 T["_compute_win_config()"]["popup left: priority=preview uses configured height"] = function()
   local preview = get_preview()
   local geom = popup_geom({ col = 100 })
-  local p = preview._compute_win_config(popup_params("left", { geom = geom, content_lines = 100, priority = "preview" }))
+  local p = preview._compute_win_config(
+    popup_params("left", { geom = geom, content_lines = 100, priority = "preview" })
+  )
   -- height "40%" of 50 = 20
   expect.equality(p.height, 20)
 end
@@ -1004,15 +1011,19 @@ end
 T["_compute_win_config()"]["popup left: priority=menu caps to popup height"] = function()
   local preview = get_preview()
   local geom = popup_geom({ col = 100 })
-  local p = preview._compute_win_config(popup_params("left", { geom = geom, content_lines = 100, priority = "menu" }))
+  local p = preview._compute_win_config(
+    popup_params("left", { geom = geom, content_lines = 100, priority = "menu" })
+  )
   expect.equality(p.height, 15)
 end
 
 T["_compute_win_config()"]["popup top/bottom: priority does not change behavior"] = function()
   local preview = get_preview()
   -- top/bottom already use configured dimensions, not popup height
-  local p_menu = preview._compute_win_config(popup_params("top", { content_lines = 5, priority = "menu" }))
-  local p_prev = preview._compute_win_config(popup_params("top", { content_lines = 5, priority = "preview" }))
+  local p_menu =
+    preview._compute_win_config(popup_params("top", { content_lines = 5, priority = "menu" }))
+  local p_prev =
+    preview._compute_win_config(popup_params("top", { content_lines = 5, priority = "preview" }))
   expect.equality(p_menu.height, p_prev.height)
 end
 
@@ -1370,7 +1381,8 @@ T["_compute_win_config()"]["popup top: between gap shifts row"] = function()
   local preview = get_preview()
   local gap = { top = 0, right = 0, bottom = 0, left = 0, between = 2 }
   local geom = popup_geom({ row = 20 })
-  local p = preview._compute_win_config(popup_params("top", { geom = geom, gap = gap, content_lines = 5 }))
+  local p =
+    preview._compute_win_config(popup_params("top", { geom = geom, gap = gap, content_lines = 5 }))
   -- h=5, row = 20 - 5 - 2 - 2 = 11
   expect.equality(p.row, 11)
   expect.equality(p.height, 5)
@@ -1380,7 +1392,9 @@ T["_compute_win_config()"]["popup bottom: between gap shifts start_row"] = funct
   local preview = get_preview()
   local gap = { top = 0, right = 0, bottom = 0, left = 0, between = 3 }
   local geom = popup_geom() -- row=20, h=15, border=rounded
-  local p = preview._compute_win_config(popup_params("bottom", { geom = geom, gap = gap, content_lines = 5 }))
+  local p = preview._compute_win_config(
+    popup_params("bottom", { geom = geom, gap = gap, content_lines = 5 })
+  )
   -- border_size=1, start_row = 20 + 15 + 2 + 3 = 40
   expect.equality(p.row, 40)
 end
@@ -1389,7 +1403,9 @@ T["_compute_win_config()"]["popup bottom: bottom gap reduces available space"] =
   local preview = get_preview()
   local gap = { top = 0, right = 0, bottom = 5, left = 0, between = 0 }
   local geom = popup_geom({ row = 40, height = 5 }) -- border=rounded
-  local p = preview._compute_win_config(popup_params("bottom", { geom = geom, gap = gap, content_lines = 3 }))
+  local p = preview._compute_win_config(
+    popup_params("bottom", { geom = geom, gap = gap, content_lines = 3 })
+  )
   -- start_row = 40 + 5 + 2 + 0 = 47, avail = 50 - 47 - 2 - 5 = -4 < 1 → nil
   expect.equality(p, nil)
 end

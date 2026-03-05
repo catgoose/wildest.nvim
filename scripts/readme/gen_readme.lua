@@ -5,7 +5,8 @@
 --   lua scripts/readme/gen_readme.lua --check    -- exit 1 if any output is stale
 --   lua scripts/readme/gen_readme.lua --output X -- write README to X instead
 
-local IMG_BASE = "https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/"
+local IMG_BASE =
+  "https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/"
 
 -- ── CLI args ───────────────────────────────────────────────────────
 
@@ -38,11 +39,15 @@ if not vim then
     opt = setmetatable({}, opt_mt),
     fn = setmetatable({}, {
       __index = function()
-        return function() return "" end
+        return function()
+          return ""
+        end
       end,
     }),
     o = setmetatable({}, {
-      __index = function() return 0 end,
+      __index = function()
+        return 0
+      end,
       __newindex = noop,
     }),
     api = setmetatable({}, {
@@ -145,7 +150,10 @@ local function img_cell(name, label, width)
   label = label or name
   return string.format(
     '<td align="center"><strong>%s</strong><br><img src="%s%s.png" width="%d"></td>',
-    label, IMG_BASE, name, width
+    label,
+    IMG_BASE,
+    name,
+    width
   )
 end
 
@@ -190,14 +198,18 @@ local function serialize_lua(v, indent)
   local pad_close = string.rep("  ", indent)
   -- Check if sequential list
   local count = 0
-  for _ in pairs(v) do count = count + 1 end
+  for _ in pairs(v) do
+    count = count + 1
+  end
   if count == #v and count > 0 then
     local parts = {}
     for _, item in ipairs(v) do
       parts[#parts + 1] = serialize_lua(item, 0)
     end
     local inline = "{ " .. table.concat(parts, ", ") .. " }"
-    if #inline <= 60 then return inline end
+    if #inline <= 60 then
+      return inline
+    end
     local lines = { "{" }
     for _, item in ipairs(v) do
       lines[#lines + 1] = pad .. serialize_lua(item, indent + 1) .. ","
@@ -207,8 +219,12 @@ local function serialize_lua(v, indent)
   end
   -- Dict-style table
   local keys = {}
-  for k in pairs(v) do keys[#keys + 1] = k end
-  table.sort(keys, function(a, b) return tostring(a) < tostring(b) end)
+  for k in pairs(v) do
+    keys[#keys + 1] = k
+  end
+  table.sort(keys, function(a, b)
+    return tostring(a) < tostring(b)
+  end)
   local parts = {}
   for _, k in ipairs(keys) do
     local ks = (type(k) == "string" and k:match("^[%a_][%w_]*$")) and k
@@ -216,7 +232,9 @@ local function serialize_lua(v, indent)
     parts[#parts + 1] = ks .. " = " .. serialize_lua(v[k], 0)
   end
   local inline = "{ " .. table.concat(parts, ", ") .. " }"
-  if #inline <= 60 then return inline end
+  if #inline <= 60 then
+    return inline
+  end
   local lines = { "{" }
   for _, k in ipairs(keys) do
     local ks = (type(k) == "string" and k:match("^[%a_][%w_]*$")) and k
@@ -230,21 +248,44 @@ end
 -- ── Config serializer ────────────────────────────────────────────
 
 local config_field_order = {
-  "cmd", "renderer", "theme", "pipeline", "highlighter", "highlights",
-  "left", "right", "separator", "ellipsis",
-  "border", "title", "position",
-  "max_height", "min_height", "fixed_height", "max_width",
-  "noselect", "reverse", "pumblend", "offset",
-  "empty_message", "laststatus", "cmdheight",
-  "gradient_colors", "custom_highlights",
-  "preview", "palette", "mux",
+  "cmd",
+  "renderer",
+  "theme",
+  "pipeline",
+  "highlighter",
+  "highlights",
+  "left",
+  "right",
+  "separator",
+  "ellipsis",
+  "border",
+  "title",
+  "position",
+  "max_height",
+  "min_height",
+  "fixed_height",
+  "max_width",
+  "noselect",
+  "reverse",
+  "pumblend",
+  "offset",
+  "empty_message",
+  "laststatus",
+  "cmdheight",
+  "gradient_colors",
+  "custom_highlights",
+  "preview",
+  "palette",
+  "mux",
 }
 
 local config_skip_keys = { category = true, label = true }
 
 local function config_to_lua(name)
   local raw = configs_mod.configs[name]
-  if not raw then return "-- (unknown config)" end
+  if not raw then
+    return "-- (unknown config)"
+  end
   local seen = {}
   local parts = {}
   for _, key in ipairs(config_field_order) do
@@ -268,7 +309,9 @@ end
 
 local function gen_expect(name)
   local raw = configs_mod.configs[name]
-  if not raw then return name end
+  if not raw then
+    return name
+  end
 
   local desc = configs_mod.scene_to_description(raw)
 
@@ -289,15 +332,17 @@ local ISSUE_BASE = "https://github.com/catgoose/wildest.nvim/issues/new"
 local function issue_url(config_name, index)
   local title = string.format("Screenshot issue: [%d] %s", index, config_name)
   local body = string.format(
-    "**Screenshot index:** %d\n**Config key:** `%s`\n\n"
-    .. "**Describe the issue:**\n",
-    index, config_name
+    "**Screenshot index:** %d\n**Config key:** `%s`\n\n" .. "**Describe the issue:**\n",
+    index,
+    config_name
   )
   -- Minimal percent-encoding for URL query params
   local function encode(s)
-    return (s:gsub("[^%w%-_.~]", function(c)
-      return string.format("%%%02X", string.byte(c))
-    end))
+    return (
+      s:gsub("[^%w%-_.~]", function(c)
+        return string.format("%%%02X", string.byte(c))
+      end)
+    )
   end
   return string.format("%s?title=%s&body=%s", ISSUE_BASE, encode(title), encode(body))
 end
@@ -311,16 +356,23 @@ local function img_cell_detailed(config_name, label, width)
   local report_url = issue_url(config_name, detail_index)
   return string.format(
     '<td align="center">\n'
-    .. '<strong><a href="%s">[%d]</a> %s</strong><br>\n'
-    .. '<em>%s</em><br>\n'
-    .. '<img src="%s%s.png" width="%d"><br>\n'
-    .. '<details><summary>Config</summary>\n'
-    .. '<pre><code class="language-lua">\n'
-    .. '%s\n'
-    .. '</code></pre>\n'
-    .. '</details>\n'
-    .. '</td>',
-    report_url, detail_index, label, expect, IMG_BASE, config_name, width, config_lua
+      .. '<strong><a href="%s">[%d]</a> %s</strong><br>\n'
+      .. "<em>%s</em><br>\n"
+      .. '<img src="%s%s.png" width="%d"><br>\n'
+      .. "<details><summary>Config</summary>\n"
+      .. '<pre><code class="language-lua">\n'
+      .. "%s\n"
+      .. "</code></pre>\n"
+      .. "</details>\n"
+      .. "</td>",
+    report_url,
+    detail_index,
+    label,
+    expect,
+    IMG_BASE,
+    config_name,
+    width,
+    config_lua
   )
 end
 
@@ -343,25 +395,34 @@ local pipeline_names_with_search = (function()
 end)()
 
 local pipeline_label_fn = function(n)
-  if n == "search" then return "Search" end
+  if n == "search" then
+    return "Search"
+  end
   return get_label(n)
 end
 
 local gallery_sections = {
-  { key = "renderer",         names = configs_mod.renderer_names },
-  { key = "feature",          names = configs_mod.feature_names },
-  { key = "pipeline",         names = pipeline_names_with_search, label_fn = pipeline_label_fn },
-  { key = "border",           names = configs_mod.border_names },
+  { key = "renderer", names = configs_mod.renderer_names },
+  { key = "feature", names = configs_mod.feature_names },
+  { key = "pipeline", names = pipeline_names_with_search, label_fn = pipeline_label_fn },
+  { key = "border", names = configs_mod.border_names },
   { key = "wildmenu_variant", names = configs_mod.wildmenu_variant_names },
-  { key = "palette_variant",  names = configs_mod.palette_variant_names },
-  { key = "dimension",        names = configs_mod.dimension_names },
-  { key = "gradient",         names = configs_mod.gradient_names },
-  { key = "combination",      names = configs_mod.combination_names },
-  { key = "highlight",        names = configs_mod.highlight_names },
-  { key = "theme",            names = configs_mod.theme_names, prefix = "theme_", label_fn = function(name) return name end },
-  { key = "layout",           names = configs_mod.layout_names },
-  { key = "option",           names = configs_mod.option_names },
-  { key = "preview",          names = configs_mod.preview_names },
+  { key = "palette_variant", names = configs_mod.palette_variant_names },
+  { key = "dimension", names = configs_mod.dimension_names },
+  { key = "gradient", names = configs_mod.gradient_names },
+  { key = "combination", names = configs_mod.combination_names },
+  { key = "highlight", names = configs_mod.highlight_names },
+  {
+    key = "theme",
+    names = configs_mod.theme_names,
+    prefix = "theme_",
+    label_fn = function(name)
+      return name
+    end,
+  },
+  { key = "layout", names = configs_mod.layout_names },
+  { key = "option", names = configs_mod.option_names },
+  { key = "preview", names = configs_mod.preview_names },
 }
 
 -- ── One-off section generators ───────────────────────────────────────
@@ -409,24 +470,42 @@ local function gen_theme_table()
   for _, name in ipairs(configs_mod.theme_names) do
     local meta = theme_meta[name]
     local theme_col = string.format("`%s`", name)
-    if #theme_col > max_theme then max_theme = #theme_col end
-    if #meta.renderer > max_rend then max_rend = #meta.renderer end
-    if #meta.desc > max_desc then max_desc = #meta.desc end
+    if #theme_col > max_theme then
+      max_theme = #theme_col
+    end
+    if #meta.renderer > max_rend then
+      max_rend = #meta.renderer
+    end
+    if #meta.desc > max_desc then
+      max_desc = #meta.desc
+    end
   end
 
   local function pad(s, w)
     return s .. string.rep(" ", w - #s)
   end
 
-  lines[#lines + 1] = string.format("| %s | %s | %s |",
-    pad("Theme", max_theme), pad("Renderer", max_rend), pad("Description", max_desc))
-  lines[#lines + 1] = string.format("| %s | %s | %s |",
-    string.rep("-", max_theme), string.rep("-", max_rend), string.rep("-", max_desc))
+  lines[#lines + 1] = string.format(
+    "| %s | %s | %s |",
+    pad("Theme", max_theme),
+    pad("Renderer", max_rend),
+    pad("Description", max_desc)
+  )
+  lines[#lines + 1] = string.format(
+    "| %s | %s | %s |",
+    string.rep("-", max_theme),
+    string.rep("-", max_rend),
+    string.rep("-", max_desc)
+  )
   for _, name in ipairs(configs_mod.theme_names) do
     local meta = theme_meta[name]
     local theme_col = string.format("`%s`", name)
-    lines[#lines + 1] = string.format("| %s | %s | %s |",
-      pad(theme_col, max_theme), pad(meta.renderer, max_rend), pad(meta.desc, max_desc))
+    lines[#lines + 1] = string.format(
+      "| %s | %s | %s |",
+      pad(theme_col, max_theme),
+      pad(meta.renderer, max_rend),
+      pad(meta.desc, max_desc)
+    )
   end
   return table.concat(lines, "\n")
 end

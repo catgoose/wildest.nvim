@@ -6,7 +6,6 @@
 local commands = require("wildest.cmdline.commands")
 local parser = require("wildest.cmdline.parser")
 local pipeline_mod = require("wildest.pipeline")
-local result = require("wildest.pipeline.result")
 local util = require("wildest.util")
 
 local M = {}
@@ -162,7 +161,41 @@ function M.file_finder_pipeline(opts)
     return files
   end)
 
-  table.insert(pipeline, result.result())
+  table.insert(pipeline, function(ctx, files)
+    if type(files) ~= "table" or #files == 0 then
+      return false
+    end
+
+    local data = {
+      input = ctx.input or "",
+      arg = ctx.arg or "",
+      cmd = ctx.cmd or "",
+      expand = ctx.expand or "file",
+    }
+
+    -- Highlight only the filename portion (after last separator)
+    local last_sep = (ctx.arg or ""):match(".*/()")
+    if last_sep then
+      data.query = (ctx.arg or ""):sub(last_sep)
+    end
+
+    local r = {
+      value = files,
+      data = data,
+    }
+
+    r.output = function(rdata, candidate)
+      local input = rdata.input or ""
+      local arg = rdata.arg or ""
+      if arg ~= "" then
+        local prefix = input:sub(1, #input - #arg)
+        return string.format("%s%s", prefix, candidate)
+      end
+      return string.format("%s%s", input, candidate)
+    end
+
+    return r
+  end)
 
   return pipeline
 end

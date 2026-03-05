@@ -24,11 +24,12 @@ if [ -f "$ROOT_DIR/README.md" ]; then
   python3 "$SCRIPT_DIR/md_table_to_html.py" < "$ROOT_DIR/README.md" > "$WORK_DIR/README.md"
 fi
 
-# Strip LuaCATS-only annotations that clash with LDoc
+# Strip LuaCATS-only annotations that clash with LDoc.
+# Convert to plain comments (no @) so LDoc ignores them entirely.
 find "$WORK_DIR/lua" -name '*.lua' -exec sed -i \
-  -e 's/^---@class/-- @class/' \
-  -e 's/^---@field/-- @field/' \
-  -e 's/^---@alias/-- @alias/' \
+  -e 's/^---@class/-- class:/' \
+  -e 's/^---@field/-- field:/' \
+  -e 's/^---@alias/-- alias:/' \
   {} +
 
 echo "Generating HTML docs with ldoc..."

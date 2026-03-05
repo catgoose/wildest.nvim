@@ -67,7 +67,11 @@ end
 
 T["chain highlighter"]["single highlighter returns nil — returns empty table"] = function()
   local h = chain.new({
-    { highlight = function(_, _) return nil end },
+    {
+      highlight = function(_, _)
+        return nil
+      end,
+    },
   })
   local result = h.highlight("foo", "foobar")
   expect.equality(result, {})
@@ -77,7 +81,11 @@ T["chain highlighter"]["three highlighters — correct fallback order"] = functi
   local spans3 = { { 0, 1, "WildestAccent" } }
   local h = chain.new({
     mock_hl({}),
-    { highlight = function(_, _) return nil end },
+    {
+      highlight = function(_, _)
+        return nil
+      end,
+    },
     mock_hl(spans3),
   })
   local result = h.highlight("f", "foobar")

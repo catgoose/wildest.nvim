@@ -20,6 +20,8 @@ local M = {}
 ---@field fuzzy? boolean Apply fuzzy filtering (default: false)
 ---@field frecency? boolean Apply frecency boosting (default: false)
 ---@field frecency_blend? number Frecency blend factor (default: 0.5)
+---@field exec_cache? boolean Cache $PATH executables instead of using getcompletion("shellcmd") (default: false)
+---@field engine? "fast"|"vim"|table Engine preset: "fast" enables exec_cache, "vim" uses built-in (default: "vim")
 
 --- Get Vim `:!` history entries (commands starting with `!`).
 ---@param max integer
@@ -65,6 +67,22 @@ function M.shell_pipeline(opts)
     complete_args = "file"
   end
   local do_env_vars = opts.env_vars ~= false
+
+  -- Resolve exec_cache from engine or legacy option
+  if opts.exec_cache == nil and opts.engine then
+    if opts.engine == "fast" then
+      opts = vim.tbl_extend("force", {}, opts)
+      opts.exec_cache = true
+    elseif type(opts.engine) == "table" and opts.engine.shell then
+      opts = vim.tbl_extend("force", {}, opts)
+      opts.exec_cache = true
+      -- Configure exec_cache with custom command if provided
+      local ec_opts = require("wildest.engine").to_exec_cache_opts(opts.engine.shell)
+      if ec_opts and next(ec_opts) then
+        require("wildest.shell.exec_cache").configure(ec_opts)
+      end
+    end
+  end
 
   -- Track whether we're in Phase 1 (command name) or Phase 2 (arguments)
   -- and what kind of completion is active, so wrap_result can set the right output/expand.
@@ -134,8 +152,16 @@ function M.shell_pipeline(opts)
 
       -- Executable completions (only when arg is non-empty to avoid thousands of results)
       if arg ~= "" then
-        local ok, shellcmds = pcall(vim.fn.getcompletion, arg, "shellcmd")
-        if ok and shellcmds then
+        local shellcmds
+        if opts.exec_cache then
+          shellcmds = require("wildest.shell.exec_cache").filter(arg)
+        else
+          local ok, result = pcall(vim.fn.getcompletion, arg, "shellcmd")
+          if ok then
+            shellcmds = result
+          end
+        end
+        if shellcmds then
           for _, cmd in ipairs(shellcmds) do
             if not seen[cmd] then
               seen[cmd] = true

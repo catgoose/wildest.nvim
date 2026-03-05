@@ -4,8 +4,8 @@ local expect = MiniTest.expect
 
 local T = new_set()
 
-local parser = require("wildest.cmdline.parser")
 local commands = require("wildest.cmdline.commands")
+local parser = require("wildest.cmdline.parser")
 local E = commands.EXPAND
 
 -- parse() — basic commands -------------------------------------------------------

@@ -538,6 +538,144 @@ w.branch(
 Shell history is auto-detected from `vim.o.shell` — bash, zsh, and fish are
 supported. The history file is read once per cmdline session and cached.
 
+### File Finder Pipeline
+
+![File Finder](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/file_finder.png)
+
+The `file_finder_pipeline()` uses external tools (`fd`, `rg --files`, or `find`)
+for async file completion instead of Vim's synchronous `getcompletion("file")`.
+This is dramatically faster on large codebases and respects `.gitignore`:
+
+```lua
+-- Standalone: replaces cmdline file completion entirely
+w.branch(
+  w.file_finder_pipeline(),
+  w.cmdline_pipeline({ fuzzy = true }),
+  w.search_pipeline()
+)
+
+-- Integrated: file_finder option makes cmdline_pipeline use fd/rg for file/dir completions
+w.branch(
+  w.cmdline_pipeline({ fuzzy = true, file_finder = true }),
+  w.search_pipeline()
+)
+```
+
+| Option          | Type           | Default | Description                                     |
+| --------------- | -------------- | ------- | ----------------------------------------------- |
+| `file_command`  | string[]       | auto    | Custom file listing command (default: auto-detect fd/rg/find) |
+| `dir_command`   | string[]       | auto    | Custom directory listing command                |
+| `cwd`           | string         | `cwd()` | Working directory for file search               |
+| `max_results`   | integer        | `5000`  | Maximum number of file results                  |
+
+**Tool detection order:** `fd` → `fdfind` → `rg --files` → `find`
+
+The `file_finder` option on `cmdline_pipeline()` wraps this as an internal branch —
+file/dir completions go through the async subprocess path, while all other
+completions (commands, options, buffers, etc.) use the normal sync path.
+
+### Engine Option
+
+Every pipeline that has a fast alternative accepts an `engine` option. Pass a
+string shortcut for sensible defaults, or a table for granular control — including
+custom commands and flags:
+
+```lua
+-- String shortcut: enable all fast paths with defaults
+w.cmdline_pipeline({ fuzzy = true, engine = "fast" })  -- file_finder for :e, :split, etc.
+w.shell_pipeline({ fuzzy = true, engine = "fast" })    -- cached $PATH executables for :!
+w.help_pipeline({ fuzzy = true, engine = "fast" })     -- preloaded help tags for :help
+w.search_pipeline({ engine = "fast" })                 -- async rg/grep for / and ? search
+w.substitute_pipeline({ engine = "fast" })             -- async rg/grep for :s/ and :g/
+
+-- Explicit vim mode (the default — no external tools)
+w.cmdline_pipeline({ fuzzy = true, engine = "vim" })
+
+-- Boolean per-type: enable with auto-detected defaults
+w.cmdline_pipeline({ engine = { files = true } })
+w.shell_pipeline({ engine = { shell = true } })
+w.help_pipeline({ engine = { help = true } })
+
+-- Command array: custom tool + flags
+w.cmdline_pipeline({
+  fuzzy = true,
+  engine = {
+    files = { "fd", "-tf", "--hidden", "--no-ignore", "--max-depth", "8" },
+  },
+})
+w.shell_pipeline({
+  engine = { shell = { "bash", "-c", "compgen -c" } },
+})
+
+-- Full options table (named keys)
+w.cmdline_pipeline({
+  engine = {
+    files = {
+      command = { "fd", "-tf", "--hidden" },
+      dir_command = { "fd", "-td", "--hidden" },
+      max_results = 2000,
+      cwd = "/projects",
+    },
+  },
+})
+
+-- Function: fully custom engine
+w.cmdline_pipeline({
+  engine = {
+    files = function(ctx, query)
+      return { "rg", "--files", "--glob", "*" .. query .. "*" }
+    end,
+  },
+})
+w.shell_pipeline({
+  engine = {
+    shell = function()
+      -- Return a list of executable names
+      return { "git", "npm", "cargo", "make" }
+    end,
+  },
+})
+```
+
+Each engine value is polymorphic:
+
+| Value | Type | Meaning |
+| --- | --- | --- |
+| `true` | boolean | Auto-detect defaults |
+| `{ "fd", "-tf", ... }` | string[] | Custom command (one result per line) |
+| `{ command = ..., max_results = ... }` | table (named keys) | Full options passthrough |
+| `function(ctx, input)` | function | Custom engine function |
+| `false` / `nil` | — | Disabled (use Vim built-in) |
+
+Pipeline routing:
+
+| Value              | `cmdline_pipeline`         | `shell_pipeline`       | `help_pipeline`        | `search_pipeline` / `substitute_pipeline` |
+| ------------------ | -------------------------- | ---------------------- | ---------------------- | ----------------------------------------- |
+| `nil` / `"vim"`    | `getcompletion("file")`    | `getcompletion("shellcmd")` | `getcompletion("help")` | `vim.regex` (sync)                   |
+| `"fast"`           | Async fd/rg/find           | Cached `$PATH` scan    | Preloaded tag index    | Async rg/grep                             |
+| `{ files = ... }`  | Custom file finder         | —                      | —                      | —                                         |
+| `{ shell = ... }`  | —                          | Custom exec source     | —                      | —                                         |
+| `{ help = ... }`   | —                          | —                      | Custom tag source      | —                                         |
+| `{ search = ... }` | —                          | —                      | —                      | Custom search command                     |
+
+The legacy `file_finder`, `exec_cache`, and `help_cache` options still work and
+take precedence over `engine` when set explicitly.
+
+### Performance Caches
+
+Preload caches at startup so the first completion is instant:
+
+```lua
+-- Optional: warm caches eagerly (otherwise populated on first use)
+w.preload_exec_cache()
+w.preload_help_cache()
+```
+
+| Cache            | Pipeline           | What it caches             | TTL       |
+| ---------------- | ------------------ | -------------------------- | --------- |
+| `exec_cache`     | `shell_pipeline()` | `$PATH` executables        | 60 seconds |
+| `help_cache`     | `help_pipeline()`  | Help tag index             | 5 minutes  |
+
 ### History Pipeline
 
 The `history_pipeline()` completes from command and search history. By default

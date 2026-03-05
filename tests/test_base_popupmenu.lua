@@ -231,7 +231,12 @@ T["BasePopupmenu"]["render_candidates skipped when show_empty in popupmenu"] = f
   -- nil candidate, crashing inside render_line → nvim_strwidth(nil).
   local renderer = setmetatable({
     _state = {
-      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      highlights = {
+        default = "Normal",
+        selected = "Visual",
+        accent = "Normal",
+        selected_accent = "Visual",
+      },
       empty_message = "No results",
       page = { -1, -1 },
       win = -1,
@@ -251,7 +256,8 @@ T["BasePopupmenu"]["render_candidates skipped when show_empty in popupmenu"] = f
   }, { __index = BasePopupmenu })
 
   -- Simulate what paginate returns for total=0 with empty_message
-  local page_start, page_end, show_empty = renderer:paginate({ selected = -1, run_id = 1, session_id = 1 }, 0, 10)
+  local page_start, page_end, show_empty =
+    renderer:paginate({ selected = -1, run_id = 1, session_id = 1 }, 0, 10)
   expect.equality(page_start, -1)
   expect.equality(page_end, -1)
   expect.equality(show_empty ~= false, true)
@@ -304,7 +310,12 @@ end
 T["BasePopupmenu"]["render_one_candidate exists and returns line"] = function()
   local renderer = setmetatable({
     _state = {
-      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      highlights = {
+        default = "Normal",
+        selected = "Visual",
+        accent = "Normal",
+        selected_accent = "Visual",
+      },
       left = {},
       right = {},
       highlighter = nil,
@@ -314,7 +325,8 @@ T["BasePopupmenu"]["render_one_candidate exists and returns line"] = function()
 
   local result = { value = { "hello", "world" }, data = {} }
   local ctx = { selected = -1 }
-  local line, spans, base_hl = renderer:render_one_candidate(result, ctx, renderer._state, "", 0, 20)
+  local line, spans, base_hl =
+    renderer:render_one_candidate(result, ctx, renderer._state, "", 0, 20)
   expect.equality(type(line), "string")
   expect.equality(type(spans), "table")
   expect.equality(base_hl, "Normal")
@@ -323,7 +335,12 @@ end
 T["BasePopupmenu"]["render_one_candidate marks selected"] = function()
   local renderer = setmetatable({
     _state = {
-      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      highlights = {
+        default = "Normal",
+        selected = "Visual",
+        accent = "Normal",
+        selected_accent = "Visual",
+      },
       left = {},
       right = {},
       highlighter = nil,
@@ -340,7 +357,12 @@ end
 T["BasePopupmenu"]["render_candidates delegates to grid when columns > 1"] = function()
   local renderer = setmetatable({
     _state = {
-      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      highlights = {
+        default = "Normal",
+        selected = "Visual",
+        accent = "Normal",
+        selected_accent = "Visual",
+      },
       left = {},
       right = {},
       highlighter = nil,
@@ -360,7 +382,12 @@ end
 T["BasePopupmenu"]["render_candidates_grid pads incomplete row"] = function()
   local renderer = setmetatable({
     _state = {
-      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      highlights = {
+        default = "Normal",
+        selected = "Visual",
+        accent = "Normal",
+        selected_accent = "Visual",
+      },
       left = {},
       right = {},
       highlighter = nil,
@@ -383,7 +410,12 @@ end
 T["BasePopupmenu"]["render_candidates_grid single candidate in grid"] = function()
   local renderer = setmetatable({
     _state = {
-      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      highlights = {
+        default = "Normal",
+        selected = "Visual",
+        accent = "Normal",
+        selected_accent = "Visual",
+      },
       left = {},
       right = {},
       highlighter = nil,
@@ -402,7 +434,12 @@ end
 T["BasePopupmenu"]["render_candidates_grid reverse order"] = function()
   local renderer = setmetatable({
     _state = {
-      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      highlights = {
+        default = "Normal",
+        selected = "Visual",
+        accent = "Normal",
+        selected_accent = "Visual",
+      },
       left = {},
       right = {},
       highlighter = nil,
