@@ -589,6 +589,17 @@ M.popupmenu_cmdline_icon({opts?})               *wildest.popupmenu_cmdline_icon*
         (wildest.Component)
 
 
+M.popupmenu_docs({opts?})                               *wildest.popupmenu_docs*
+    Documentation hints chrome component — shows a one-line doc for the selected candidate.
+    Use in the `bottom` array of a popupmenu renderer.
+
+    Parameters: ~
+        {opts?}  (table)  { hl?: string, prefix?: string }
+
+    Returns: ~
+        (function)  chrome_component
+
+
 M.empty_message({msg}, {hl?})                            *wildest.empty_message*
     Static empty message component.
 
