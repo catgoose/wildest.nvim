@@ -235,6 +235,7 @@ end
 ---@field files? boolean|string[]|table|function Enable async file finder. true=auto, string[]=custom command, table=full opts, function=dynamic command.
 ---@field shell? boolean|string[]|table|function Enable exec cache. true=auto, string[]=custom command, table=opts, function=returns executable list.
 ---@field help? boolean|string[]|table|function Enable help cache. true=auto, string[]=custom command, table=opts, function=returns tag list.
+---@field search? boolean|string|string[] Enable external search engine for / ? and :s/:g. true/"fast"=auto rg/grep, "rg"/"grep"=specific, string[]=custom command.
 
 ---Branch pipeline — tries each sub-pipeline until one succeeds.
 ---@param ... wildest.Pipeline[] Sub-pipelines to try in order
@@ -279,7 +280,7 @@ function M.cmdline_pipeline(opts)
 end
 
 ---Search pipeline — completes search patterns from buffer lines and history.
----@param opts? table { max_results?: integer, fuzzy?: boolean, fuzzy_filter?: function }
+---@param opts? table { max_results?: integer, fuzzy?: boolean, fuzzy_filter?: function, engine?: "fast"|"vim"|string|string[] }
 ---@return wildest.PipelineStep[] pipeline
 function M.search_pipeline(opts)
   return require("wildest.search").search_pipeline(opts)
@@ -397,7 +398,7 @@ function M.shell_pipeline(opts)
 end
 
 ---Substitute/global pipeline — shows matching buffer lines for :s/ and :g/ commands.
----@param opts? table { max_results?: integer, fuzzy?: boolean, fuzzy_filter?: function }
+---@param opts? table { max_results?: integer, fuzzy?: boolean, fuzzy_filter?: function, engine?: "fast"|"vim"|string|string[] }
 ---@return wildest.PipelineStep[] pipeline
 function M.substitute_pipeline(opts)
   return require("wildest.substitute").substitute_pipeline(opts)

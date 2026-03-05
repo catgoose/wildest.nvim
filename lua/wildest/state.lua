@@ -153,6 +153,7 @@ function M.stop()
   pipeline_mod.clear_handlers()
   debounce_mod.cancel_all()
   file_finder.cancel()
+  require("wildest.buffer_search").cancel()
 
   require("wildest.preview").hide()
   ghost_text.hide()

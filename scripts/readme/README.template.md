@@ -585,6 +585,8 @@ custom commands and flags:
 w.cmdline_pipeline({ fuzzy = true, engine = "fast" })  -- file_finder for :e, :split, etc.
 w.shell_pipeline({ fuzzy = true, engine = "fast" })    -- cached $PATH executables for :!
 w.help_pipeline({ fuzzy = true, engine = "fast" })     -- preloaded help tags for :help
+w.search_pipeline({ engine = "fast" })                 -- async rg/grep for / and ? search
+w.substitute_pipeline({ engine = "fast" })             -- async rg/grep for :s/ and :g/
 
 -- Explicit vim mode (the default — no external tools)
 w.cmdline_pipeline({ fuzzy = true, engine = "vim" })
@@ -647,13 +649,14 @@ Each engine value is polymorphic:
 
 Pipeline routing:
 
-| Value              | `cmdline_pipeline`         | `shell_pipeline`       | `help_pipeline`        |
-| ------------------ | -------------------------- | ---------------------- | ---------------------- |
-| `nil` / `"vim"`    | `getcompletion("file")`    | `getcompletion("shellcmd")` | `getcompletion("help")` |
-| `"fast"`           | Async fd/rg/find           | Cached `$PATH` scan    | Preloaded tag index    |
-| `{ files = ... }`  | Custom file finder         | —                      | —                      |
-| `{ shell = ... }`  | —                          | Custom exec source     | —                      |
-| `{ help = ... }`   | —                          | —                      | Custom tag source      |
+| Value              | `cmdline_pipeline`         | `shell_pipeline`       | `help_pipeline`        | `search_pipeline` / `substitute_pipeline` |
+| ------------------ | -------------------------- | ---------------------- | ---------------------- | ----------------------------------------- |
+| `nil` / `"vim"`    | `getcompletion("file")`    | `getcompletion("shellcmd")` | `getcompletion("help")` | `vim.regex` (sync)                   |
+| `"fast"`           | Async fd/rg/find           | Cached `$PATH` scan    | Preloaded tag index    | Async rg/grep                             |
+| `{ files = ... }`  | Custom file finder         | —                      | —                      | —                                         |
+| `{ shell = ... }`  | —                          | Custom exec source     | —                      | —                                         |
+| `{ help = ... }`   | —                          | —                      | Custom tag source      | —                                         |
+| `{ search = ... }` | —                          | —                      | —                      | Custom search command                     |
 
 The legacy `file_finder`, `exec_cache`, and `help_cache` options still work and
 take precedence over `engine` when set explicitly.

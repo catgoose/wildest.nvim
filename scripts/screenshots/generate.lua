@@ -100,7 +100,8 @@ end
 ---@return string
 local function vhs_preamble(typing_speed)
   typing_speed = typing_speed or "50ms"
-  return string.format([[Require nvim
+  return string.format(
+    [[Require nvim
 
 Set Shell "bash"
 Set FontSize %d
@@ -109,8 +110,15 @@ Set Width %d
 Set Height %d
 Set Padding %d
 Set Theme "%s"
-Set TypingSpeed %s]], settings.font_size, settings.font_family, settings.width, settings.height,
-    settings.padding, settings.theme, typing_speed)
+Set TypingSpeed %s]],
+    settings.font_size,
+    settings.font_family,
+    settings.width,
+    settings.height,
+    settings.padding,
+    settings.theme,
+    typing_speed
+  )
 end
 
 -- ── VHS tape generation ──────────────────────────────────────────
@@ -128,7 +136,10 @@ local function generate_tape(config_name, generate_gifs)
     table.insert(parts, "")
   end
 
-  table.insert(parts, string.format([[%s
+  table.insert(
+    parts,
+    string.format(
+      [[%s
 
 Type "%s"
 Enter
@@ -145,7 +156,15 @@ Escape
 Sleep 300ms
 Type ":q!"
 Enter
-Sleep 500ms]], vhs_preamble(), nvim_cmd, mode, typed, output_dir, config_name))
+Sleep 500ms]],
+      vhs_preamble(),
+      nvim_cmd,
+      mode,
+      typed,
+      output_dir,
+      config_name
+    )
+  )
 
   return write_tmpfile(table.concat(parts, "\n"))
 end
@@ -188,7 +207,11 @@ local function run_parallel(jobs, max_concurrent)
         -- Report result
         local config_name = jobs[i].config
         if code == 0 and file_exists(output_dir .. "/" .. config_name .. ".png") then
-          printf("    OK: %s.png (%s)", config_name, file_size_human(output_dir .. "/" .. config_name .. ".png"))
+          printf(
+            "    OK: %s.png (%s)",
+            config_name,
+            file_size_human(output_dir .. "/" .. config_name .. ".png")
+          )
         else
           printf("    FAILED: %s", config_name)
         end
@@ -289,10 +312,10 @@ local scene_pools = {
 -- Weighted distribution: file & option are the most common user actions,
 -- search and help are frequent, lua is less common but important to test.
 local scene_weights = {
-  { "file",   25 },
+  { "file", 25 },
   { "option", 25 },
-  { "help",   20 },
-  { "lua",    15 },
+  { "help", 20 },
+  { "lua", 15 },
   { "search", 15 },
 }
 
@@ -348,15 +371,15 @@ end
 -- ── Showdown GIF scene generation ────────────────────────────────
 
 local showdown_action_keys = {
-  accept           = { key = "Enter" },
-  open_tab         = { key = "Ctrl+T" },
-  open_split       = { key = "Ctrl+S" },
-  open_vsplit      = { key = "Ctrl+V" },
+  accept = { key = "Enter" },
+  open_tab = { key = "Ctrl+T" },
+  open_split = { key = "Ctrl+S" },
+  open_vsplit = { key = "Ctrl+V" },
   send_to_quickfix = { key = "Ctrl+Q" },
-  send_to_loclist  = { key = "Ctrl+L" },
-  toggle_preview   = { key = "Ctrl+P" },
-  redirect_output  = { key = "Ctrl+R" },
-  search_accept    = { key = "Enter" },
+  send_to_loclist = { key = "Ctrl+L" },
+  toggle_preview = { key = "Ctrl+P" },
+  redirect_output = { key = "Ctrl+R" },
+  search_accept = { key = "Enter" },
 }
 
 --- Build the VHS tape body for showdown scenes (preview + actions).
@@ -442,8 +465,10 @@ local function generate_gif(name)
     scene_tape = build_scene_tape(25)
   end
 
-  local nvim_cmd = string.format("%sWILDEST_GIF_NAME=%s nvim -u %s -i NONE", env_prefix, name, gif_init_lua)
-  local tape = string.format([[Output "%s/%s.gif"
+  local nvim_cmd =
+    string.format("%sWILDEST_GIF_NAME=%s nvim -u %s -i NONE", env_prefix, name, gif_init_lua)
+  local tape = string.format(
+    [[Output "%s/%s.gif"
 
 %s
 
@@ -458,7 +483,13 @@ Show
 Hide
 Type ":q!"
 Enter
-Sleep 500ms]], output_dir, name, vhs_preamble("60ms"), nvim_cmd, scene_tape)
+Sleep 500ms]],
+    output_dir,
+    name,
+    vhs_preamble("60ms"),
+    nvim_cmd,
+    scene_tape
+  )
 
   local tape_file = write_tmpfile(tape)
 
@@ -482,8 +513,12 @@ local function install_deps()
   if os.execute("command -v vhs >/dev/null 2>&1") ~= 0 then
     printf("  Installing VHS and ttyd...")
     os.execute("sudo mkdir -p /etc/apt/keyrings")
-    os.execute("curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg")
-    os.execute('echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list')
+    os.execute(
+      "curl -fsSL https://repo.charm.sh/apt/gpg.key | sudo gpg --dearmor -o /etc/apt/keyrings/charm.gpg"
+    )
+    os.execute(
+      'echo "deb [signed-by=/etc/apt/keyrings/charm.gpg] https://repo.charm.sh/apt/ * *" | sudo tee /etc/apt/sources.list.d/charm.list'
+    )
     os.execute("sudo apt-get update")
     os.execute("sudo apt-get install -y vhs ttyd")
   end
@@ -491,7 +526,9 @@ local function install_deps()
   if os.execute('fc-list | grep -qi "JetBrainsMono Nerd Font"') ~= 0 then
     printf("  Installing JetBrainsMono Nerd Font...")
     os.execute("mkdir -p ~/.local/share/fonts")
-    os.execute("curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz | tar -xJf - -C ~/.local/share/fonts")
+    os.execute(
+      "curl -fsSL https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.tar.xz | tar -xJf - -C ~/.local/share/fonts"
+    )
     os.execute("fc-cache -fv")
   end
 
@@ -529,7 +566,9 @@ local function ensure_devicons()
   local devicons_path = root_dir .. "/deps/nvim-web-devicons"
   if not file_exists(devicons_path) then
     printf("Cloning nvim-web-devicons...")
-    os.execute("git clone --depth 1 https://github.com/nvim-tree/nvim-web-devicons " .. devicons_path)
+    os.execute(
+      "git clone --depth 1 https://github.com/nvim-tree/nvim-web-devicons " .. devicons_path
+    )
   end
 end
 

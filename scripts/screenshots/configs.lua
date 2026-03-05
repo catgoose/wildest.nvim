@@ -67,10 +67,22 @@ M.defaults = {
 -- ── Shared data ──────────────────────────────────────────────────
 
 local rainbow_colors = {
-  "#ff0000", "#ff4400", "#ff8800", "#ffcc00",
-  "#ffff00", "#88ff00", "#00ff44", "#00ffaa",
-  "#00ffff", "#00aaff", "#0044ff", "#4400ff",
-  "#8800ff", "#cc00ff", "#ff00ff", "#ff0088",
+  "#ff0000",
+  "#ff4400",
+  "#ff8800",
+  "#ffcc00",
+  "#ffff00",
+  "#88ff00",
+  "#00ff44",
+  "#00ffaa",
+  "#00ffff",
+  "#00aaff",
+  "#0044ff",
+  "#4400ff",
+  "#8800ff",
+  "#cc00ff",
+  "#ff00ff",
+  "#ff0088",
 }
 
 local neon_highlights = {
@@ -1099,14 +1111,27 @@ M.configs = {
     theme = "wanted",
     cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
-    preview = { position = "right", anchor = "popup", width = "60%", border = "rounded", gap = 1, priority = "preview" },
+    preview = {
+      position = "right",
+      anchor = "popup",
+      width = "60%",
+      border = "rounded",
+      gap = 1,
+      priority = "preview",
+    },
   },
   preview_priority_screen = {
     category = "preview",
     label = "Priority Screen",
     cmd = ":e lua/wildest/renderer/components/",
     noselect = false,
-    preview = { position = "right", anchor = "screen", width = "40%", border = "rounded", priority = "preview" },
+    preview = {
+      position = "right",
+      anchor = "screen",
+      width = "40%",
+      border = "rounded",
+      priority = "preview",
+    },
   },
 }
 
@@ -1114,108 +1139,242 @@ M.configs = {
 M.default_cmd = ":set fold"
 
 -- Ordered name lists (single source of truth for README generation + generate.sh)
-M.renderer_names = { "popupmenu", "popupmenu_border", "popupmenu_palette", "palette_prompt_bottom", "wildmenu" }
+M.renderer_names =
+  { "popupmenu", "popupmenu_border", "popupmenu_palette", "palette_prompt_bottom", "wildmenu" }
 M.feature_names = {
-  "devicons", "fuzzy", "gradient", "search", "fuzzy_search", "renderer_mux",
-  "kind_icons", "cmdline_icon", "cmdline_icon_help", "prefix_highlighter",
-  "scrollbar", "pumblend", "chain_highlighter", "scrollbar_collapse",
-  "columns_3", "columns_4", "ghost_text", "ghost_text_custom",
-  "docs_hints", "docs_hints_help",
-  "file_finder", "file_finder_devicons",
+  "devicons",
+  "fuzzy",
+  "gradient",
+  "search",
+  "fuzzy_search",
+  "renderer_mux",
+  "kind_icons",
+  "cmdline_icon",
+  "cmdline_icon_help",
+  "prefix_highlighter",
+  "scrollbar",
+  "pumblend",
+  "chain_highlighter",
+  "scrollbar_collapse",
+  "columns_3",
+  "columns_4",
+  "ghost_text",
+  "ghost_text_custom",
+  "docs_hints",
+  "docs_hints_help",
+  "file_finder",
+  "file_finder_devicons",
 }
-M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline", "history_prefix_pipeline" }
+M.pipeline_names = {
+  "lua_pipeline",
+  "help_pipeline",
+  "history_pipeline",
+  "shell_pipeline",
+  "substitute_pipeline",
+  "history_prefix_pipeline",
+}
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
-M.border_names = { "border_rounded", "border_single", "border_double", "border_solid", "border_title" }
-M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal", "wildmenu_pipe", "wildmenu_arrows_index", "wildmenu_compact", "wildmenu_powerline" }
-M.palette_variant_names = { "palette_no_title", "palette_custom_prefix", "palette_large", "palette_compact", "palette_search" }
-M.dimension_names = { "max_height_small", "fixed_height_false", "max_width_60", "min_height_5", "max_height_large", "max_width_40", "min_width_40" }
-M.gradient_names = { "gradient_warm", "gradient_cool", "gradient_sunset", "gradient_ice", "gradient_forest" }
-M.combination_names = { "devicons_kind", "reverse_bordered", "accent_incsearch", "noselect_reverse", "pumblend_bordered", "devicons_scrollbar_border", "gradient_bordered", "palette_gradient", "wildmenu_fzy" }
+M.border_names =
+  { "border_rounded", "border_single", "border_double", "border_solid", "border_title" }
+M.wildmenu_variant_names = {
+  "wildmenu_dot",
+  "wildmenu_reverse",
+  "wildmenu_minimal",
+  "wildmenu_pipe",
+  "wildmenu_arrows_index",
+  "wildmenu_compact",
+  "wildmenu_powerline",
+}
+M.palette_variant_names = {
+  "palette_no_title",
+  "palette_custom_prefix",
+  "palette_large",
+  "palette_compact",
+  "palette_search",
+}
+M.dimension_names = {
+  "max_height_small",
+  "fixed_height_false",
+  "max_width_60",
+  "min_height_5",
+  "max_height_large",
+  "max_width_40",
+  "min_width_40",
+}
+M.gradient_names =
+  { "gradient_warm", "gradient_cool", "gradient_sunset", "gradient_ice", "gradient_forest" }
+M.combination_names = {
+  "devicons_kind",
+  "reverse_bordered",
+  "accent_incsearch",
+  "noselect_reverse",
+  "pumblend_bordered",
+  "devicons_scrollbar_border",
+  "gradient_bordered",
+  "palette_gradient",
+  "wildmenu_fzy",
+}
 M.layout_names = {
-  "laststatus_0", "laststatus_2", "laststatus_3",
-  "cmdheight_0", "cmdheight_0_offset_1", "cmdheight_0_offset_2",
-  "offset_1", "offset_2",
+  "laststatus_0",
+  "laststatus_2",
+  "laststatus_3",
+  "cmdheight_0",
+  "cmdheight_0_offset_1",
+  "cmdheight_0_offset_2",
+  "offset_1",
+  "offset_2",
 }
 M.option_names = {
-  "noselect_false", "reverse", "empty_message", "empty_message_popupmenu",
-  "buffer_flags", "position_top", "position_center", "ellipsis",
-  "position_top_bordered", "noselect_bordered", "fixed_height_true",
-  "top_component", "bottom_component", "top_bottom_components",
-  "before_cursor", "sort_buffers_lastused",
+  "noselect_false",
+  "reverse",
+  "empty_message",
+  "empty_message_popupmenu",
+  "buffer_flags",
+  "position_top",
+  "position_center",
+  "ellipsis",
+  "position_top_bordered",
+  "noselect_bordered",
+  "fixed_height_true",
+  "top_component",
+  "bottom_component",
+  "top_bottom_components",
+  "before_cursor",
+  "sort_buffers_lastused",
 }
 M.preview_names = {
-  "preview_right_screen", "preview_left_screen", "preview_top_screen", "preview_bottom_screen",
-  "preview_right_popup", "preview_left_popup", "preview_top_popup", "preview_bottom_popup",
-  "preview_wanted_right", "preview_wanted_left", "preview_wanted_top", "preview_wanted_bottom",
-  "preview_gap_right", "preview_gap_left", "preview_gap_screen_right", "preview_gap_screen_left",
-  "preview_priority_right", "preview_priority_screen",
+  "preview_right_screen",
+  "preview_left_screen",
+  "preview_top_screen",
+  "preview_bottom_screen",
+  "preview_right_popup",
+  "preview_left_popup",
+  "preview_top_popup",
+  "preview_bottom_popup",
+  "preview_wanted_right",
+  "preview_wanted_left",
+  "preview_wanted_top",
+  "preview_wanted_bottom",
+  "preview_gap_right",
+  "preview_gap_left",
+  "preview_gap_screen_right",
+  "preview_gap_screen_left",
+  "preview_priority_right",
+  "preview_priority_screen",
 }
 
 -- Theme configs (generated)
 M.theme_names = {
-  "auto", "default", "saloon", "outlaw", "sunset", "prairie", "dusty",
-  "midnight", "wanted", "cactus", "tumbleweed",
-  "kanagawa", "kanagawa_dragon", "kanagawa_lotus",
-  "catppuccin_mocha", "catppuccin_frappe", "catppuccin_latte",
-  "tokyonight_night", "tokyonight_storm", "tokyonight_moon",
-  "rose_pine", "rose_pine_moon", "rose_pine_dawn",
-  "gruvbox_dark", "gruvbox_light", "nord", "onedark", "nightfox",
-  "everforest_dark", "everforest_light", "dracula", "solarized_dark",
+  "auto",
+  "default",
+  "saloon",
+  "outlaw",
+  "sunset",
+  "prairie",
+  "dusty",
+  "midnight",
+  "wanted",
+  "cactus",
+  "tumbleweed",
+  "kanagawa",
+  "kanagawa_dragon",
+  "kanagawa_lotus",
+  "catppuccin_mocha",
+  "catppuccin_frappe",
+  "catppuccin_latte",
+  "tokyonight_night",
+  "tokyonight_storm",
+  "tokyonight_moon",
+  "rose_pine",
+  "rose_pine_moon",
+  "rose_pine_dawn",
+  "gruvbox_dark",
+  "gruvbox_light",
+  "nord",
+  "onedark",
+  "nightfox",
+  "everforest_dark",
+  "everforest_light",
+  "dracula",
+  "solarized_dark",
 }
 
 -- ── Categories (ordered, used by generate.lua CLI + list) ──────
 
 M.categories = {
-  { flag = "renderers",         display = "Renderers",         names = M.renderer_names },
-  { flag = "themes",            display = "Themes",            names = M.theme_names, prefix = "theme_" },
-  { flag = "features",          display = "Features",          names = M.feature_names },
-  { flag = "pipelines",         display = "Pipelines",         names = M.pipeline_names },
-  { flag = "highlights",        display = "Highlights",        names = M.highlight_names },
-  { flag = "borders",           display = "Borders",           names = M.border_names },
+  { flag = "renderers", display = "Renderers", names = M.renderer_names },
+  {
+    flag = "themes",
+    display = "Themes",
+    names = M.theme_names,
+    prefix = "theme_",
+  },
+  { flag = "features", display = "Features", names = M.feature_names },
+  { flag = "pipelines", display = "Pipelines", names = M.pipeline_names },
+  { flag = "highlights", display = "Highlights", names = M.highlight_names },
+  { flag = "borders", display = "Borders", names = M.border_names },
   { flag = "wildmenu-variants", display = "Wildmenu Variants", names = M.wildmenu_variant_names },
-  { flag = "palette-variants",  display = "Palette Variants",  names = M.palette_variant_names },
-  { flag = "dimensions",        display = "Dimensions",        names = M.dimension_names },
-  { flag = "gradients",         display = "Gradients",         names = M.gradient_names },
-  { flag = "combinations",      display = "Combinations",      names = M.combination_names },
-  { flag = "layouts",           display = "Layouts",           names = M.layout_names },
-  { flag = "options",           display = "Options",           names = M.option_names },
-  { flag = "previews",          display = "Previews",          names = M.preview_names },
+  { flag = "palette-variants", display = "Palette Variants", names = M.palette_variant_names },
+  { flag = "dimensions", display = "Dimensions", names = M.dimension_names },
+  { flag = "gradients", display = "Gradients", names = M.gradient_names },
+  { flag = "combinations", display = "Combinations", names = M.combination_names },
+  { flag = "layouts", display = "Layouts", names = M.layout_names },
+  { flag = "options", display = "Options", names = M.option_names },
+  { flag = "previews", display = "Previews", names = M.preview_names },
 }
 
 -- Theme metadata (descriptions for README generation)
 M.theme_meta = {
-  auto            = { renderer = "bordered", desc = "Derives colors from your colorscheme - a chameleon" },
-  default         = { renderer = "plain",    desc = "Standard Pmenu links, no frills" },
-  saloon          = { renderer = "bordered", desc = "Amber and whiskey - belly up to the bar" },
-  outlaw          = { renderer = "bordered", desc = "Dark with crimson - wanted dead or alive" },
-  sunset          = { renderer = "bordered", desc = "Orange to purple - end of the trail" },
-  prairie         = { renderer = "bordered", desc = "Soft greens and earth - wide open spaces" },
-  dusty           = { renderer = "bordered", desc = "Sandstone and sage - desert wanderer" },
-  midnight        = { renderer = "bordered", desc = "Deep blue and silver - stars over the range" },
-  wanted          = { renderer = "palette",  desc = "Parchment and ink - nailed to the post office wall" },
-  cactus          = { renderer = "bordered", desc = "Green on dark soil - prickly but pretty" },
-  tumbleweed      = { renderer = "plain",    desc = "Light and minimal - blowin' through town" },
-  kanagawa        = { renderer = "bordered", desc = "Deep ink, warm autumn - the far east frontier" },
+  auto = { renderer = "bordered", desc = "Derives colors from your colorscheme - a chameleon" },
+  default = { renderer = "plain", desc = "Standard Pmenu links, no frills" },
+  saloon = { renderer = "bordered", desc = "Amber and whiskey - belly up to the bar" },
+  outlaw = { renderer = "bordered", desc = "Dark with crimson - wanted dead or alive" },
+  sunset = { renderer = "bordered", desc = "Orange to purple - end of the trail" },
+  prairie = { renderer = "bordered", desc = "Soft greens and earth - wide open spaces" },
+  dusty = { renderer = "bordered", desc = "Sandstone and sage - desert wanderer" },
+  midnight = { renderer = "bordered", desc = "Deep blue and silver - stars over the range" },
+  wanted = { renderer = "palette", desc = "Parchment and ink - nailed to the post office wall" },
+  cactus = { renderer = "bordered", desc = "Green on dark soil - prickly but pretty" },
+  tumbleweed = { renderer = "plain", desc = "Light and minimal - blowin' through town" },
+  kanagawa = { renderer = "bordered", desc = "Deep ink, warm autumn - the far east frontier" },
   kanagawa_dragon = { renderer = "bordered", desc = "Dark earth tones - dragon in the canyon" },
-  kanagawa_lotus  = { renderer = "bordered", desc = "Light parchment - lotus in the desert spring" },
-  catppuccin_mocha  = { renderer = "bordered", desc = "Rich dark pastels - lavender in the moonlight" },
-  catppuccin_frappe = { renderer = "bordered", desc = "Dusky blue-grey pastels - twilight in the valley" },
-  catppuccin_latte  = { renderer = "bordered", desc = "Warm light pastels - cream and ink at dawn" },
-  tokyonight_night  = { renderer = "bordered", desc = "Deep midnight blue - neon in the dark" },
-  tokyonight_storm  = { renderer = "bordered", desc = "Stormy dark blue - lightning on the horizon" },
-  tokyonight_moon   = { renderer = "bordered", desc = "Soft moonlit blue - silver glow on the plains" },
-  rose_pine         = { renderer = "bordered", desc = "Muted dark tones - wild roses at dusk" },
-  rose_pine_moon    = { renderer = "bordered", desc = "Deeper purple base - roses under moonlight" },
-  rose_pine_dawn    = { renderer = "bordered", desc = "Warm parchment light - roses at first light" },
-  gruvbox_dark      = { renderer = "bordered", desc = "Warm retro earth - campfire in the canyon" },
-  gruvbox_light     = { renderer = "bordered", desc = "Sandy retro light - parchment in the sun" },
-  nord              = { renderer = "bordered", desc = "Arctic cool - frost on the frontier" },
-  onedark           = { renderer = "bordered", desc = "Atom-inspired grey - steel and blue" },
-  nightfox          = { renderer = "bordered", desc = "Deep ocean blue - foxfire in the night" },
-  everforest_dark   = { renderer = "bordered", desc = "Woodland greens on dark soil - deep in the forest" },
-  everforest_light  = { renderer = "bordered", desc = "Soft cream with fresh greens - forest clearing" },
-  dracula           = { renderer = "bordered", desc = "Classic dark purple - the count rides at midnight" },
-  solarized_dark    = { renderer = "bordered", desc = "Precision teal and cyan - the original classic" },
+  kanagawa_lotus = { renderer = "bordered", desc = "Light parchment - lotus in the desert spring" },
+  catppuccin_mocha = {
+    renderer = "bordered",
+    desc = "Rich dark pastels - lavender in the moonlight",
+  },
+  catppuccin_frappe = {
+    renderer = "bordered",
+    desc = "Dusky blue-grey pastels - twilight in the valley",
+  },
+  catppuccin_latte = { renderer = "bordered", desc = "Warm light pastels - cream and ink at dawn" },
+  tokyonight_night = { renderer = "bordered", desc = "Deep midnight blue - neon in the dark" },
+  tokyonight_storm = { renderer = "bordered", desc = "Stormy dark blue - lightning on the horizon" },
+  tokyonight_moon = {
+    renderer = "bordered",
+    desc = "Soft moonlit blue - silver glow on the plains",
+  },
+  rose_pine = { renderer = "bordered", desc = "Muted dark tones - wild roses at dusk" },
+  rose_pine_moon = { renderer = "bordered", desc = "Deeper purple base - roses under moonlight" },
+  rose_pine_dawn = { renderer = "bordered", desc = "Warm parchment light - roses at first light" },
+  gruvbox_dark = { renderer = "bordered", desc = "Warm retro earth - campfire in the canyon" },
+  gruvbox_light = { renderer = "bordered", desc = "Sandy retro light - parchment in the sun" },
+  nord = { renderer = "bordered", desc = "Arctic cool - frost on the frontier" },
+  onedark = { renderer = "bordered", desc = "Atom-inspired grey - steel and blue" },
+  nightfox = { renderer = "bordered", desc = "Deep ocean blue - foxfire in the night" },
+  everforest_dark = {
+    renderer = "bordered",
+    desc = "Woodland greens on dark soil - deep in the forest",
+  },
+  everforest_light = {
+    renderer = "bordered",
+    desc = "Soft cream with fresh greens - forest clearing",
+  },
+  dracula = { renderer = "bordered", desc = "Classic dark purple - the count rides at midnight" },
+  solarized_dark = {
+    renderer = "bordered",
+    desc = "Precision teal and cyan - the original classic",
+  },
 }
 
 for _, name in ipairs(M.theme_names) do
@@ -1233,14 +1392,36 @@ end
 -- ── Random scene generation ──────────────────────────────────────
 
 local scene_names = {
-  "Tumbleweeds Roll", "Prairie Dust", "Clock Tower", "The Draw",
-  "Quickfire", "Ricochet", "Smoke Clears", "Sunset Silhouette",
-  "Dust Settles", "The Legend", "The Stranger Rides In", "Quick Draw",
-  "High Noon", "Tumbleweed", "Neon Saloon", "Sunset Riders",
-  "The Posse", "Ember Trail", "Ride Into the Sunset", "Wanted",
-  "Rustler's Moon", "Coyote Howl", "Dusty Trail", "Gallows Humor",
-  "Last Stand", "Campfire Glow", "Gold Rush", "Canyon Echo",
-  "Barbed Wire", "Whiskey Creek",
+  "Tumbleweeds Roll",
+  "Prairie Dust",
+  "Clock Tower",
+  "The Draw",
+  "Quickfire",
+  "Ricochet",
+  "Smoke Clears",
+  "Sunset Silhouette",
+  "Dust Settles",
+  "The Legend",
+  "The Stranger Rides In",
+  "Quick Draw",
+  "High Noon",
+  "Tumbleweed",
+  "Neon Saloon",
+  "Sunset Riders",
+  "The Posse",
+  "Ember Trail",
+  "Ride Into the Sunset",
+  "Wanted",
+  "Rustler's Moon",
+  "Coyote Howl",
+  "Dusty Trail",
+  "Gallows Humor",
+  "Last Stand",
+  "Campfire Glow",
+  "Gold Rush",
+  "Canyon Echo",
+  "Barbed Wire",
+  "Whiskey Creek",
 }
 
 local function pick(t)
@@ -1260,6 +1441,9 @@ function M.random_scene(label)
     { "substitute", "cmdline_fuzzy", "search_fuzzy" },
     { "cmdline_file_finder", "search" },
     { "cmdline_file_finder", "search_fuzzy" },
+    { "cmdline_fuzzy", "search_engine_fast" },
+    { "cmdline_fuzzy", "search_fuzzy_engine_fast" },
+    { "substitute_engine_fast", "cmdline_fuzzy", "search" },
   }
   local lefts = {
     {},
@@ -1349,14 +1533,22 @@ function M.random_scene(label)
     scene.bottom = { "docs" }
   end
   if math.random(6) == 1 then
-    scene.hooks = pick({ "enter", "leave", "draw", "enter+leave", "enter+draw", "results", "select", "select+accept" })
+    scene.hooks = pick({
+      "enter",
+      "leave",
+      "draw",
+      "enter+leave",
+      "enter+draw",
+      "results",
+      "select",
+      "select+accept",
+    })
   end
   if recipe == "theme" then
     scene.renderer = "theme:" .. pick(M._random_themes)
     scene.left = pick(lefts)
     scene.right = pick(rights)
     scene.highlighter = pick(highlighters)
-
   elseif recipe == "wildmenu" then
     scene.renderer = "wildmenu"
     scene.highlighter = pick(highlighters)
@@ -1364,7 +1556,6 @@ function M.random_scene(label)
     scene.ellipsis = pick({ "...", "…", " >" })
     scene.left = pick({ { "arrows" }, {} })
     scene.right = pick({ { "arrows_right", " ", "index" }, { "index" }, {} })
-
   elseif recipe == "palette" then
     scene.renderer = "palette"
     scene.palette = {
@@ -1380,7 +1571,6 @@ function M.random_scene(label)
     if math.random(2) == 1 then
       scene.custom_highlights = pick(custom_hl_sets)
     end
-
   elseif recipe == "border_custom" then
     scene.renderer = "border_theme"
     scene.border = pick(borders)
@@ -1389,7 +1579,6 @@ function M.random_scene(label)
     scene.custom_highlights = pick(custom_hl_sets)
     scene.left = pick(lefts)
     scene.right = pick(rights)
-
   elseif recipe == "mux" then
     scene.renderer = "mux"
     scene.mux = {
@@ -1407,7 +1596,6 @@ function M.random_scene(label)
         separator = " | ",
       },
     }
-
   elseif recipe == "gradient" then
     scene.renderer = "theme:" .. pick(M._random_themes)
     scene.highlights = false
@@ -1500,7 +1688,8 @@ end
 ---@param n number
 ---@return table[]
 function M.showdown_scenes(n)
-  local seed = tonumber(os.getenv("WILDEST_GIF_SEED")) or (os.time() + (vim.fn.getpid and vim.fn.getpid() or 0))
+  local seed = tonumber(os.getenv("WILDEST_GIF_SEED"))
+    or (os.time() + (vim.fn.getpid and vim.fn.getpid() or 0))
   local plan = M.showdown_scene_plan(n, seed)
 
   -- Re-seed for the config randomization (independent of the plan seed)
@@ -1525,7 +1714,12 @@ function M.showdown_scenes(n)
     local pos = pick({ "right", "left", "top", "bottom" })
     local anchor = pick({ "screen", "popup" })
     local dim = (pos == "right" or pos == "left") and "width" or "height"
-    scene.preview = { position = pos, anchor = anchor, [dim] = pick({ "30%", "40%", "50%" }), border = pick(borders) }
+    scene.preview = {
+      position = pos,
+      anchor = anchor,
+      [dim] = pick({ "30%", "40%", "50%" }),
+      border = pick(borders),
+    }
 
     -- Add default actions keymaps
     scene.actions = {
@@ -1583,15 +1777,33 @@ local function setup_block_lines(cfg, add)
 
   -- Core fields
   local field_order = {
-    "renderer", "pipeline", "highlighter",
-    "padding", "left", "right", "top", "bottom", "separator", "ellipsis",
-    "border", "title", "position",
-    "max_height", "min_height", "max_width", "min_width", "fixed_height",
+    "renderer",
+    "pipeline",
+    "highlighter",
+    "padding",
+    "left",
+    "right",
+    "top",
+    "bottom",
+    "separator",
+    "ellipsis",
+    "border",
+    "title",
+    "position",
+    "max_height",
+    "min_height",
+    "max_width",
+    "min_width",
+    "fixed_height",
     "columns",
-    "noselect", "reverse", "pumblend", "offset",
+    "noselect",
+    "reverse",
+    "pumblend",
+    "offset",
     "ghost_text",
     "empty_message",
-    "highlights", "gradient_colors",
+    "highlights",
+    "gradient_colors",
   }
 
   for _, key in ipairs(field_order) do
@@ -1722,7 +1934,9 @@ local sample_lua_lines = {
 ---@return string[] lines
 function M.scene_to_lines(scene, index, total)
   local lines = {}
-  local function add(s) table.insert(lines, s) end
+  local function add(s)
+    table.insert(lines, s)
+  end
 
   add("-- wildest.nvim")
   if index and total then
@@ -1756,7 +1970,9 @@ function M.scene_to_description(cfg)
   end
 
   local tokens = {}
-  local function add(s) tokens[#tokens + 1] = s end
+  local function add(s)
+    tokens[#tokens + 1] = s
+  end
 
   local renderer = merged.renderer or "theme:auto"
   if renderer == "popupmenu" then
@@ -1781,25 +1997,57 @@ function M.scene_to_description(cfg)
     add(merged.border)
   end
 
-  if merged.title then add("title") end
+  if merged.title then
+    add("title")
+  end
   if merged.position and merged.position ~= "bottom" then
     add("position=" .. merged.position)
   end
-  if merged.reverse then add("reverse") end
-  if merged.noselect == true then add("noselect") end
-  if merged.noselect == false then add("noselect=false") end
-  if merged.pumblend then add("pumblend=" .. merged.pumblend) end
-  if merged.offset then add("offset=" .. merged.offset) end
-  if merged.max_height then add("max_height=" .. merged.max_height) end
-  if merged.min_height then add("min_height=" .. merged.min_height) end
-  if merged.fixed_height == false then add("fixed_height=false") end
-  if merged.columns and merged.columns > 1 then add("columns=" .. merged.columns) end
-  if merged.ghost_text then add("ghost_text") end
-  if merged.file_finder then add("file_finder") end
-  if merged.empty_message then add("empty_message") end
-  if merged.empty_message_first_draw_delay then add("empty_delay=" .. merged.empty_message_first_draw_delay .. "ms") end
-  if merged.ellipsis then add("ellipsis") end
-  if merged.top and #merged.top > 0 then add("top") end
+  if merged.reverse then
+    add("reverse")
+  end
+  if merged.noselect == true then
+    add("noselect")
+  end
+  if merged.noselect == false then
+    add("noselect=false")
+  end
+  if merged.pumblend then
+    add("pumblend=" .. merged.pumblend)
+  end
+  if merged.offset then
+    add("offset=" .. merged.offset)
+  end
+  if merged.max_height then
+    add("max_height=" .. merged.max_height)
+  end
+  if merged.min_height then
+    add("min_height=" .. merged.min_height)
+  end
+  if merged.fixed_height == false then
+    add("fixed_height=false")
+  end
+  if merged.columns and merged.columns > 1 then
+    add("columns=" .. merged.columns)
+  end
+  if merged.ghost_text then
+    add("ghost_text")
+  end
+  if merged.file_finder then
+    add("file_finder")
+  end
+  if merged.empty_message then
+    add("empty_message")
+  end
+  if merged.empty_message_first_draw_delay then
+    add("empty_delay=" .. merged.empty_message_first_draw_delay .. "ms")
+  end
+  if merged.ellipsis then
+    add("ellipsis")
+  end
+  if merged.top and #merged.top > 0 then
+    add("top")
+  end
   if merged.bottom and #merged.bottom > 0 then
     local has_docs = false
     for _, b in ipairs(merged.bottom) do
@@ -1815,21 +2063,43 @@ function M.scene_to_description(cfg)
   local left = merged.left
   local has_devicons, has_kind, has_buffer_flags, has_cmdline_icon = false, false, false, false
   if type(left) == "string" then
-    if left == "devicons" then has_devicons = true end
+    if left == "devicons" then
+      has_devicons = true
+    end
   elseif type(left) == "table" then
     for _, item in ipairs(left) do
-      if item == "devicons" then has_devicons = true end
-      if item == "kind_icon" then has_kind = true end
-      if item == "buffer_flags" then has_buffer_flags = true end
-      if item == "cmdline_icon" then has_cmdline_icon = true end
+      if item == "devicons" then
+        has_devicons = true
+      end
+      if item == "kind_icon" then
+        has_kind = true
+      end
+      if item == "buffer_flags" then
+        has_buffer_flags = true
+      end
+      if item == "cmdline_icon" then
+        has_cmdline_icon = true
+      end
     end
   end
-  if has_devicons then add("devicons") end
-  if has_kind then add("kind icons") end
-  if has_cmdline_icon then add("cmdline icon") end
-  if has_buffer_flags then add("buffer flags") end
-  if not has_devicons and M.defaults.left == "devicons"
-    and renderer ~= "wildmenu" and renderer ~= "mux" then
+  if has_devicons then
+    add("devicons")
+  end
+  if has_kind then
+    add("kind icons")
+  end
+  if has_cmdline_icon then
+    add("cmdline icon")
+  end
+  if has_buffer_flags then
+    add("buffer flags")
+  end
+  if
+    not has_devicons
+    and M.defaults.left == "devicons"
+    and renderer ~= "wildmenu"
+    and renderer ~= "mux"
+  then
     add("no devicons")
   end
 
@@ -1837,8 +2107,13 @@ function M.scene_to_description(cfg)
   local has_scrollbar_collapse = false
   if type(merged.right) == "table" then
     for _, item in ipairs(merged.right) do
-      if item == "scrollbar" then has_scrollbar = true end
-      if item == "scrollbar_collapse" then has_scrollbar_collapse = true; has_scrollbar = true end
+      if item == "scrollbar" then
+        has_scrollbar = true
+      end
+      if item == "scrollbar_collapse" then
+        has_scrollbar_collapse = true
+        has_scrollbar = true
+      end
     end
   end
   if has_scrollbar_collapse then
@@ -1849,11 +2124,17 @@ function M.scene_to_description(cfg)
   local default_has_scrollbar = false
   if type(M.defaults.right) == "table" then
     for _, item in ipairs(M.defaults.right) do
-      if item == "scrollbar" then default_has_scrollbar = true end
+      if item == "scrollbar" then
+        default_has_scrollbar = true
+      end
     end
   end
-  if not has_scrollbar and default_has_scrollbar
-    and renderer ~= "wildmenu" and renderer ~= "mux" then
+  if
+    not has_scrollbar
+    and default_has_scrollbar
+    and renderer ~= "wildmenu"
+    and renderer ~= "mux"
+  then
     add("no scrollbar")
   end
 
@@ -1861,18 +2142,27 @@ function M.scene_to_description(cfg)
     local has_arrows = false
     if type(left) == "table" then
       for _, item in ipairs(left) do
-        if item == "arrows" then has_arrows = true end
+        if item == "arrows" then
+          has_arrows = true
+        end
       end
     end
     if type(merged.right) == "table" then
       for _, item in ipairs(merged.right) do
-        if item == "arrows_right" then has_arrows = true end
+        if item == "arrows_right" then
+          has_arrows = true
+        end
       end
     end
-    if has_arrows then add("arrows") end
+    if has_arrows then
+      add("arrows")
+    end
     if type(merged.right) == "table" then
       for _, item in ipairs(merged.right) do
-        if item == "index" then add("index"); break end
+        if item == "index" then
+          add("index")
+          break
+        end
       end
     end
     if merged.separator then
@@ -1886,15 +2176,40 @@ function M.scene_to_description(cfg)
 
   if merged.pipeline then
     for _, p in ipairs(merged.pipeline) do
-      if p == "lua" then add("lua pipeline") end
-      if p == "help_fuzzy" then add("help pipeline") end
-      if p == "history" then add("history pipeline") end
-      if p == "history_prefix" then add("history prefix pipeline") end
-      if p == "shell" or p == "shell_fuzzy" then add("shell pipeline") end
-      if p == "substitute" then add("substitute pipeline") end
-      if p == "search_fuzzy" then add("fuzzy search") end
-      if p == "cmdline_fuzzy_before_cursor" then add("before_cursor") end
-      if p == "cmdline_buffers_lastused" then add("sort_buffers_lastused") end
+      if p == "lua" then
+        add("lua pipeline")
+      end
+      if p == "help_fuzzy" then
+        add("help pipeline")
+      end
+      if p == "history" then
+        add("history pipeline")
+      end
+      if p == "history_prefix" then
+        add("history prefix pipeline")
+      end
+      if p == "shell" or p == "shell_fuzzy" then
+        add("shell pipeline")
+      end
+      if p == "substitute" or p == "substitute_engine_fast" then
+        add("substitute pipeline")
+      end
+      if p == "search_fuzzy" or p == "search_fuzzy_engine_fast" then
+        add("fuzzy search")
+      end
+      if
+        p == "search_engine_fast"
+        or p == "search_fuzzy_engine_fast"
+        or p == "substitute_engine_fast"
+      then
+        add("engine=fast")
+      end
+      if p == "cmdline_fuzzy_before_cursor" then
+        add("before_cursor")
+      end
+      if p == "cmdline_buffers_lastused" then
+        add("sort_buffers_lastused")
+      end
     end
   end
 
@@ -1918,10 +2233,16 @@ function M.scene_to_description(cfg)
     add("hooks=" .. merged.hooks)
   end
 
-  if merged.action then add("action: " .. merged.action) end
+  if merged.action then
+    add("action: " .. merged.action)
+  end
 
-  if merged.custom_highlights then add("custom highlights") end
-  if merged.gradient_colors then add("gradient colors") end
+  if merged.custom_highlights then
+    add("custom highlights")
+  end
+  if merged.gradient_colors then
+    add("gradient colors")
+  end
 
   return table.concat(tokens, ", ")
 end
@@ -1937,7 +2258,9 @@ function M.config_to_lines(name)
 
   local label = cfg.label or name
   local lines = {}
-  local function add(s) table.insert(lines, s) end
+  local function add(s)
+    table.insert(lines, s)
+  end
 
   add("-- wildest.nvim")
   add('-- "' .. label .. '" (' .. name .. ")")
@@ -1990,6 +2313,12 @@ local function resolve_pipeline(list, w)
       table.insert(branches, w.help_pipeline({ fuzzy = true, engine = "fast" }))
     elseif name == "shell_exec_cache" or name == "shell_engine_fast" then
       table.insert(branches, w.shell_pipeline({ fuzzy = true, engine = "fast" }))
+    elseif name == "search_engine_fast" then
+      table.insert(branches, w.search_pipeline({ engine = "fast" }))
+    elseif name == "search_fuzzy_engine_fast" then
+      table.insert(branches, w.search_pipeline({ fuzzy = true, engine = "fast" }))
+    elseif name == "substitute_engine_fast" then
+      table.insert(branches, w.substitute_pipeline({ engine = "fast" }))
     end
   end
   return w.branch(unpack(branches))

@@ -118,4 +118,23 @@ function M.to_help_cache_opts(val)
   return nil
 end
 
+--- Convert a resolved engine value into buffer search engine value.
+--- Passes through to buffer_search.resolve_engine.
+---@param val any Raw engine.search value
+---@return any engine_val Value suitable for buffer_search.resolve_engine
+function M.to_buffer_search_val(val)
+  local kind, normalized = M.resolve(val)
+  if kind == "disabled" then
+    return nil
+  end
+  if kind == "auto" then
+    return true
+  end
+  if kind == "command" then
+    return normalized
+  end
+  -- For opts/function, pass through the original value
+  return val
+end
+
 return M

@@ -58,11 +58,21 @@ T["parse_dimension()"]["returns total for unrecognized input"] = function()
 end
 
 T["parse_dimension()"]["handles function returning number"] = function()
-  expect.equality(renderer_util.parse_dimension(function() return 42 end, 100), 42)
+  expect.equality(
+    renderer_util.parse_dimension(function()
+      return 42
+    end, 100),
+    42
+  )
 end
 
 T["parse_dimension()"]["handles function returning percentage string"] = function()
-  expect.equality(renderer_util.parse_dimension(function() return "50%" end, 200), 100)
+  expect.equality(
+    renderer_util.parse_dimension(function()
+      return "50%"
+    end, 200),
+    100
+  )
 end
 
 T["parse_dimension()"]["passes ctx to function"] = function()
@@ -87,8 +97,12 @@ T["calculate_width()"]["nil max_width uses full available"] = function()
 end
 
 T["calculate_width()"]["accepts function values"] = function()
-  local max_fn = function() return 50 end
-  local min_fn = function() return 20 end
+  local max_fn = function()
+    return 50
+  end
+  local min_fn = function()
+    return 20
+  end
   expect.equality(renderer_util.calculate_width(max_fn, min_fn, 100), 50)
 end
 
@@ -187,7 +201,11 @@ end
 
 T["get_popup_geometry()"]["returns stored geometry with visible=true"] = function()
   renderer_util._last_popup_geometry = {
-    row = 5, col = 10, width = 40, height = 12, border = "rounded",
+    row = 5,
+    col = 10,
+    width = 40,
+    height = 12,
+    border = "rounded",
   }
   local g = renderer_util.get_popup_geometry()
   expect.equality(g.visible, true)
@@ -203,8 +221,16 @@ end
 T["create_base_state()"] = new_set()
 
 T["create_base_state()"]["auto-wraps list of highlighters into chain highlighter"] = function()
-  local h1 = { highlight = function() return {} end }
-  local h2 = { highlight = function() return { { 0, 1, "hl" } } end }
+  local h1 = {
+    highlight = function()
+      return {}
+    end,
+  }
+  local h2 = {
+    highlight = function()
+      return { { 0, 1, "hl" } }
+    end,
+  }
   local state = renderer_util.create_base_state({ highlighter = { h1, h2 } })
   -- The wrapped highlighter should have a .highlight method
   expect.equality(type(state.highlighter.highlight), "function")
@@ -214,7 +240,11 @@ T["create_base_state()"]["auto-wraps list of highlighters into chain highlighter
 end
 
 T["create_base_state()"]["passes single highlighter through unchanged"] = function()
-  local h = { highlight = function() return { { 0, 2, "hl" } } end }
+  local h = {
+    highlight = function()
+      return { { 0, 2, "hl" } }
+    end,
+  }
   local state = renderer_util.create_base_state({ highlighter = h })
   expect.equality(state.highlighter, h)
 end

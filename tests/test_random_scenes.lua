@@ -4,7 +4,8 @@ local expect = MiniTest.expect
 
 local T = new_set()
 
-local script_dir = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":h:h") .. "/scripts/screenshots"
+local script_dir = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":h:h")
+  .. "/scripts/screenshots"
 local configs = dofile(script_dir .. "/configs.lua")
 
 -- Seed for reproducibility in tests
@@ -22,10 +23,17 @@ local valid_pipelines = {
   ["shell_fuzzy"] = true,
   ["substitute"] = true,
   ["cmdline_file_finder"] = true,
+  ["search_engine_fast"] = true,
+  ["search_fuzzy_engine_fast"] = true,
+  ["substitute_engine_fast"] = true,
 }
 
 local valid_renderers_prefix = {
-  "theme:", "wildmenu", "border_theme", "palette", "mux",
+  "theme:",
+  "wildmenu",
+  "border_theme",
+  "palette",
+  "mux",
 }
 
 local valid_left_components = {

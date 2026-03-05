@@ -6,10 +6,16 @@ local T = new_set()
 
 local hooks = require("wildest.hooks")
 
-T["on/fire"] = new_set({ hooks = {
-  pre_case = function() hooks.clear() end,
-  post_case = function() hooks.clear() end,
-} })
+T["on/fire"] = new_set({
+  hooks = {
+    pre_case = function()
+      hooks.clear()
+    end,
+    post_case = function()
+      hooks.clear()
+    end,
+  },
+})
 
 T["on/fire"]["fires registered listener"] = function()
   local called = {}
@@ -22,8 +28,12 @@ end
 
 T["on/fire"]["fires multiple listeners in order"] = function()
   local order = {}
-  hooks.on("enter", function() table.insert(order, 1) end)
-  hooks.on("enter", function() table.insert(order, 2) end)
+  hooks.on("enter", function()
+    table.insert(order, 1)
+  end)
+  hooks.on("enter", function()
+    table.insert(order, 2)
+  end)
   hooks.fire("enter", ":")
   expect.equality(order, { 1, 2 })
 end
@@ -31,8 +41,12 @@ end
 T["on/fire"]["different events are independent"] = function()
   local enter_called = false
   local leave_called = false
-  hooks.on("enter", function() enter_called = true end)
-  hooks.on("leave", function() leave_called = true end)
+  hooks.on("enter", function()
+    enter_called = true
+  end)
+  hooks.on("leave", function()
+    leave_called = true
+  end)
   hooks.fire("enter", ":")
   expect.equality(enter_called, true)
   expect.equality(leave_called, false)
@@ -51,8 +65,12 @@ end
 
 T["on/fire"]["listener error does not break other listeners"] = function()
   local second_called = false
-  hooks.on("enter", function() error("boom") end)
-  hooks.on("enter", function() second_called = true end)
+  hooks.on("enter", function()
+    error("boom")
+  end)
+  hooks.on("enter", function()
+    second_called = true
+  end)
   hooks.fire("enter", ":")
   expect.equality(second_called, true)
 end
@@ -75,14 +93,22 @@ T["on/fire"]["no-op fire on unregistered event"] = function()
   hooks.fire("leave")
 end
 
-T["off"] = new_set({ hooks = {
-  pre_case = function() hooks.clear() end,
-  post_case = function() hooks.clear() end,
-} })
+T["off"] = new_set({
+  hooks = {
+    pre_case = function()
+      hooks.clear()
+    end,
+    post_case = function()
+      hooks.clear()
+    end,
+  },
+})
 
 T["off"]["removes a specific listener"] = function()
   local count = 0
-  local fn = function() count = count + 1 end
+  local fn = function()
+    count = count + 1
+  end
   hooks.on("enter", fn)
   hooks.fire("enter", ":")
   expect.equality(count, 1)
@@ -94,8 +120,12 @@ end
 T["off"]["only removes the exact function reference"] = function()
   local a_count = 0
   local b_count = 0
-  local fn_a = function() a_count = a_count + 1 end
-  local fn_b = function() b_count = b_count + 1 end
+  local fn_a = function()
+    a_count = a_count + 1
+  end
+  local fn_b = function()
+    b_count = b_count + 1
+  end
   hooks.on("enter", fn_a)
   hooks.on("enter", fn_b)
   hooks.off("enter", fn_a)
@@ -105,26 +135,38 @@ T["off"]["only removes the exact function reference"] = function()
 end
 
 T["clear"] = new_set({ hooks = {
-  post_case = function() hooks.clear() end,
+  post_case = function()
+    hooks.clear()
+  end,
 } })
 
 T["clear"]["removes all listeners"] = function()
   local called = false
-  hooks.on("enter", function() called = true end)
+  hooks.on("enter", function()
+    called = true
+  end)
   hooks.clear()
   hooks.fire("enter", ":")
   expect.equality(called, false)
 end
 
-T["init.lua API"] = new_set({ hooks = {
-  pre_case = function() hooks.clear() end,
-  post_case = function() hooks.clear() end,
-} })
+T["init.lua API"] = new_set({
+  hooks = {
+    pre_case = function()
+      hooks.clear()
+    end,
+    post_case = function()
+      hooks.clear()
+    end,
+  },
+})
 
 T["init.lua API"]["wildest.on/off work"] = function()
   local wildest = require("wildest")
   local count = 0
-  local fn = function() count = count + 1 end
+  local fn = function()
+    count = count + 1
+  end
   wildest.on("enter", fn)
   hooks.fire("enter", ":")
   expect.equality(count, 1)
@@ -133,10 +175,16 @@ T["init.lua API"]["wildest.on/off work"] = function()
   expect.equality(count, 1)
 end
 
-T["pipeline hooks"] = new_set({ hooks = {
-  pre_case = function() hooks.clear() end,
-  post_case = function() hooks.clear() end,
-} })
+T["pipeline hooks"] = new_set({
+  hooks = {
+    pre_case = function()
+      hooks.clear()
+    end,
+    post_case = function()
+      hooks.clear()
+    end,
+  },
+})
 
 T["pipeline hooks"]["results hook receives ctx and result"] = function()
   local captured = {}
@@ -160,10 +208,16 @@ T["pipeline hooks"]["error hook receives ctx and err"] = function()
   expect.equality(captured.err, "timeout")
 end
 
-T["selection hooks"] = new_set({ hooks = {
-  pre_case = function() hooks.clear() end,
-  post_case = function() hooks.clear() end,
-} })
+T["selection hooks"] = new_set({
+  hooks = {
+    pre_case = function()
+      hooks.clear()
+    end,
+    post_case = function()
+      hooks.clear()
+    end,
+  },
+})
 
 T["selection hooks"]["select hook receives ctx, candidate, index"] = function()
   local captured = {}
@@ -193,7 +247,9 @@ T["selection hooks"]["all seven events are valid"] = function()
   local events = { "enter", "leave", "draw", "results", "error", "select", "accept" }
   for _, event in ipairs(events) do
     local called = false
-    hooks.on(event, function() called = true end)
+    hooks.on(event, function()
+      called = true
+    end)
     hooks.fire(event)
     expect.equality(called, true)
     hooks.clear()

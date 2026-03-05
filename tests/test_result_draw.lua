@@ -69,7 +69,11 @@ T["result draw"]["draw receives correct data context"] = function()
 end
 
 T["result draw"]["empty candidates returns false regardless of draw"] = function()
-  local step = result_mod.result({ draw = function() return "x" end })
+  local step = result_mod.result({
+    draw = function()
+      return "x"
+    end,
+  })
   local ctx = { input = "test" }
   local result = step(ctx, {})
   expect.equality(result, false)
