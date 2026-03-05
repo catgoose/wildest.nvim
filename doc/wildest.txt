@@ -42,6 +42,15 @@ M.setup({opts})                                                  *wildest.setup*
                                                              *wildest-pipelines*
 PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP
 
+wildest.EngineOpts                                          *wildest.EngineOpts*
+
+    Fields: ~
+        {files?}   (boolean|string[]|table|function)  Enable async file finder. true=auto, string[]=custom command, table=full opts, function=dynamic command.
+        {shell?}   (boolean|string[]|table|function)  Enable exec cache. true=auto, string[]=custom command, table=opts, function=returns executable list.
+        {help?}    (boolean|string[]|table|function)  Enable help cache. true=auto, string[]=custom command, table=opts, function=returns tag list.
+        {search?}  (boolean|string|string[])          Enable external search engine for / ? and :s/:g. true/"fast"=auto rg/grep, "rg"/"grep"=specific, string[]=custom command.
+
+
 M.branch({...})                                                 *wildest.branch*
     Branch pipeline — tries each sub-pipeline until one succeeds.
 
@@ -96,7 +105,7 @@ M.cmdline_pipeline({opts?})                           *wildest.cmdline_pipeline*
     Cmdline pipeline — completes commands, files, buffers, help tags, etc.
 
     Parameters: ~
-        {opts?}  (wildest.CmdlinePipelineOpts)  { fuzzy?: boolean, fuzzy_filter?: function, sort_buffers_lastused?: boolean, before_cursor?: boolean }
+        {opts?}  (wildest.CmdlinePipelineOpts)  { fuzzy?: boolean, fuzzy_filter?: function, sort_buffers_lastused?: boolean, before_cursor?: boolean, file_finder?: boolean|table, engine?: "fast"|"vim"|wildest.EngineOpts }
 
     Returns: ~
         (wildest.PipelineStep[])  pipeline
@@ -106,7 +115,7 @@ M.search_pipeline({opts?})                             *wildest.search_pipeline*
     Search pipeline — completes search patterns from buffer lines and history.
 
     Parameters: ~
-        {opts?}  (table)  { max_results?: integer, fuzzy?: boolean, fuzzy_filter?: function }
+        {opts?}  (table)  { max_results?: integer, fuzzy?: boolean, fuzzy_filter?: function, engine?: "fast"|"vim"|string|string[] }
 
     Returns: ~
         (wildest.PipelineStep[])  pipeline
@@ -247,7 +256,7 @@ M.help_pipeline({opts?})                                 *wildest.help_pipeline*
     Help tag completion pipeline.
 
     Parameters: ~
-        {opts?}  (table)
+        {opts?}  (table)  { fuzzy?: boolean, max_results?: integer, help_cache?: boolean, engine?: "fast"|"vim"|wildest.EngineOpts }
 
     Returns: ~
         (wildest.PipelineStep[])  pipeline
@@ -257,7 +266,7 @@ M.shell_pipeline({opts?})                               *wildest.shell_pipeline*
     Shell command pipeline — history, executables, file args, env vars.
 
     Parameters: ~
-        {opts?}  (wildest.ShellPipelineOpts)
+        {opts?}  (wildest.ShellPipelineOpts)  Options including engine?: "fast"|"vim"|wildest.EngineOpts
 
     Returns: ~
         (wildest.PipelineStep[])  pipeline
@@ -267,7 +276,7 @@ M.substitute_pipeline({opts?})                     *wildest.substitute_pipeline*
     Substitute/global pipeline — shows matching buffer lines for :s/ and :g/ commands.
 
     Parameters: ~
-        {opts?}  (table)  { max_results?: integer, fuzzy?: boolean, fuzzy_filter?: function }
+        {opts?}  (table)  { max_results?: integer, fuzzy?: boolean, fuzzy_filter?: function, engine?: "fast"|"vim"|string|string[] }
 
     Returns: ~
         (wildest.PipelineStep[])  pipeline
@@ -649,6 +658,23 @@ M.project_root({markers?})                                *wildest.project_root*
 
 M.clear_project_root_cache()                  *wildest.clear_project_root_cache*
     Clear the project root detection cache.
+
+
+M.preload_exec_cache()                              *wildest.preload_exec_cache*
+    Preload the shell executable cache for faster :! completion.
+    Call this from setup or an early autocommand to warm the cache.
+
+
+M.clear_exec_cache()                                  *wildest.clear_exec_cache*
+    Clear the shell executable cache (e.g., after installing new programs).
+
+
+M.preload_help_cache()                              *wildest.preload_help_cache*
+    Preload help tags cache for faster :help completion.
+
+
+M.clear_help_cache()                                  *wildest.clear_help_cache*
+    Clear the help tags cache.
 
 
 M.frecency_scorer({opts?})                             *wildest.frecency_scorer*
