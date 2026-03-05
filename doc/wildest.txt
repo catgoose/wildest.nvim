@@ -289,6 +289,7 @@ wildest.PopupmenuOpts                                    *wildest.PopupmenuOpts*
         {min_height?}                      (integer|string|fun(ctx:any):integer|string)      Minimum visible lines (default 0)
         {max_width?}                       (integer|string|fun(ctx:any):integer|string|nil)  Maximum width (nil = full editor width)
         {min_width?}                       (integer|string|fun(ctx:any):integer|string)      Minimum width (default 16)
+        {columns?}                         (integer)                                         Number of columns for grid layout (default 1)
         {reverse?}                         (boolean)                                         Reverse candidate order (default false)
         {fixed_height?}                    (boolean)                                         Pad to max_height to prevent resizing (default false)
         {empty_message?}                   (string|nil)                                      Message shown when there are no results
@@ -312,6 +313,7 @@ wildest.PopupmenuBorderOpts                        *wildest.PopupmenuBorderOpts*
         {min_height?}                      (integer|string|fun(ctx:any):integer|string)      Minimum visible lines (default 0)
         {max_width?}                       (integer|string|fun(ctx:any):integer|string|nil)  Max width (nil = full width)
         {min_width?}                       (integer|string|fun(ctx:any):integer|string)      Minimum width (default 16)
+        {columns?}                         (integer)                                         Number of columns for grid layout (default 1)
         {reverse?}                         (boolean)                                         Reverse candidate order (default false)
         {fixed_height?}                    (boolean)                                         Pad to max_height to prevent resizing (default false)
         {position?}                        (string)                                          Vertical placement: "top", "center", or "bottom" (default "bottom")
