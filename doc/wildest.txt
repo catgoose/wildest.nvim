@@ -577,6 +577,16 @@ M.popupmenu_kind_icon({opts?})                     *wildest.popupmenu_kind_icon*
         (wildest.Component)
 
 
+M.popupmenu_cmdline_icon({opts?})               *wildest.popupmenu_cmdline_icon*
+    Cmdline context icon component — shows an icon based on the current command type.
+
+    Parameters: ~
+        {opts?}  (table)  { icons?: table<string,string>, hl?: string|table<string,string> }
+
+    Returns: ~
+        (wildest.Component)
+
+
 M.empty_message({msg}, {hl?})                            *wildest.empty_message*
     Static empty message component.
 
