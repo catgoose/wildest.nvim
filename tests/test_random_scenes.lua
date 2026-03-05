@@ -18,6 +18,7 @@ local valid_pipelines = {
   ["lua"] = true,
   ["help_fuzzy"] = true,
   ["history"] = true,
+  ["history_prefix"] = true,
   ["shell_fuzzy"] = true,
   ["substitute"] = true,
 }

@@ -286,6 +286,12 @@ M.configs = {
     pipeline = { "substitute", "cmdline_fuzzy" },
   },
 
+  history_prefix_pipeline = {
+    category = "pipeline",
+    label = "History (Prefix)",
+    pipeline = { "history_prefix", "cmdline_fuzzy" },
+  },
+
   -- Layout configs (statusline / offset variations)
   laststatus_0 = {
     category = "layout",
@@ -1023,7 +1029,7 @@ M.feature_names = {
   "kind_icons", "prefix_highlighter", "scrollbar", "pumblend", "chain_highlighter",
   "scrollbar_collapse",
 }
-M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline" }
+M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline", "history_prefix_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
 M.border_names = { "border_rounded", "border_single", "border_double", "border_solid", "border_title" }
 M.wildmenu_variant_names = { "wildmenu_dot", "wildmenu_reverse", "wildmenu_minimal", "wildmenu_pipe", "wildmenu_arrows_index", "wildmenu_compact", "wildmenu_powerline" }
@@ -1154,6 +1160,7 @@ function M.random_scene(label)
     { "lua", "cmdline_fuzzy", "search" },
     { "help_fuzzy", "cmdline_fuzzy", "search_fuzzy" },
     { "history", "cmdline_fuzzy", "search" },
+    { "history_prefix", "cmdline_fuzzy", "search" },
     { "shell_fuzzy", "cmdline_fuzzy", "search" },
     { "substitute", "cmdline_fuzzy", "search" },
     { "substitute", "cmdline_fuzzy", "search_fuzzy" },
@@ -1758,6 +1765,7 @@ function M.scene_to_description(cfg)
       if p == "lua" then add("lua pipeline") end
       if p == "help_fuzzy" then add("help pipeline") end
       if p == "history" then add("history pipeline") end
+      if p == "history_prefix" then add("history prefix pipeline") end
       if p == "shell" or p == "shell_fuzzy" then add("shell pipeline") end
       if p == "substitute" then add("substitute pipeline") end
       if p == "search_fuzzy" then add("fuzzy search") end
@@ -1838,6 +1846,8 @@ local function resolve_pipeline(list, w)
       table.insert(branches, w.help_pipeline({ fuzzy = true }))
     elseif name == "history" then
       table.insert(branches, w.history_pipeline())
+    elseif name == "history_prefix" then
+      table.insert(branches, w.history_pipeline({ prefix = true }))
     elseif name == "shell" then
       table.insert(branches, w.shell_pipeline())
     elseif name == "shell_fuzzy" then

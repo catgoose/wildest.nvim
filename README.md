@@ -260,7 +260,12 @@ drive - input goes in one end, completions come out the other.
 <tr>
 <td align="center"><strong>Shell Commands</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/shell_pipeline.png" width="400"></td>
 <td align="center"><strong>Substitute</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/substitute_pipeline.png" width="400"></td>
+<td align="center"><strong>History (Prefix)</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/history_prefix_pipeline.png" width="400"></td>
+</tr>
+<tr>
 <td align="center"><strong>Search</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/search.png" width="400"></td>
+<td></td>
+<td></td>
 </tr>
 </table>
 <!-- gen:pipeline_gallery:end -->
@@ -271,7 +276,7 @@ drive - input goes in one end, completions come out the other.
 | `cmdline_pipeline()`     | Command names, args, files, options - the whole ranch |
 | `search_pipeline()`      | Buffer search for `/` and `?` modes                   |
 | `file_finder_pipeline()` | Async file finding via `fd`, `rg`, or `find`          |
-| `history_pipeline()`     | Command and search history                            |
+| `history_pipeline()`     | Command and search history (substring or prefix match) |
 | `lua_pipeline()`         | Lua expression completion for `:lua` and `:=`         |
 | `help_pipeline()`        | Help tags with fuzzy matching                         |
 | `shell_pipeline()`       | Shell history, executables, file args, env vars for `:!` |
@@ -545,6 +550,26 @@ w.branch(
 
 Shell history is auto-detected from `vim.o.shell` — bash, zsh, and fish are
 supported. The history file is read once per cmdline session and cached.
+
+### History Pipeline
+
+The `history_pipeline()` completes from command and search history. By default
+it uses substring matching, but `prefix = true` restricts matches to entries
+that start with the current input — like Vim's built-in `<Up>` key filtering:
+
+```lua
+-- Substring match (default) — typing "set" matches "set wrap" and "reset"
+w.history_pipeline()
+
+-- Prefix match — typing "set" only matches "set wrap", not "reset"
+w.history_pipeline({ prefix = true })
+```
+
+| Option    | Type    | Default | Description                           |
+| --------- | ------- | ------- | ------------------------------------- |
+| `max`     | integer | `100`   | Maximum number of history entries     |
+| `cmdtype` | string  | auto    | Force history type (`":"`, `"/"`)     |
+| `prefix`  | boolean | `false` | Match only entries starting with input |
 
 ## Brandin' Iron (Renderers)
 

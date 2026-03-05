@@ -364,7 +364,7 @@ end
 ---@divider Domain Pipelines
 
 ---History completion pipeline (command and search history).
----@param opts? table
+---@param opts? table { max?: integer, cmdtype?: string, prefix?: boolean }
 ---@return wildest.PipelineStep[] pipeline
 function M.history_pipeline(opts)
   return { require("wildest.pipeline.history").history(opts) }
