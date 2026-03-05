@@ -718,6 +718,15 @@ M.clear_theme_cache()                                *wildest.clear_theme_cache*
     Clear all compiled theme bytecode caches.
 
 
+                                                                 *wildest-hooks*
+HHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHHH
+
+M.on()                                                              *wildest.on*
+
+
+M.off()                                                            *wildest.off*
+
+
 AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 
 M.register_action({name}, {fn})                        *wildest.register_action*
