@@ -8,6 +8,7 @@
 local config = require("wildest.config")
 local debounce_mod = require("wildest.pipeline.debounce")
 local file_finder = require("wildest.file_finder")
+local ghost_text = require("wildest.ghost_text")
 local hooks = require("wildest.hooks")
 local log = require("wildest.log")
 local pipeline_mod = require("wildest.pipeline")
@@ -154,6 +155,7 @@ function M.stop()
   file_finder.cancel()
 
   require("wildest.preview").hide()
+  ghost_text.hide()
 
   local cfg = config.get()
   if cfg.renderer then
@@ -455,6 +457,7 @@ function M.draw()
       log.log("state", "draw_hidden")
       pcall(cfg.renderer.hide, cfg.renderer)
       require("wildest.preview").hide()
+      ghost_text.hide()
       return
     end
 
@@ -468,6 +471,7 @@ function M.draw()
       -- to show an empty_message or hide itself.
       log.log("state", "draw_empty")
       preview.hide()
+      ghost_text.hide()
       local ok, err = pcall(cfg.renderer.render, cfg.renderer, ctx, result)
       if not ok then
         log.log("state", "draw_render_error", { err = tostring(err) })
@@ -529,6 +533,10 @@ function M.draw()
 
       log.log("state", "draw_render_ok")
       hooks.fire("draw", ctx, result)
+      if cfg.ghost_text then
+        local gt_opts = type(cfg.ghost_text) == "table" and cfg.ghost_text or {}
+        ghost_text.update(ctx, result, gt_opts)
+      end
       vim.cmd.redraw()
       apply_incsearch_fix_if_needed()
     end

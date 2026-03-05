@@ -1,0 +1,1 @@
+/home/jtye/git/nvim-colorizer.lua

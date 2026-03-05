@@ -259,6 +259,20 @@ M.configs = {
     highlighter = "chain",
   },
 
+  ghost_text = {
+    category = "feature",
+    label = "Ghost Text",
+    ghost_text = true,
+    noselect = true,
+  },
+
+  ghost_text_custom = {
+    category = "feature",
+    label = "Ghost Text (custom)",
+    ghost_text = { hl_group = "WildestAccent" },
+    noselect = true,
+  },
+
   columns_3 = {
     category = "feature",
     label = "Columns (3)",
@@ -1065,7 +1079,7 @@ M.feature_names = {
   "devicons", "fuzzy", "gradient", "search", "fuzzy_search", "renderer_mux",
   "kind_icons", "cmdline_icon", "cmdline_icon_help", "prefix_highlighter",
   "scrollbar", "pumblend", "chain_highlighter", "scrollbar_collapse",
-  "columns_3", "columns_4",
+  "columns_3", "columns_4", "ghost_text", "ghost_text_custom",
 }
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline", "history_prefix_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
@@ -1283,6 +1297,9 @@ function M.random_scene(label)
   end
   if math.random(6) == 1 then
     scene.columns = pick({ 2, 3, 4 })
+  end
+  if math.random(6) == 1 then
+    scene.ghost_text = pick({ true, { hl_group = "WildestAccent" } })
   end
   if math.random(6) == 1 then
     scene.hooks = pick({ "enter", "leave", "draw", "enter+leave", "enter+draw", "results", "select", "select+accept" })
@@ -1525,6 +1542,7 @@ local function setup_block_lines(cfg, add)
     "max_height", "min_height", "max_width", "min_width", "fixed_height",
     "columns",
     "noselect", "reverse", "pumblend", "offset",
+    "ghost_text",
     "empty_message",
     "highlights", "gradient_colors",
   }
@@ -1729,6 +1747,7 @@ function M.scene_to_description(cfg)
   if merged.min_height then add("min_height=" .. merged.min_height) end
   if merged.fixed_height == false then add("fixed_height=false") end
   if merged.columns and merged.columns > 1 then add("columns=" .. merged.columns) end
+  if merged.ghost_text then add("ghost_text") end
   if merged.empty_message then add("empty_message") end
   if merged.empty_message_first_draw_delay then add("empty_delay=" .. merged.empty_message_first_draw_delay .. "ms") end
   if merged.ellipsis then add("ellipsis") end
@@ -2143,6 +2162,9 @@ function M.build(name_or_cfg, w)
   end
   if merged.actions then
     setup_opts.actions = merged.actions
+  end
+  if merged.ghost_text then
+    setup_opts.ghost_text = merged.ghost_text
   end
 
   -- Collect vim option overrides to return to the caller.

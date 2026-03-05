@@ -266,6 +266,159 @@ T["BasePopupmenu"]["render_candidates skipped when show_empty in popupmenu"] = f
   expect.equality(ok, false)
 end
 
+T["BasePopupmenu"]["paginate accounts for columns in page size"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal" },
+      page = { -1, -1 },
+      columns = 3,
+      win = -1,
+    },
+  }, { __index = BasePopupmenu })
+
+  -- With 3 columns and max_height=4, effective page size should be 12
+  local ctx = { selected = 0, session_id = 1 }
+  local ps, pe, show_empty = renderer:paginate(ctx, 20, 4)
+  expect.equality(show_empty, false)
+  -- page should span 12 items (4 rows * 3 cols)
+  expect.equality(pe - ps + 1, 12)
+end
+
+T["BasePopupmenu"]["paginate defaults to 1 column"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal" },
+      page = { -1, -1 },
+      -- no columns field
+      win = -1,
+    },
+  }, { __index = BasePopupmenu })
+
+  local ctx = { selected = 0, session_id = 1 }
+  local ps, pe, show_empty = renderer:paginate(ctx, 20, 4)
+  expect.equality(show_empty, false)
+  -- page should span 4 items (4 rows * 1 col)
+  expect.equality(pe - ps + 1, 4)
+end
+
+T["BasePopupmenu"]["render_one_candidate exists and returns line"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      left = {},
+      right = {},
+      highlighter = nil,
+      page = { 0, 1 },
+    },
+  }, { __index = BasePopupmenu })
+
+  local result = { value = { "hello", "world" }, data = {} }
+  local ctx = { selected = -1 }
+  local line, spans, base_hl = renderer:render_one_candidate(result, ctx, renderer._state, "", 0, 20)
+  expect.equality(type(line), "string")
+  expect.equality(type(spans), "table")
+  expect.equality(base_hl, "Normal")
+end
+
+T["BasePopupmenu"]["render_one_candidate marks selected"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      left = {},
+      right = {},
+      highlighter = nil,
+      page = { 0, 1 },
+    },
+  }, { __index = BasePopupmenu })
+
+  local result = { value = { "hello", "world" }, data = {} }
+  local ctx = { selected = 0 }
+  local _, _, base_hl = renderer:render_one_candidate(result, ctx, renderer._state, "", 0, 20)
+  expect.equality(base_hl, "Visual")
+end
+
+T["BasePopupmenu"]["render_candidates delegates to grid when columns > 1"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      left = {},
+      right = {},
+      highlighter = nil,
+      columns = 2,
+      page = { 0, 3 },
+    },
+  }, { __index = BasePopupmenu })
+
+  local result = { value = { "alpha", "beta", "gamma", "delta" }, data = {} }
+  local ctx = { selected = -1 }
+  local lines, hls = renderer:render_candidates(result, ctx, 0, 3, 40)
+  -- 4 candidates in 2 columns = 2 rows
+  expect.equality(#lines, 2)
+  expect.equality(#hls, 2)
+end
+
+T["BasePopupmenu"]["render_candidates_grid pads incomplete row"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      left = {},
+      right = {},
+      highlighter = nil,
+      columns = 3,
+      page = { 0, 4 },
+    },
+  }, { __index = BasePopupmenu })
+
+  -- 5 candidates in 3 columns = 2 rows (3 + 2, second row padded)
+  local result = { value = { "a", "b", "c", "d", "e" }, data = {} }
+  local ctx = { selected = -1 }
+  local lines, hls = renderer:render_candidates_grid(result, ctx, 0, 4, 30)
+  expect.equality(#lines, 2)
+  -- Each line should be 30 chars wide (padded to full width)
+  for _, line in ipairs(lines) do
+    expect.equality(vim.api.nvim_strwidth(line), 30)
+  end
+end
+
+T["BasePopupmenu"]["render_candidates_grid single candidate in grid"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      left = {},
+      right = {},
+      highlighter = nil,
+      columns = 3,
+      page = { 0, 0 },
+    },
+  }, { __index = BasePopupmenu })
+
+  local result = { value = { "only" }, data = {} }
+  local ctx = { selected = -1 }
+  local lines, hls = renderer:render_candidates_grid(result, ctx, 0, 0, 30)
+  expect.equality(#lines, 1)
+  expect.equality(vim.api.nvim_strwidth(lines[1]), 30)
+end
+
+T["BasePopupmenu"]["render_candidates_grid reverse order"] = function()
+  local renderer = setmetatable({
+    _state = {
+      highlights = { default = "Normal", selected = "Visual", accent = "Normal", selected_accent = "Visual" },
+      left = {},
+      right = {},
+      highlighter = nil,
+      columns = 2,
+      page = { 0, 3 },
+    },
+  }, { __index = BasePopupmenu })
+
+  local result = { value = { "first", "second", "third", "fourth" }, data = {} }
+  local ctx = { selected = -1 }
+  local lines_fwd, _ = renderer:render_candidates_grid(result, ctx, 0, 3, 40)
+  local lines_rev, _ = renderer:render_candidates_grid(result, ctx, 0, 3, 40, { reverse = true })
+  -- Reversed order should produce different first line
+  expect.no_equality(lines_fwd[1], lines_rev[1])
+end
+
 T["Renderer inheritance"] = new_set()
 
 T["Renderer inheritance"]["popupmenu has hide method from base"] = function()
@@ -274,6 +427,8 @@ T["Renderer inheritance"]["popupmenu has hide method from base"] = function()
   expect.equality(type(renderer.hide), "function")
   expect.equality(type(renderer.render), "function")
   expect.equality(type(renderer.render_candidates), "function")
+  expect.equality(type(renderer.render_one_candidate), "function")
+  expect.equality(type(renderer.render_candidates_grid), "function")
   expect.equality(type(renderer.pad_to_height), "function")
   expect.equality(type(renderer.clamp_height), "function")
   expect.equality(type(renderer.flush_buffer), "function")

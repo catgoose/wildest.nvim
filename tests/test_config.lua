@@ -22,6 +22,7 @@ T["setup()"]["returns defaults when called with no args"] = function()
   expect.equality(cfg.longest_prefix, false)
   expect.equality(cfg.pipeline_timeout, 0)
   expect.equality(cfg.skip_commands, {})
+  expect.equality(cfg.ghost_text, false)
   expect.equality(cfg.pipeline, nil)
   expect.equality(cfg.renderer, nil)
 end
@@ -66,6 +67,20 @@ T["get()"]["returns specific key value"] = function()
   config.setup({ trigger = "tab" })
   expect.equality(config.get("trigger"), "tab")
   expect.equality(config.get("modes"), { ":", "/", "?" })
+end
+
+T["get()"]["ghost_text boolean config"] = function()
+  local config = require("wildest.config")
+  config.setup({ ghost_text = true })
+  expect.equality(config.get("ghost_text"), true)
+end
+
+T["get()"]["ghost_text table config"] = function()
+  local config = require("wildest.config")
+  config.setup({ ghost_text = { hl_group = "Special" } })
+  local gt = config.get("ghost_text")
+  expect.equality(type(gt), "table")
+  expect.equality(gt.hl_group, "Special")
 end
 
 T["get()"]["returns nil for unknown keys"] = function()

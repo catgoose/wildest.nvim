@@ -32,6 +32,7 @@
 ---@field pipeline? wildest.PipelineStep|wildest.PipelineStep[] Pipeline steps or single pipeline step
 ---@field preview? wildest.PreviewConfig Preview window configuration
 ---@field layout? fun(geometry: table): table? Layout adjustment callback
+---@field ghost_text? boolean|wildest.GhostTextConfig Show top candidate as inline ghost text (default: false)
 ---@field auto_colorscheme? boolean Re-apply highlights on colorscheme change (default: true)
 ---@field renderer? wildest.Renderer Renderer instance
 
@@ -86,6 +87,7 @@ local defaults = {
   -- incsearch pattern after each redraw.
   apply_incsearch_fix = false,
 
+  ghost_text = false,
   pipeline = nil, -- must be set by user
   renderer = nil, -- must be set by user
 }

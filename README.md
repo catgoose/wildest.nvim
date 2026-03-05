@@ -81,6 +81,7 @@
   - [Kind Icons](#kind-icons)
   - [Cmdline Icon](#cmdline-icon)
   - [Grid Layout](#grid-layout)
+  - [Ghost Text](#ghost-text)
   - [Frecency](#frecency)
   - [Commands](#commands)
   - [Health Check](#health-check)
@@ -1118,6 +1119,34 @@ Set `columns` to `2`, `3`, or `4`. Selection highlighting applies per-cell.
 Left/right components render within each cell column, so keeping them minimal
 (or empty) works best with grid layouts.
 
+## Ghost Text
+
+![Ghost Text](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/ghost_text.png)
+
+Show the top completion candidate as dimmed inline text next to the cmdline cursor.
+The ghost text appears when no candidate is selected (`noselect = true`) and disappears
+when you start stepping through candidates:
+
+```lua
+w.setup({
+  ghost_text = true,
+  noselect = true, -- ghost text only shows when no item is selected
+  pipeline = w.cmdline_pipeline(),
+  renderer = w.popupmenu_border_theme({ border = "rounded" }),
+})
+
+-- Custom highlight group
+w.setup({
+  ghost_text = { hl_group = "WildestAccent" },
+  -- ...
+})
+```
+
+| Option     | Type                    | Default     | Description                           |
+| ---------- | ----------------------- | ----------- | ------------------------------------- |
+| `ghost_text` | boolean\|table\|false | `false`     | Enable ghost text preview             |
+| `hl_group` | string                  | `"Comment"` | Highlight group for the ghost text    |
+
 ## Frecency
 
 Frecency combines **frequency** (how often) and **recency** (how recently)
@@ -1212,6 +1241,7 @@ Checks for:
 | `auto_colorscheme` | `true`              | Re-apply highlights on `:colorscheme` change |
 | `preview`          | `nil`               | Preview window config (see Preview section)  |
 | `layout`           | `nil`               | Layout callback (see Layout section)         |
+| `ghost_text`       | `false`             | Show top candidate as inline ghost text      |
 | `pipeline`         | `nil`               | Your pipeline (required)                     |
 | `renderer`         | `nil`               | Your renderer (required)                     |
 
