@@ -79,6 +79,7 @@
     - [Extend Theme](#extend-theme)
     - [Compile](#compile)
   - [Kind Icons](#kind-icons)
+  - [Cmdline Icon](#cmdline-icon)
   - [Frecency](#frecency)
   - [Commands](#commands)
   - [Health Check](#health-check)
@@ -706,6 +707,7 @@ Decorate your popupmenu and wildmenu with components:
 | `popupmenu_devicons()`                   | File type icons (requires `nvim-web-devicons`)         |
 | `popupmenu_buffer_flags()`               | Buffer status flags (`+` modified, `-` readonly, etc.) |
 | `popupmenu_kind_icon()`                  | LSP-style kind/type icons next to candidates           |
+| `popupmenu_cmdline_icon()`               | Context icon based on command type (file, help, lua)   |
 | `popupmenu_empty_message_with_spinner()` | "Searching..." with animated spinner                   |
 | `popupmenu_zip_columns()`                | Merge two components side-by-side                      |
 | `empty_message()`                        | Custom message when no results                         |
@@ -909,6 +911,47 @@ w.popupmenu_kind_icon({
   end,
 })
 ```
+
+## Cmdline Icon
+
+![Cmdline Icon](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/cmdline_icon.png)
+
+Show a context-aware icon that changes based on the current command type.
+Inspired by noice.nvim's per-command-pattern styling — `:e` shows a file icon,
+`:help` shows a book, `:lua` shows a moon, `/` shows a magnifying glass:
+
+```lua
+w.popupmenu_renderer({
+  left = { " ", w.popupmenu_cmdline_icon(), w.popupmenu_devicons() },
+  right = { " ", w.popupmenu_scrollbar() },
+})
+
+-- Custom icons and per-key highlight groups
+w.popupmenu_cmdline_icon({
+  icons = { file = " ", help = "? ", lua = " " },
+  hl = {
+    file = "Directory",
+    help = "Special",
+    lua = "Number",
+    default = "WildestCmdlineIcon",
+  },
+})
+```
+
+| Key           | When it shows                          | Default |
+| ------------- | -------------------------------------- | ------- |
+| `file`        | `:e`, `:w`, file completions           | ` `    |
+| `dir`         | Directory completions                  | ` `    |
+| `buffer`      | `:b`, buffer completions               | ` `    |
+| `help`        | `:help` completions                    | `󰋖 `    |
+| `option`      | `:set` option completions              | ` `    |
+| `color`       | `:colorscheme` completions             | ` `    |
+| `lua`         | `:lua`, `:=` completions               | ` `    |
+| `search`      | `/` and `?` search mode                | ` `    |
+| `substitute`  | `:s/`, `:%s/`, `:g/` commands          | ` `    |
+| `shell`       | `:!` shell commands                    | ` `    |
+| `command`     | Command name completions               | ` `    |
+| `default`     | Fallback for unrecognized contexts     | ` `    |
 
 ## Frecency
 

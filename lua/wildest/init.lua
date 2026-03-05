@@ -627,6 +627,13 @@ function M.popupmenu_kind_icon(opts)
   return require("wildest.renderer.components.kind_icon").new(opts)
 end
 
+---Cmdline context icon component — shows an icon based on the current command type.
+---@param opts? table { icons?: table<string,string>, hl?: string|table<string,string> }
+---@return wildest.Component
+function M.popupmenu_cmdline_icon(opts)
+  return require("wildest.renderer.components.cmdline_icon").new(opts)
+end
+
 ---Static empty message component.
 ---@param msg string Message to display when there are no results
 ---@param hl? string Highlight group

@@ -31,6 +31,7 @@ local valid_left_components = {
   [" "] = true,
   ["devicons"] = true,
   ["kind_icon"] = true,
+  ["cmdline_icon"] = true,
   ["arrows"] = true,
 }
 

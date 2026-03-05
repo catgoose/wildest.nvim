@@ -216,6 +216,21 @@ M.configs = {
     left = { "kind_icon" },
   },
 
+  cmdline_icon = {
+    category = "feature",
+    label = "Cmdline Icon",
+    cmd = ":e lua/wildest/renderer/components/",
+    left = { "cmdline_icon" },
+  },
+
+  cmdline_icon_help = {
+    category = "feature",
+    label = "Cmdline Icon (Help)",
+    cmd = ":help nvim_b",
+    pipeline = { "help_fuzzy", "cmdline_fuzzy" },
+    left = { "cmdline_icon" },
+  },
+
   prefix_highlighter = {
     category = "feature",
     label = "Prefix Highlighter",
@@ -1026,8 +1041,8 @@ M.default_cmd = ":set fold"
 M.renderer_names = { "popupmenu", "popupmenu_border", "popupmenu_palette", "palette_prompt_bottom", "wildmenu" }
 M.feature_names = {
   "devicons", "fuzzy", "gradient", "search", "fuzzy_search", "renderer_mux",
-  "kind_icons", "prefix_highlighter", "scrollbar", "pumblend", "chain_highlighter",
-  "scrollbar_collapse",
+  "kind_icons", "cmdline_icon", "cmdline_icon_help", "prefix_highlighter",
+  "scrollbar", "pumblend", "chain_highlighter", "scrollbar_collapse",
 }
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline", "history_prefix_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
@@ -1169,7 +1184,9 @@ function M.random_scene(label)
     {},
     { "devicons" },
     { "kind_icon" },
+    { "cmdline_icon" },
     { "devicons", "kind_icon" },
+    { "cmdline_icon", "devicons" },
     { "buffer_flags" },
   }
   local rights = {
@@ -1693,7 +1710,7 @@ function M.scene_to_description(cfg)
   add(merged.highlighter or "fzy")
 
   local left = merged.left
-  local has_devicons, has_kind, has_buffer_flags = false, false, false
+  local has_devicons, has_kind, has_buffer_flags, has_cmdline_icon = false, false, false, false
   if type(left) == "string" then
     if left == "devicons" then has_devicons = true end
   elseif type(left) == "table" then
@@ -1701,10 +1718,12 @@ function M.scene_to_description(cfg)
       if item == "devicons" then has_devicons = true end
       if item == "kind_icon" then has_kind = true end
       if item == "buffer_flags" then has_buffer_flags = true end
+      if item == "cmdline_icon" then has_cmdline_icon = true end
     end
   end
   if has_devicons then add("devicons") end
   if has_kind then add("kind icons") end
+  if has_cmdline_icon then add("cmdline icon") end
   if has_buffer_flags then add("buffer flags") end
   if not has_devicons and M.defaults.left == "devicons"
     and renderer ~= "wildmenu" and renderer ~= "mux" then
@@ -1883,6 +1902,8 @@ local function resolve_component(name, w)
     return w.wildmenu_index()
   elseif name == "kind_icon" then
     return w.popupmenu_kind_icon()
+  elseif name == "cmdline_icon" then
+    return w.popupmenu_cmdline_icon()
   elseif name == "buffer_flags" then
     return w.popupmenu_buffer_flags()
   else
