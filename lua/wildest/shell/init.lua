@@ -76,6 +76,11 @@ function M.shell_pipeline(opts)
     elseif type(opts.engine) == "table" and opts.engine.shell then
       opts = vim.tbl_extend("force", {}, opts)
       opts.exec_cache = true
+      -- Configure exec_cache with custom command if provided
+      local ec_opts = require("wildest.engine").to_exec_cache_opts(opts.engine.shell)
+      if ec_opts and next(ec_opts) then
+        require("wildest.shell.exec_cache").configure(ec_opts)
+      end
     end
   end
 

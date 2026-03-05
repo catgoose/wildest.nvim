@@ -8,15 +8,44 @@ local M = {}
 local cached_tags = nil
 local cache_timestamp = 0
 local CACHE_TTL = 300 -- 5 minutes
+local custom_command = nil -- user-provided command override
 
---- Load all help tags synchronously.
+--- Load all help tags using Vim's built-in mechanism.
 ---@return string[]
-local function load_tags()
+local function load_tags_vim()
   local ok, tags = pcall(vim.fn.getcompletion, "", "help")
   if ok and tags then
     return tags
   end
   return {}
+end
+
+--- Load help tags using a custom command or function.
+---@return string[]
+local function load_tags_custom()
+  local cmd = custom_command
+  if type(cmd) == "function" then
+    local ok, result = pcall(cmd)
+    if ok and type(result) == "table" then
+      return result
+    end
+    return load_tags_vim()
+  end
+  -- Run command synchronously — expects one tag per line
+  local res = vim.system(cmd, { text = true }):wait()
+  if res.code == 0 and res.stdout then
+    return vim.split(res.stdout, "\n", { trimempty = true })
+  end
+  return load_tags_vim()
+end
+
+--- Load all help tags synchronously.
+---@return string[]
+local function load_tags()
+  if custom_command then
+    return load_tags_custom()
+  end
+  return load_tags_vim()
 end
 
 --- Get cached help tags, refreshing if stale.
@@ -49,6 +78,20 @@ function M.filter(prefix)
     end
   end
   return results
+end
+
+--- Configure the help cache with custom options.
+---@param opts? table { command?: string[]|function, ttl?: integer }
+function M.configure(opts)
+  opts = opts or {}
+  if opts.command ~= nil then
+    custom_command = opts.command
+  end
+  if opts.ttl then
+    CACHE_TTL = opts.ttl
+  end
+  cached_tags = nil
+  cache_timestamp = 0
 end
 
 --- Invalidate the cache.

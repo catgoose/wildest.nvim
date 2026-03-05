@@ -577,7 +577,8 @@ completions (commands, options, buffers, etc.) use the normal sync path.
 ### Engine Option
 
 Every pipeline that has a fast alternative accepts an `engine` option. Pass a
-string shortcut for sensible defaults or a table for granular control:
+string shortcut for sensible defaults, or a table for granular control — including
+custom commands and flags:
 
 ```lua
 -- String shortcut: enable all fast paths with defaults
@@ -588,25 +589,71 @@ w.help_pipeline({ fuzzy = true, engine = "fast" })     -- preloaded help tags fo
 -- Explicit vim mode (the default — no external tools)
 w.cmdline_pipeline({ fuzzy = true, engine = "vim" })
 
--- Table: granular per-type control
+-- Boolean per-type: enable with auto-detected defaults
+w.cmdline_pipeline({ engine = { files = true } })
+w.shell_pipeline({ engine = { shell = true } })
+w.help_pipeline({ engine = { help = true } })
+
+-- Command array: custom tool + flags
 w.cmdline_pipeline({
   fuzzy = true,
   engine = {
-    files = true,                          -- fd/rg for file completions
-    -- files = { max_results = 1000 },     -- ...with custom options
+    files = { "fd", "-tf", "--hidden", "--no-ignore", "--max-depth", "8" },
   },
 })
-w.shell_pipeline({ engine = { shell = true } })  -- just the exec cache
-w.help_pipeline({ engine = { help = true } })    -- just the help cache
+w.shell_pipeline({
+  engine = { shell = { "bash", "-c", "compgen -c" } },
+})
+
+-- Full options table (named keys)
+w.cmdline_pipeline({
+  engine = {
+    files = {
+      command = { "fd", "-tf", "--hidden" },
+      dir_command = { "fd", "-td", "--hidden" },
+      max_results = 2000,
+      cwd = "/projects",
+    },
+  },
+})
+
+-- Function: fully custom engine
+w.cmdline_pipeline({
+  engine = {
+    files = function(ctx, query)
+      return { "rg", "--files", "--glob", "*" .. query .. "*" }
+    end,
+  },
+})
+w.shell_pipeline({
+  engine = {
+    shell = function()
+      -- Return a list of executable names
+      return { "git", "npm", "cargo", "make" }
+    end,
+  },
+})
 ```
+
+Each engine value is polymorphic:
+
+| Value | Type | Meaning |
+| --- | --- | --- |
+| `true` | boolean | Auto-detect defaults |
+| `{ "fd", "-tf", ... }` | string[] | Custom command (one result per line) |
+| `{ command = ..., max_results = ... }` | table (named keys) | Full options passthrough |
+| `function(ctx, input)` | function | Custom engine function |
+| `false` / `nil` | — | Disabled (use Vim built-in) |
+
+Pipeline routing:
 
 | Value              | `cmdline_pipeline`         | `shell_pipeline`       | `help_pipeline`        |
 | ------------------ | -------------------------- | ---------------------- | ---------------------- |
 | `nil` / `"vim"`    | `getcompletion("file")`    | `getcompletion("shellcmd")` | `getcompletion("help")` |
 | `"fast"`           | Async fd/rg/find           | Cached `$PATH` scan    | Preloaded tag index    |
-| `{ files = true }` | Async fd/rg/find           | —                      | —                      |
-| `{ shell = true }` | —                          | Cached `$PATH` scan    | —                      |
-| `{ help = true }`  | —                          | —                      | Preloaded tag index    |
+| `{ files = ... }`  | Custom file finder         | —                      | —                      |
+| `{ shell = ... }`  | —                          | Custom exec source     | —                      |
+| `{ help = ... }`   | —                          | —                      | Custom tag source      |
 
 The legacy `file_finder`, `exec_cache`, and `help_cache` options still work and
 take precedence over `engine` when set explicitly.

@@ -207,6 +207,203 @@ T["engine option"]["shell engine table with shell=true enables exec_cache"] = fu
   expect.equality(type(pipeline), "table")
 end
 
+-- ── engine resolver ──────────────────────────────────────────────────
+
+T["engine resolver"] = new_set()
+
+local engine_mod = require("wildest.engine")
+
+T["engine resolver"]["resolve true returns auto"] = function()
+  local kind, val = engine_mod.resolve(true)
+  expect.equality(kind, "auto")
+  expect.equality(type(val), "table")
+end
+
+T["engine resolver"]["resolve false returns disabled"] = function()
+  local kind = engine_mod.resolve(false)
+  expect.equality(kind, "disabled")
+end
+
+T["engine resolver"]["resolve nil returns disabled"] = function()
+  local kind = engine_mod.resolve(nil)
+  expect.equality(kind, "disabled")
+end
+
+T["engine resolver"]["resolve string array returns command"] = function()
+  local kind, val = engine_mod.resolve({ "fd", "-tf", "--hidden" })
+  expect.equality(kind, "command")
+  expect.equality(val[1], "fd")
+  expect.equality(val[3], "--hidden")
+end
+
+T["engine resolver"]["resolve table with named keys returns opts"] = function()
+  local kind, val = engine_mod.resolve({ command = { "fd" }, max_results = 100 })
+  expect.equality(kind, "opts")
+  expect.equality(val.max_results, 100)
+end
+
+T["engine resolver"]["resolve function returns function"] = function()
+  local fn = function() end
+  local kind, val = engine_mod.resolve(fn)
+  expect.equality(kind, "function")
+  expect.equality(val, fn)
+end
+
+T["engine resolver"]["to_file_finder_opts true returns empty table"] = function()
+  local opts = engine_mod.to_file_finder_opts(true)
+  expect.equality(type(opts), "table")
+  expect.equality(next(opts), nil)
+end
+
+T["engine resolver"]["to_file_finder_opts command array maps to file_command"] = function()
+  local opts = engine_mod.to_file_finder_opts({ "fd", "-tf", "--hidden" })
+  expect.equality(type(opts), "table")
+  expect.equality(opts.file_command[1], "fd")
+  expect.equality(opts.file_command[3], "--hidden")
+end
+
+T["engine resolver"]["to_file_finder_opts function maps to file_command"] = function()
+  local fn = function() end
+  local opts = engine_mod.to_file_finder_opts(fn)
+  expect.equality(opts.file_command, fn)
+end
+
+T["engine resolver"]["to_file_finder_opts opts table passes through"] = function()
+  local opts = engine_mod.to_file_finder_opts({ max_results = 500, cwd = "/tmp" })
+  expect.equality(opts.max_results, 500)
+  expect.equality(opts.cwd, "/tmp")
+end
+
+T["engine resolver"]["to_exec_cache_opts command array maps to command"] = function()
+  local opts = engine_mod.to_exec_cache_opts({ "bash", "-c", "compgen -c" })
+  expect.equality(opts.command[1], "bash")
+end
+
+T["engine resolver"]["to_help_cache_opts function maps to command"] = function()
+  local fn = function() end
+  local opts = engine_mod.to_help_cache_opts(fn)
+  expect.equality(opts.command, fn)
+end
+
+-- ── engine custom commands ──────────────────────────────────────────
+
+T["engine custom commands"] = new_set()
+
+T["engine custom commands"]["cmdline engine files with command array creates branch"] = function()
+  local cmdline = require("wildest.cmdline")
+  local pipeline = cmdline.cmdline_pipeline({
+    engine = { files = { "fd", "-tf", "--hidden" } },
+  })
+  expect.equality(#pipeline, 1) -- branch
+  expect.equality(type(pipeline[1]), "function")
+end
+
+T["engine custom commands"]["cmdline engine files with function creates branch"] = function()
+  local cmdline = require("wildest.cmdline")
+  local pipeline = cmdline.cmdline_pipeline({
+    engine = {
+      files = function()
+        return { "echo", "test.lua" }
+      end,
+    },
+  })
+  expect.equality(#pipeline, 1)
+end
+
+T["engine custom commands"]["exec_cache configure accepts custom command"] = function()
+  local ec = require("wildest.shell.exec_cache")
+  ec.clear()
+  ec.configure({ command = { "echo", "mycmd" } })
+  local result = ec.get()
+  expect.equality(type(result), "table")
+  -- Should contain "mycmd" from echo output
+  local found = false
+  for _, name in ipairs(result) do
+    if name == "mycmd" then
+      found = true
+    end
+  end
+  expect.equality(found, true)
+  -- Clean up
+  ec.configure({ command = nil })
+  ec.clear()
+end
+
+T["engine custom commands"]["exec_cache configure accepts function"] = function()
+  local ec = require("wildest.shell.exec_cache")
+  ec.clear()
+  ec.configure({
+    command = function()
+      return { "alpha", "beta", "gamma" }
+    end,
+  })
+  local result = ec.get()
+  expect.equality(#result, 3)
+  expect.equality(result[1], "alpha")
+  expect.equality(result[2], "beta")
+  expect.equality(result[3], "gamma")
+  -- Clean up
+  ec.configure({ command = nil })
+  ec.clear()
+end
+
+T["engine custom commands"]["help_cache configure accepts custom command"] = function()
+  local hc = require("wildest.pipeline.help_cache")
+  hc.clear()
+  hc.configure({ command = { "echo", "custom-tag" } })
+  local result = hc.get()
+  expect.equality(type(result), "table")
+  local found = false
+  for _, tag in ipairs(result) do
+    if tag == "custom-tag" then
+      found = true
+    end
+  end
+  expect.equality(found, true)
+  -- Clean up
+  hc.configure({ command = nil })
+  hc.clear()
+end
+
+T["engine custom commands"]["help_cache configure accepts function"] = function()
+  local hc = require("wildest.pipeline.help_cache")
+  hc.clear()
+  hc.configure({
+    command = function()
+      return { "tag-one", "tag-two" }
+    end,
+  })
+  local result = hc.get()
+  expect.equality(#result, 2)
+  expect.equality(result[1], "tag-one")
+  -- Clean up
+  hc.configure({ command = nil })
+  hc.clear()
+end
+
+T["engine custom commands"]["shell engine with custom command builds pipeline"] = function()
+  local shell_mod = require("wildest.shell")
+  local pipeline = shell_mod.shell_pipeline({
+    engine = { shell = { "bash", "-c", "compgen -c" } },
+  })
+  expect.equality(type(pipeline), "table")
+  expect.equality(#pipeline >= 1, true)
+  -- Clean up exec_cache
+  require("wildest.shell.exec_cache").configure({ command = nil })
+  require("wildest.shell.exec_cache").clear()
+end
+
+T["engine custom commands"]["help engine with custom command builds pipeline"] = function()
+  local help_mod = require("wildest.pipeline.help")
+  local pipeline = help_mod.help_pipeline({
+    engine = { help = { "echo", "my-help-tag" } },
+  })
+  expect.equality(type(pipeline), "table")
+  -- Clean up help_cache
+  require("wildest.pipeline.help_cache").configure({ command = nil })
+  require("wildest.pipeline.help_cache").clear()
+end
+
 -- ── exec_cache ───────────────────────────────────────────────────────
 
 T["exec_cache"] = new_set()

@@ -9,6 +9,7 @@ local M = {}
 local cached_executables = nil
 local cache_timestamp = 0
 local CACHE_TTL = 60 -- seconds before re-scanning
+local custom_command = nil -- user-provided command override
 
 --- Scan $PATH synchronously and return a deduplicated, sorted list of executables.
 ---@return string[]
@@ -40,40 +41,109 @@ local function scan_path_sync()
   return results
 end
 
+--- Parse newline-delimited command output into a deduplicated sorted list.
+---@param stdout string
+---@return string[]
+local function parse_command_output(stdout)
+  local lines = vim.split(stdout, "\n", { trimempty = true })
+  local seen = {}
+  local results = {}
+  for _, name in ipairs(lines) do
+    if not seen[name] then
+      seen[name] = true
+      results[#results + 1] = name
+    end
+  end
+  table.sort(results)
+  return results
+end
+
+--- Run a command asynchronously and parse its output.
+---@param cmd string[] command to run
+---@param callback fun(executables: string[])
+---@param fallback fun(): string[] sync fallback if command fails
+local function run_command_async(cmd, callback, fallback)
+  vim.system(cmd, { text = true }, function(res)
+    vim.schedule(function()
+      if res.code == 0 and res.stdout then
+        callback(parse_command_output(res.stdout))
+      else
+        callback(fallback())
+      end
+    end)
+  end)
+end
+
 --- Scan $PATH asynchronously using vim.system (compgen -c or similar).
 ---@param callback fun(executables: string[])
 local function scan_path_async(callback)
+  -- Custom command takes priority
+  if custom_command then
+    local cmd = custom_command
+    if type(cmd) == "function" then
+      -- Function engine: call it to get result synchronously
+      vim.schedule(function()
+        local ok, result = pcall(cmd)
+        if ok and type(result) == "table" then
+          table.sort(result)
+          callback(result)
+        else
+          callback(scan_path_sync())
+        end
+      end)
+      return
+    end
+    run_command_async(cmd, callback, scan_path_sync)
+    return
+  end
+
   -- Use compgen for bash, or fall back to sync scan
   local shell = vim.env.SHELL or "/bin/sh"
   local is_bash = shell:find("bash") ~= nil
 
   if is_bash then
-    vim.system({ "bash", "-c", "compgen -c" }, { text = true }, function(res)
-      vim.schedule(function()
-        if res.code == 0 and res.stdout then
-          local lines = vim.split(res.stdout, "\n", { trimempty = true })
-          local seen = {}
-          local results = {}
-          for _, name in ipairs(lines) do
-            if not seen[name] then
-              seen[name] = true
-              results[#results + 1] = name
-            end
-          end
-          table.sort(results)
-          callback(results)
-        else
-          -- Fallback to sync scan
-          callback(scan_path_sync())
-        end
-      end)
-    end)
+    run_command_async({ "bash", "-c", "compgen -c" }, callback, scan_path_sync)
   else
     -- Non-bash: scan synchronously (still fast for most systems)
     vim.schedule(function()
       callback(scan_path_sync())
     end)
   end
+end
+
+--- Configure the exec cache with custom options.
+---@param opts? table { command?: string[]|function, ttl?: integer }
+function M.configure(opts)
+  opts = opts or {}
+  if opts.command ~= nil then
+    custom_command = opts.command
+  end
+  if opts.ttl then
+    CACHE_TTL = opts.ttl
+  end
+  -- Clear cache so next get() uses the new config
+  cached_executables = nil
+  cache_timestamp = 0
+end
+
+--- Run custom command synchronously for first-call initialization.
+---@return string[]
+local function scan_custom_sync()
+  local cmd = custom_command
+  if type(cmd) == "function" then
+    local ok, result = pcall(cmd)
+    if ok and type(result) == "table" then
+      table.sort(result)
+      return result
+    end
+    return scan_path_sync()
+  end
+  -- Run command synchronously
+  local res = vim.system(cmd, { text = true }):wait()
+  if res.code == 0 and res.stdout then
+    return parse_command_output(res.stdout)
+  end
+  return scan_path_sync()
 end
 
 --- Get cached executables, refreshing if stale.
@@ -87,7 +157,7 @@ function M.get()
 
   if not cached_executables then
     -- First call: sync scan so we have results immediately
-    cached_executables = scan_path_sync()
+    cached_executables = custom_command and scan_custom_sync() or scan_path_sync()
     cache_timestamp = now
     return cached_executables
   end

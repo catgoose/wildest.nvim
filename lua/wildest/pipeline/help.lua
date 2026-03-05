@@ -24,6 +24,11 @@ function M.help_pipeline(opts)
       use_cache = true
     elseif type(opts.engine) == "table" and opts.engine.help then
       use_cache = true
+      -- Configure help_cache with custom command if provided
+      local hc_opts = require("wildest.engine").to_help_cache_opts(opts.engine.help)
+      if hc_opts and next(hc_opts) then
+        require("wildest.pipeline.help_cache").configure(hc_opts)
+      end
     end
   end
 

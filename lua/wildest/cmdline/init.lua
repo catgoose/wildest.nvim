@@ -12,23 +12,29 @@ local M = {}
 
 local E = commands.EXPAND
 
---- Resolve the file_finder setting from engine + legacy file_finder option.
+--- Resolve file_finder opts from engine + legacy file_finder option.
 ---@param opts table
----@return boolean|table|nil file_finder setting
+---@return table|nil file_finder_pipeline opts, or nil if disabled
 local function resolve_file_finder(opts)
   -- Legacy option takes precedence if set explicitly
   if opts.file_finder ~= nil then
-    return opts.file_finder
+    if not opts.file_finder then
+      return nil
+    end
+    if type(opts.file_finder) == "table" then
+      return opts.file_finder
+    end
+    return {} -- file_finder = true
   end
   local engine = opts.engine
   if engine == nil or engine == "vim" then
     return nil
   end
   if engine == "fast" then
-    return true
+    return {}
   end
-  if type(engine) == "table" then
-    return engine.files or nil
+  if type(engine) == "table" and engine.files then
+    return require("wildest.engine").to_file_finder_opts(engine.files)
   end
   return nil
 end
@@ -40,14 +46,13 @@ function M.cmdline_pipeline(opts)
   opts = opts or {}
 
   -- Resolve file_finder from engine or legacy option
-  local ff = resolve_file_finder(opts)
+  local ff_opts = resolve_file_finder(opts)
 
   -- When file_finder is enabled, use branch() so file/dir completions
   -- go through the async file_finder_pipeline (fd/rg/find) and everything
   -- else falls through to the normal sync path.
-  if ff then
+  if ff_opts then
     local branch_mod = require("wildest.pipeline.branch")
-    local ff_opts = type(ff) == "table" and ff or {}
     local file_finder = require("wildest.file_finder").file_finder_pipeline(ff_opts)
 
     -- Build the non-file-finder pipeline (same opts minus file_finder/engine)

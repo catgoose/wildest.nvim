@@ -232,9 +232,9 @@ end
 ---@divider Pipeline Constructors
 
 ---@class wildest.EngineOpts
----@field files? boolean|table Enable async file finder (fd/rg/find) for file/dir completions. Table passes opts to file_finder_pipeline.
----@field shell? boolean Enable $PATH executable cache for shell command completion.
----@field help? boolean Enable preloaded help tag cache for help completion.
+---@field files? boolean|string[]|table|function Enable async file finder. true=auto, string[]=custom command, table=full opts, function=dynamic command.
+---@field shell? boolean|string[]|table|function Enable exec cache. true=auto, string[]=custom command, table=opts, function=returns executable list.
+---@field help? boolean|string[]|table|function Enable help cache. true=auto, string[]=custom command, table=opts, function=returns tag list.
 
 ---Branch pipeline — tries each sub-pipeline until one succeeds.
 ---@param ... wildest.Pipeline[] Sub-pipelines to try in order
