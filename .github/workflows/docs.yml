@@ -24,6 +24,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           fetch-depth: 0
+          token: ${{ secrets.CI_PAT }}
       - name: Install lemmy-help
         run: |
           mkdir -p deps
@@ -46,6 +47,7 @@ jobs:
             exit 0
           fi
           git commit -m "docs: auto-generate vimdoc"
+          git pull --rebase origin main
           git push
 
   html-docs:

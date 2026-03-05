@@ -22,6 +22,7 @@ jobs:
       - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5
         with:
           fetch-depth: 0
+          token: ${{ secrets.CI_PAT }}
 
       - uses: JohnnyMorganz/stylua-action@479972f01e665acfcba96ada452c36608bdbbb5e
         with:
@@ -42,6 +43,7 @@ jobs:
             exit 0
           fi
           git commit -m "style: auto-format with StyLua"
+          git pull --rebase origin main
           git push
 
   test:
