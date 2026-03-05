@@ -750,6 +750,36 @@ function M.clear_theme_cache()
   require("wildest.themes").clear_cache()
 end
 
+---@tag wildest-hooks
+---@divider Hooks
+
+---Register a listener for a lifecycle event.
+---
+---Available events:
+---  - "enter": fired on CmdlineEnter when wildest activates. Args: (cmdtype: string)
+---  - "leave": fired on CmdlineLeave before cleanup. Args: none
+---  - "draw":  fired after the renderer draws. Args: (ctx: table, result: table)
+---
+---Example:
+--->lua
+---local wildest = require('wildest')
+---wildest.on('enter', function(cmdtype)
+---  vim.print('Wildest activated for ' .. cmdtype)
+---end)
+---<
+---@param event string Event name
+---@param fn fun(...) Callback function
+function M.on(event, fn)
+  require("wildest.hooks").on(event, fn)
+end
+
+---Remove a previously registered listener.
+---@param event string Event name
+---@param fn fun(...) The same function reference passed to on()
+function M.off(event, fn)
+  require("wildest.hooks").off(event, fn)
+end
+
 ---@divider Actions
 
 ---Register a named action for use in the actions config.

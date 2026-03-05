@@ -8,6 +8,7 @@
 local config = require("wildest.config")
 local debounce_mod = require("wildest.pipeline.debounce")
 local file_finder = require("wildest.file_finder")
+local hooks = require("wildest.hooks")
 local log = require("wildest.log")
 local pipeline_mod = require("wildest.pipeline")
 
@@ -118,6 +119,8 @@ function M.start(cmdtype)
   state.triggered = (cfg.trigger ~= "tab")
   log.log("state", "start_done", { session_id = state.session_id, triggered = state.triggered })
 
+  hooks.fire("enter", cmdtype)
+
   if state.triggered and cfg.min_input == 0 then
     M.run_pipeline("")
   end
@@ -129,6 +132,8 @@ function M.stop()
   if not state.active then
     return
   end
+
+  hooks.fire("leave")
 
   state.active = false
   reset_session_fields()
@@ -466,6 +471,7 @@ function M.draw()
         log.log("state", "draw_render_error", { err = tostring(err) })
       else
         log.log("state", "draw_render_ok")
+        hooks.fire("draw", ctx, result)
         vim.cmd.redraw()
         apply_incsearch_fix_if_needed()
       end
@@ -520,6 +526,7 @@ function M.draw()
       end
 
       log.log("state", "draw_render_ok")
+      hooks.fire("draw", ctx, result)
       vim.cmd.redraw()
       apply_incsearch_fix_if_needed()
     end
