@@ -1360,6 +1360,7 @@ local showdown_action_cycle = {
   "send_to_quickfix",
   "send_to_loclist",
   "toggle_preview",
+  "redirect_output",
   "search_accept",
 }
 
@@ -1427,6 +1428,7 @@ function M.showdown_scenes(n)
       ["<C-q>"] = "send_to_quickfix",
       ["<C-l>"] = "send_to_loclist",
       ["<C-p>"] = "toggle_preview",
+      ["<C-r>"] = "redirect_output",
     }
 
     -- Copy plan metadata

@@ -1147,19 +1147,21 @@ w.setup({
     ["<C-l>"] = "send_to_loclist",
     ["<C-y>"] = "yank",
     ["<C-p>"] = "toggle_preview",
+    ["<C-r>"] = "redirect_output",
   },
 })
 ```
 
-| Action             | Description                                |
-| ------------------ | ------------------------------------------ |
-| `open_split`       | Open candidate in a horizontal split       |
-| `open_vsplit`      | Open candidate in a vertical split         |
-| `open_tab`         | Open candidate in a new tab                |
-| `send_to_quickfix` | Send all candidates to the quickfix list   |
-| `send_to_loclist`  | Send all candidates to the location list   |
-| `yank`             | Yank the selected candidate to `"` and `+` |
-| `toggle_preview`   | Toggle the preview window on/off           |
+| Action              | Description                                          |
+| ------------------- | ---------------------------------------------------- |
+| `open_split`        | Open candidate in a horizontal split                 |
+| `open_vsplit`       | Open candidate in a vertical split                   |
+| `open_tab`          | Open candidate in a new tab                          |
+| `send_to_quickfix`  | Send all candidates to the quickfix list             |
+| `send_to_loclist`   | Send all candidates to the location list             |
+| `yank`              | Yank the selected candidate to `"` and `+`           |
+| `toggle_preview`    | Toggle the preview window on/off                     |
+| `redirect_output`   | Execute command, show output in a scratch split      |
 
 Register custom actions:
 

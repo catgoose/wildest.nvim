@@ -355,6 +355,7 @@ local showdown_action_keys = {
   send_to_quickfix = { key = "Ctrl+Q" },
   send_to_loclist  = { key = "Ctrl+L" },
   toggle_preview   = { key = "Ctrl+P" },
+  redirect_output  = { key = "Ctrl+R" },
   search_accept    = { key = "Enter" },
 }
 

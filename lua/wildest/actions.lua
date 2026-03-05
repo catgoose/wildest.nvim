@@ -253,4 +253,36 @@ M.register("toggle_preview", function(_)
   require("wildest.state").draw()
 end)
 
+M.register("redirect_output", function(ctx)
+  local cmdline = ctx.input or ""
+  if ctx.candidate then
+    -- Build the full command with the selected candidate substituted in
+    local data = ctx.data or {}
+    local result = ctx.result
+    if result and result.output then
+      cmdline = result.output(data, ctx.candidate)
+    else
+      cmdline = ctx.candidate
+    end
+  end
+  if cmdline == "" then
+    return
+  end
+  leave_cmdline_and_run(function()
+    local output = vim.api.nvim_exec2(cmdline, { output = true })
+    local text = output.output or ""
+    if text == "" then
+      vim.notify("[wildest] No output", vim.log.levels.INFO)
+      return
+    end
+    vim.cmd("new")
+    local lines = vim.split(text, "\n")
+    vim.api.nvim_buf_set_lines(0, 0, -1, false, lines)
+    vim.bo.buftype = "nofile"
+    vim.bo.bufhidden = "wipe"
+    vim.bo.swapfile = false
+    vim.bo.modifiable = false
+  end)
+end)
+
 return M

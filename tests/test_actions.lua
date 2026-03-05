@@ -78,6 +78,7 @@ T["list()"]["contains all built-in actions"] = function()
     "send_to_loclist",
     "yank",
     "toggle_preview",
+    "redirect_output",
   }
   for _, b in ipairs(builtins) do
     expect.equality(set[b], true)
@@ -86,7 +87,7 @@ end
 
 T["built-in actions"] = new_set()
 
-T["built-in actions"]["all 7 are registered and resolvable"] = function()
+T["built-in actions"]["all 8 are registered and resolvable"] = function()
   local actions = require("wildest.actions")
   local builtins = {
     "open_split",
@@ -96,6 +97,7 @@ T["built-in actions"]["all 7 are registered and resolvable"] = function()
     "send_to_loclist",
     "yank",
     "toggle_preview",
+    "redirect_output",
   }
   for _, name in ipairs(builtins) do
     local fn = actions.resolve(name)
