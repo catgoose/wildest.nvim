@@ -227,7 +227,7 @@ M.history_pipeline({opts?})                           *wildest.history_pipeline*
     History completion pipeline (command and search history).
 
     Parameters: ~
-        {opts?}  (table)
+        {opts?}  (table)  { max?: integer, cmdtype?: string, prefix?: boolean }
 
     Returns: ~
         (wildest.PipelineStep[])  pipeline
