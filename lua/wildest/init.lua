@@ -756,9 +756,13 @@ end
 ---Register a listener for a lifecycle event.
 ---
 ---Available events:
----  - "enter": fired on CmdlineEnter when wildest activates. Args: (cmdtype: string)
----  - "leave": fired on CmdlineLeave before cleanup. Args: none
----  - "draw":  fired after the renderer draws. Args: (ctx: table, result: table)
+---  - "enter":   fired on CmdlineEnter when wildest activates. Args: (cmdtype: string)
+---  - "leave":   fired on CmdlineLeave before cleanup. Args: none
+---  - "draw":    fired after the renderer draws. Args: (ctx: table, result: table)
+---  - "results": fired when pipeline finishes with candidates. Args: (ctx: table, result: table)
+---  - "error":   fired when pipeline errors. Args: (ctx: table, err: any)
+---  - "select":  fired when a candidate is selected. Args: (ctx: table, candidate: any, index: integer)
+---  - "accept":  fired when a completion is accepted. Args: (ctx: table, candidate: any)
 ---
 ---Example:
 --->lua

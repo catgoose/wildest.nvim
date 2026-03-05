@@ -11,11 +11,10 @@ local valid_events = {
   enter = true,
   leave = true,
   draw = true,
-  -- Future:
-  -- results = true,
-  -- error = true,
-  -- select = true,
-  -- accept = true,
+  results = true,
+  error = true,
+  select = true,
+  accept = true,
 }
 
 --- Register a listener for an event.

@@ -1235,7 +1235,7 @@ function M.random_scene(label)
     scene.fixed_height = pick({ true, false })
   end
   if math.random(6) == 1 then
-    scene.hooks = pick({ "enter", "leave", "draw", "enter+leave", "enter+draw" })
+    scene.hooks = pick({ "enter", "leave", "draw", "enter+leave", "enter+draw", "results", "select", "select+accept" })
   end
   if recipe == "theme" then
     scene.renderer = "theme:" .. pick(M._random_themes)
@@ -1547,6 +1547,21 @@ local function setup_block_lines(cfg, add)
     if hook_str:find("draw") then
       add("w.on('draw', function(ctx, result)")
       add("  -- ctx.selected, result.value")
+      add("end)")
+    end
+    if hook_str:find("results") then
+      add("w.on('results', function(ctx, result)")
+      add("  -- result.value contains candidates")
+      add("end)")
+    end
+    if hook_str:find("select") then
+      add("w.on('select', function(ctx, candidate, index)")
+      add("  -- candidate selected at index")
+      add("end)")
+    end
+    if hook_str:find("accept") then
+      add("w.on('accept', function(ctx, candidate)")
+      add("  -- completion accepted")
       add("end)")
     end
   end

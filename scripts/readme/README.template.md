@@ -1174,11 +1174,15 @@ w.on('draw', function(ctx, result)
 end)
 ```
 
-| Event   | Args               | When                                      |
-| ------- | ------------------ | ----------------------------------------- |
-| `enter` | `(cmdtype: string)` | CmdlineEnter, after wildest activates     |
-| `leave` | *(none)*           | CmdlineLeave, before cleanup              |
-| `draw`  | `(ctx, result)`    | After each successful renderer draw       |
+| Event     | Args                          | When                                      |
+| --------- | ----------------------------- | ----------------------------------------- |
+| `enter`   | `(cmdtype: string)`           | CmdlineEnter, after wildest activates     |
+| `leave`   | *(none)*                      | CmdlineLeave, before cleanup              |
+| `draw`    | `(ctx, result)`               | After each successful renderer draw       |
+| `results` | `(ctx, result)`               | Pipeline finishes with candidates         |
+| `error`   | `(ctx, err)`                  | Pipeline errors                           |
+| `select`  | `(ctx, candidate, index)`     | Candidate selected via step/scroll        |
+| `accept`  | `(ctx, candidate)`            | Completion accepted                       |
 
 Remove a listener with `w.off(event, fn)` — pass the same function reference:
 

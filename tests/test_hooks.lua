@@ -133,4 +133,71 @@ T["init.lua API"]["wildest.on/off work"] = function()
   expect.equality(count, 1)
 end
 
+T["pipeline hooks"] = new_set({ hooks = {
+  pre_case = function() hooks.clear() end,
+  post_case = function() hooks.clear() end,
+} })
+
+T["pipeline hooks"]["results hook receives ctx and result"] = function()
+  local captured = {}
+  hooks.on("results", function(ctx, result)
+    captured.ctx = ctx
+    captured.result = result
+  end)
+  hooks.fire("results", { run_id = 1 }, { value = { "a", "b" } })
+  expect.equality(captured.ctx.run_id, 1)
+  expect.equality(#captured.result.value, 2)
+end
+
+T["pipeline hooks"]["error hook receives ctx and err"] = function()
+  local captured = {}
+  hooks.on("error", function(ctx, err)
+    captured.ctx = ctx
+    captured.err = err
+  end)
+  hooks.fire("error", { run_id = 2 }, "timeout")
+  expect.equality(captured.ctx.run_id, 2)
+  expect.equality(captured.err, "timeout")
+end
+
+T["selection hooks"] = new_set({ hooks = {
+  pre_case = function() hooks.clear() end,
+  post_case = function() hooks.clear() end,
+} })
+
+T["selection hooks"]["select hook receives ctx, candidate, index"] = function()
+  local captured = {}
+  hooks.on("select", function(ctx, candidate, index)
+    captured.ctx = ctx
+    captured.candidate = candidate
+    captured.index = index
+  end)
+  hooks.fire("select", { cmdtype = ":" }, "test_file.lua", 3)
+  expect.equality(captured.ctx.cmdtype, ":")
+  expect.equality(captured.candidate, "test_file.lua")
+  expect.equality(captured.index, 3)
+end
+
+T["selection hooks"]["accept hook receives ctx and candidate"] = function()
+  local captured = {}
+  hooks.on("accept", function(ctx, candidate)
+    captured.ctx = ctx
+    captured.candidate = candidate
+  end)
+  hooks.fire("accept", { cmdtype = ":" }, "chosen.lua")
+  expect.equality(captured.ctx.cmdtype, ":")
+  expect.equality(captured.candidate, "chosen.lua")
+end
+
+T["selection hooks"]["all seven events are valid"] = function()
+  local events = { "enter", "leave", "draw", "results", "error", "select", "accept" }
+  for _, event in ipairs(events) do
+    local called = false
+    hooks.on(event, function() called = true end)
+    hooks.fire(event)
+    expect.equality(called, true)
+    hooks.clear()
+  end
+end
+
 return T

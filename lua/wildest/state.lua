@@ -361,6 +361,7 @@ function M.on_finish(ctx, result)
   end
 
   log.log("state", "on_finish_draw", { num_candidates = state.result and #state.result.value or 0 })
+  hooks.fire("results", ctx, state.result)
   M.draw()
 end
 
@@ -382,6 +383,7 @@ function M.on_error(ctx, err)
   state.result = nil
   state.error = err
   state.hidden = false
+  hooks.fire("error", ctx, err)
   M.draw()
 end
 
@@ -624,6 +626,7 @@ function M.step(n)
       state.replaced_cmdline = candidate
       M.feedkeys_cmdline(candidate)
     end
+    hooks.fire("select", { cmdtype = state.cmdtype, input = state.previous_cmdline }, candidate, state.selected)
   end
 
   M.draw()
@@ -670,6 +673,7 @@ function M.scroll(n)
     state.replaced_cmdline = candidate
     M.feedkeys_cmdline(candidate)
   end
+  hooks.fire("select", { cmdtype = state.cmdtype, input = state.previous_cmdline }, candidate, state.selected)
 
   M.draw()
 end
@@ -689,6 +693,9 @@ function M.accept_completion()
   if state.selected == -1 then
     return
   end
+
+  local candidate = state.result and state.result.value[state.selected + 1]
+  hooks.fire("accept", { cmdtype = state.cmdtype, input = state.previous_cmdline }, candidate)
 
   state.previous_cmdline = vim.fn.getcmdline()
   state.replaced_cmdline = nil
