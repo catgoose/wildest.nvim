@@ -1234,6 +1234,9 @@ function M.random_scene(label)
   if math.random(4) == 1 then
     scene.fixed_height = pick({ true, false })
   end
+  if math.random(6) == 1 then
+    scene.hooks = pick({ "enter", "leave", "draw", "enter+leave", "enter+draw", "results", "select", "select+accept" })
+  end
   if recipe == "theme" then
     scene.renderer = "theme:" .. pick(M._random_themes)
     scene.left = pick(lefts)
@@ -1526,6 +1529,42 @@ local function setup_block_lines(cfg, add)
   end
 
   add("})")
+
+  -- Hook examples (shown as API calls after setup)
+  if cfg.hooks then
+    add("")
+    local hook_str = cfg.hooks
+    if hook_str:find("enter") then
+      add("w.on('enter', function(cmdtype)")
+      add("  vim.o.statusline = ' wildest [' .. cmdtype .. '] '")
+      add("end)")
+    end
+    if hook_str:find("leave") then
+      add("w.on('leave', function()")
+      add("  vim.o.statusline = ' %f %m%= '")
+      add("end)")
+    end
+    if hook_str:find("draw") then
+      add("w.on('draw', function(ctx, result)")
+      add("  -- ctx.selected, result.value")
+      add("end)")
+    end
+    if hook_str:find("results") then
+      add("w.on('results', function(ctx, result)")
+      add("  -- result.value contains candidates")
+      add("end)")
+    end
+    if hook_str:find("select") then
+      add("w.on('select', function(ctx, candidate, index)")
+      add("  -- candidate selected at index")
+      add("end)")
+    end
+    if hook_str:find("accept") then
+      add("w.on('accept', function(ctx, candidate)")
+      add("  -- completion accepted")
+      add("end)")
+    end
+  end
 end
 
 -- Sample Lua code appended to screenshot buffers so search-mode
@@ -1741,6 +1780,10 @@ function M.scene_to_description(cfg)
       desc = desc .. " gap=" .. (type(p.gap) == "number" and p.gap or "table")
     end
     add(desc)
+  end
+
+  if merged.hooks then
+    add("hooks=" .. merged.hooks)
   end
 
   if merged.action then add("action: " .. merged.action) end

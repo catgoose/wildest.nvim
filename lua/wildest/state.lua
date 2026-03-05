@@ -8,6 +8,7 @@
 local config = require("wildest.config")
 local debounce_mod = require("wildest.pipeline.debounce")
 local file_finder = require("wildest.file_finder")
+local hooks = require("wildest.hooks")
 local log = require("wildest.log")
 local pipeline_mod = require("wildest.pipeline")
 
@@ -118,6 +119,8 @@ function M.start(cmdtype)
   state.triggered = (cfg.trigger ~= "tab")
   log.log("state", "start_done", { session_id = state.session_id, triggered = state.triggered })
 
+  hooks.fire("enter", cmdtype)
+
   if state.triggered and cfg.min_input == 0 then
     M.run_pipeline("")
   end
@@ -129,6 +132,8 @@ function M.stop()
   if not state.active then
     return
   end
+
+  hooks.fire("leave")
 
   state.active = false
   reset_session_fields()
@@ -356,6 +361,7 @@ function M.on_finish(ctx, result)
   end
 
   log.log("state", "on_finish_draw", { num_candidates = state.result and #state.result.value or 0 })
+  hooks.fire("results", ctx, state.result)
   M.draw()
 end
 
@@ -377,6 +383,7 @@ function M.on_error(ctx, err)
   state.result = nil
   state.error = err
   state.hidden = false
+  hooks.fire("error", ctx, err)
   M.draw()
 end
 
@@ -466,6 +473,7 @@ function M.draw()
         log.log("state", "draw_render_error", { err = tostring(err) })
       else
         log.log("state", "draw_render_ok")
+        hooks.fire("draw", ctx, result)
         vim.cmd.redraw()
         apply_incsearch_fix_if_needed()
       end
@@ -520,6 +528,7 @@ function M.draw()
       end
 
       log.log("state", "draw_render_ok")
+      hooks.fire("draw", ctx, result)
       vim.cmd.redraw()
       apply_incsearch_fix_if_needed()
     end
@@ -617,6 +626,7 @@ function M.step(n)
       state.replaced_cmdline = candidate
       M.feedkeys_cmdline(candidate)
     end
+    hooks.fire("select", { cmdtype = state.cmdtype, input = state.previous_cmdline }, candidate, state.selected)
   end
 
   M.draw()
@@ -663,6 +673,7 @@ function M.scroll(n)
     state.replaced_cmdline = candidate
     M.feedkeys_cmdline(candidate)
   end
+  hooks.fire("select", { cmdtype = state.cmdtype, input = state.previous_cmdline }, candidate, state.selected)
 
   M.draw()
 end
@@ -682,6 +693,9 @@ function M.accept_completion()
   if state.selected == -1 then
     return
   end
+
+  local candidate = state.result and state.result.value[state.selected + 1]
+  hooks.fire("accept", { cmdtype = state.cmdtype, input = state.previous_cmdline }, candidate)
 
   state.previous_cmdline = vim.fn.getcmdline()
   state.replaced_cmdline = nil

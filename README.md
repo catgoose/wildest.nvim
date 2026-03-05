@@ -85,6 +85,7 @@
   - [Settin' the Rules (Config Options)](#settin-the-rules-config-options)
   - [Preview](#preview)
   - [Actions](#actions)
+  - [Hooks](#hooks)
   - [Utilities](#utilities)
     - [Project Root](#project-root)
     - [Highlight Utilities](#highlight-utilities)
@@ -1331,6 +1332,48 @@ w.register_action("my_action", function(ctx)
   -- ctx.candidate, ctx.candidates, ctx.selected, ctx.data, ctx.cmdtype
   vim.notify("Selected: " .. (ctx.candidate or "none"))
 end)
+```
+
+## Hooks
+
+Register callbacks for lifecycle events — set up state when the cmdline opens,
+tear it down when it closes, or react after every draw:
+
+```lua
+local w = require('wildest')
+
+-- Fired when wildest activates on CmdlineEnter
+w.on('enter', function(cmdtype)
+  vim.o.statusline = ' wildest [' .. cmdtype .. '] '
+end)
+
+-- Fired on CmdlineLeave before cleanup
+w.on('leave', function()
+  vim.o.statusline = ' %f %m%= '
+end)
+
+-- Fired after every renderer draw
+w.on('draw', function(ctx, result)
+  -- ctx.selected, ctx.cmdtype, result.value, etc.
+end)
+```
+
+| Event     | Args                          | When                                      |
+| --------- | ----------------------------- | ----------------------------------------- |
+| `enter`   | `(cmdtype: string)`           | CmdlineEnter, after wildest activates     |
+| `leave`   | *(none)*                      | CmdlineLeave, before cleanup              |
+| `draw`    | `(ctx, result)`               | After each successful renderer draw       |
+| `results` | `(ctx, result)`               | Pipeline finishes with candidates         |
+| `error`   | `(ctx, err)`                  | Pipeline errors                           |
+| `select`  | `(ctx, candidate, index)`     | Candidate selected via step/scroll        |
+| `accept`  | `(ctx, candidate)`            | Completion accepted                       |
+
+Remove a listener with `w.off(event, fn)` — pass the same function reference:
+
+```lua
+local my_hook = function(cmdtype) print(cmdtype) end
+w.on('enter', my_hook)
+w.off('enter', my_hook)  -- unregistered
 ```
 
 ## Utilities
