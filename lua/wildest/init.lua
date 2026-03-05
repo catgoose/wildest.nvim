@@ -636,6 +636,14 @@ function M.popupmenu_cmdline_icon(opts)
   return require("wildest.renderer.components.cmdline_icon").new(opts)
 end
 
+---Documentation hints chrome component — shows a one-line doc for the selected candidate.
+---Use in the `bottom` array of a popupmenu renderer.
+---@param opts? table { hl?: string, prefix?: string }
+---@return function chrome_component
+function M.popupmenu_docs(opts)
+  return require("wildest.renderer.components.docs").new(opts)
+end
+
 ---Static empty message component.
 ---@param msg string Message to display when there are no results
 ---@param hl? string Highlight group

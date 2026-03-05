@@ -82,6 +82,7 @@
   - [Cmdline Icon](#cmdline-icon)
   - [Grid Layout](#grid-layout)
   - [Ghost Text](#ghost-text)
+  - [Documentation Hints](#documentation-hints)
   - [Frecency](#frecency)
   - [Commands](#commands)
   - [Health Check](#health-check)
@@ -742,6 +743,7 @@ Decorate your popupmenu and wildmenu with components:
 | `popupmenu_buffer_flags()`               | Buffer status flags (`+` modified, `-` readonly, etc.) |
 | `popupmenu_kind_icon()`                  | LSP-style kind/type icons next to candidates           |
 | `popupmenu_cmdline_icon()`               | Context icon based on command type (file, help, lua)   |
+| `popupmenu_docs()`                       | Documentation hint for selected candidate (bottom)     |
 | `popupmenu_empty_message_with_spinner()` | "Searching..." with animated spinner                   |
 | `popupmenu_zip_columns()`                | Merge two components side-by-side                      |
 | `empty_message()`                        | Custom message when no results                         |
@@ -1146,6 +1148,40 @@ w.setup({
 | ---------- | ----------------------- | ----------- | ------------------------------------- |
 | `ghost_text` | boolean\|table\|false | `false`     | Enable ghost text preview             |
 | `hl_group` | string                  | `"Comment"` | Highlight group for the ghost text    |
+
+## Documentation Hints
+
+![Docs Hints](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/docs_hints.png)
+
+Show a one-line documentation hint for the selected completion candidate.
+Extracts info from Neovim's help system, option metadata, command definitions,
+and highlight group properties:
+
+```lua
+w.popupmenu_border_theme({
+  border = "rounded",
+  noselect = false, -- docs show for the selected item
+  bottom = { w.popupmenu_docs() },
+  highlighter = w.fzy_highlighter(),
+})
+```
+
+The hint adapts to the completion context:
+
+| Context       | What it shows                                         |
+| ------------- | ----------------------------------------------------- |
+| `:set` option | Option type, scope, default value + help description  |
+| `:help` tag   | First line of the help entry                          |
+| Command name  | Command synopsis from `:help :command`                |
+| Highlight     | Current colors, bold/italic, or link target           |
+| Event         | First line of the autocmd event help                  |
+
+```lua
+w.popupmenu_docs({
+  hl = "Special",   -- highlight group (default: "WildestDocs" -> Comment)
+  prefix = " 󰋖 ",   -- prefix before the hint text (default: " ")
+})
+```
 
 ## Frecency
 

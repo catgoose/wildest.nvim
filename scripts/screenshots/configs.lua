@@ -273,6 +273,27 @@ M.configs = {
     noselect = true,
   },
 
+  docs_hints = {
+    category = "feature",
+    label = "Docs Hints",
+    cmd = ":set fold",
+    renderer = "border_theme",
+    border = "rounded",
+    noselect = false,
+    bottom = { "docs" },
+  },
+
+  docs_hints_help = {
+    category = "feature",
+    label = "Docs Hints (help)",
+    cmd = ":help auto",
+    pipeline = { "help_fuzzy" },
+    renderer = "border_theme",
+    border = "rounded",
+    noselect = false,
+    bottom = { "docs" },
+  },
+
   columns_3 = {
     category = "feature",
     label = "Columns (3)",
@@ -1080,6 +1101,7 @@ M.feature_names = {
   "kind_icons", "cmdline_icon", "cmdline_icon_help", "prefix_highlighter",
   "scrollbar", "pumblend", "chain_highlighter", "scrollbar_collapse",
   "columns_3", "columns_4", "ghost_text", "ghost_text_custom",
+  "docs_hints", "docs_hints_help",
 }
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline", "history_prefix_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
@@ -1300,6 +1322,9 @@ function M.random_scene(label)
   end
   if math.random(6) == 1 then
     scene.ghost_text = pick({ true, { hl_group = "WildestAccent" } })
+  end
+  if math.random(6) == 1 then
+    scene.bottom = { "docs" }
   end
   if math.random(6) == 1 then
     scene.hooks = pick({ "enter", "leave", "draw", "enter+leave", "enter+draw", "results", "select", "select+accept" })
@@ -1752,7 +1777,15 @@ function M.scene_to_description(cfg)
   if merged.empty_message_first_draw_delay then add("empty_delay=" .. merged.empty_message_first_draw_delay .. "ms") end
   if merged.ellipsis then add("ellipsis") end
   if merged.top and #merged.top > 0 then add("top") end
-  if merged.bottom and #merged.bottom > 0 then add("bottom") end
+  if merged.bottom and #merged.bottom > 0 then
+    local has_docs = false
+    for _, b in ipairs(merged.bottom) do
+      if b == "docs" then
+        has_docs = true
+      end
+    end
+    add(has_docs and "docs" or "bottom")
+  end
 
   add(merged.highlighter or "fzy")
 
@@ -1953,6 +1986,8 @@ local function resolve_component(name, w)
     return w.popupmenu_cmdline_icon()
   elseif name == "buffer_flags" then
     return w.popupmenu_buffer_flags()
+  elseif name == "docs" then
+    return w.popupmenu_docs()
   else
     return name
   end
@@ -2068,10 +2103,10 @@ local function build_renderer_opts(cfg, w)
     opts.fixed_height = cfg.fixed_height
   end
   if cfg.top then
-    opts.top = cfg.top
+    opts.top = resolve_components(cfg.top, w)
   end
   if cfg.bottom then
-    opts.bottom = cfg.bottom
+    opts.bottom = resolve_components(cfg.bottom, w)
   end
   return opts
 end
