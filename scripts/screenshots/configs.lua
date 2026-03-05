@@ -294,6 +294,25 @@ M.configs = {
     bottom = { "docs" },
   },
 
+  file_finder = {
+    category = "feature",
+    label = "File Finder",
+    cmd = ":e lua/wild",
+    pipeline = { "cmdline_file_finder" },
+    renderer = "border_theme",
+    border = "rounded",
+  },
+
+  file_finder_devicons = {
+    category = "feature",
+    label = "File Finder (devicons)",
+    cmd = ":e lua/wild",
+    pipeline = { "cmdline_file_finder" },
+    renderer = "border_theme",
+    border = "rounded",
+    left = { "devicons" },
+  },
+
   columns_3 = {
     category = "feature",
     label = "Columns (3)",
@@ -1102,6 +1121,7 @@ M.feature_names = {
   "scrollbar", "pumblend", "chain_highlighter", "scrollbar_collapse",
   "columns_3", "columns_4", "ghost_text", "ghost_text_custom",
   "docs_hints", "docs_hints_help",
+  "file_finder", "file_finder_devicons",
 }
 M.pipeline_names = { "lua_pipeline", "help_pipeline", "history_pipeline", "shell_pipeline", "substitute_pipeline", "history_prefix_pipeline" }
 M.highlight_names = { "hl_neon", "hl_ember", "hl_ocean" }
@@ -1238,6 +1258,8 @@ function M.random_scene(label)
     { "shell_fuzzy", "cmdline_fuzzy", "search" },
     { "substitute", "cmdline_fuzzy", "search" },
     { "substitute", "cmdline_fuzzy", "search_fuzzy" },
+    { "cmdline_file_finder", "search" },
+    { "cmdline_file_finder", "search_fuzzy" },
   }
   local lefts = {
     {},
@@ -1773,6 +1795,7 @@ function M.scene_to_description(cfg)
   if merged.fixed_height == false then add("fixed_height=false") end
   if merged.columns and merged.columns > 1 then add("columns=" .. merged.columns) end
   if merged.ghost_text then add("ghost_text") end
+  if merged.file_finder then add("file_finder") end
   if merged.empty_message then add("empty_message") end
   if merged.empty_message_first_draw_delay then add("empty_delay=" .. merged.empty_message_first_draw_delay .. "ms") end
   if merged.ellipsis then add("ellipsis") end
@@ -1959,6 +1982,14 @@ local function resolve_pipeline(list, w)
       table.insert(branches, w.cmdline_pipeline({ fuzzy = true, before_cursor = true }))
     elseif name == "cmdline_buffers_lastused" then
       table.insert(branches, w.cmdline_pipeline({ fuzzy = true, sort_buffers_lastused = true }))
+    elseif name == "cmdline_file_finder" then
+      table.insert(branches, w.cmdline_pipeline({ fuzzy = true, engine = "fast" }))
+    elseif name == "cmdline_engine_fast" then
+      table.insert(branches, w.cmdline_pipeline({ fuzzy = true, engine = "fast" }))
+    elseif name == "help_cache" or name == "help_engine_fast" then
+      table.insert(branches, w.help_pipeline({ fuzzy = true, engine = "fast" }))
+    elseif name == "shell_exec_cache" or name == "shell_engine_fast" then
+      table.insert(branches, w.shell_pipeline({ fuzzy = true, engine = "fast" }))
     end
   end
   return w.branch(unpack(branches))

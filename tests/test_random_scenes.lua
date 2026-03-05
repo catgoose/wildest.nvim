@@ -21,6 +21,7 @@ local valid_pipelines = {
   ["history_prefix"] = true,
   ["shell_fuzzy"] = true,
   ["substitute"] = true,
+  ["cmdline_file_finder"] = true,
 }
 
 local valid_renderers_prefix = {

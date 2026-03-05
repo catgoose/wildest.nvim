@@ -231,6 +231,11 @@ end
 ---@tag wildest-pipelines
 ---@divider Pipeline Constructors
 
+---@class wildest.EngineOpts
+---@field files? boolean|table Enable async file finder (fd/rg/find) for file/dir completions. Table passes opts to file_finder_pipeline.
+---@field shell? boolean Enable $PATH executable cache for shell command completion.
+---@field help? boolean Enable preloaded help tag cache for help completion.
+
 ---Branch pipeline — tries each sub-pipeline until one succeeds.
 ---@param ... wildest.Pipeline[] Sub-pipelines to try in order
 ---@return wildest.PipelineStep
@@ -267,7 +272,7 @@ function M.subpipeline(factory)
 end
 
 ---Cmdline pipeline — completes commands, files, buffers, help tags, etc.
----@param opts? wildest.CmdlinePipelineOpts { fuzzy?: boolean, fuzzy_filter?: function, sort_buffers_lastused?: boolean, before_cursor?: boolean }
+---@param opts? wildest.CmdlinePipelineOpts { fuzzy?: boolean, fuzzy_filter?: function, sort_buffers_lastused?: boolean, before_cursor?: boolean, file_finder?: boolean|table, engine?: "fast"|"vim"|wildest.EngineOpts }
 ---@return wildest.PipelineStep[] pipeline
 function M.cmdline_pipeline(opts)
   return require("wildest.cmdline").cmdline_pipeline(opts)
@@ -378,14 +383,14 @@ function M.lua_pipeline(opts)
 end
 
 ---Help tag completion pipeline.
----@param opts? table
+---@param opts? table { fuzzy?: boolean, max_results?: integer, help_cache?: boolean, engine?: "fast"|"vim"|wildest.EngineOpts }
 ---@return wildest.PipelineStep[] pipeline
 function M.help_pipeline(opts)
   return require("wildest.pipeline.help").help_pipeline(opts)
 end
 
 ---Shell command pipeline — history, executables, file args, env vars.
----@param opts? wildest.ShellPipelineOpts
+---@param opts? wildest.ShellPipelineOpts Options including engine?: "fast"|"vim"|wildest.EngineOpts
 ---@return wildest.PipelineStep[] pipeline
 function M.shell_pipeline(opts)
   return require("wildest.shell").shell_pipeline(opts)
@@ -684,6 +689,27 @@ end
 ---Clear the project root detection cache.
 function M.clear_project_root_cache()
   require("wildest.util").clear_project_root_cache()
+end
+
+---Preload the shell executable cache for faster :! completion.
+---Call this from setup or an early autocommand to warm the cache.
+function M.preload_exec_cache()
+  require("wildest.shell.exec_cache").preload()
+end
+
+---Clear the shell executable cache (e.g., after installing new programs).
+function M.clear_exec_cache()
+  require("wildest.shell.exec_cache").clear()
+end
+
+---Preload help tags cache for faster :help completion.
+function M.preload_help_cache()
+  require("wildest.pipeline.help_cache").preload()
+end
+
+---Clear the help tags cache.
+function M.clear_help_cache()
+  require("wildest.pipeline.help_cache").clear()
 end
 
 ---Frecency scorer — for use with sort_by to rank by frequency + recency.
