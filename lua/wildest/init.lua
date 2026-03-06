@@ -189,6 +189,20 @@ function M.setup(opts)
     end
   end)
 
+  bind(cfg.mark_key, function()
+    if state.is_active() and (state.get().result or not state.get().triggered) then
+      state.mark(1)
+      return true
+    end
+  end)
+
+  bind(cfg.unmark_key, function()
+    if state.is_active() and state.get().result then
+      state.unmark(-1)
+      return true
+    end
+  end)
+
   if cfg.jump_keys then
     for _, entry in ipairs(cfg.jump_keys) do
       local key = entry[1] or entry.key

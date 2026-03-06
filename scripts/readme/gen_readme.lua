@@ -116,6 +116,8 @@ local hl_descriptions = {
   WildestSelected = "Selected candidate",
   WildestAccent = "Matched characters",
   WildestSelectedAccent = "Matched characters (selected)",
+  WildestMarked = "Marked candidates (multi-select)",
+  WildestMarkedAccent = "Matched characters (marked)",
   WildestBorder = "Border decoration",
   WildestPrompt = "Palette prompt area",
   WildestPromptCursor = "Palette prompt cursor",
@@ -422,6 +424,7 @@ local gallery_sections = {
   },
   { key = "layout", names = configs_mod.layout_names },
   { key = "option", names = configs_mod.option_names },
+  { key = "multiselect", names = configs_mod.multiselect_names },
   { key = "preview", names = configs_mod.preview_names },
 }
 

@@ -23,6 +23,8 @@ and reference the config key so we can reproduce it.
 - [Themes](#themes)
 - [Layout Variations](#layout-variations)
 - [Renderer Options](#renderer-options)
+- [Multi-Select](#multi-select)
+- [Preview](#preview)
 
 ## Renderers
 
@@ -88,6 +90,11 @@ and reference the config key so we can reproduce it.
 
 <!-- gen:option_gallery_test:start -->
 <!-- gen:option_gallery_test:end -->
+
+## Multi-Select
+
+<!-- gen:multiselect_gallery_test:start -->
+<!-- gen:multiselect_gallery_test:end -->
 
 ## Preview
 

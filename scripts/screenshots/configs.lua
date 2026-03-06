@@ -1133,6 +1133,159 @@ M.configs = {
       priority = "preview",
     },
   },
+
+  -- Search preview configs: show buffer content with match highlighting
+  preview_search = {
+    category = "preview",
+    label = "Search Preview",
+    cmd = "/function",
+    noselect = false,
+    pipeline = { "cmdline_fuzzy", "search" },
+    preview = { position = "right", anchor = "screen", width = "50%", border = "rounded" },
+  },
+
+  preview_search_reverse = {
+    category = "preview",
+    label = "Search Preview (?)",
+    cmd = "?return",
+    noselect = false,
+    pipeline = { "cmdline_fuzzy", "search" },
+    preview = { position = "right", anchor = "screen", width = "50%", border = "rounded" },
+  },
+
+  -- Help preview with frecency
+  preview_help_frecency = {
+    category = "preview",
+    label = "Help + Frecency",
+    cmd = ":help nvim_buf",
+    noselect = false,
+    frecency = true,
+    pipeline = { "help_fuzzy", "cmdline_fuzzy" },
+    left = { "frecency_bar", "devicons" },
+    right = { "scrollbar" },
+    preview = { position = "right", anchor = "screen", width = "40%", border = "rounded" },
+  },
+
+  -- File preview with frecency bar
+  preview_file_frecency = {
+    category = "preview",
+    label = "Files + Frecency",
+    cmd = ":e lua/wildest/",
+    noselect = false,
+    frecency = true,
+    left = { "frecency_bar", "devicons" },
+    right = { "scrollbar" },
+    preview = { position = "right", anchor = "screen", width = "40%", border = "rounded" },
+  },
+
+  -- ── Multi-select configs ────────────────────────────────────────
+
+  -- Basic multi-select: mark files and send to quickfix
+  multiselect_quickfix = {
+    category = "multiselect",
+    label = "Multi-Select → Quickfix",
+    cmd = ":e lua/wildest/renderer/components/",
+    noselect = false,
+    mark_key = "<Tab>",
+    unmark_key = "<S-Tab>",
+    next_key = { "<C-j>", "<Down>" },
+    previous_key = { "<C-k>", "<Up>" },
+    actions = { ["<C-q>"] = "send_to_quickfix" },
+    left = { "devicons" },
+    right = { "scrollbar" },
+  },
+
+  -- Multi-select: mark files and send to location list
+  multiselect_loclist = {
+    category = "multiselect",
+    label = "Multi-Select → Location List",
+    cmd = ":e tests/",
+    noselect = false,
+    mark_key = "<Tab>",
+    unmark_key = "<S-Tab>",
+    next_key = { "<C-j>", "<Down>" },
+    previous_key = { "<C-k>", "<Up>" },
+    actions = { ["<C-l>"] = "send_to_loclist" },
+    left = { "devicons" },
+    right = { "scrollbar" },
+  },
+
+  -- Multi-select: mark and open in splits
+  multiselect_splits = {
+    category = "multiselect",
+    label = "Multi-Select → Open Marked",
+    cmd = ":e lua/wildest/",
+    noselect = false,
+    mark_key = "<Tab>",
+    unmark_key = "<S-Tab>",
+    next_key = { "<C-j>", "<Down>" },
+    previous_key = { "<C-k>", "<Up>" },
+    actions = { ["<C-o>"] = "open_marked" },
+    left = { "devicons" },
+    right = { "scrollbar" },
+  },
+
+  -- Multi-select with frecency and preview
+  multiselect_frecency = {
+    category = "multiselect",
+    label = "Multi-Select + Frecency",
+    cmd = ":e lua/wildest/",
+    noselect = false,
+    frecency = true,
+    mark_key = "<Tab>",
+    unmark_key = "<S-Tab>",
+    next_key = { "<C-j>", "<Down>" },
+    previous_key = { "<C-k>", "<Up>" },
+    actions = { ["<C-q>"] = "send_to_quickfix" },
+    left = { "frecency_bar", "devicons" },
+    right = { "scrollbar" },
+    preview = { position = "right", anchor = "screen", width = "40%", border = "rounded" },
+  },
+
+  -- Multi-select with palette theme
+  multiselect_palette = {
+    category = "multiselect",
+    label = "Multi-Select Palette",
+    cmd = ":e lua/wildest/renderer/",
+    noselect = false,
+    mark_key = "<Tab>",
+    unmark_key = "<S-Tab>",
+    next_key = { "<C-j>", "<Down>" },
+    previous_key = { "<C-k>", "<Up>" },
+    actions = { ["<C-q>"] = "send_to_quickfix", ["<C-o>"] = "open_marked" },
+    renderer = "palette",
+    palette = {
+      title = " Multi-Select ",
+      prompt_prefix = " :",
+      prompt_position = "bottom",
+      max_height = "60%",
+      max_width = "60%",
+      min_width = 40,
+      margin = "auto",
+    },
+    left = { "devicons" },
+    right = { "scrollbar" },
+  },
+
+  -- Full-featured palette with search preview
+  preview_palette_search = {
+    category = "preview",
+    label = "Palette Search",
+    cmd = "/require",
+    noselect = false,
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "palette",
+    palette = {
+      title = " Search ",
+      prompt_prefix = " / ",
+      prompt_position = "bottom",
+      max_height = "50%",
+      max_width = "50%",
+      min_width = 40,
+      margin = "auto",
+    },
+    preview = { position = "right", anchor = "popup", width = "50%", border = "rounded" },
+  },
 }
 
 -- Default VHS command for configs that don't specify one
@@ -1242,6 +1395,13 @@ M.option_names = {
   "before_cursor",
   "sort_buffers_lastused",
 }
+M.multiselect_names = {
+  "multiselect_quickfix",
+  "multiselect_loclist",
+  "multiselect_splits",
+  "multiselect_frecency",
+  "multiselect_palette",
+}
 M.preview_names = {
   "preview_right_screen",
   "preview_left_screen",
@@ -1320,6 +1480,7 @@ M.categories = {
   { flag = "combinations", display = "Combinations", names = M.combination_names },
   { flag = "layouts", display = "Layouts", names = M.layout_names },
   { flag = "options", display = "Options", names = M.option_names },
+  { flag = "multiselect", display = "Multi-Select", names = M.multiselect_names },
   { flag = "previews", display = "Previews", names = M.preview_names },
 }
 
@@ -1802,6 +1963,10 @@ local function setup_block_lines(cfg, add)
     "offset",
     "ghost_text",
     "empty_message",
+    "mark_key",
+    "unmark_key",
+    "next_key",
+    "previous_key",
     "highlights",
     "gradient_colors",
   }
@@ -1841,6 +2006,15 @@ local function setup_block_lines(cfg, add)
     add("  custom_highlights = {")
     for _, name in ipairs(hl_names) do
       add("    " .. name .. " = { ... },")
+    end
+    add("  },")
+  end
+
+  -- Actions sub-table
+  if cfg.actions then
+    add("  actions = {")
+    for k, v in pairs(cfg.actions) do
+      add('    ["' .. k .. '"] = ' .. fmt_val(v) .. ",")
     end
     add("  },")
   end
@@ -2237,6 +2411,9 @@ function M.scene_to_description(cfg)
     add("action: " .. merged.action)
   end
 
+  if merged.mark_key then
+    add("multi-select")
+  end
   if merged.custom_highlights then
     add("custom highlights")
   end
@@ -2557,6 +2734,18 @@ function M.build(name_or_cfg, w)
   end
   if merged.actions then
     setup_opts.actions = merged.actions
+  end
+  if merged.mark_key then
+    setup_opts.mark_key = merged.mark_key
+  end
+  if merged.unmark_key then
+    setup_opts.unmark_key = merged.unmark_key
+  end
+  if merged.next_key then
+    setup_opts.next_key = merged.next_key
+  end
+  if merged.previous_key then
+    setup_opts.previous_key = merged.previous_key
   end
   if merged.ghost_text then
     setup_opts.ghost_text = merged.ghost_text

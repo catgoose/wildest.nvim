@@ -32,6 +32,7 @@ local M = {}
 ---@field suppress_change boolean Suppress next CmdlineChanged from our setcmdline
 ---@field triggered boolean For trigger='tab': has Tab been pressed?
 ---@field pipeline_timer? uv_timer_t Timeout timer for pipeline
+---@field marked table<integer, boolean> Set of marked candidate indices (0-indexed)
 
 --- State table — single source of truth
 local state = {
@@ -51,6 +52,7 @@ local state = {
   suppress_change = false,
   triggered = false,
   pipeline_timer = nil,
+  marked = {},
 }
 
 --- Cancel and close the pipeline timeout timer if active.
@@ -74,6 +76,7 @@ local function reset_session_fields()
   state.replaced_cmdline = nil
   state.completion_stack = {}
   state.draw_done = false
+  state.marked = {}
 end
 
 --- Get the current state table (read-only — do not mutate)
@@ -191,6 +194,7 @@ function M.on_change(cmdline)
   state.replaced_cmdline = nil
   state.completion_stack = {}
   state.draw_done = false
+  state.marked = {}
 
   if not state.triggered then
     log.log("state", "on_change_not_triggered")
@@ -443,6 +447,7 @@ function M.draw()
 
     local ctx = {
       selected = state.selected,
+      marked = state.marked,
       run_id = state.run_id,
       session_id = state.session_id,
       cmdtype = state.cmdtype,
@@ -694,6 +699,120 @@ function M.scroll(n)
     state.selected
   )
 
+  M.draw()
+end
+
+--- Mark the current candidate and advance selection by n positions.
+--- If no candidate is selected, selects the first one and marks it.
+---@param n integer direction to advance after marking (1 = next, -1 = previous)
+function M.mark(n)
+  if not state.active then
+    return
+  end
+
+  if not state.triggered then
+    M.trigger()
+    return
+  end
+
+  if not state.result or #state.result.value == 0 then
+    return
+  end
+
+  local count = #state.result.value
+
+  -- If nothing selected, select first
+  if state.selected == -1 then
+    state.selected = 0
+  end
+
+  -- Toggle mark on current item
+  state.marked[state.selected] = not state.marked[state.selected] or nil
+
+  -- Advance to next/previous (without wrapping past -1)
+  local next_sel = state.selected + n
+  if next_sel >= 0 and next_sel < count then
+    state.selected = next_sel
+  end
+
+  -- Update cmdline to reflect new selection
+  local candidate = state.result.value[state.selected + 1]
+  if state.result.output then
+    candidate = state.result.output(state.result.data, candidate)
+  end
+  if type(candidate) == "string" and candidate ~= "" then
+    state.replaced_cmdline = candidate
+    M.feedkeys_cmdline(candidate)
+  end
+  hooks.fire(
+    "select",
+    { cmdtype = state.cmdtype, input = state.previous_cmdline },
+    candidate,
+    state.selected
+  )
+
+  M.draw()
+end
+
+--- Unmark the current candidate and move selection by n positions.
+---@param n integer direction to move after unmarking (-1 = previous, 1 = next)
+function M.unmark(n)
+  if not state.active then
+    return
+  end
+
+  if not state.result or #state.result.value == 0 then
+    return
+  end
+
+  if state.selected == -1 then
+    return
+  end
+
+  local count = #state.result.value
+
+  -- Unmark current item
+  state.marked[state.selected] = nil
+
+  -- Move selection
+  local next_sel = state.selected + n
+  if next_sel >= 0 and next_sel < count then
+    state.selected = next_sel
+  end
+
+  -- Update cmdline
+  local candidate = state.result.value[state.selected + 1]
+  if state.result.output then
+    candidate = state.result.output(state.result.data, candidate)
+  end
+  if type(candidate) == "string" and candidate ~= "" then
+    state.replaced_cmdline = candidate
+    M.feedkeys_cmdline(candidate)
+  end
+  hooks.fire(
+    "select",
+    { cmdtype = state.cmdtype, input = state.previous_cmdline },
+    candidate,
+    state.selected
+  )
+
+  M.draw()
+end
+
+--- Get sorted array of marked candidate indices (0-indexed).
+---@return integer[]
+function M.get_marked()
+  local indices = {}
+  for idx in pairs(state.marked) do
+    indices[#indices + 1] = idx
+  end
+  table.sort(indices)
+  return indices
+end
+
+--- Clear all marks.
+function M.clear_marks()
+  state.marked = {}
   M.draw()
 end
 

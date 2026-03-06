@@ -84,6 +84,8 @@
   - [Ghost Text](#ghost-text)
   - [Documentation Hints](#documentation-hints)
   - [Frecency](#frecency)
+    - [Frecency Heatmap](#frecency-heatmap)
+  - [Multi-Select](#multi-select)
   - [Commands](#commands)
   - [Health Check](#health-check)
   - [Settin' the Rules (Config Options)](#settin-the-rules-config-options)
@@ -956,6 +958,8 @@ When a theme is applied, it overrides these with explicit colors.
 | `WildestBorder` | `FloatBorder` | Border decoration |
 | `WildestPrompt` | `Pmenu` | Palette prompt area |
 | `WildestPromptCursor` | `Cursor` | Palette prompt cursor |
+| `WildestMarked` | `PmenuSel` | Marked candidates (multi-select) |
+| `WildestMarkedAccent` | `PmenuMatchSel` | Matched characters (marked) |
 | `WildestScrollbar` | `PmenuSbar` | Scrollbar track |
 | `WildestScrollbarThumb` | `PmenuThumb` | Scrollbar thumb |
 | `WildestSpinner` | `Special` | Loading spinner |
@@ -1353,6 +1357,97 @@ w.frecency_visit(":edit foo.lua")
 The `blend` option in `frecency_boost` controls the mix: `0` = original order
 only, `1` = pure frecency, `0.5` = equal blend.
 
+### Frecency Heatmap
+
+The `popupmenu_frecency_bar()` component adds a colored heat indicator next to
+each candidate. Hot (frequently used) items glow warm, cold items are dim.
+Candidates with no history show as blank.
+
+```lua
+w.setup({
+  pipeline = w.cmdline_pipeline({ fuzzy = true }),
+  renderer = w.popupmenu_renderer({
+    left = { w.popupmenu_frecency_bar(), w.popupmenu_devicons() },
+    right = { w.popupmenu_scrollbar() },
+  }),
+})
+
+-- Custom gradient colors + indicator character
+w.popupmenu_frecency_bar({
+  colors = { "#334455", "#887733", "#cc6622", "#ff2200" },
+  char = "●",
+})
+
+-- Use pre-created highlight groups instead of hex colors
+w.popupmenu_frecency_bar({
+  gradient = { "Comment", "String", "WarningMsg", "ErrorMsg" },
+})
+```
+
+| Option     | Type     | Default             | Description                                   |
+| ---------- | -------- | ------------------- | --------------------------------------------- |
+| `colors`   | string[] | grey → orange → red | Hex fg colors for gradient (cold → hot)       |
+| `gradient` | string[] | —                   | Pre-created hl group names (overrides colors) |
+| `char`     | string   | `"▎"`               | Indicator character                           |
+| `dim_char` | string   | `" "`               | Character for zero-score items                |
+| `weights`  | table    | —                   | Custom frecency time bucket weights           |
+
+## Multi-Select
+
+Mark multiple candidates with `mark_key` (<kbd>Tab</kbd> by default when configured),
+then apply a bulk action to all of them — open 5 files at once, send 3 items to
+quickfix, delete marked buffers, or yank them all.
+
+```lua
+require('wildest').setup({
+  -- Tab/S-Tab to mark/unmark, C-j/C-k to navigate
+  mark_key = '<Tab>',
+  unmark_key = '<S-Tab>',
+  next_key = { '<C-j>', '<Down>' },
+  previous_key = { '<C-k>', '<Up>' },
+  actions = {
+    ['<C-q>'] = 'send_to_quickfix',  -- marked → quickfix
+    ['<C-l>'] = 'send_to_loclist',   -- marked → location list
+    ['<C-o>'] = 'open_marked',       -- open all marked files
+    ['<C-d>'] = 'delete_marked_buffers',
+  },
+  -- ...
+})
+```
+
+Marked candidates get the `WildestMarked` highlight group (defaults to `PmenuSel`).
+Customize it via themes or `vim.api.nvim_set_hl(0, 'WildestMarked', { ... })`.
+
+| Config Key   | Type            | Default | Description                              |
+| ------------ | --------------- | ------- | ---------------------------------------- |
+| `mark_key`   | string/string[] | `nil`   | Key(s) to mark candidate and advance     |
+| `unmark_key` | string/string[] | `nil`   | Key(s) to unmark candidate and go back   |
+
+Built-in bulk actions that use marked candidates:
+
+| Action                  | Description                                                |
+| ----------------------- | ---------------------------------------------------------- |
+| `send_to_quickfix`      | Send marked (or all) candidates to quickfix                |
+| `send_to_loclist`       | Send marked (or all) candidates to location list           |
+| `open_marked`           | Open all marked files/buffers/help tags                    |
+| `delete_marked_buffers` | Delete all marked buffers                                  |
+| `yank_marked`           | Yank all marked candidates (newline-separated) to clipboard|
+
+<!-- gen:multiselect_gallery:start -->
+<table>
+<tr>
+<td align="center"><strong>Multi-Select → Quickfix</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/multiselect_quickfix.png" width="400"></td>
+<td align="center"><strong>Multi-Select → Location List</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/multiselect_loclist.png" width="400"></td>
+<td align="center"><strong>Multi-Select → Open Marked</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/multiselect_splits.png" width="400"></td>
+</tr>
+<tr>
+<td align="center"><strong>Multi-Select + Frecency</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/multiselect_frecency.png" width="400"></td>
+<td align="center"><strong>Multi-Select Palette</strong><br><img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/multiselect_palette.png" width="400"></td>
+<td></td>
+</tr>
+</table>
+<!-- gen:multiselect_gallery:end -->
+
 ## Commands
 
 | Command                  | Description                                         |
@@ -1405,6 +1500,8 @@ Checks for:
 | `previous_key`     | `'<S-Tab>'`         | Back up to the previous one                  |
 | `accept_key`       | `'<Down>'`          | Accept and keep completin'                   |
 | `reject_key`       | `'<Up>'`            | Reject and restore original                  |
+| `mark_key`         | `nil`               | Mark candidate and advance (multi-select)    |
+| `unmark_key`       | `nil`               | Unmark candidate and go back (multi-select)  |
 | `trigger`          | `'auto'`            | `'auto'` or `'tab'` (manual trigger)         |
 | `noselect`         | `true`              | Don't auto-select first candidate            |
 | `longest_prefix`   | `false`             | Insert longest common prefix on first Tab    |
