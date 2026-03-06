@@ -128,7 +128,7 @@ function PopupmenuPalette:render(ctx, result)
   local outer_width = renderer_util.calculate_width(state.max_width, state.min_width, editor_cols)
 
   local max_h = renderer_util.parse_dimension(state.max_height, editor_lines)
-  local chrome_lines = 2 -- prompt + separator
+  local chrome_lines = 2 + self:chrome_line_count("top") + self:chrome_line_count("bottom") -- prompt + separator + user chrome
   local content_max_h = math.max(1, max_h - chrome_lines)
 
   local page_start, page_end, show_empty = self:paginate(ctx, total, content_max_h)
@@ -150,6 +150,14 @@ function PopupmenuPalette:render(ctx, result)
     local separator = string.rep("─", content_width)
     table.insert(lines, separator)
     table.insert(line_highlights, { spans = {}, base_hl = state.highlights.separator })
+  end
+
+  -- Top chrome (user components)
+  local top_lines, top_hls =
+    self:render_chrome("top", ctx, result, page_start, page_end, total, content_width)
+  for i, line in ipairs(top_lines) do
+    lines[#lines + 1] = line
+    line_highlights[#line_highlights + 1] = top_hls[i]
   end
 
   -- Content lines
@@ -186,6 +194,14 @@ function PopupmenuPalette:render(ctx, result)
     #lines + (target_content_h - content_count),
     content_width
   )
+
+  -- Bottom chrome (user components)
+  local bottom_lines, bottom_hls =
+    self:render_chrome("bottom", ctx, result, page_start, page_end, total, content_width)
+  for i, line in ipairs(bottom_lines) do
+    lines[#lines + 1] = line
+    line_highlights[#line_highlights + 1] = bottom_hls[i]
+  end
 
   -- Prompt at bottom
   if state.prompt_position == "bottom" then

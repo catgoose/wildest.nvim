@@ -104,11 +104,88 @@ end
 ---@param path string
 ---@param cfg wildest.PreviewConfig
 ---@return string|nil title
+--- Format file size into human-readable string.
+---@param bytes integer
+---@return string
+local function format_size(bytes)
+  if bytes < 1024 then
+    return string.format("%d B", bytes)
+  elseif bytes < 1024 * 1024 then
+    return string.format("%.1f KB", bytes / 1024)
+  elseif bytes < 1024 * 1024 * 1024 then
+    return string.format("%.1f MB", bytes / (1024 * 1024))
+  else
+    return string.format("%.1f GB", bytes / (1024 * 1024 * 1024))
+  end
+end
+
+--- Format unix permissions to rwx string.
+---@param mode integer
+---@return string
+local function format_mode(mode)
+  local bits = { "r", "w", "x" }
+  local parts = {}
+  for i = 8, 0, -1 do
+    local idx = (8 - i) % 3 + 1
+    parts[#parts + 1] = bit.band(mode, bit.lshift(1, i)) ~= 0 and bits[idx] or "-"
+  end
+  return table.concat(parts)
+end
+
+--- Build metadata lines for a binary/non-displayable file.
+---@param path string
+---@param stat table uv_fs_stat result
+---@return string[]
+local function file_metadata(path, stat)
+  local lines = {
+    "  Binary file",
+    "",
+  }
+  lines[#lines + 1] = "  Path:      " .. path
+  lines[#lines + 1] = "  Size:      " .. format_size(stat.size)
+  lines[#lines + 1] = "  Mode:      " .. format_mode(stat.mode)
+
+  local ft = vim.filetype.match({ filename = path })
+  if ft then
+    lines[#lines + 1] = "  Filetype:  " .. ft
+  end
+
+  -- Mime type via `file` command
+  local ok, result = pcall(vim.fn.system, { "file", "--brief", "--mime-type", path })
+  if ok and type(result) == "string" then
+    local mime = vim.trim(result)
+    if mime ~= "" and not mime:find("^cannot open") then
+      lines[#lines + 1] = "  MIME:      " .. mime
+    end
+  end
+
+  local mtime = stat.mtime
+  if mtime then
+    local ts = type(mtime) == "table" and mtime.sec or mtime
+    lines[#lines + 1] = "  Modified:  " .. os.date("%Y-%m-%d %H:%M:%S", ts)
+  end
+
+  return lines
+end
+
 local function load_file(path, cfg)
   local expanded = safe_expand(path)
   local stat = vim.uv.fs_stat(expanded)
   if not stat or stat.type == "directory" then
     return nil
+  end
+  -- Read first 1KB to check for binary content
+  local fd = vim.uv.fs_open(expanded, "r", 438)
+  if not fd then
+    return nil
+  end
+  local chunk = vim.uv.fs_read(fd, 1024, 0)
+  vim.uv.fs_close(fd)
+  if chunk and chunk:find("\0") then
+    local lines = file_metadata(expanded, stat)
+    vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+    vim.bo[preview_state.buf].filetype = ""
+    return vim.fs.basename(expanded)
   end
   local lines = vim.fn.readfile(expanded, "", cfg.max_lines or 500)
   vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)

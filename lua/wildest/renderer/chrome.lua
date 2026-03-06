@@ -88,13 +88,46 @@ function M.resolve_chrome_lines(components, ctx, width, base_hl)
   for _, comp in ipairs(components) do
     local text, spans = resolve_one(comp, ctx)
     if text then
-      -- Pad to width
-      local text_width = vim.api.nvim_strwidth(text)
-      if text_width < width then
-        text = text .. string.rep(" ", width - text_width)
+      -- Check if this is a multi-line result (text contains newlines)
+      if text:find("\n") then
+        local line_texts = vim.split(text, "\n", { plain = true })
+        -- Distribute spans across lines by byte offset
+        local byte_offset = 0
+        for li, lt in ipairs(line_texts) do
+          local line_spans = {}
+          if spans then
+            local line_start = byte_offset
+            local line_end = byte_offset + #lt
+            for _, s in ipairs(spans) do
+              local s_start, s_len, s_hl = s[1], s[2], s[3]
+              local s_end = s_start + s_len
+              if s_start < line_end and s_end > line_start then
+                local adj_start = math.max(0, s_start - line_start)
+                local adj_end = math.min(#lt, s_end - line_start)
+                if adj_end > adj_start then
+                  line_spans[#line_spans + 1] = { adj_start, adj_end - adj_start, s_hl }
+                end
+              end
+            end
+          end
+          -- Pad to width
+          local text_width = vim.api.nvim_strwidth(lt)
+          if text_width < width then
+            lt = lt .. string.rep(" ", width - text_width)
+          end
+          lines[#lines + 1] = lt
+          line_highlights[#line_highlights + 1] = { spans = line_spans, base_hl = base_hl }
+          byte_offset = byte_offset + #line_texts[li] + 1 -- +1 for the \n
+        end
+      else
+        -- Pad to width
+        local text_width = vim.api.nvim_strwidth(text)
+        if text_width < width then
+          text = text .. string.rep(" ", width - text_width)
+        end
+        lines[#lines + 1] = text
+        line_highlights[#line_highlights + 1] = { spans = spans or {}, base_hl = base_hl }
       end
-      lines[#lines + 1] = text
-      line_highlights[#line_highlights + 1] = { spans = spans or {}, base_hl = base_hl }
     end
   end
 
