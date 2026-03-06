@@ -86,8 +86,9 @@ function M.setup(opts)
   vim.api.nvim_create_autocmd("CmdlineLeave", {
     group = augroup,
     callback = function()
-      log.log("autocmd", "CmdlineLeave")
-      state.stop()
+      local abort = vim.v.event and vim.v.event.abort or false
+      log.log("autocmd", "CmdlineLeave", { abort = abort })
+      state.stop({ abort = abort })
       log.flush()
     end,
   })
@@ -661,6 +662,14 @@ end
 ---@return wildest.Component
 function M.popupmenu_cmdline_icon(opts)
   return require("wildest.renderer.components.cmdline_icon").new(opts)
+end
+
+---Frecency heatmap bar component — shows a colored indicator per candidate based on usage frequency.
+---Hot (frequently used) items glow warm, cold items are dim.
+---@param opts? table { colors?: string[], gradient?: string[], char?: string, dim_char?: string, weights?: table }
+---@return wildest.Component
+function M.popupmenu_frecency_bar(opts)
+  return require("wildest.renderer.components.frecency_bar").new(opts)
 end
 
 ---Documentation hints chrome component — shows a one-line doc for the selected candidate.

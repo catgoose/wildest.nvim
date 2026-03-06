@@ -131,10 +131,46 @@ function M.start(cmdtype)
 end
 
 --- Stop the current session (called on CmdlineLeave)
-function M.stop()
+---@param event? table autocmd event with abort info
+function M.stop(event)
   log.log("state", "stop", { active = state.active })
   if not state.active then
     return
+  end
+
+  -- Fire accept for the final cmdline when executed (not aborted)
+  local aborted = event and event.abort
+  if aborted == nil then
+    aborted = vim.v.event and vim.v.event.abort
+  end
+  local final_cmdline = vim.fn.getcmdline()
+  if (not final_cmdline or final_cmdline == "") and state.replaced_cmdline then
+    final_cmdline = state.replaced_cmdline
+  end
+  if not final_cmdline or final_cmdline == "" then
+    final_cmdline = state.previous_cmdline
+  end
+  log.log("state", "stop_accept_check", {
+    abort = aborted,
+    final_cmdline = final_cmdline,
+    replaced = state.replaced_cmdline,
+    previous = state.previous_cmdline,
+    selected = state.selected,
+  })
+  if not aborted and final_cmdline and final_cmdline ~= "" then
+    -- Fire accept for the full cmdline (matches history entries)
+    hooks.fire("accept", { cmdtype = state.cmdtype, input = final_cmdline }, final_cmdline)
+    -- Also fire for the raw selected candidate (matches completion items)
+    if state.selected >= 0 and state.result and state.result.value then
+      local raw_candidate = state.result.value[state.selected + 1]
+      if
+        type(raw_candidate) == "string"
+        and raw_candidate ~= ""
+        and raw_candidate ~= final_cmdline
+      then
+        hooks.fire("accept", { cmdtype = state.cmdtype, input = final_cmdline }, raw_candidate)
+      end
+    end
   end
 
   hooks.fire("leave")
@@ -605,6 +641,7 @@ function M.step(n)
         local full = state.result.output(state.result.data, lcp)
         if type(full) == "string" and full ~= state.previous_cmdline then
           M.feedkeys_cmdline(full)
+          state.previous_cmdline = full
           state.replaced_cmdline = full
           M.draw()
           return

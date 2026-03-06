@@ -598,6 +598,17 @@ M.popupmenu_cmdline_icon({opts?})               *wildest.popupmenu_cmdline_icon*
         (wildest.Component)
 
 
+M.popupmenu_frecency_bar({opts?})               *wildest.popupmenu_frecency_bar*
+    Frecency heatmap bar component — shows a colored indicator per candidate based on usage frequency.
+    Hot (frequently used) items glow warm, cold items are dim.
+
+    Parameters: ~
+        {opts?}  (table)  { colors?: string[], gradient?: string[], char?: string, dim_char?: string, weights?: table }
+
+    Returns: ~
+        (wildest.Component)
+
+
 M.popupmenu_docs({opts?})                               *wildest.popupmenu_docs*
     Documentation hints chrome component — shows a one-line doc for the selected candidate.
     Use in the `bottom` array of a popupmenu renderer.
@@ -917,8 +928,11 @@ M.start({cmdtype})                                         *wildest.state.start*
         {cmdtype}  (string)  the command type (':', '/', '?')
 
 
-M.stop()                                                    *wildest.state.stop*
+M.stop({event?})                                            *wildest.state.stop*
      Stop the current session (called on CmdlineLeave)
+
+    Parameters: ~
+        {event?}  (table)  autocmd event with abort info
 
 
 M.on_change({cmdline})                                 *wildest.state.on_change*
@@ -1619,7 +1633,7 @@ M.apply_line_highlights({buf}, {ns_id}, {lines}, {line_highlights})
         {buf}              (integer)   buffer handle
         {ns_id}            (integer)   namespace id
         {lines}            (string[])  line texts
-        {line_highlights}  (table[])   per-line {spans, base_hl}
+        {line_highlights}  (table[])   per-line {spans, base_hl, right_start?, default_hl?}
 
 
                                            *wildest.renderer.open_or_update_win*

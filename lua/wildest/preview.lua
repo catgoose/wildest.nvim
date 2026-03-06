@@ -144,33 +144,153 @@ local function load_buffer(name, cfg)
   return title
 end
 
---- Load help content into the preview buffer.
+--- Search runtimepath doc/tags files for a help tag.
+--- Returns the help file path and the tag marker pattern.
 ---@param tag string
----@return string|nil title
-local function load_help(tag)
-  -- Try direct file lookup first
-  local rtp = vim.o.runtimepath ---@type string
-  local help_file = vim.fn.findfile(string.format("doc/%s.txt", tag), rtp)
-  if help_file ~= "" then
-    local lines = vim.fn.readfile(help_file, "", 500)
-    vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
-    vim.bo[preview_state.buf].filetype = "help"
-    return tag
-  end
-  -- Fall back to taglist to locate the help file without opening a window
-  local ok, tags = pcall(vim.fn.taglist, string.format("^%s$", vim.fn.escape(tag, "\\")))
-  if ok and type(tags) == "table" then
-    for _, entry in ipairs(tags) do
-      local fname = entry.filename
-      if fname and vim.uv.fs_stat(fname) then
-        local lines = vim.fn.readfile(fname, "", 500)
-        vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
-        vim.bo[preview_state.buf].filetype = "help"
-        return tag
+---@return string|nil filepath, string|nil search_pattern
+local function find_help_tag(tag)
+  local tag_files = vim.api.nvim_get_runtime_file("doc/tags", true)
+  for _, tf in ipairs(tag_files) do
+    local f = io.open(tf, "r")
+    if f then
+      local dir = vim.fs.dirname(tf)
+      for line in f:lines() do
+        -- tags format: <tag>\t<filename>\t<search>
+        local t, fname = line:match("^(%S+)\t(%S+)")
+        if t == tag then
+          f:close()
+          local full = dir .. "/" .. fname
+          if vim.uv.fs_stat(full) then
+            return full
+          end
+        end
       end
+      f:close()
     end
   end
   return nil
+end
+
+--- Load help content into the preview buffer.
+--- Finds the help file and scrolls to the tag location.
+---@param tag string
+---@return string|nil title, integer|nil tag_line
+local function load_help(tag)
+  local help_file = find_help_tag(tag)
+  if not help_file then
+    return nil, nil
+  end
+
+  -- Find the tag line in the full file first
+  local tag_marker = string.format("*%s*", tag)
+  local tag_line = nil
+  local f = io.open(help_file, "r")
+  if f then
+    local i = 0
+    for line in f:lines() do
+      i = i + 1
+      if line:find(tag_marker, 1, true) then
+        tag_line = i
+        break
+      end
+    end
+    f:close()
+  end
+
+  -- Load a window of lines around the tag (keeps buffer small for huge files)
+  local start_line = 1
+  if tag_line then
+    start_line = math.max(1, tag_line - 5)
+  end
+  local lines = vim.fn.readfile(help_file, "", start_line + 500)
+  if start_line > 1 then
+    lines = vim.list_slice(lines, start_line)
+  end
+  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+  vim.bo[preview_state.buf].filetype = "help"
+
+  -- Adjust tag_line to be relative to the loaded chunk
+  local scroll = tag_line and (tag_line - start_line + 1) or 1
+  return tag, scroll
+end
+
+--- Load current buffer into preview, scrolled to matching line with highlights.
+---@param candidate string the matching line text
+---@param pattern string the search pattern
+---@param cfg wildest.PreviewConfig
+---@return string|nil title, integer|nil scroll_line
+local function load_search(candidate, pattern, cfg)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local max = cfg.max_lines or 500
+  local all_lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+  -- Find the first line that matches the candidate text (search full buffer)
+  local trimmed_candidate = vim.trim(candidate)
+  local match_line = nil
+  for i, line in ipairs(all_lines) do
+    if vim.trim(line) == trimmed_candidate then
+      match_line = i
+      break
+    end
+  end
+
+  -- Load a window of lines around the match
+  local start_line = 1
+  if match_line then
+    start_line = math.max(1, match_line - math.floor(max / 4))
+  end
+  local end_line = math.min(#all_lines, start_line + max - 1)
+  local lines = vim.list_slice(all_lines, start_line, end_line)
+
+  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+
+  local ft = vim.bo[bufnr].filetype
+  if ft and ft ~= "" then
+    vim.bo[preview_state.buf].filetype = ft
+  else
+    vim.bo[preview_state.buf].filetype = ""
+  end
+
+  -- Adjust match_line to be relative to the loaded chunk
+  local scroll = match_line and (match_line - start_line + 1) or nil
+
+  -- Highlight the matching line and pattern matches
+  vim.api.nvim_buf_clear_namespace(preview_state.buf, preview_state.ns_id, 0, -1)
+  if scroll then
+    vim.api.nvim_buf_set_extmark(preview_state.buf, preview_state.ns_id, scroll - 1, 0, {
+      end_col = #lines[scroll],
+      hl_group = "CursorLine",
+      hl_eol = true,
+      priority = 100,
+    })
+  end
+
+  -- Highlight all pattern matches in loaded lines with IncSearch
+  local ok, regex = pcall(vim.regex, pattern)
+  if ok and regex then
+    for i, line in ipairs(lines) do
+      local pos = 0
+      while pos < #line do
+        local s, e = regex:match_str(line:sub(pos + 1))
+        if not s then
+          break
+        end
+        vim.api.nvim_buf_set_extmark(preview_state.buf, preview_state.ns_id, i - 1, pos + s, {
+          end_col = pos + e,
+          hl_group = "IncSearch",
+          priority = 200,
+        })
+        if e == s then
+          break
+        end
+        pos = pos + e
+      end
+    end
+  end
+
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  local title = name ~= "" and vim.fs.basename(name) or "[buffer]"
+  return title, scroll
 end
 
 --- Load fallback content.
@@ -469,13 +589,21 @@ function M.update(ctx, result)
   local data = result.data or {}
   local expand = detect_expand(data)
   local title = nil
+  local scroll_line = nil
 
   if expand == "file" then
     title = load_file(candidate, cfg)
   elseif expand == "buffer" then
     title = load_buffer(candidate, cfg)
   elseif expand == "help" then
-    title = load_help(candidate)
+    title, scroll_line = load_help(candidate)
+    if not title then
+      load_fallback(candidate)
+      title = candidate
+    end
+  elseif expand == "search" then
+    local pattern = data.input or ""
+    title, scroll_line = load_search(candidate, pattern, cfg)
   elseif expand == "shellcmd" or expand == "environment" then
     M.hide()
     return
@@ -542,6 +670,11 @@ function M.update(ctx, result)
     vim.wo[preview_state.win].cursorline = false
     vim.wo[preview_state.win].number = true
     vim.wo[preview_state.win].signcolumn = "no"
+  end
+
+  -- Scroll to tag line for help previews
+  if scroll_line and vim.api.nvim_win_is_valid(preview_state.win) then
+    pcall(vim.api.nvim_win_set_cursor, preview_state.win, { scroll_line, 0 })
   end
 end
 

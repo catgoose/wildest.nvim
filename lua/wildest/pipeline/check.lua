@@ -11,7 +11,9 @@ local M = {}
 ---@return wildest.PipelineStep
 function M.check(predicate)
   return function(ctx, x)
-    if predicate(ctx, x) then
+    local passed = predicate(ctx, x) and true or false
+    require("wildest.log").log("check", "eval", { input = ctx.input, passed = passed })
+    if passed then
       return x
     end
     return false

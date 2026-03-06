@@ -27,9 +27,6 @@
 ---@field output? fun(data: table, candidate: any): string
 ---@field draw? fun(data: table, candidate: any): string
 
----@diagnostic disable-next-line: undefined-global
-local utf8 = utf8 ---@type {codes: fun(s: string): fun(): integer, integer, char: fun(code: integer): string}
-
 local hl_mod = require("wildest.highlight")
 local log = require("wildest.log")
 local util = require("wildest.util")
@@ -305,22 +302,34 @@ function M.truncate_with_spans(text, spans, max_width, ellipsis)
     return ellipsis:sub(1, max_width), {}
   end
 
-  -- Truncate text
-  local parts = {}
+  -- Truncate text by iterating UTF-8 characters
   local cur_width = 0
   local byte_pos = 0
+  local i = 1
+  local len = #text
 
-  for p, code in utf8.codes(text) do
-    local c = utf8.char(code)
+  while i <= len do
+    local b = text:byte(i)
+    local char_len
+    if b < 0x80 then
+      char_len = 1
+    elseif b < 0xE0 then
+      char_len = 2
+    elseif b < 0xF0 then
+      char_len = 3
+    else
+      char_len = 4
+    end
+    local c = text:sub(i, i + char_len - 1)
     local cw = util.strdisplaywidth(c)
     if cur_width + cw > target then
       break
     end
-    parts[#parts + 1] = c
     cur_width = cur_width + cw
-    byte_pos = p + #c - 1
+    byte_pos = i + char_len - 1
+    i = i + char_len
   end
-  local result = table.concat(parts)
+  local result = text:sub(1, byte_pos)
 
   -- Adjust spans to fit truncated text
   local adjusted = {}
@@ -349,7 +358,7 @@ end
 ---@param candidate_spans table[]|nil highlight spans for the candidate
 ---@param max_width integer
 ---@param default_hl string
----@return string line, table[] spans
+---@return string line, table[] spans, integer right_start byte offset where right components begin
 function M.render_line(candidate, left_parts, right_parts, candidate_spans, max_width, default_hl)
   -- Calculate widths
   local left_width = 0
@@ -409,7 +418,8 @@ function M.render_line(candidate, left_parts, right_parts, candidate_spans, max_
   end
 
   -- Right component spans
-  offset = #left_text + #display_candidate + #padding
+  local right_start = #left_text + #display_candidate + #padding
+  offset = right_start
   for _, part in ipairs(right_parts) do
     local len = #part[1]
     if part[2] and part[2] ~= default_hl then
@@ -418,7 +428,7 @@ function M.render_line(candidate, left_parts, right_parts, candidate_spans, max_
     offset = offset + len
   end
 
-  return line, all_spans
+  return line, all_spans, right_start
 end
 
 -- Shared renderer infrastructure
@@ -541,6 +551,7 @@ function M.render_components(state, ctx, result, index, is_selected)
     total = #result.value,
     page_start = state.page[1],
     page_end = state.page[2],
+    run_id = ctx.run_id,
     is_selected = is_selected,
     is_marked = is_marked,
     result = result,
@@ -566,21 +577,78 @@ function M.render_components(state, ctx, result, index, is_selected)
   return left_parts, right_parts
 end
 
+--- Check if a highlight group defines its own bg color.
+---@param name string
+---@return boolean
+local function has_bg(name)
+  if not name then
+    return false
+  end
+  local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = name, link = false })
+  return ok and hl and hl.bg ~= nil
+end
+
 --- Apply line highlights (base hl + accent spans) to buffer
 ---@param buf integer buffer handle
 ---@param ns_id integer namespace id
 ---@param lines string[] line texts
----@param line_highlights table[] per-line {spans, base_hl}
+---@param line_highlights table[] per-line {spans, base_hl, right_start?, default_hl?}
 function M.apply_line_highlights(buf, ns_id, lines, line_highlights)
   vim.api.nvim_buf_clear_namespace(buf, ns_id, 0, -1)
   for line_idx, hl_info in ipairs(line_highlights) do
     local l = line_idx - 1
-    vim.api.nvim_buf_set_extmark(buf, ns_id, l, 0, {
-      end_col = #lines[line_idx],
-      hl_group = hl_info.base_hl,
-      hl_eol = true,
-      priority = 100,
-    })
+    local line_len = #lines[line_idx]
+    local is_selected = hl_info.default_hl and hl_info.base_hl ~= hl_info.default_hl
+
+    -- On selected lines, find right-side spans with their own bg (e.g.
+    -- scrollbar) so we can gap the base hl around them.  This avoids
+    -- PmenuSel bg bleeding into the scrollbar column while still
+    -- extending PmenuSel through the spacer and past end-of-line.
+    local bg_gaps = nil
+    if is_selected and hl_info.spans and hl_info.right_start then
+      for _, span in ipairs(hl_info.spans) do
+        if span[1] >= hl_info.right_start and has_bg(span[3]) then
+          if not bg_gaps then
+            bg_gaps = {}
+          end
+          table.insert(bg_gaps, span)
+        end
+      end
+    end
+
+    if bg_gaps then
+      table.sort(bg_gaps, function(a, b)
+        return a[1] < b[1]
+      end)
+      local pos = 0
+      for _, span in ipairs(bg_gaps) do
+        local gap_start = span[1]
+        local gap_end = gap_start + span[2]
+        if pos < gap_start then
+          vim.api.nvim_buf_set_extmark(buf, ns_id, l, pos, {
+            end_col = gap_start,
+            hl_group = hl_info.base_hl,
+            priority = 100,
+          })
+        end
+        pos = gap_end
+      end
+      -- Continue base hl after last gap to end of line + eol
+      vim.api.nvim_buf_set_extmark(buf, ns_id, l, pos, {
+        end_col = line_len,
+        hl_group = hl_info.base_hl,
+        hl_eol = true,
+        priority = 100,
+      })
+    else
+      vim.api.nvim_buf_set_extmark(buf, ns_id, l, 0, {
+        end_col = line_len,
+        hl_group = hl_info.base_hl,
+        hl_eol = true,
+        priority = 100,
+      })
+    end
+
     hl_mod.apply_spans(buf, ns_id, l, hl_info.spans)
   end
 end
