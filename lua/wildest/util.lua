@@ -203,6 +203,9 @@ function M.detect_expand(data)
     if e == "help" then
       return "help"
     end
+    if e == "search" then
+      return "search"
+    end
     if e == "shellcmd" then
       return "shellcmd"
     end

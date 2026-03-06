@@ -51,6 +51,32 @@ function M.setup(root)
   math.randomseed(os.time() + vim.fn.getpid())
 end
 
+--- Write fake frecency data so the frecency bar has something to display.
+function M.prepopulate_frecency()
+  local frecency = require("wildest.frecency")
+  local now = os.time()
+  -- Simulate varied usage patterns so the heatmap shows a gradient
+  local entries = {
+    ["set foldenable"] = { count = 42, timestamps = { now - 300, now - 600, now - 1200, now } },
+    ["set foldmethod"] = { count = 35, timestamps = { now - 900, now - 3600, now } },
+    ["set foldlevel"] = { count = 28, timestamps = { now - 7200, now - 3600 } },
+    ["set foldcolumn"] = { count = 20, timestamps = { now - 86400, now - 43200 } },
+    ["set foldexpr"] = { count = 12, timestamps = { now - 172800 } },
+    ["set foldclose"] = { count = 5, timestamps = { now - 604800 } },
+    ["e lua/wildest/init.lua"] = { count = 50, timestamps = { now - 120, now - 600, now - 1800, now } },
+    ["e lua/wildest/renderer/init.lua"] = { count = 38, timestamps = { now - 300, now - 3600, now } },
+    ["e lua/wildest/preview.lua"] = { count = 30, timestamps = { now - 1800, now - 7200 } },
+    ["e lua/wildest/state.lua"] = { count = 22, timestamps = { now - 43200, now - 7200 } },
+    ["e lua/wildest/filter/init.lua"] = { count = 15, timestamps = { now - 86400 } },
+    ["e tests/test_scrollbar.lua"] = { count = 8, timestamps = { now - 172800 } },
+    ["help nvim_buf_set_lines"] = { count = 25, timestamps = { now - 600, now - 3600, now } },
+    ["help nvim_buf_get_lines"] = { count = 18, timestamps = { now - 7200, now - 14400 } },
+    ["help nvim_buf_set_extmark"] = { count = 30, timestamps = { now - 300, now } },
+    ["help nvim_buf_delete"] = { count = 10, timestamps = { now - 86400 } },
+  }
+  frecency.save(entries)
+end
+
 -- ── Defaults ─────────────────────────────────────────────────────
 
 M.defaults = {
@@ -1147,6 +1173,70 @@ M.configs = {
       priority = "preview",
     },
   },
+
+  -- Search preview configs: show buffer content with match highlighting
+  preview_search = {
+    category = "preview",
+    label = "Search Preview",
+    cmd = "/function",
+    noselect = false,
+    pipeline = { "cmdline_fuzzy", "search" },
+    preview = { position = "right", anchor = "screen", width = "50%", border = "rounded" },
+  },
+
+  preview_search_reverse = {
+    category = "preview",
+    label = "Search Preview (?)",
+    cmd = "?return",
+    noselect = false,
+    pipeline = { "cmdline_fuzzy", "search" },
+    preview = { position = "right", anchor = "screen", width = "50%", border = "rounded" },
+  },
+
+  -- Help preview with frecency
+  preview_help_frecency = {
+    category = "preview",
+    label = "Help + Frecency",
+    cmd = ":help nvim_buf",
+    noselect = false,
+    frecency = true,
+    pipeline = { "help_fuzzy", "cmdline_fuzzy" },
+    left = { "frecency_bar", "devicons" },
+    right = { "scrollbar" },
+    preview = { position = "right", anchor = "screen", width = "40%", border = "rounded" },
+  },
+
+  -- File preview with frecency bar
+  preview_file_frecency = {
+    category = "preview",
+    label = "Files + Frecency",
+    cmd = ":e lua/wildest/",
+    noselect = false,
+    frecency = true,
+    left = { "frecency_bar", "devicons" },
+    right = { "scrollbar" },
+    preview = { position = "right", anchor = "screen", width = "40%", border = "rounded" },
+  },
+
+  -- Full-featured palette with search preview
+  preview_palette_search = {
+    category = "preview",
+    label = "Palette Search",
+    cmd = "/require",
+    noselect = false,
+    pipeline = { "cmdline_fuzzy", "search" },
+    renderer = "palette",
+    palette = {
+      title = " Search ",
+      prompt_prefix = " / ",
+      prompt_position = "bottom",
+      max_height = "50%",
+      max_width = "50%",
+      min_width = 40,
+      margin = "auto",
+    },
+    preview = { position = "right", anchor = "popup", width = "50%", border = "rounded" },
+  },
 }
 
 -- Default VHS command for configs that don't specify one
@@ -1277,6 +1367,11 @@ M.preview_names = {
   "preview_gap_screen_left",
   "preview_priority_right",
   "preview_priority_screen",
+  "preview_search",
+  "preview_search_reverse",
+  "preview_help_frecency",
+  "preview_file_frecency",
+  "preview_palette_search",
 }
 
 -- Theme configs (generated)
@@ -1549,6 +1644,17 @@ function M.random_scene(label)
   end
   if math.random(6) == 1 then
     scene.bottom = { "docs" }
+  end
+  -- Randomly add preview to showcase search/file/help previews
+  if math.random(3) == 1 then
+    local pos = pick({ "right", "left" })
+    scene.preview = {
+      position = pos,
+      anchor = pick({ "screen", "popup" }),
+      width = pick({ "35%", "40%", "50%" }),
+      border = pick({ "rounded", "single" }),
+    }
+    scene.noselect = false
   end
   if math.random(6) == 1 then
     scene.hooks = pick({
@@ -2564,6 +2670,11 @@ function M.build(name_or_cfg, w)
     merged.highlights = false
   end
 
+  -- Prepopulate frecency data if requested
+  if merged.frecency then
+    M.prepopulate_frecency()
+  end
+
   -- Pipeline
   local pipeline = resolve_pipeline(merged.pipeline, w)
 
@@ -2680,6 +2791,9 @@ function M.gif_init(name, n)
   local configs_dir = vim.fn.fnamemodify(debug.getinfo(1, "S").source:sub(2), ":h")
   local root = vim.fn.fnamemodify(configs_dir, ":h:h")
   M.setup(root)
+
+  -- Prepopulate frecency so the heatmap bar has data to display
+  M.prepopulate_frecency()
 
   local w = require("wildest")
   n = n or 25

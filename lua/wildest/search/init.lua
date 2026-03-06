@@ -43,6 +43,7 @@ function M.search_pipeline(opts)
         data = {
           input = input,
           arg = input,
+          expand = "search",
         },
         output = function(_data, _candidate)
           -- For search, just keep the pattern in the cmdline
@@ -83,7 +84,7 @@ function M.search_pipeline(opts)
           ctx.arg = input
           pipeline_mod.resolve(async_ctx, {
             value = matches,
-            data = { input = input, arg = input },
+            data = { input = input, arg = input, expand = "search" },
             output = function(_data, _candidate)
               return input
             end,

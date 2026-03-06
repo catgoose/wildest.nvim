@@ -214,6 +214,85 @@ local function load_help(tag)
   return tag, scroll
 end
 
+--- Load current buffer into preview, scrolled to matching line with highlights.
+---@param candidate string the matching line text
+---@param pattern string the search pattern
+---@param cfg wildest.PreviewConfig
+---@return string|nil title, integer|nil scroll_line
+local function load_search(candidate, pattern, cfg)
+  local bufnr = vim.api.nvim_get_current_buf()
+  local max = cfg.max_lines or 500
+  local all_lines = vim.api.nvim_buf_get_lines(bufnr, 0, -1, false)
+
+  -- Find the first line that matches the candidate text (search full buffer)
+  local trimmed_candidate = vim.trim(candidate)
+  local match_line = nil
+  for i, line in ipairs(all_lines) do
+    if vim.trim(line) == trimmed_candidate then
+      match_line = i
+      break
+    end
+  end
+
+  -- Load a window of lines around the match
+  local start_line = 1
+  if match_line then
+    start_line = math.max(1, match_line - math.floor(max / 4))
+  end
+  local end_line = math.min(#all_lines, start_line + max - 1)
+  local lines = vim.list_slice(all_lines, start_line, end_line)
+
+  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+
+  local ft = vim.bo[bufnr].filetype
+  if ft and ft ~= "" then
+    vim.bo[preview_state.buf].filetype = ft
+  else
+    vim.bo[preview_state.buf].filetype = ""
+  end
+
+  -- Adjust match_line to be relative to the loaded chunk
+  local scroll = match_line and (match_line - start_line + 1) or nil
+
+  -- Highlight the matching line and pattern matches
+  vim.api.nvim_buf_clear_namespace(preview_state.buf, preview_state.ns_id, 0, -1)
+  if scroll then
+    vim.api.nvim_buf_set_extmark(preview_state.buf, preview_state.ns_id, scroll - 1, 0, {
+      end_col = #lines[scroll],
+      hl_group = "CursorLine",
+      hl_eol = true,
+      priority = 100,
+    })
+  end
+
+  -- Highlight all pattern matches in loaded lines with IncSearch
+  local ok, regex = pcall(vim.regex, pattern)
+  if ok and regex then
+    for i, line in ipairs(lines) do
+      local pos = 0
+      while pos < #line do
+        local s, e = regex:match_str(line:sub(pos + 1))
+        if not s then
+          break
+        end
+        vim.api.nvim_buf_set_extmark(preview_state.buf, preview_state.ns_id, i - 1, pos + s, {
+          end_col = pos + e,
+          hl_group = "IncSearch",
+          priority = 200,
+        })
+        if e == s then
+          break
+        end
+        pos = pos + e
+      end
+    end
+  end
+
+  local name = vim.api.nvim_buf_get_name(bufnr)
+  local title = name ~= "" and vim.fs.basename(name) or "[buffer]"
+  return title, scroll
+end
+
 --- Load fallback content.
 ---@param candidate string
 local function load_fallback(candidate)
@@ -522,6 +601,9 @@ function M.update(ctx, result)
       load_fallback(candidate)
       title = candidate
     end
+  elseif expand == "search" then
+    local pattern = data.input or ""
+    title, scroll_line = load_search(candidate, pattern, cfg)
   elseif expand == "shellcmd" or expand == "environment" then
     M.hide()
     return

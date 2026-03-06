@@ -306,6 +306,10 @@ local scene_pools = {
     { mode = "/", typed = "self" },
     { mode = "/", typed = "table" },
     { mode = "/", typed = "string" },
+    { mode = "?", typed = "function" },
+    { mode = "?", typed = "return" },
+    { mode = "?", typed = "local" },
+    { mode = "?", typed = "require" },
   },
 }
 
@@ -350,7 +354,6 @@ local function build_scene_tape(n)
     local pool = scene_pools[kind]
     local s = pool[math.random(#pool)]
     local speed = math.random(30, 120)
-    local wait_ms = math.random(1500, 3000)
 
     if i > 1 then
       table.insert(parts, "Ctrl+N")
@@ -360,7 +363,15 @@ local function build_scene_tape(n)
     table.insert(parts, string.format('Type "%s"', s.mode))
     table.insert(parts, "Sleep 300ms")
     table.insert(parts, string.format('Type@%dms "%s"', speed, s.typed))
-    table.insert(parts, string.format("Sleep %dms", wait_ms))
+    table.insert(parts, "Sleep 800ms")
+
+    -- Tab through a few completions to showcase previews updating
+    local tab_count = math.random(2, 5)
+    for _ = 1, tab_count do
+      table.insert(parts, "Tab")
+      table.insert(parts, string.format("Sleep %dms", math.random(600, 1200)))
+    end
+
     table.insert(parts, "Escape")
     table.insert(parts, "Sleep 300ms")
     table.insert(parts, "")

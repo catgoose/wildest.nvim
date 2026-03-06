@@ -81,7 +81,7 @@ end
 ---@param query string highlight query
 ---@param i integer 0-indexed candidate index
 ---@param width integer content width for this candidate
----@return string line, table[] spans, string base_hl
+---@return string line, table[] spans, string base_hl, integer right_start, string default_hl
 function BasePopupmenu:render_one_candidate(result, ctx, state, query, i, width)
   local candidates = result.value or {}
   local raw_candidate = candidates[i + 1]
@@ -104,10 +104,10 @@ function BasePopupmenu:render_one_candidate(result, ctx, state, query, i, width)
   local left_parts, right_parts =
     renderer_util.render_components(state, ctx, result, i, is_selected)
 
-  local line, spans =
+  local line, spans, right_start =
     renderer_util.render_line(candidate, left_parts, right_parts, candidate_spans, width, base_hl)
 
-  return line, spans, base_hl
+  return line, spans, base_hl, right_start, state.highlights.default
 end
 
 --- Render candidates into lines and line_highlights arrays
@@ -139,9 +139,15 @@ function BasePopupmenu:render_candidates(result, ctx, page_start, page_end, widt
   end
 
   for i = start, finish, step do
-    local line, spans, base_hl = self:render_one_candidate(result, ctx, state, query, i, width)
+    local line, spans, base_hl, right_start, default_hl =
+      self:render_one_candidate(result, ctx, state, query, i, width)
     table.insert(lines, line)
-    table.insert(line_highlights, { spans = spans, base_hl = base_hl })
+    table.insert(line_highlights, {
+      spans = spans,
+      base_hl = base_hl,
+      right_start = right_start,
+      default_hl = default_hl,
+    })
   end
 
   return lines, line_highlights
