@@ -132,17 +132,32 @@ local function format_mode(mode)
   return table.concat(parts)
 end
 
---- Build metadata lines for a binary/non-displayable file.
+--- Type labels for stat.type values.
+local type_labels = {
+  file = "File",
+  directory = "Directory",
+  link = "Symlink",
+  fifo = "FIFO (named pipe)",
+  socket = "Socket",
+  char = "Character device",
+  block = "Block device",
+}
+
+--- Build metadata lines for a non-displayable file.
 ---@param path string
 ---@param stat table uv_fs_stat result
+---@param label? string header label (default derived from stat.type)
 ---@return string[]
-local function file_metadata(path, stat)
+local function file_metadata(path, stat, label)
+  label = label or (type_labels[stat.type] or stat.type)
   local lines = {
-    "  Binary file",
+    "  " .. label,
     "",
   }
   lines[#lines + 1] = "  Path:      " .. path
-  lines[#lines + 1] = "  Size:      " .. format_size(stat.size)
+  if stat.size and stat.size > 0 then
+    lines[#lines + 1] = "  Size:      " .. format_size(stat.size)
+  end
   lines[#lines + 1] = "  Mode:      " .. format_mode(stat.mode)
 
   local ft = vim.filetype.match({ filename = path })
@@ -168,21 +183,81 @@ local function file_metadata(path, stat)
   return lines
 end
 
+--- Load a directory listing into the preview buffer.
+---@param path string
+---@return string|nil title
+local function load_directory(path)
+  local expanded = safe_expand(path)
+  local stat = vim.uv.fs_stat(expanded)
+  if not stat or stat.type ~= "directory" then
+    return nil
+  end
+  local handle = vim.uv.fs_scandir(expanded)
+  if not handle then
+    return nil
+  end
+  local entries = {}
+  while true do
+    local name, typ = vim.uv.fs_scandir_next(handle)
+    if not name then
+      break
+    end
+    entries[#entries + 1] = { name = name, type = typ }
+  end
+  table.sort(entries, function(a, b)
+    -- Directories first, then alphabetical
+    if a.type == "directory" and b.type ~= "directory" then
+      return true
+    end
+    if a.type ~= "directory" and b.type == "directory" then
+      return false
+    end
+    return a.name < b.name
+  end)
+  local lines = {
+    "  " .. expanded,
+    "  " .. #entries .. " entries",
+    "",
+  }
+  for _, entry in ipairs(entries) do
+    local suffix = entry.type == "directory" and "/" or ""
+    local icon = entry.type == "directory" and " " or "  "
+    lines[#lines + 1] = icon .. entry.name .. suffix
+  end
+  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+  vim.bo[preview_state.buf].filetype = ""
+  return vim.fs.basename(expanded) .. "/"
+end
+
 local function load_file(path, cfg)
   local expanded = safe_expand(path)
   local stat = vim.uv.fs_stat(expanded)
-  if not stat or stat.type == "directory" then
+  if not stat then
     return nil
   end
-  -- Read first 1KB to check for binary content
+  if stat.type == "directory" then
+    return load_directory(expanded)
+  end
+  -- Special files (sockets, fifos, devices): show metadata
+  if stat.type ~= "file" then
+    local lines = file_metadata(expanded, stat)
+    vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+    vim.bo[preview_state.buf].filetype = ""
+    return vim.fs.basename(expanded)
+  end
+  -- Try to open — handles permission denied
   local fd = vim.uv.fs_open(expanded, "r", 438)
   if not fd then
-    return nil
+    local lines = file_metadata(expanded, stat, "Permission denied")
+    vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+    vim.bo[preview_state.buf].filetype = ""
+    return vim.fs.basename(expanded)
   end
+  -- Read first 1KB to check for binary content
   local chunk = vim.uv.fs_read(fd, 1024, 0)
   vim.uv.fs_close(fd)
   if chunk and chunk:find("\0") then
-    local lines = file_metadata(expanded, stat)
+    local lines = file_metadata(expanded, stat, "Binary file")
     vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
     vim.bo[preview_state.buf].filetype = ""
     return vim.fs.basename(expanded)
@@ -195,8 +270,7 @@ local function load_file(path, cfg)
   else
     vim.bo[preview_state.buf].filetype = ""
   end
-  local title = vim.fs.basename(expanded)
-  return title
+  return vim.fs.basename(expanded)
 end
 
 --- Load buffer content into the preview buffer.
@@ -668,7 +742,7 @@ function M.update(ctx, result)
   local title = nil
   local scroll_line = nil
 
-  if expand == "file" then
+  if expand == "file" or expand == "dir" or expand == "file_in_path" then
     title = load_file(candidate, cfg)
   elseif expand == "buffer" then
     title = load_buffer(candidate, cfg)
@@ -685,10 +759,10 @@ function M.update(ctx, result)
     M.hide()
     return
   else
-    -- Heuristic: try as file first
+    -- Heuristic: try as file/directory first
     local expanded = safe_expand(candidate)
     local st = vim.uv.fs_stat(expanded)
-    if st and st.type ~= "directory" then
+    if st then
       title = load_file(candidate, cfg)
     else
       load_fallback(candidate)
