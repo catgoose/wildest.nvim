@@ -501,6 +501,16 @@ M.popupmenu_buffer_flags({opts?})               *wildest.popupmenu_buffer_flags*
         (wildest.Component)
 
 
+M.popupmenu_frecency_bar({opts?})               *wildest.popupmenu_frecency_bar*
+    Frecency heatmap bar — colored indicator based on usage frequency.
+
+    Parameters: ~
+        {opts?}  (table)
+
+    Returns: ~
+        (wildest.Component)
+
+
                                   *wildest.popupmenu_empty_message_with_spinner*
 M.popupmenu_empty_message_with_spinner({opts?})
     Empty message with animated spinner.
