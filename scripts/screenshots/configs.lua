@@ -332,6 +332,24 @@ M.configs = {
     bottom = { "docs" },
   },
 
+  statusline = {
+    category = "feature",
+    label = "Statusline (default)",
+    renderer = "border_theme",
+    border = "rounded",
+    bottom = { "statusline" },
+    noselect = false,
+  },
+
+  statusline_custom = {
+    category = "feature",
+    label = "Statusline (custom groups)",
+    renderer = "border_theme",
+    border = "rounded",
+    bottom = { "statusline_custom" },
+    noselect = false,
+  },
+
   frecency_bar = {
     category = "feature",
     label = "Frecency Heatmap",
@@ -1357,6 +1375,8 @@ M.feature_names = {
   "docs_hints_help",
   "frecency_bar",
   "frecency_bar_custom",
+  "statusline",
+  "statusline_custom",
   "file_finder",
   "file_finder_devicons",
 }
@@ -2598,6 +2618,14 @@ local function resolve_component(name, w)
     return w.popupmenu_frecency_bar({
       colors = { "#334455", "#556644", "#887733", "#bb6622", "#dd4411", "#ff2200" },
       char = "●",
+    })
+  elseif name == "statusline" then
+    return w.popupmenu_statusline()
+  elseif name == "statusline_custom" then
+    return w.popupmenu_statusline({
+      left = { "route", "matches", "marked" },
+      center = { "position", "page", "scroll" },
+      right = { "frecency_score", "input", "density", "time" },
     })
   else
     return name

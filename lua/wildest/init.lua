@@ -680,6 +680,25 @@ function M.popupmenu_docs(opts)
   return require("wildest.renderer.components.docs").new(opts)
 end
 
+---Contextual key hints chrome component — shows available keybindings.
+---Reads from the user's wildest config so hints always match their bindings.
+---Use in the `bottom` or `top` array of a popupmenu renderer.
+---@param opts? table { hl?: string, separator?: string, prefix?: string, keys?: table<string,string> }
+---@return function chrome_component
+function M.popupmenu_key_hints(opts)
+  return require("wildest.renderer.components.key_hints").new(opts)
+end
+
+---Dynamic statusline chrome component with left/center/right alignment.
+---Shows match count, position, page, scroll, marked count, route, input length,
+---frecency stats, frecency score for selected item, density bar, time, and key hints.
+---Use in the `bottom` or `top` array of a popupmenu renderer.
+---@param opts? table { hl?: string, accent_hl?: string, hot_hl?: string, separator?: string, left?: string[], center?: string[], right?: string[], sections?: string[], keys?: table<string,string>, bar_width?: integer }
+---@return function chrome_component
+function M.popupmenu_statusline(opts)
+  return require("wildest.renderer.components.statusline").new(opts)
+end
+
 ---Static empty message component.
 ---@param msg string Message to display when there are no results
 ---@param hl? string Highlight group
