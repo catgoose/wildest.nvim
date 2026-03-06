@@ -32,6 +32,7 @@ function M.new(opts)
   state.empty_message_first_draw_delay = opts.empty_message_first_draw_delay
   state.title = opts.title
   state.position = opts.position or "bottom"
+  state.margin = opts.margin
   state.border = border_info
   renderer_util.create_accent_highlights(state)
 
@@ -123,7 +124,12 @@ function PopupmenuBorder:render(ctx, result)
     win_row = math.max(0, row - height - 1)
   end
 
-  local actual_col = renderer_util.center_col(col, outer_width, editor_width)
+  local actual_col
+  if state.margin ~= nil then
+    actual_col = col + renderer_util.parse_margin(state.margin, editor_width, outer_width)
+  else
+    actual_col = renderer_util.center_col(col, outer_width, editor_width)
+  end
 
   local win_config = {
     relative = "editor",

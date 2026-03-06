@@ -1353,6 +1353,41 @@ w.frecency_visit(":edit foo.lua")
 The `blend` option in `frecency_boost` controls the mix: `0` = original order
 only, `1` = pure frecency, `0.5` = equal blend.
 
+### Frecency Heatmap
+
+The `popupmenu_frecency_bar()` component adds a colored heat indicator next to
+each candidate. Hot (frequently used) items glow warm, cold items are dim.
+Candidates with no history show as blank.
+
+```lua
+w.setup({
+  pipeline = w.cmdline_pipeline({ fuzzy = true }),
+  renderer = w.popupmenu_renderer({
+    left = { w.popupmenu_frecency_bar(), w.popupmenu_devicons() },
+    right = { w.popupmenu_scrollbar() },
+  }),
+})
+
+-- Custom gradient colors + indicator character
+w.popupmenu_frecency_bar({
+  colors = { '#334455', '#887733', '#cc6622', '#ff2200' },
+  char = '●',
+})
+
+-- Use pre-created highlight groups instead of hex colors
+w.popupmenu_frecency_bar({
+  gradient = { 'Comment', 'String', 'WarningMsg', 'ErrorMsg' },
+})
+```
+
+| Option     | Type     | Default                    | Description                                    |
+| ---------- | -------- | -------------------------- | ---------------------------------------------- |
+| `colors`   | string[] | grey → orange → red        | Hex fg colors for gradient (cold → hot)        |
+| `gradient` | string[] | —                          | Pre-created hl group names (overrides colors)  |
+| `char`     | string   | `"▎"`                      | Indicator character                            |
+| `dim_char` | string   | `" "`                      | Character for zero-score items                 |
+| `weights`  | table    | —                          | Custom frecency time bucket weights            |
+
 ## Commands
 
 | Command                  | Description                                         |

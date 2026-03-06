@@ -40,10 +40,14 @@ function M.help_pipeline(opts)
       return false
     end
 
-    -- Extract help argument
+    -- Extract help argument (may be empty after the space)
     local arg = input:match("^%s*h%a*%s+(.+)$")
     if not arg then
-      return false
+      if input:match("^%s*h%a*%s+$") then
+        arg = ""
+      else
+        return false
+      end
     end
 
     local results
@@ -72,7 +76,7 @@ function M.help_pipeline(opts)
     table.insert(pipeline, require("wildest.filter").fuzzy_filter())
   end
 
-  table.insert(pipeline, result.result())
+  table.insert(pipeline, result.result({ data = { expand = "help" } }))
   return pipeline
 end
 

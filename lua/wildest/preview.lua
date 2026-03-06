@@ -144,33 +144,56 @@ local function load_buffer(name, cfg)
   return title
 end
 
---- Load help content into the preview buffer.
+--- Search runtimepath doc/tags files for a help tag.
+--- Returns the help file path and the tag marker pattern.
 ---@param tag string
----@return string|nil title
-local function load_help(tag)
-  -- Try direct file lookup first
-  local rtp = vim.o.runtimepath ---@type string
-  local help_file = vim.fn.findfile(string.format("doc/%s.txt", tag), rtp)
-  if help_file ~= "" then
-    local lines = vim.fn.readfile(help_file, "", 500)
-    vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
-    vim.bo[preview_state.buf].filetype = "help"
-    return tag
-  end
-  -- Fall back to taglist to locate the help file without opening a window
-  local ok, tags = pcall(vim.fn.taglist, string.format("^%s$", vim.fn.escape(tag, "\\")))
-  if ok and type(tags) == "table" then
-    for _, entry in ipairs(tags) do
-      local fname = entry.filename
-      if fname and vim.uv.fs_stat(fname) then
-        local lines = vim.fn.readfile(fname, "", 500)
-        vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
-        vim.bo[preview_state.buf].filetype = "help"
-        return tag
+---@return string|nil filepath, string|nil search_pattern
+local function find_help_tag(tag)
+  local tag_files = vim.api.nvim_get_runtime_file("doc/tags", true)
+  for _, tf in ipairs(tag_files) do
+    local f = io.open(tf, "r")
+    if f then
+      local dir = vim.fs.dirname(tf)
+      for line in f:lines() do
+        -- tags format: <tag>\t<filename>\t<search>
+        local t, fname = line:match("^(%S+)\t(%S+)")
+        if t == tag then
+          f:close()
+          local full = dir .. "/" .. fname
+          if vim.uv.fs_stat(full) then
+            return full
+          end
+        end
       end
+      f:close()
     end
   end
   return nil
+end
+
+--- Load help content into the preview buffer.
+--- Finds the help file and scrolls to the tag location.
+---@param tag string
+---@return string|nil title, integer|nil tag_line
+local function load_help(tag)
+  local help_file = find_help_tag(tag)
+  if not help_file then
+    return nil, nil
+  end
+
+  local lines = vim.fn.readfile(help_file, "", 2000)
+  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+  vim.bo[preview_state.buf].filetype = "help"
+
+  -- Find the line containing *tag* to scroll to
+  local tag_marker = string.format("*%s*", tag)
+  for i, line in ipairs(lines) do
+    if line:find(tag_marker, 1, true) then
+      return tag, i
+    end
+  end
+
+  return tag, nil
 end
 
 --- Load fallback content.
@@ -469,13 +492,18 @@ function M.update(ctx, result)
   local data = result.data or {}
   local expand = detect_expand(data)
   local title = nil
+  local scroll_line = nil
 
   if expand == "file" then
     title = load_file(candidate, cfg)
   elseif expand == "buffer" then
     title = load_buffer(candidate, cfg)
   elseif expand == "help" then
-    title = load_help(candidate)
+    title, scroll_line = load_help(candidate)
+    if not title then
+      load_fallback(candidate)
+      title = candidate
+    end
   elseif expand == "shellcmd" or expand == "environment" then
     M.hide()
     return
@@ -542,6 +570,11 @@ function M.update(ctx, result)
     vim.wo[preview_state.win].cursorline = false
     vim.wo[preview_state.win].number = true
     vim.wo[preview_state.win].signcolumn = "no"
+  end
+
+  -- Scroll to tag line for help previews
+  if scroll_line and vim.api.nvim_win_is_valid(preview_state.win) then
+    pcall(vim.api.nvim_win_set_cursor, preview_state.win, { scroll_line, 0 })
   end
 end
 

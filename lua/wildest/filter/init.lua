@@ -167,6 +167,10 @@ function M.fuzzy_filter(opts)
       query = ctx.arg
     end
 
+    if query == "" then
+      return candidates
+    end
+
     if key_fn then
       -- Filter using key extraction
       local keys = {}

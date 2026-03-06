@@ -6,6 +6,7 @@
 local cache = require("wildest.cache")
 local commands = require("wildest.cmdline.commands")
 local completions = require("wildest.cmdline.completions")
+local log = require("wildest.log")
 local parser = require("wildest.cmdline.parser")
 
 local M = {}
@@ -68,10 +69,13 @@ function M.cmdline_pipeline(opts)
 
   --- Parse stage: parse cmdline and get completions
   local function parse_and_complete(ctx, input)
-    if not input or input == "" then
+    log.log("cmdline", "parse_and_complete", { input = input, cmdtype = ctx.cmdtype })
+    if not input then
+      log.log("cmdline", "reject_nil_input")
       return false
     end
     if ctx.cmdtype ~= ":" then
+      log.log("cmdline", "reject_wrong_cmdtype", { cmdtype = ctx.cmdtype })
       return false
     end
 
@@ -82,6 +86,7 @@ function M.cmdline_pipeline(opts)
         ctx._full_cmdline = input
         input = input:sub(1, pos - 1)
         if input == "" then
+          log.log("cmdline", "reject_empty_before_cursor")
           return false
         end
       end
@@ -90,6 +95,7 @@ function M.cmdline_pipeline(opts)
     -- Check cache
     local cached = parse_cache:get(input)
     if cached then
+      log.log("cmdline", "cache_hit", { input = input, count = #cached.candidates })
       ctx.arg = cached.arg
       ctx.cmd = cached.cmd
       ctx.expand = cached.expand
@@ -111,7 +117,15 @@ function M.cmdline_pipeline(opts)
       candidates = completions.get_completions(parsed)
     end
 
+    log.log("cmdline", "completions", {
+      input = input,
+      expand = parsed.expand,
+      arg = parsed.arg,
+      count = candidates and #candidates or 0,
+    })
+
     if not candidates or #candidates == 0 then
+      log.log("cmdline", "reject_no_candidates", { input = input })
       return false
     end
 

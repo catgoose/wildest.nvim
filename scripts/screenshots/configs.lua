@@ -306,6 +306,20 @@ M.configs = {
     bottom = { "docs" },
   },
 
+  frecency_bar = {
+    category = "feature",
+    label = "Frecency Heatmap",
+    left = { "frecency_bar" },
+  },
+
+  frecency_bar_custom = {
+    category = "feature",
+    label = "Frecency Heatmap (custom)",
+    left = { "frecency_bar_custom", "devicons" },
+    renderer = "border_theme",
+    border = "rounded",
+  },
+
   file_finder = {
     category = "feature",
     label = "File Finder",
@@ -1162,6 +1176,8 @@ M.feature_names = {
   "ghost_text_custom",
   "docs_hints",
   "docs_hints_help",
+  "frecency_bar",
+  "frecency_bar_custom",
   "file_finder",
   "file_finder_devicons",
 }
@@ -1453,6 +1469,8 @@ function M.random_scene(label)
     { "devicons", "kind_icon" },
     { "cmdline_icon", "devicons" },
     { "buffer_flags" },
+    { "frecency_bar" },
+    { "frecency_bar", "devicons" },
   }
   local rights = {
     { "scrollbar" },
@@ -2061,7 +2079,8 @@ function M.scene_to_description(cfg)
   add(merged.highlighter or "fzy")
 
   local left = merged.left
-  local has_devicons, has_kind, has_buffer_flags, has_cmdline_icon = false, false, false, false
+  local has_devicons, has_kind, has_buffer_flags, has_cmdline_icon, has_frecency_bar =
+    false, false, false, false, false
   if type(left) == "string" then
     if left == "devicons" then
       has_devicons = true
@@ -2080,6 +2099,9 @@ function M.scene_to_description(cfg)
       if item == "cmdline_icon" then
         has_cmdline_icon = true
       end
+      if item == "frecency_bar" or item == "frecency_bar_custom" then
+        has_frecency_bar = true
+      end
     end
   end
   if has_devicons then
@@ -2093,6 +2115,9 @@ function M.scene_to_description(cfg)
   end
   if has_buffer_flags then
     add("buffer flags")
+  end
+  if has_frecency_bar then
+    add("frecency heatmap")
   end
   if
     not has_devicons
@@ -2348,6 +2373,13 @@ local function resolve_component(name, w)
     return w.popupmenu_buffer_flags()
   elseif name == "docs" then
     return w.popupmenu_docs()
+  elseif name == "frecency_bar" then
+    return w.popupmenu_frecency_bar()
+  elseif name == "frecency_bar_custom" then
+    return w.popupmenu_frecency_bar({
+      colors = { "#334455", "#556644", "#887733", "#bb6622", "#dd4411", "#ff2200" },
+      char = "●",
+    })
   else
     return name
   end

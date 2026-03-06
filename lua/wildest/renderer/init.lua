@@ -27,9 +27,6 @@
 ---@field output? fun(data: table, candidate: any): string
 ---@field draw? fun(data: table, candidate: any): string
 
----@diagnostic disable-next-line: undefined-global
-local utf8 = utf8 ---@type {codes: fun(s: string): fun(): integer, integer, char: fun(code: integer): string}
-
 local hl_mod = require("wildest.highlight")
 local log = require("wildest.log")
 local util = require("wildest.util")
@@ -287,22 +284,34 @@ function M.truncate_with_spans(text, spans, max_width, ellipsis)
     return ellipsis:sub(1, max_width), {}
   end
 
-  -- Truncate text
-  local parts = {}
+  -- Truncate text by iterating UTF-8 characters
   local cur_width = 0
   local byte_pos = 0
+  local i = 1
+  local len = #text
 
-  for p, code in utf8.codes(text) do
-    local c = utf8.char(code)
+  while i <= len do
+    local b = text:byte(i)
+    local char_len
+    if b < 0x80 then
+      char_len = 1
+    elseif b < 0xE0 then
+      char_len = 2
+    elseif b < 0xF0 then
+      char_len = 3
+    else
+      char_len = 4
+    end
+    local c = text:sub(i, i + char_len - 1)
     local cw = util.strdisplaywidth(c)
     if cur_width + cw > target then
       break
     end
-    parts[#parts + 1] = c
     cur_width = cur_width + cw
-    byte_pos = p + #c - 1
+    byte_pos = i + char_len - 1
+    i = i + char_len
   end
-  local result = table.concat(parts)
+  local result = text:sub(1, byte_pos)
 
   -- Adjust spans to fit truncated text
   local adjusted = {}
@@ -520,6 +529,7 @@ function M.render_components(state, ctx, result, index, is_selected)
     total = #result.value,
     page_start = state.page[1],
     page_end = state.page[2],
+    run_id = ctx.run_id,
     is_selected = is_selected,
     result = result,
     candidate = candidate,

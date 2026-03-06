@@ -90,6 +90,17 @@ end
 
 T["parse_and_complete"] = new_set()
 
+T["parse_and_complete"]["returns commands for empty input"] = function()
+  local pipeline = cmdline.cmdline_pipeline()
+  local parse_and_complete = pipeline[1]
+
+  local ctx = { input = "", cmdtype = ":" }
+  local result = parse_and_complete(ctx, "")
+  -- Should return a table of command completions, not false
+  expect.equality(type(result), "table")
+  expect.equality(#result > 0, true)
+end
+
 T["parse_and_complete"]["uses colon syntax on cache"] = function()
   -- Regression test: creating two pipelines and calling parse_and_complete
   -- should not error. The parse_cache must use colon syntax (:get/:set).
