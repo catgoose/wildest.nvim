@@ -117,7 +117,7 @@ end
 ---   - colors?: string[] Hex fg colors for the gradient (cold → hot). Default: grey → orange → red.
 ---   - gradient?: string[] Pre-created hl group names (overrides colors).
 ---   - char?: string Indicator character (default "▎").
----   - dim_char?: string Character for zero-score items (default " "). Set to char to always show.
+---   - dim_char?: string Character for zero-score items (default "▎"). Set to " " to hide zero-score items.
 ---   - weights?: table Custom frecency time bucket weights.
 ---@return table component
 function M.new(opts)
@@ -172,11 +172,10 @@ function M.new(opts)
       local candidates = ctx.result and ctx.result.value or {}
       for i = start_idx, math.min(end_idx, #candidates) do
         local c = candidates[i]
-        if type(c) == "string" then
-          local s = frecency.score(c, cached_data, weights)
-          if s > cached_max then
-            cached_max = s
-          end
+        local item = type(c) == "string" and c or (c.word or c[1] or tostring(c))
+        local s = frecency.score(item, cached_data, weights)
+        if s > cached_max then
+          cached_max = s
         end
       end
     end
