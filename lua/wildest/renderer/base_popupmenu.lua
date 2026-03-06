@@ -90,19 +90,25 @@ function BasePopupmenu:render_one_candidate(result, ctx, state, query, i, width)
     candidate = result.draw(result.data, raw_candidate) or raw_candidate
   end
   local is_selected = (i == ctx.selected)
-  local base_hl = is_selected and state.highlights.selected or state.highlights.default
-  local accent_hl = is_selected and state.highlights.selected_accent or state.highlights.accent
+  local is_marked = ctx.marked and ctx.marked[i] or false
+  local base_hl = is_selected and state.highlights.selected
+    or is_marked and state.highlights.marked
+    or state.highlights.default
+  local accent_hl = is_selected and state.highlights.selected_accent
+    or is_marked and state.highlights.marked_accent
+    or state.highlights.accent
 
+  local is_highlighted = is_selected or is_marked
   local candidate_spans = renderer_util.get_candidate_spans(
     state.highlighter,
     query,
     candidate,
     accent_hl,
-    state.highlights.selected_accent,
-    is_selected
+    is_selected and state.highlights.selected_accent or state.highlights.marked_accent,
+    is_highlighted
   )
   local left_parts, right_parts =
-    renderer_util.render_components(state, ctx, result, i, is_selected)
+    renderer_util.render_components(state, ctx, result, i, is_highlighted)
 
   local line, spans, right_start =
     renderer_util.render_line(candidate, left_parts, right_parts, candidate_spans, width, base_hl)
@@ -223,8 +229,8 @@ function BasePopupmenu:render_candidates_grid(result, ctx, page_start, page_end,
         cell_line = cell_line .. string.rep(" ", col_width - cell_display_w)
       end
 
-      -- If this cell is selected, it drives the base_hl for highlights
-      if i == ctx.selected then
+      -- If this cell is selected or marked, it drives the base_hl for highlights
+      if i == ctx.selected or (ctx.marked and ctx.marked[i]) then
         row_base_hl = cell_base_hl
       end
 

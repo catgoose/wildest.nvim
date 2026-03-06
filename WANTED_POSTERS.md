@@ -91,6 +91,128 @@
   <!-- gen:option_gallery_test:start -->
   <!-- gen:option_gallery_test:end -->
 
+## Multi-Select
+
+<!-- gen:multiselect_gallery_test:start -->
+<table>
+<tr>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B1%5D%20multiselect_quickfix&body=%2A%2AScreenshot%20index%3A%2A%2A%201%0A%2A%2AConfig%20key%3A%2A%2A%20%60multiselect_quickfix%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[1]</a> Multi-Select → Quickfix</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, multi-select, :e lua/wildest/renderer/components/</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/multiselect_quickfix.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e lua/wildest/renderer/components/",
+left = { "devicons" },
+right = { "scrollbar" },
+noselect = false,
+previous_key = { "<C-k>", "<Up>" },
+actions = { ["<C-q>"] = "send_to_quickfix" },
+mark_key = "<Tab>",
+unmark_key = "<S-Tab>",
+next_key = { "<C-j>", "<Down>" },
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B2%5D%20multiselect_loclist&body=%2A%2AScreenshot%20index%3A%2A%2A%202%0A%2A%2AConfig%20key%3A%2A%2A%20%60multiselect_loclist%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[2]</a> Multi-Select → Location List</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, multi-select, :e tests/</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/multiselect_loclist.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e tests/",
+left = { "devicons" },
+right = { "scrollbar" },
+noselect = false,
+previous_key = { "<C-k>", "<Up>" },
+actions = { ["<C-l>"] = "send_to_loclist" },
+mark_key = "<Tab>",
+unmark_key = "<S-Tab>",
+next_key = { "<C-j>", "<Down>" },
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B3%5D%20multiselect_splits&body=%2A%2AScreenshot%20index%3A%2A%2A%203%0A%2A%2AConfig%20key%3A%2A%2A%20%60multiselect_splits%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[3]</a> Multi-Select → Open Marked</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, scrollbar, multi-select, :e lua/wildest/</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/multiselect_splits.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e lua/wildest/",
+left = { "devicons" },
+right = { "scrollbar" },
+noselect = false,
+previous_key = { "<C-k>", "<Up>" },
+actions = { ["<C-o>"] = "open_marked" },
+mark_key = "<Tab>",
+unmark_key = "<S-Tab>",
+next_key = { "<C-j>", "<Down>" },
+</code></pre>
+</details>
+</td>
+</tr>
+<tr>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B4%5D%20multiselect_frecency&body=%2A%2AScreenshot%20index%3A%2A%2A%204%0A%2A%2AConfig%20key%3A%2A%2A%20%60multiselect_frecency%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[4]</a> Multi-Select + Frecency</strong><br>
+<em>auto theme, bordered, noselect=false, fzy, devicons, frecency heatmap, scrollbar, preview right screen, multi-select, :e lua/wildest/</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/multiselect_frecency.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e lua/wildest/",
+left = { "frecency_bar", "devicons" },
+right = { "scrollbar" },
+noselect = false,
+preview = {
+  anchor = "screen",
+  border = "rounded",
+  position = "right",
+  width = "40%",
+},
+frecency = true,
+previous_key = { "<C-k>", "<Up>" },
+actions = { ["<C-q>"] = "send_to_quickfix" },
+mark_key = "<Tab>",
+unmark_key = "<S-Tab>",
+next_key = { "<C-j>", "<Down>" },
+</code></pre>
+</details>
+</td>
+<td align="center">
+<strong><a href="https://github.com/catgoose/wildest.nvim/issues/new?title=Screenshot%20issue%3A%20%5B5%5D%20multiselect_palette&body=%2A%2AScreenshot%20index%3A%2A%2A%205%0A%2A%2AConfig%20key%3A%2A%2A%20%60multiselect_palette%60%0A%0A%2A%2ADescribe%20the%20issue%3A%2A%2A%0A">[5]</a> Multi-Select Palette</strong><br>
+<em>palette, noselect=false, fzy, devicons, scrollbar, multi-select, :e lua/wildest/renderer/</em><br>
+<img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/multiselect_palette.png" width="400"><br>
+<details><summary>Config</summary>
+<pre><code class="language-lua">
+cmd = ":e lua/wildest/renderer/",
+renderer = "palette",
+left = { "devicons" },
+right = { "scrollbar" },
+noselect = false,
+palette = {
+  margin = "auto",
+  max_height = "60%",
+  max_width = "60%",
+  min_width = 40,
+  prompt_position = "bottom",
+  prompt_prefix = " :",
+  title = " Multi-Select ",
+},
+previous_key = { "<C-k>", "<Up>" },
+actions = {
+  ["<C-o>"] = "open_marked",
+  ["<C-q>"] = "send_to_quickfix",
+},
+mark_key = "<Tab>",
+unmark_key = "<S-Tab>",
+next_key = { "<C-j>", "<Down>" },
+</code></pre>
+</details>
+</td>
+<td></td>
+</tr>
+</table>
+<!-- gen:multiselect_gallery_test:end -->
+
 ## Preview
 
   <!-- gen:preview_gallery_test:start -->

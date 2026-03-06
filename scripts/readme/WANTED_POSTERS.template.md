@@ -91,6 +91,11 @@
   <!-- gen:option_gallery_test:start -->
   <!-- gen:option_gallery_test:end -->
 
+## Multi-Select
+
+<!-- gen:multiselect_gallery_test:start -->
+<!-- gen:multiselect_gallery_test:end -->
+
 ## Preview
 
   <!-- gen:preview_gallery_test:start -->

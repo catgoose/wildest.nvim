@@ -18,6 +18,8 @@
 ---@field close_key? string|string[] Key(s) to close popup but stay in cmdline (default: '<C-e>')
 ---@field confirm_key? string|string[] Key(s) to accept selection and execute (default: '<C-y>')
 ---@field dismiss_key? string|string[] Key(s) to dismiss popup and restore input (default: nil)
+---@field mark_key? string|string[] Key(s) to mark candidate and advance (default: nil)
+---@field unmark_key? string|string[] Key(s) to unmark candidate and go back (default: nil)
 ---@field jump_keys? table[] Custom jump bindings: { { key, count } ... } e.g. { { "<C-n>", 5 }, { "<C-p>", -10 } }
 ---@field actions? table<string, string|fun(ctx: wildest.ActionContext)> Key-to-action mappings
 ---@field interval? integer Debounce interval in ms (default: 100)
@@ -50,6 +52,8 @@ local defaults = {
   close_key = "<C-e>",
   confirm_key = "<C-y>",
   dismiss_key = nil,
+  mark_key = nil,
+  unmark_key = nil,
   jump_keys = {},
   actions = {},
   interval = 100, -- debounce interval in ms

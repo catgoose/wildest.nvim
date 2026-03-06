@@ -45,6 +45,8 @@ function M.setup_default_highlights()
     WildestBorder = "FloatBorder",
     WildestPrompt = "Pmenu",
     WildestPromptCursor = "Cursor",
+    WildestMarked = "PmenuSel",
+    WildestMarkedAccent = "PmenuMatchSel",
     WildestScrollbar = "PmenuSbar",
     WildestScrollbarThumb = "PmenuThumb",
     WildestSpinner = "Special",
@@ -201,9 +203,11 @@ function M.create_base_state(opts, defaults)
     highlights = {
       default = user_hl.default or opts.hl or "WildestDefault",
       selected = user_hl.selected or opts.selected_hl or "WildestSelected",
+      marked = user_hl.marked or "WildestMarked",
       error = opts.error_hl or "WildestError",
       accent = user_hl.accent or nil,
       selected_accent = user_hl.selected_accent or nil,
+      marked_accent = user_hl.marked_accent or nil,
     },
     max_height = opts.max_height or defaults.max_height or 16,
     min_height = opts.min_height or defaults.min_height or 0,
@@ -260,6 +264,20 @@ function M.create_accent_highlights(state)
       )
     else
       state.highlights.selected_accent = "WildestSelectedAccent"
+    end
+  end
+
+  if not state.highlights.marked_accent then
+    local marked_accent_hl = vim.api.nvim_get_hl(0, { name = "WildestMarkedAccent" })
+    if marked_accent_hl.link then
+      state.highlights.marked_accent = hl_mod.hl_with_attr(
+        "WildestMarkedAccent_derived",
+        state.highlights.marked,
+        "underline",
+        "bold"
+      )
+    else
+      state.highlights.marked_accent = "WildestMarkedAccent"
     end
   end
 end
@@ -515,7 +533,10 @@ end
 function M.render_components(state, ctx, result, index, is_selected)
   local left_parts = {}
   local right_parts = {}
-  local hl = is_selected and state.highlights.selected or state.highlights.default
+  local is_marked = ctx.marked and ctx.marked[index] or false
+  local hl = is_selected and state.highlights.selected
+    or is_marked and state.highlights.marked
+    or state.highlights.default
 
   local raw_candidate = result.value[index + 1]
   local candidate = raw_candidate
@@ -532,11 +553,13 @@ function M.render_components(state, ctx, result, index, is_selected)
     page_end = state.page[2],
     run_id = ctx.run_id,
     is_selected = is_selected,
+    is_marked = is_marked,
     result = result,
     candidate = candidate,
     query = query,
     default_hl = state.highlights.default,
     selected_hl = state.highlights.selected,
+    marked_hl = state.highlights.marked,
   }
 
   for _, comp in ipairs(state.left) do

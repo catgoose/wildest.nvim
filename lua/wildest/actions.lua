@@ -8,6 +8,7 @@
 ---@class wildest.ActionContext
 ---@field candidate string|nil Selected candidate (raw)
 ---@field candidates string[] All filtered candidates
+---@field marked_candidates string[] Marked candidates (empty if none marked)
 ---@field selected number 0-indexed, -1 if none
 ---@field result wildest.PipelineResult Full pipeline result
 ---@field data table Pipeline metadata (cmd, arg, expand, input, query)
@@ -88,11 +89,21 @@ function M.build_context()
     candidate = candidates[selected + 1]
   end
 
+  -- Build marked candidates list from marked indices
+  local marked_indices = state.get_marked()
+  local marked_candidates = {}
+  for _, idx in ipairs(marked_indices) do
+    if idx >= 0 and idx < #candidates then
+      marked_candidates[#marked_candidates + 1] = candidates[idx + 1]
+    end
+  end
+
   local data = s.result.data or {}
 
   return {
     candidate = candidate,
     candidates = candidates,
+    marked_candidates = marked_candidates,
     selected = selected,
     result = s.result,
     data = data,
@@ -218,10 +229,11 @@ local function build_list_items(candidates, expand)
 end
 
 M.register("send_to_quickfix", function(ctx)
-  if #ctx.candidates == 0 then
+  local targets = #ctx.marked_candidates > 0 and ctx.marked_candidates or ctx.candidates
+  if #targets == 0 then
     return
   end
-  local items = build_list_items(ctx.candidates, detect_expand(ctx.data))
+  local items = build_list_items(targets, detect_expand(ctx.data))
   leave_cmdline_and_run(function()
     vim.fn.setqflist(items, "r")
     vim.cmd.copen()
@@ -229,10 +241,11 @@ M.register("send_to_quickfix", function(ctx)
 end)
 
 M.register("send_to_loclist", function(ctx)
-  if #ctx.candidates == 0 then
+  local targets = #ctx.marked_candidates > 0 and ctx.marked_candidates or ctx.candidates
+  if #targets == 0 then
     return
   end
-  local items = build_list_items(ctx.candidates, detect_expand(ctx.data))
+  local items = build_list_items(targets, detect_expand(ctx.data))
   leave_cmdline_and_run(function()
     vim.fn.setloclist(0, items, "r")
     vim.cmd.lopen()
@@ -251,6 +264,51 @@ M.register("toggle_preview", function(_)
   local preview = require("wildest.preview")
   preview.toggle()
   require("wildest.state").draw()
+end)
+
+M.register("open_marked", function(ctx)
+  local targets = #ctx.marked_candidates > 0 and ctx.marked_candidates or {}
+  if #targets == 0 then
+    return
+  end
+  local expand = detect_expand(ctx.data)
+  leave_cmdline_and_run(function()
+    for _, c in ipairs(targets) do
+      local escaped = vim.fn.fnameescape(c) ---@type string
+      if expand == "buffer" then
+        vim.cmd.buffer(escaped)
+      elseif expand == "help" then
+        vim.cmd.help(escaped)
+      else
+        vim.cmd.edit(escaped)
+      end
+    end
+  end)
+end)
+
+M.register("delete_marked_buffers", function(ctx)
+  local targets = #ctx.marked_candidates > 0 and ctx.marked_candidates or {}
+  if #targets == 0 then
+    return
+  end
+  leave_cmdline_and_run(function()
+    for _, c in ipairs(targets) do
+      local bufnr = vim.fn.bufnr(c)
+      if bufnr ~= -1 then
+        pcall(vim.api.nvim_buf_delete, bufnr, {})
+      end
+    end
+  end)
+end)
+
+M.register("yank_marked", function(ctx)
+  local targets = #ctx.marked_candidates > 0 and ctx.marked_candidates or {}
+  if #targets == 0 then
+    return
+  end
+  local text = table.concat(targets, "\n")
+  vim.fn.setreg('"', text)
+  vim.fn.setreg("+", text)
 end)
 
 M.register("redirect_output", function(ctx)

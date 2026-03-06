@@ -77,6 +77,9 @@ T["list()"]["contains all built-in actions"] = function()
     "send_to_quickfix",
     "send_to_loclist",
     "yank",
+    "yank_marked",
+    "open_marked",
+    "delete_marked_buffers",
     "toggle_preview",
     "redirect_output",
   }
@@ -87,7 +90,7 @@ end
 
 T["built-in actions"] = new_set()
 
-T["built-in actions"]["all 8 are registered and resolvable"] = function()
+T["built-in actions"]["all built-in actions are registered and resolvable"] = function()
   local actions = require("wildest.actions")
   local builtins = {
     "open_split",
@@ -96,6 +99,9 @@ T["built-in actions"]["all 8 are registered and resolvable"] = function()
     "send_to_quickfix",
     "send_to_loclist",
     "yank",
+    "yank_marked",
+    "open_marked",
+    "delete_marked_buffers",
     "toggle_preview",
     "redirect_output",
   }

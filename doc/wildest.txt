@@ -840,6 +840,8 @@ wildest.Config                                                  *wildest.Config*
         {close_key?}            (string|string[])                                      Key(s) to close popup but stay in cmdline (default: '<C-e>')
         {confirm_key?}          (string|string[])                                      Key(s) to accept selection and execute (default: '<C-y>')
         {dismiss_key?}          (string|string[])                                      Key(s) to dismiss popup and restore input (default: nil)
+        {mark_key?}             (string|string[])                                      Key(s) to mark candidate and advance (default: nil)
+        {unmark_key?}           (string|string[])                                      Key(s) to unmark candidate and go back (default: nil)
         {jump_keys?}            (table[])                                              Custom jump bindings: { { key, count } ... } e.g. { { "<C-n>", 5 }, { "<C-p>", -10 } }
         {actions?}              (table<string,string|fun(ctx:wildest.ActionContext)>)  Key-to-action mappings
         {interval?}             (integer)                                              Debounce interval in ms (default: 100)
@@ -902,6 +904,7 @@ wildest.State                                                    *wildest.State*
         {suppress_change}    (boolean)                 Suppress next CmdlineChanged from our setcmdline
         {triggered}          (boolean)                 For trigger='tab': has Tab been pressed?
         {pipeline_timer?}    (uv_timer_t)              Timeout timer for pipeline
+        {marked}             (table<integer,boolean>)  Set of marked candidate indices (0-indexed)
 
 
 M.get()                                                      *wildest.state.get*
@@ -982,6 +985,32 @@ M.scroll({n})                                             *wildest.state.scroll*
 
     Parameters: ~
         {n}  (integer)  positive = down, negative = up
+
+
+M.mark({n})                                                 *wildest.state.mark*
+     Mark the current candidate and advance selection by n positions.
+     If no candidate is selected, selects the first one and marks it.
+
+    Parameters: ~
+        {n}  (integer)  direction to advance after marking (1 = next, -1 = previous)
+
+
+M.unmark({n})                                             *wildest.state.unmark*
+     Unmark the current candidate and move selection by n positions.
+
+    Parameters: ~
+        {n}  (integer)  direction to move after unmarking (-1 = previous, 1 = next)
+
+
+M.get_marked()                                        *wildest.state.get_marked*
+     Get sorted array of marked candidate indices (0-indexed).
+
+    Returns: ~
+        (integer[])
+
+
+M.clear_marks()                                      *wildest.state.clear_marks*
+     Clear all marks.
 
 
 M.feedkeys_cmdline({text})                      *wildest.state.feedkeys_cmdline*
