@@ -181,19 +181,37 @@ local function load_help(tag)
     return nil, nil
   end
 
-  local lines = vim.fn.readfile(help_file, "", 2000)
+  -- Find the tag line in the full file first
+  local tag_marker = string.format("*%s*", tag)
+  local tag_line = nil
+  local f = io.open(help_file, "r")
+  if f then
+    local i = 0
+    for line in f:lines() do
+      i = i + 1
+      if line:find(tag_marker, 1, true) then
+        tag_line = i
+        break
+      end
+    end
+    f:close()
+  end
+
+  -- Load a window of lines around the tag (keeps buffer small for huge files)
+  local start_line = 1
+  if tag_line then
+    start_line = math.max(1, tag_line - 5)
+  end
+  local lines = vim.fn.readfile(help_file, "", start_line + 500)
+  if start_line > 1 then
+    lines = vim.list_slice(lines, start_line)
+  end
   vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
   vim.bo[preview_state.buf].filetype = "help"
 
-  -- Find the line containing *tag* to scroll to
-  local tag_marker = string.format("*%s*", tag)
-  for i, line in ipairs(lines) do
-    if line:find(tag_marker, 1, true) then
-      return tag, i
-    end
-  end
-
-  return tag, nil
+  -- Adjust tag_line to be relative to the loaded chunk
+  local scroll = tag_line and (tag_line - start_line + 1) or 1
+  return tag, scroll
 end
 
 --- Load fallback content.

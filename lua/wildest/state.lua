@@ -636,6 +636,7 @@ function M.step(n)
         local full = state.result.output(state.result.data, lcp)
         if type(full) == "string" and full ~= state.previous_cmdline then
           M.feedkeys_cmdline(full)
+          state.previous_cmdline = full
           state.replaced_cmdline = full
           M.draw()
           return
