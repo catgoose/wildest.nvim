@@ -106,11 +106,11 @@ cmd = ":e lua/wildest/renderer/components/",
 left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
+mark_key = "<Tab>",
+unmark_key = "<S-Tab>",
 actions = { ["<C-q>"] = "send_to_quickfix" },
 previous_key = { "<C-k>", "<Up>" },
 next_key = { "<C-j>", "<Down>" },
-unmark_key = "<S-Tab>",
-mark_key = "<Tab>",
 </code></pre>
 </details>
 </td>
@@ -124,11 +124,11 @@ cmd = ":e tests/",
 left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
+mark_key = "<Tab>",
+unmark_key = "<S-Tab>",
 actions = { ["<C-l>"] = "send_to_loclist" },
 previous_key = { "<C-k>", "<Up>" },
 next_key = { "<C-j>", "<Down>" },
-unmark_key = "<S-Tab>",
-mark_key = "<Tab>",
 </code></pre>
 </details>
 </td>
@@ -142,11 +142,11 @@ cmd = ":e lua/wildest/",
 left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
+mark_key = "<Tab>",
+unmark_key = "<S-Tab>",
 actions = { ["<C-o>"] = "open_marked" },
 previous_key = { "<C-k>", "<Up>" },
 next_key = { "<C-j>", "<Down>" },
-unmark_key = "<S-Tab>",
-mark_key = "<Tab>",
 </code></pre>
 </details>
 </td>
@@ -168,12 +168,12 @@ preview = {
   position = "right",
   width = "40%",
 },
+mark_key = "<Tab>",
+frecency = true,
 actions = { ["<C-q>"] = "send_to_quickfix" },
 previous_key = { "<C-k>", "<Up>" },
 next_key = { "<C-j>", "<Down>" },
 unmark_key = "<S-Tab>",
-mark_key = "<Tab>",
-frecency = true,
 </code></pre>
 </details>
 </td>
@@ -197,14 +197,14 @@ palette = {
   prompt_prefix = " :",
   title = " Multi-Select ",
 },
+mark_key = "<Tab>",
+unmark_key = "<S-Tab>",
 actions = {
   ["<C-o>"] = "open_marked",
   ["<C-q>"] = "send_to_quickfix",
 },
-previous_key = { "<C-k>", "<Up>" },
 next_key = { "<C-j>", "<Down>" },
-unmark_key = "<S-Tab>",
-mark_key = "<Tab>",
+previous_key = { "<C-k>", "<Up>" },
 </code></pre>
 </details>
 </td>

@@ -90,6 +90,7 @@
   - [Documentation Hints](#documentation-hints)
   - [Frecency](#frecency)
     - [Frecency Heatmap](#frecency-heatmap)
+  - [Statusline](#statusline)
   - [Multi-Select](#multi-select)
   - [Commands](#commands)
   - [Health Check](#health-check)
@@ -1393,6 +1394,62 @@ w.popupmenu_frecency_bar({
 | `char`     | string   | `"▎"`               | Indicator character                           |
 | `dim_char` | string   | `" "`               | Character for zero-score items                |
 | `weights`  | table    | —                   | Custom frecency time bucket weights           |
+
+## Statusline
+
+The `popupmenu_statusline()` chrome component adds a dynamic status bar to your
+popup with left/center/right aligned section groups. Add it to the `bottom` (or
+`top`) array of any popupmenu renderer.
+
+```lua
+-- Defaults — just enable it:
+w.setup({
+  renderer = w.popupmenu_palette_theme({
+    bottom = { w.popupmenu_statusline() },
+  }),
+})
+
+-- Custom groups:
+w.popupmenu_statusline({
+  left = { "route", "matches", "marked" },
+  center = { "position", "page" },
+  right = { "scroll", "frecency_score", "time" },
+})
+
+-- Flat list (left-aligned, wraps to multiple rows):
+w.popupmenu_statusline({
+  sections = { "route", "matches", "position", "page", "marked" },
+})
+```
+
+Available sections:
+
+| Section          | Description                                          |
+| ---------------- | ---------------------------------------------------- |
+| `route`          | Pipeline source (files, help, commands, etc.)        |
+| `matches`        | Total match count                                    |
+| `position`       | Selected item index `[3/42]`                         |
+| `page`           | Current page `pg 2/7`                                |
+| `scroll`         | Scroll percentage `54%`                              |
+| `marked`         | Marked candidate count                               |
+| `input`          | Input character count                                |
+| `frecency`       | Count of frecent items in results                    |
+| `frecency_score` | Frecency score of the highlighted item               |
+| `density`        | Visual progress bar of visible vs total items        |
+| `time`           | Current time `HH:MM`                                 |
+| `keys`           | Configured keybinding hints                          |
+
+| Option       | Type     | Default                   | Description                     |
+| ------------ | -------- | ------------------------- | ------------------------------- |
+| `left`       | string[] | `{"route","matches","marked"}` | Left-aligned sections      |
+| `center`     | string[] | `{"position","page"}`     | Center-aligned sections         |
+| `right`      | string[] | `{"scroll","frecency_score","time"}` | Right-aligned sections |
+| `sections`   | string[] | —                         | Flat list (disables alignment)  |
+| `hl`         | string   | `WildestStatusline`       | Base highlight group            |
+| `accent_hl`  | string   | `WildestStatuslineAccent` | Accent highlight for numbers    |
+| `hot_hl`     | string   | `WildestStatuslineHot`    | Highlight for hot indicators    |
+| `separator`  | string   | `"  "`                    | Between sections in same group  |
+| `bar_width`  | integer  | `8`                       | Width of density progress bar   |
 
 ## Multi-Select
 
