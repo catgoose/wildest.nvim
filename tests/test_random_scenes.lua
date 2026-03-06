@@ -42,6 +42,8 @@ local valid_left_components = {
   ["kind_icon"] = true,
   ["cmdline_icon"] = true,
   ["arrows"] = true,
+  ["frecency_bar"] = true,
+  ["buffer_flags"] = true,
 }
 
 -- random_scene() ---------------------------------------------------------------

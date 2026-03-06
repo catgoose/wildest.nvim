@@ -114,10 +114,13 @@ end
 function M.scorer(opts)
   opts = opts or {}
   local weights = opts.weights
+  local data = nil
 
   return function(candidate, _ctx)
-    -- Load data once per scoring batch via upvalue cache
-    local data = M.load()
+    -- Load data once per scorer lifetime (typically one pipeline setup)
+    if not data then
+      data = M.load()
+    end
     return M.score(candidate, data, weights)
   end
 end

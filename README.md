@@ -59,6 +59,11 @@
       - [Subpipeline](#subpipeline)
     - [Roll Your Own (Custom Pipelines)](#roll-your-own-custom-pipelines)
     - [Custom Domain Pipelines](#custom-domain-pipelines)
+    - [Shell Pipeline](#shell-pipeline)
+    - [File Finder Pipeline](#file-finder-pipeline)
+    - [Engine Option](#engine-option)
+    - [Performance Caches](#performance-caches)
+    - [History Pipeline](#history-pipeline)
   - [Brandin' Iron (Renderers)](#brandin-iron-renderers)
     - [Plain Popupmenu](#plain-popupmenu)
     - [Bordered Popupmenu](#bordered-popupmenu)
@@ -84,10 +89,14 @@
   - [Ghost Text](#ghost-text)
   - [Documentation Hints](#documentation-hints)
   - [Frecency](#frecency)
+    - [Frecency Heatmap](#frecency-heatmap)
   - [Commands](#commands)
   - [Health Check](#health-check)
   - [Settin' the Rules (Config Options)](#settin-the-rules-config-options)
   - [Preview](#preview)
+    - [Gap](#gap)
+    - [Priority](#priority)
+  - [Layout](#layout)
   - [Actions](#actions)
   - [Hooks](#hooks)
   - [Utilities](#utilities)
@@ -275,14 +284,14 @@ drive - input goes in one end, completions come out the other.
 <!-- gen:pipeline_gallery:end -->
 </details>
 
-| Pipeline                 | What it wrangles                                      |
-| ------------------------ | ----------------------------------------------------- |
-| `cmdline_pipeline()`     | Command names, args, files, options - the whole ranch |
-| `search_pipeline()`      | Buffer search for `/` and `?` modes                   |
-| `file_finder_pipeline()` | Async file finding via `fd`, `rg`, or `find`          |
-| `history_pipeline()`     | Command and search history (substring or prefix match) |
-| `lua_pipeline()`         | Lua expression completion for `:lua` and `:=`         |
-| `help_pipeline()`        | Help tags with fuzzy matching                         |
+| Pipeline                 | What it wrangles                                         |
+| ------------------------ | -------------------------------------------------------- |
+| `cmdline_pipeline()`     | Command names, args, files, options - the whole ranch    |
+| `search_pipeline()`      | Buffer search for `/` and `?` modes                      |
+| `file_finder_pipeline()` | Async file finding via `fd`, `rg`, or `find`             |
+| `history_pipeline()`     | Command and search history (substring or prefix match)   |
+| `lua_pipeline()`         | Lua expression completion for `:lua` and `:=`            |
+| `help_pipeline()`        | Help tags with fuzzy matching                            |
 | `shell_pipeline()`       | Shell history, executables, file args, env vars for `:!` |
 
 ### Pipeline Combinators
@@ -535,20 +544,21 @@ w.branch(
 )
 ```
 
-| Option           | Type                        | Default  | Description                                  |
-| ---------------- | --------------------------- | -------- | -------------------------------------------- |
-| `history`        | boolean                     | `true`   | Include shell history file entries            |
-| `history_file`   | string                      | `"auto"` | Path to history file (`"auto"` = detect)     |
-| `history_max`    | integer                     | `100`    | Max shell history entries                    |
-| `vim_history`    | boolean                     | `true`   | Include Vim's `:!` command history           |
-| `vim_history_max`| integer                     | `50`     | Max Vim history entries                      |
-| `complete_args`  | `"file"`\|`"none"`\|`false` | `"file"` | Argument completion strategy                 |
-| `env_vars`       | boolean                     | `true`   | Complete `$VAR` environment variable names   |
-| `fuzzy`          | boolean                     | `false`  | Apply fuzzy filtering                        |
-| `frecency`       | boolean                     | `false`  | Apply frecency boosting                      |
-| `frecency_blend` | number                      | `0.5`    | Frecency blend factor                        |
+| Option            | Type                        | Default  | Description                                |
+| ----------------- | --------------------------- | -------- | ------------------------------------------ |
+| `history`         | boolean                     | `true`   | Include shell history file entries         |
+| `history_file`    | string                      | `"auto"` | Path to history file (`"auto"` = detect)   |
+| `history_max`     | integer                     | `100`    | Max shell history entries                  |
+| `vim_history`     | boolean                     | `true`   | Include Vim's `:!` command history         |
+| `vim_history_max` | integer                     | `50`     | Max Vim history entries                    |
+| `complete_args`   | `"file"`\|`"none"`\|`false` | `"file"` | Argument completion strategy               |
+| `env_vars`        | boolean                     | `true`   | Complete `$VAR` environment variable names |
+| `fuzzy`           | boolean                     | `false`  | Apply fuzzy filtering                      |
+| `frecency`        | boolean                     | `false`  | Apply frecency boosting                    |
+| `frecency_blend`  | number                      | `0.5`    | Frecency blend factor                      |
 
 **Completion phases:**
+
 - **Command name** (no spaces yet): shell history + Vim `:!` history + executables
 - **Arguments** (after first space): file paths, or `$VAR` environment variables
 
@@ -565,25 +575,18 @@ This is dramatically faster on large codebases and respects `.gitignore`:
 
 ```lua
 -- Standalone: replaces cmdline file completion entirely
-w.branch(
-  w.file_finder_pipeline(),
-  w.cmdline_pipeline({ fuzzy = true }),
-  w.search_pipeline()
-)
+w.branch(w.file_finder_pipeline(), w.cmdline_pipeline({ fuzzy = true }), w.search_pipeline())
 
 -- Integrated: file_finder option makes cmdline_pipeline use fd/rg for file/dir completions
-w.branch(
-  w.cmdline_pipeline({ fuzzy = true, file_finder = true }),
-  w.search_pipeline()
-)
+w.branch(w.cmdline_pipeline({ fuzzy = true, file_finder = true }), w.search_pipeline())
 ```
 
-| Option          | Type           | Default | Description                                     |
-| --------------- | -------------- | ------- | ----------------------------------------------- |
-| `file_command`  | string[]       | auto    | Custom file listing command (default: auto-detect fd/rg/find) |
-| `dir_command`   | string[]       | auto    | Custom directory listing command                |
-| `cwd`           | string         | `cwd()` | Working directory for file search               |
-| `max_results`   | integer        | `5000`  | Maximum number of file results                  |
+| Option         | Type     | Default | Description                                                   |
+| -------------- | -------- | ------- | ------------------------------------------------------------- |
+| `file_command` | string[] | auto    | Custom file listing command (default: auto-detect fd/rg/find) |
+| `dir_command`  | string[] | auto    | Custom directory listing command                              |
+| `cwd`          | string   | `cwd()` | Working directory for file search                             |
+| `max_results`  | integer  | `5000`  | Maximum number of file results                                |
 
 **Tool detection order:** `fd` → `fdfind` → `rg --files` → `find`
 
@@ -599,11 +602,11 @@ custom commands and flags:
 
 ```lua
 -- String shortcut: enable all fast paths with defaults
-w.cmdline_pipeline({ fuzzy = true, engine = "fast" })  -- file_finder for :e, :split, etc.
-w.shell_pipeline({ fuzzy = true, engine = "fast" })    -- cached $PATH executables for :!
-w.help_pipeline({ fuzzy = true, engine = "fast" })     -- preloaded help tags for :help
-w.search_pipeline({ engine = "fast" })                 -- async rg/grep for / and ? search
-w.substitute_pipeline({ engine = "fast" })             -- async rg/grep for :s/ and :g/
+w.cmdline_pipeline({ fuzzy = true, engine = "fast" }) -- file_finder for :e, :split, etc.
+w.shell_pipeline({ fuzzy = true, engine = "fast" }) -- cached $PATH executables for :!
+w.help_pipeline({ fuzzy = true, engine = "fast" }) -- preloaded help tags for :help
+w.search_pipeline({ engine = "fast" }) -- async rg/grep for / and ? search
+w.substitute_pipeline({ engine = "fast" }) -- async rg/grep for :s/ and :g/
 
 -- Explicit vim mode (the default — no external tools)
 w.cmdline_pipeline({ fuzzy = true, engine = "vim" })
@@ -656,24 +659,24 @@ w.shell_pipeline({
 
 Each engine value is polymorphic:
 
-| Value | Type | Meaning |
-| --- | --- | --- |
-| `true` | boolean | Auto-detect defaults |
-| `{ "fd", "-tf", ... }` | string[] | Custom command (one result per line) |
-| `{ command = ..., max_results = ... }` | table (named keys) | Full options passthrough |
-| `function(ctx, input)` | function | Custom engine function |
-| `false` / `nil` | — | Disabled (use Vim built-in) |
+| Value                                  | Type               | Meaning                              |
+| -------------------------------------- | ------------------ | ------------------------------------ |
+| `true`                                 | boolean            | Auto-detect defaults                 |
+| `{ "fd", "-tf", ... }`                 | string[]           | Custom command (one result per line) |
+| `{ command = ..., max_results = ... }` | table (named keys) | Full options passthrough             |
+| `function(ctx, input)`                 | function           | Custom engine function               |
+| `false` / `nil`                        | —                  | Disabled (use Vim built-in)          |
 
 Pipeline routing:
 
-| Value              | `cmdline_pipeline`         | `shell_pipeline`       | `help_pipeline`        | `search_pipeline` / `substitute_pipeline` |
-| ------------------ | -------------------------- | ---------------------- | ---------------------- | ----------------------------------------- |
-| `nil` / `"vim"`    | `getcompletion("file")`    | `getcompletion("shellcmd")` | `getcompletion("help")` | `vim.regex` (sync)                   |
-| `"fast"`           | Async fd/rg/find           | Cached `$PATH` scan    | Preloaded tag index    | Async rg/grep                             |
-| `{ files = ... }`  | Custom file finder         | —                      | —                      | —                                         |
-| `{ shell = ... }`  | —                          | Custom exec source     | —                      | —                                         |
-| `{ help = ... }`   | —                          | —                      | Custom tag source      | —                                         |
-| `{ search = ... }` | —                          | —                      | —                      | Custom search command                     |
+| Value              | `cmdline_pipeline`      | `shell_pipeline`            | `help_pipeline`         | `search_pipeline` / `substitute_pipeline` |
+| ------------------ | ----------------------- | --------------------------- | ----------------------- | ----------------------------------------- |
+| `nil` / `"vim"`    | `getcompletion("file")` | `getcompletion("shellcmd")` | `getcompletion("help")` | `vim.regex` (sync)                        |
+| `"fast"`           | Async fd/rg/find        | Cached `$PATH` scan         | Preloaded tag index     | Async rg/grep                             |
+| `{ files = ... }`  | Custom file finder      | —                           | —                       | —                                         |
+| `{ shell = ... }`  | —                       | Custom exec source          | —                       | —                                         |
+| `{ help = ... }`   | —                       | —                           | Custom tag source       | —                                         |
+| `{ search = ... }` | —                       | —                           | —                       | Custom search command                     |
 
 The legacy `file_finder`, `exec_cache`, and `help_cache` options still work and
 take precedence over `engine` when set explicitly.
@@ -688,10 +691,10 @@ w.preload_exec_cache()
 w.preload_help_cache()
 ```
 
-| Cache            | Pipeline           | What it caches             | TTL       |
-| ---------------- | ------------------ | -------------------------- | --------- |
-| `exec_cache`     | `shell_pipeline()` | `$PATH` executables        | 60 seconds |
-| `help_cache`     | `help_pipeline()`  | Help tag index             | 5 minutes  |
+| Cache        | Pipeline           | What it caches      | TTL        |
+| ------------ | ------------------ | ------------------- | ---------- |
+| `exec_cache` | `shell_pipeline()` | `$PATH` executables | 60 seconds |
+| `help_cache` | `help_pipeline()`  | Help tag index      | 5 minutes  |
 
 ### History Pipeline
 
@@ -707,10 +710,10 @@ w.history_pipeline()
 w.history_pipeline({ prefix = true })
 ```
 
-| Option    | Type    | Default | Description                           |
-| --------- | ------- | ------- | ------------------------------------- |
-| `max`     | integer | `100`   | Maximum number of history entries     |
-| `cmdtype` | string  | auto    | Force history type (`":"`, `"/"`)     |
+| Option    | Type    | Default | Description                            |
+| --------- | ------- | ------- | -------------------------------------- |
+| `max`     | integer | `100`   | Maximum number of history entries      |
+| `cmdtype` | string  | auto    | Force history type (`":"`, `"/"`)      |
 | `prefix`  | boolean | `false` | Match only entries starting with input |
 
 ## Brandin' Iron (Renderers)
@@ -1223,20 +1226,20 @@ w.popupmenu_cmdline_icon({
 })
 ```
 
-| Key           | When it shows                          | Default |
-| ------------- | -------------------------------------- | ------- |
-| `file`        | `:e`, `:w`, file completions           | ` `    |
-| `dir`         | Directory completions                  | ` `    |
-| `buffer`      | `:b`, buffer completions               | ` `    |
-| `help`        | `:help` completions                    | `󰋖 `    |
-| `option`      | `:set` option completions              | ` `    |
-| `color`       | `:colorscheme` completions             | ` `    |
-| `lua`         | `:lua`, `:=` completions               | ` `    |
-| `search`      | `/` and `?` search mode                | ` `    |
-| `substitute`  | `:s/`, `:%s/`, `:g/` commands          | ` `    |
-| `shell`       | `:!` shell commands                    | ` `    |
-| `command`     | Command name completions               | ` `    |
-| `default`     | Fallback for unrecognized contexts     | ` `    |
+| Key          | When it shows                      | Default |
+| ------------ | ---------------------------------- | ------- |
+| `file`       | `:e`, `:w`, file completions       | ` `     |
+| `dir`        | Directory completions              | ` `     |
+| `buffer`     | `:b`, buffer completions           | ` `     |
+| `help`       | `:help` completions                | `󰋖 `    |
+| `option`     | `:set` option completions          | ` `     |
+| `color`      | `:colorscheme` completions         | ` `     |
+| `lua`        | `:lua`, `:=` completions           | ` `     |
+| `search`     | `/` and `?` search mode            | ` `     |
+| `substitute` | `:s/`, `:%s/`, `:g/` commands      | ` `     |
+| `shell`      | `:!` shell commands                | ` `     |
+| `command`    | Command name completions           | ` `     |
+| `default`    | Fallback for unrecognized contexts | ` `     |
 
 ## Grid Layout
 
@@ -1282,10 +1285,10 @@ w.setup({
 })
 ```
 
-| Option     | Type                    | Default     | Description                           |
-| ---------- | ----------------------- | ----------- | ------------------------------------- |
-| `ghost_text` | boolean\|table\|false | `false`     | Enable ghost text preview             |
-| `hl_group` | string                  | `"Comment"` | Highlight group for the ghost text    |
+| Option       | Type                  | Default     | Description                        |
+| ------------ | --------------------- | ----------- | ---------------------------------- |
+| `ghost_text` | boolean\|table\|false | `false`     | Enable ghost text preview          |
+| `hl_group`   | string                | `"Comment"` | Highlight group for the ghost text |
 
 ## Documentation Hints
 
@@ -1306,18 +1309,18 @@ w.popupmenu_border_theme({
 
 The hint adapts to the completion context:
 
-| Context       | What it shows                                         |
-| ------------- | ----------------------------------------------------- |
-| `:set` option | Option type, scope, default value + help description  |
-| `:help` tag   | First line of the help entry                          |
-| Command name  | Command synopsis from `:help :command`                |
-| Highlight     | Current colors, bold/italic, or link target           |
-| Event         | First line of the autocmd event help                  |
+| Context       | What it shows                                        |
+| ------------- | ---------------------------------------------------- |
+| `:set` option | Option type, scope, default value + help description |
+| `:help` tag   | First line of the help entry                         |
+| Command name  | Command synopsis from `:help :command`               |
+| Highlight     | Current colors, bold/italic, or link target          |
+| Event         | First line of the autocmd event help                 |
 
 ```lua
 w.popupmenu_docs({
-  hl = "Special",   -- highlight group (default: "WildestDocs" -> Comment)
-  prefix = " 󰋖 ",   -- prefix before the hint text (default: " ")
+  hl = "Special", -- highlight group (default: "WildestDocs" -> Comment)
+  prefix = " 󰋖 ", -- prefix before the hint text (default: " ")
 })
 ```
 
@@ -1352,6 +1355,41 @@ w.frecency_visit(":edit foo.lua")
 
 The `blend` option in `frecency_boost` controls the mix: `0` = original order
 only, `1` = pure frecency, `0.5` = equal blend.
+
+### Frecency Heatmap
+
+The `popupmenu_frecency_bar()` component adds a colored heat indicator next to
+each candidate. Hot (frequently used) items glow warm, cold items are dim.
+Candidates with no history show as blank.
+
+```lua
+w.setup({
+  pipeline = w.cmdline_pipeline({ fuzzy = true }),
+  renderer = w.popupmenu_renderer({
+    left = { w.popupmenu_frecency_bar(), w.popupmenu_devicons() },
+    right = { w.popupmenu_scrollbar() },
+  }),
+})
+
+-- Custom gradient colors + indicator character
+w.popupmenu_frecency_bar({
+  colors = { "#334455", "#887733", "#cc6622", "#ff2200" },
+  char = "●",
+})
+
+-- Use pre-created highlight groups instead of hex colors
+w.popupmenu_frecency_bar({
+  gradient = { "Comment", "String", "WarningMsg", "ErrorMsg" },
+})
+```
+
+| Option     | Type     | Default             | Description                                   |
+| ---------- | -------- | ------------------- | --------------------------------------------- |
+| `colors`   | string[] | grey → orange → red | Hex fg colors for gradient (cold → hot)       |
+| `gradient` | string[] | —                   | Pre-created hl group names (overrides colors) |
+| `char`     | string   | `"▎"`               | Indicator character                           |
+| `dim_char` | string   | `" "`               | Character for zero-score items                |
+| `weights`  | table    | —                   | Custom frecency time bucket weights           |
 
 ## Commands
 
@@ -1511,18 +1549,18 @@ w.setup({
 })
 ```
 
-| Option     | Type                  | Default    | Description                                              |
-| ---------- | --------------------- | ---------- | -------------------------------------------------------- |
-| `enabled`  | boolean               | `true`     | Show preview window                                      |
-| `position` | string                | `"right"`  | Side: `"left"`, `"right"`, `"top"`, `"bottom"`           |
-| `anchor`   | string                | `"screen"` | `"screen"` (fills edge) or `"popup"` (adjacent to popup) |
-| `width`    | integer\|string       | `"50%"`    | Panel width for left/right positions                     |
-| `height`   | integer\|string       | `"50%"`    | Panel height for top/bottom positions                    |
-| `border`   | string\|table         | `"single"` | Border style                                             |
-| `max_lines`| integer               | `500`      | Max lines to read from files                             |
-| `title`    | boolean               | `true`     | Show filename in border title                            |
-| `gap`      | integer\|table\|nil   | `nil`      | Gap between preview and edges/popup (see below)          |
-| `priority` | string                | `"menu"`   | `"menu"` or `"preview"` (see below)                      |
+| Option      | Type                | Default    | Description                                              |
+| ----------- | ------------------- | ---------- | -------------------------------------------------------- |
+| `enabled`   | boolean             | `true`     | Show preview window                                      |
+| `position`  | string              | `"right"`  | Side: `"left"`, `"right"`, `"top"`, `"bottom"`           |
+| `anchor`    | string              | `"screen"` | `"screen"` (fills edge) or `"popup"` (adjacent to popup) |
+| `width`     | integer\|string     | `"50%"`    | Panel width for left/right positions                     |
+| `height`    | integer\|string     | `"50%"`    | Panel height for top/bottom positions                    |
+| `border`    | string\|table       | `"single"` | Border style                                             |
+| `max_lines` | integer             | `500`      | Max lines to read from files                             |
+| `title`     | boolean             | `true`     | Show filename in border title                            |
+| `gap`       | integer\|table\|nil | `nil`      | Gap between preview and edges/popup (see below)          |
+| `priority`  | string              | `"menu"`   | `"menu"` or `"preview"` (see below)                      |
 
 The preview auto-detects content type from the pipeline's `expand` metadata:
 files get syntax highlighting, buffers show their contents, and help tags
@@ -1613,16 +1651,16 @@ w.setup({
 })
 ```
 
-| Action              | Description                                          |
-| ------------------- | ---------------------------------------------------- |
-| `open_split`        | Open candidate in a horizontal split                 |
-| `open_vsplit`       | Open candidate in a vertical split                   |
-| `open_tab`          | Open candidate in a new tab                          |
-| `send_to_quickfix`  | Send all candidates to the quickfix list             |
-| `send_to_loclist`   | Send all candidates to the location list             |
-| `yank`              | Yank the selected candidate to `"` and `+`           |
-| `toggle_preview`    | Toggle the preview window on/off                     |
-| `redirect_output`   | Execute command, show output in a scratch split      |
+| Action             | Description                                     |
+| ------------------ | ----------------------------------------------- |
+| `open_split`       | Open candidate in a horizontal split            |
+| `open_vsplit`      | Open candidate in a vertical split              |
+| `open_tab`         | Open candidate in a new tab                     |
+| `send_to_quickfix` | Send all candidates to the quickfix list        |
+| `send_to_loclist`  | Send all candidates to the location list        |
+| `yank`             | Yank the selected candidate to `"` and `+`      |
+| `toggle_preview`   | Toggle the preview window on/off                |
+| `redirect_output`  | Execute command, show output in a scratch split |
 
 Register custom actions:
 
@@ -1639,40 +1677,42 @@ Register callbacks for lifecycle events — set up state when the cmdline opens,
 tear it down when it closes, or react after every draw:
 
 ```lua
-local w = require('wildest')
+local w = require("wildest")
 
 -- Fired when wildest activates on CmdlineEnter
-w.on('enter', function(cmdtype)
-  vim.o.statusline = ' wildest [' .. cmdtype .. '] '
+w.on("enter", function(cmdtype)
+  vim.o.statusline = " wildest [" .. cmdtype .. "] "
 end)
 
 -- Fired on CmdlineLeave before cleanup
-w.on('leave', function()
-  vim.o.statusline = ' %f %m%= '
+w.on("leave", function()
+  vim.o.statusline = " %f %m%= "
 end)
 
 -- Fired after every renderer draw
-w.on('draw', function(ctx, result)
+w.on("draw", function(ctx, result)
   -- ctx.selected, ctx.cmdtype, result.value, etc.
 end)
 ```
 
-| Event     | Args                          | When                                      |
-| --------- | ----------------------------- | ----------------------------------------- |
-| `enter`   | `(cmdtype: string)`           | CmdlineEnter, after wildest activates     |
-| `leave`   | *(none)*                      | CmdlineLeave, before cleanup              |
-| `draw`    | `(ctx, result)`               | After each successful renderer draw       |
-| `results` | `(ctx, result)`               | Pipeline finishes with candidates         |
-| `error`   | `(ctx, err)`                  | Pipeline errors                           |
-| `select`  | `(ctx, candidate, index)`     | Candidate selected via step/scroll        |
-| `accept`  | `(ctx, candidate)`            | Completion accepted                       |
+| Event     | Args                      | When                                  |
+| --------- | ------------------------- | ------------------------------------- |
+| `enter`   | `(cmdtype: string)`       | CmdlineEnter, after wildest activates |
+| `leave`   | _(none)_                  | CmdlineLeave, before cleanup          |
+| `draw`    | `(ctx, result)`           | After each successful renderer draw   |
+| `results` | `(ctx, result)`           | Pipeline finishes with candidates     |
+| `error`   | `(ctx, err)`              | Pipeline errors                       |
+| `select`  | `(ctx, candidate, index)` | Candidate selected via step/scroll    |
+| `accept`  | `(ctx, candidate)`        | Completion accepted                   |
 
 Remove a listener with `w.off(event, fn)` — pass the same function reference:
 
 ```lua
-local my_hook = function(cmdtype) print(cmdtype) end
-w.on('enter', my_hook)
-w.off('enter', my_hook)  -- unregistered
+local my_hook = function(cmdtype)
+  print(cmdtype)
+end
+w.on("enter", my_hook)
+w.off("enter", my_hook) -- unregistered
 ```
 
 ## Utilities

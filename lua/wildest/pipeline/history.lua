@@ -22,11 +22,14 @@ function M.history(opts)
   local use_prefix = opts.prefix or false
 
   return function(ctx, input)
+    local log = require("wildest.log")
     local histtype = opts.cmdtype or ctx.cmdtype or ":"
 
     local entries = {}
     local seen = {}
     local hist_nr = vim.fn.histnr(histtype)
+
+    log.log("history", "query", { input = input, histtype = histtype, hist_nr = hist_nr })
 
     for i = hist_nr, math.max(1, hist_nr - max + 1), -1 do
       local entry = vim.fn.histget(histtype, i)
@@ -51,6 +54,8 @@ function M.history(opts)
         end
       end
     end
+
+    log.log("history", "result", { input = input, count = #entries })
 
     if #entries == 0 then
       return false

@@ -4,11 +4,40 @@ local _t0 = vim.uv.hrtime()
 local _entries = {}
 local _flush_timer = nil
 
+--- Per-module enable/disable table.
+--- Set a key to `true` to enable logging for that module, `false` to disable.
+--- When empty (default), ALL modules are logged.
+--- Example: `require("wildest.log").modules = { state = true, branch = true }`
+---@type table<string, boolean>
+M.modules = {}
+
+--- Master switch. Set to false to disable all logging.
+---@type boolean
+M.enabled = true
+
+--- Check if a module should log
+---@param source string
+---@return boolean
+local function should_log(source)
+  if not M.enabled then
+    return false
+  end
+  -- If no modules specified, log everything
+  if not next(M.modules) then
+    return true
+  end
+  return M.modules[source] == true
+end
+
 --- Add a log entry with timestamp
 ---@param source string module name
 ---@param event string event name
 ---@param data? table extra data
 function M.log(source, event, data)
+  if not should_log(source) then
+    return
+  end
+
   local entry = {
     t = math.floor((vim.uv.hrtime() - _t0) / 1e6),
     src = source,

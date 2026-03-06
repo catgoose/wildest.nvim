@@ -63,4 +63,22 @@ T["scrollbar thumb position"]["custom characters are used"] = function()
   expect.equality(result[1][1], "▓")
 end
 
+T["scrollbar selected line"] = new_set()
+
+T["scrollbar selected line"]["bar on selected line uses block char with sel hl"] = function()
+  local comp = scrollbar.new()
+  local ctx = { total = 20, page_start = 0, page_end = 4, index = 4, is_selected = true, selected_hl = "PmenuSel" }
+  local result = comp:render(ctx)
+  expect.equality(result[1][1], "█")
+  expect.equality(result[1][2], "WildestScrollbarSel")
+end
+
+T["scrollbar selected line"]["thumb on selected line unchanged"] = function()
+  local comp = scrollbar.new()
+  local ctx = { total = 20, page_start = 0, page_end = 4, index = 0, is_selected = true, selected_hl = "PmenuSel" }
+  local result = comp:render(ctx)
+  expect.equality(result[1][1], "█")
+  expect.equality(result[1][2], "WildestScrollbarThumb")
+end
+
 return T
