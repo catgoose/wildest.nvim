@@ -623,7 +623,9 @@ M.configs = {
     category = "option",
     label = "before_cursor",
     cmd = ":edit lua/wildest/init remaining_text",
+    cursor_pos = 21,
     pipeline = { "cmdline_fuzzy_before_cursor" },
+    margin = "before_cursor",
   },
 
   sort_buffers_lastused = {
@@ -1759,6 +1761,9 @@ function M.random_scene(label)
   if math.random(6) == 1 then
     scene.ghost_text = pick({ true, { hl_group = "WildestAccent" } })
   end
+  if math.random(8) == 1 then
+    scene.margin = "before_cursor"
+  end
   if math.random(6) == 1 then
     scene.bottom = { "docs" }
   end
@@ -2740,6 +2745,12 @@ local function build_renderer_opts(cfg, w)
   end
   if cfg.fixed_height ~= nil then
     opts.fixed_height = cfg.fixed_height
+  end
+  if cfg.columns then
+    opts.columns = cfg.columns
+  end
+  if cfg.margin then
+    opts.margin = cfg.margin
   end
   if cfg.top then
     opts.top = resolve_components(cfg.top, w)

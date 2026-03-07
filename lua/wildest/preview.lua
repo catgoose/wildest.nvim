@@ -532,7 +532,7 @@ function M.reserved_space()
   if pos == "right" then
     return {
       top = gap.top,
-      right = parse_dim(cfg.width, vim.o.columns) + gap.right,
+      right = parse_dim(cfg.width, vim.o.columns) + gap.right + gap.between,
       bottom = gap.bottom,
       left = gap.left,
     }
@@ -541,12 +541,12 @@ function M.reserved_space()
       top = gap.top,
       right = gap.right,
       bottom = gap.bottom,
-      left = parse_dim(cfg.width, vim.o.columns) + gap.left,
+      left = parse_dim(cfg.width, vim.o.columns) + gap.left + gap.between,
     }
   elseif pos == "top" then
     local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
     return {
-      top = parse_dim(cfg.height, available_rows) + gap.top,
+      top = parse_dim(cfg.height, available_rows) + gap.top + gap.between,
       right = gap.right,
       bottom = gap.bottom,
       left = gap.left,
@@ -556,7 +556,7 @@ function M.reserved_space()
     return {
       top = gap.top,
       right = gap.right,
-      bottom = parse_dim(cfg.height, available_rows) + gap.bottom,
+      bottom = parse_dim(cfg.height, available_rows) + gap.bottom + gap.between,
       left = gap.left,
     }
   end

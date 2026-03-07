@@ -157,45 +157,76 @@ T["before_cursor"]["pipeline is created without errors"] = function()
   expect.equality(#pipeline >= 2, true)
 end
 
-T["before_cursor"]["wrap_result uses full cmdline from ctx"] = function()
+T["before_cursor"]["wrap_result uses truncated input for prefix calculation"] = function()
   local pipeline = cmdline.cmdline_pipeline({ before_cursor = true })
   local wrap_result = pipeline[#pipeline]
   local ctx = {
-    input = "set fold",
+    input = "set foldmethod=syntax",
     _full_cmdline = "set foldmethod=syntax",
+    _before_cursor = "set fold",
+    _after_cursor = "method=syntax",
     arg = "fold",
     cmd = "set",
     expand = E.OPTION,
     cmdtype = ":",
   }
   local result = wrap_result(ctx, { "foldmethod" })
-  expect.equality(result.data.input, "set foldmethod=syntax")
+  -- data.input should be the truncated (before-cursor) text
+  expect.equality(result.data.input, "set fold")
+  expect.equality(result.data._after_cursor, "method=syntax")
 end
 
-T["before_cursor"]["output function reconstructs with full cmdline"] = function()
+T["before_cursor"]["output function reconstructs correctly with after-cursor text"] = function()
   local pipeline = cmdline.cmdline_pipeline({ before_cursor = true })
   local wrap_result = pipeline[#pipeline]
   local ctx = {
-    input = "set fold",
+    input = "set foldmethod=syntax",
     _full_cmdline = "set foldmethod=syntax",
+    _before_cursor = "set fold",
+    _after_cursor = "method=syntax",
     arg = "fold",
     cmd = "set",
     expand = E.OPTION,
     cmdtype = ":",
   }
   local result = wrap_result(ctx, { "foldmethod" })
-  -- output should use _full_cmdline for reconstruction
   local replacement = result.output(result.data, "foldmethod")
-  -- The prefix is data.input minus data.arg = "set foldmethod=syntax" minus "fold" = "set "
-  -- Actually: prefix = data.input:sub(1, #input - #arg) = "set foldmethod=syntax":sub(1, 21-4) = "set foldmethod=synta"
-  -- Wait — data.arg is "fold", data.input is "set foldmethod=syntax"
-  -- prefix = "set foldmethod=syntax":sub(1, 21-4) = first 17 chars = "set foldmethod=sy"
-  -- That doesn't look right. Let me check: data.input = _full_cmdline, data.arg = ctx.arg = "fold"
-  -- So replacement = "set foldmethod=sy" .. "foldmethod" — this is the existing behavior.
-  -- The key assertion is that it uses the full cmdline, not the sliced one.
-  expect.equality(type(replacement), "string")
-  -- Should contain the candidate
-  expect.equality(replacement:find("foldmethod") ~= nil, true)
+  -- prefix = "set fold":sub(1, 8-4) = "set "
+  -- replacement = "set " .. "foldmethod" .. "method=syntax"
+  expect.equality(replacement, "set foldmethodmethod=syntax")
+end
+
+T["before_cursor"]["output without before_cursor has no after-cursor text"] = function()
+  local pipeline = cmdline.cmdline_pipeline({})
+  local wrap_result = pipeline[#pipeline]
+  local ctx = {
+    input = "set fold",
+    arg = "fold",
+    cmd = "set",
+    expand = E.OPTION,
+    cmdtype = ":",
+  }
+  local result = wrap_result(ctx, { "foldmethod" })
+  local replacement = result.output(result.data, "foldmethod")
+  expect.equality(replacement, "set foldmethod")
+end
+
+T["before_cursor"]["command completion appends after-cursor text"] = function()
+  local pipeline = cmdline.cmdline_pipeline({ before_cursor = true })
+  local wrap_result = pipeline[#pipeline]
+  local ctx = {
+    input = "edi foo.txt",
+    _full_cmdline = "edi foo.txt",
+    _before_cursor = "edi",
+    _after_cursor = " foo.txt",
+    arg = "edi",
+    cmd = "",
+    expand = E.COMMAND,
+    cmdtype = ":",
+  }
+  local result = wrap_result(ctx, { "edit" })
+  local replacement = result.output(result.data, "edit")
+  expect.equality(replacement, "edit foo.txt")
 end
 
 return T

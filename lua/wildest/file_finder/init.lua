@@ -101,6 +101,7 @@ function M.file_finder_pipeline(opts)
     ctx.arg = parsed.arg
     ctx.cmd = parsed.cmd
     ctx.expand = expand
+    ctx.pos = parsed.pos
 
     -- Select the right base command for files vs directories
     local base_cmd = (expand == E.DIR) and dir_cmd or file_cmd
@@ -171,12 +172,17 @@ function M.file_finder_pipeline(opts)
       arg = ctx.arg or "",
       cmd = ctx.cmd or "",
       expand = ctx.expand or "file",
+      pos = ctx.pos,
     }
 
     -- Highlight only the filename portion (after last separator)
+    -- Also advance pos to the last segment for before_cursor positioning.
     local last_sep = (ctx.arg or ""):match(".*/()")
     if last_sep then
       data.query = (ctx.arg or ""):sub(last_sep)
+      if data.pos then
+        data.pos = data.pos + last_sep - 1
+      end
     end
 
     local r = {

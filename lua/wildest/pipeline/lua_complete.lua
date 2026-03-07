@@ -23,13 +23,17 @@ function M.lua_pipeline(opts)
   ---@return string|nil expr, string prefix
   local function extract_lua_expr(input)
     -- :lua expr, := expr, :lua= expr
-    local expr = input:match("^%s*lua%s+(.*)$")
-      or input:match("^%s*=%s*(.*)$")
-      or input:match("^%s*lua=%s*(.*)$")
+    local pos, expr = input:match("^%s*lua%s+()(.*)$")
     if not expr then
-      return nil, ""
+      pos, expr = input:match("^%s*=%s*()(.*)$")
     end
-    return expr, expr
+    if not expr then
+      pos, expr = input:match("^%s*lua=%s*()(.*)$")
+    end
+    if not expr then
+      return nil, "", nil
+    end
+    return expr, expr, pos
   end
 
   --- Get completions for a Lua expression
@@ -96,7 +100,7 @@ function M.lua_pipeline(opts)
       return false
     end
 
-    local expr = extract_lua_expr(input)
+    local expr, _, pos = extract_lua_expr(input)
     if not expr then
       return false
     end
@@ -107,6 +111,7 @@ function M.lua_pipeline(opts)
     end
 
     ctx.arg = expr
+    ctx.pos = pos
     -- Set query to just the partial after the last dot so highlighting
     -- matches the distinguishing suffix, not the common prefix.
     local last_dot = expr:find("%.[^.]*$")

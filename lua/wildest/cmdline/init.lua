@@ -84,7 +84,9 @@ function M.cmdline_pipeline(opts)
       local pos = vim.fn.getcmdpos()
       if pos and pos > 0 then
         ctx._full_cmdline = input
+        ctx._after_cursor = input:sub(pos)
         input = input:sub(1, pos - 1)
+        ctx._before_cursor = input
         if input == "" then
           log.log("cmdline", "reject_empty_before_cursor")
           return false
@@ -99,6 +101,7 @@ function M.cmdline_pipeline(opts)
       ctx.arg = cached.arg
       ctx.cmd = cached.cmd
       ctx.expand = cached.expand
+      ctx.pos = cached.pos
       return cached.candidates
     end
 
@@ -107,6 +110,7 @@ function M.cmdline_pipeline(opts)
     ctx.arg = parsed.arg
     ctx.cmd = parsed.cmd
     ctx.expand = parsed.expand
+    ctx.pos = parsed.pos
 
     local candidates
     if parsed.expand == E.COMMAND then
@@ -135,6 +139,7 @@ function M.cmdline_pipeline(opts)
       arg = parsed.arg,
       cmd = parsed.cmd,
       expand = parsed.expand,
+      pos = parsed.pos,
     })
 
     return candidates
@@ -147,23 +152,30 @@ function M.cmdline_pipeline(opts)
     end
 
     local data = {
-      input = ctx._full_cmdline or ctx.input or "",
+      input = ctx._before_cursor or ctx.input or "",
       arg = ctx.arg or "",
       cmd = ctx.cmd or "",
       expand = ctx.expand or "",
+      pos = ctx.pos,
+      _after_cursor = ctx._after_cursor or "",
     }
 
     -- For file completions, highlight only the filename portion (after the
     -- last path separator) so the common directory prefix isn't accented.
+    -- Also advance pos to the last segment for before_cursor positioning.
     if ctx.expand == E.FILE or ctx.expand == E.DIR or ctx.expand == E.FILE_IN_PATH then
       local last_sep = (ctx.arg or ""):match(".*/()")
       if last_sep then
         data.query = (ctx.arg or ""):sub(last_sep)
+        if data.pos then
+          data.pos = data.pos + last_sep - 1
+        end
       end
     end
 
     -- For dot-separated completions (e.g. lua vim.api.nvim), highlight only
     -- the last segment so the common prefix isn't accented.
+    -- Also advance pos past the last dot for before_cursor positioning.
     -- Skip file types where dots are part of filenames, not namespaces.
     if
       not data.query
@@ -175,6 +187,9 @@ function M.cmdline_pipeline(opts)
       local last_dot = arg:find("%.[^.]*$")
       if last_dot then
         data.query = arg:sub(last_dot + 1)
+        if data.pos then
+          data.pos = data.pos + last_dot
+        end
       end
     end
 
@@ -186,19 +201,21 @@ function M.cmdline_pipeline(opts)
 
     if ctx.expand == E.COMMAND then
       -- For command completions, just use the command name
-      result.output = function(_rdata, candidate)
-        return candidate
+      result.output = function(rdata, candidate)
+        local after = rdata._after_cursor or ""
+        return candidate .. after
       end
     else
       -- For file, arg, and other completions, replace the arg portion
       result.output = function(rdata, candidate)
         local input = rdata.input or ""
         local arg = rdata.arg or ""
+        local after = rdata._after_cursor or ""
         if arg ~= "" then
           local prefix = input:sub(1, #input - #arg)
-          return string.format("%s%s", prefix, candidate)
+          return string.format("%s%s%s", prefix, candidate, after)
         end
-        return string.format("%s%s", input, candidate)
+        return string.format("%s%s%s", input, candidate, after)
       end
     end
 

@@ -834,7 +834,7 @@ w.popupmenu_palette_theme({
 | `min_height`      | integer         | `0`         | Minimum height                                    |
 | `max_width`       | string\|integer | `"75%"`     | Max width (percentage or integer)                 |
 | `min_width`       | integer\|string | `30`        | Minimum width (or `"50%"`)                        |
-| `margin`          | string\|integer | `"auto"`    | Horizontal margin (`"auto"`, `"15%"`, or integer) |
+| `margin`          | string\|integer | `"auto"`    | Horizontal margin (`"auto"`, `"before_cursor"`, `"15%"`, or integer) |
 | `reverse`         | boolean         | `false`     | Reverse candidate order                           |
 | `fixed_height`    | boolean         | `true`      | Pad to `max_height` so the window never resizes   |
 | `columns`         | integer         | `1`         | Number of columns for grid layout                 |

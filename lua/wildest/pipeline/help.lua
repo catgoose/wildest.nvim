@@ -41,9 +41,10 @@ function M.help_pipeline(opts)
     end
 
     -- Extract help argument (may be empty after the space)
-    local arg = input:match("^%s*h%a*%s+(.+)$")
+    local arg_start, arg = input:match("^%s*h%a*%s+()(.+)$")
     if not arg then
-      if input:match("^%s*h%a*%s+$") then
+      arg_start = input:match("^%s*h%a*%s+()$")
+      if arg_start then
         arg = ""
       else
         return false
@@ -67,6 +68,7 @@ function M.help_pipeline(opts)
     results = util.take(results, max_results)
 
     ctx.arg = arg
+    ctx.pos = arg_start
     return results
   end
 
