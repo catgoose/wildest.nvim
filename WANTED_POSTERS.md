@@ -107,10 +107,10 @@ left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
 mark_key = "<Tab>",
+next_key = { "<C-j>", "<Down>" },
 unmark_key = "<S-Tab>",
 actions = { ["<C-q>"] = "send_to_quickfix" },
 previous_key = { "<C-k>", "<Up>" },
-next_key = { "<C-j>", "<Down>" },
 </code></pre>
 </details>
 </td>
@@ -125,10 +125,10 @@ left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
 mark_key = "<Tab>",
+next_key = { "<C-j>", "<Down>" },
 unmark_key = "<S-Tab>",
 actions = { ["<C-l>"] = "send_to_loclist" },
 previous_key = { "<C-k>", "<Up>" },
-next_key = { "<C-j>", "<Down>" },
 </code></pre>
 </details>
 </td>
@@ -143,10 +143,10 @@ left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
 mark_key = "<Tab>",
+next_key = { "<C-j>", "<Down>" },
 unmark_key = "<S-Tab>",
 actions = { ["<C-o>"] = "open_marked" },
 previous_key = { "<C-k>", "<Up>" },
-next_key = { "<C-j>", "<Down>" },
 </code></pre>
 </details>
 </td>
@@ -169,11 +169,11 @@ preview = {
   width = "40%",
 },
 mark_key = "<Tab>",
-frecency = true,
-actions = { ["<C-q>"] = "send_to_quickfix" },
-previous_key = { "<C-k>", "<Up>" },
 next_key = { "<C-j>", "<Down>" },
 unmark_key = "<S-Tab>",
+actions = { ["<C-q>"] = "send_to_quickfix" },
+previous_key = { "<C-k>", "<Up>" },
+frecency = true,
 </code></pre>
 </details>
 </td>
@@ -198,12 +198,12 @@ palette = {
   title = " Multi-Select ",
 },
 mark_key = "<Tab>",
+next_key = { "<C-j>", "<Down>" },
 unmark_key = "<S-Tab>",
 actions = {
   ["<C-o>"] = "open_marked",
   ["<C-q>"] = "send_to_quickfix",
 },
-next_key = { "<C-j>", "<Down>" },
 previous_key = { "<C-k>", "<Up>" },
 </code></pre>
 </details>
