@@ -881,12 +881,12 @@ wildest.Config                                                  *wildest.Config*
         {actions?}              (table<string,string|fun(ctx:wildest.ActionContext)>)  Key-to-action mappings
         {interval?}             (integer)                                              Debounce interval in ms (default: 100)
         {num_workers?}          (integer)                                              Number of async workers (default: 2)
-        {noselect?}             (boolean)                                              No item selected initially (default: true)
-        {trigger?}              ("auto"|"tab")                                         When to show completions (default: 'auto')
-        {longest_prefix?}       (boolean)                                              Insert longest common prefix on first Tab (default: false)
+        {noselect?}             (boolean|fun(cmdtype:string):boolean)                  No item selected initially (default: true)
+        {trigger?}              ("auto"|"tab"|fun(cmdtype:string):"auto"|"tab")        When to show completions (default: 'auto')
+        {longest_prefix?}       (boolean|fun(cmdtype:string):boolean)                  Insert longest common prefix on first Tab (default: false)
         {pipeline_timeout?}     (integer)                                              Timeout in ms for pipeline steps, 0 = no timeout (default: 0)
         {skip_commands?}        (string[])                                             Commands to skip completions for (default: {})
-        {min_input?}            (integer)                                              Minimum input length before showing completions (default: 0)
+        {min_input?}            (integer|fun(cmdtype:string):integer)                  Minimum input length before showing completions (default: 0)
         {apply_incsearch_fix?}  (boolean)                                              Fix incsearch highlighting for / and ? (default: false)
         {pipeline?}             (wildest.PipelineStep|wildest.PipelineStep[])          Pipeline steps or single pipeline step
         {preview?}              (wildest.PreviewConfig)                                Preview window configuration
@@ -1094,6 +1094,19 @@ Utilities                                                         *wildest.util*
 
 General-purpose utility functions used throughout wildest.nvim.
 Includes string manipulation, path handling, and project root detection.
+
+M.resolve({val}, {ctx?})                                  *wildest.util.resolve*
+     Resolve a config value that may be a function.
+     If `val` is a function, call it with `ctx` and return the result.
+     Otherwise return `val` as-is.
+
+    Parameters: ~
+        {val}   (any)
+        {ctx?}  (any)  context passed to function values
+
+    Returns: ~
+        (any)
+
 
 M.escape_pattern({str})                            *wildest.util.escape_pattern*
     Escape special characters in a Vim pattern.
