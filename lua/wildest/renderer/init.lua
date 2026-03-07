@@ -232,6 +232,8 @@ function M.create_base_state(opts, defaults)
     page = { -1, -1 },
     run_id = -1,
     draw_cache = cache_mod.dict_cache(),
+    _delay_session_id = nil,
+    _first_draw_time = nil,
   }
 end
 

@@ -33,6 +33,8 @@ local M = {}
 ---@field triggered boolean For trigger='tab': has Tab been pressed?
 ---@field pipeline_timer? uv_timer_t Timeout timer for pipeline
 ---@field marked table<integer, boolean> Set of marked candidate indices (0-indexed)
+---@field _saved_wildmenu? boolean Saved wildmenu option during session
+---@field _saved_wildoptions? string Saved wildoptions option during session
 
 --- State table — single source of truth
 local state = {
@@ -53,6 +55,8 @@ local state = {
   triggered = false,
   pipeline_timer = nil,
   marked = {},
+  _saved_wildmenu = nil,
+  _saved_wildoptions = nil,
 }
 
 --- Cancel and close the pipeline timeout timer if active.

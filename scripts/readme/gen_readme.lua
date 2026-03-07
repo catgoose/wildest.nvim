@@ -28,7 +28,7 @@ end
 
 if not vim then
   -- Minimal stub so dofile on configs.lua doesn't crash.
-  -- We only read static data tables, never call runtime functions.
+  -- We read static data tables and parse source files for defaults.
   local noop = function() end
   local opt_mt = {
     __index = function()

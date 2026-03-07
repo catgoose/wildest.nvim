@@ -1929,7 +1929,7 @@ end
 ---@param n number
 ---@return table[]
 function M.showdown_scenes(n)
-  local seed = tonumber(os.getenv("WILDEST_GIF_SEED"))
+  local seed = tonumber(vim.env.WILDEST_GIF_SEED)
     or (os.time() + (vim.fn.getpid and vim.fn.getpid() or 0))
   local plan = M.showdown_scene_plan(n, seed)
 

@@ -4,6 +4,9 @@ SHELL := /bin/bash
 DEPS_DIR := deps
 MINI_DIR := $(DEPS_DIR)/mini.nvim
 
+# Parallel screenshot jobs (override with: make screenshots JOBS=4)
+JOBS ?= 8
+
 .DEFAULT_GOAL := help
 
 .PHONY: help test test_file lint docs docs-vimdoc docs-html build clean deps \
@@ -48,27 +51,27 @@ build:
 
 ## Generate all screenshots (parallel)
 screenshots:
-	nvim --headless -l scripts/screenshots/generate.lua -j8
+	nvim --headless -l scripts/screenshots/generate.lua -j$(JOBS)
 
 ## Generate theme screenshots only
 screenshots-themes:
-	nvim --headless -l scripts/screenshots/generate.lua -j8 --themes
+	nvim --headless -l scripts/screenshots/generate.lua -j$(JOBS) --themes
 
 ## Generate renderer screenshots only
 screenshots-renderers:
-	nvim --headless -l scripts/screenshots/generate.lua -j8 --renderers
+	nvim --headless -l scripts/screenshots/generate.lua -j$(JOBS) --renderers
 
 ## Generate feature screenshots only
 screenshots-features:
-	nvim --headless -l scripts/screenshots/generate.lua -j8 --features
+	nvim --headless -l scripts/screenshots/generate.lua -j$(JOBS) --features
 
 ## Generate pipeline screenshots only
 screenshots-pipelines:
-	nvim --headless -l scripts/screenshots/generate.lua -j8 --pipelines
+	nvim --headless -l scripts/screenshots/generate.lua -j$(JOBS) --pipelines
 
 ## Generate highlight screenshots only
 screenshots-highlights:
-	nvim --headless -l scripts/screenshots/generate.lua -j8 --highlights
+	nvim --headless -l scripts/screenshots/generate.lua -j$(JOBS) --highlights
 
 ## Generate animated showdown GIF
 showdown:

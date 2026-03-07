@@ -6,3 +6,4 @@ doc/html/
 deps/
 scripts/screenshots/output/
 wildest.lua
+nvim-colorizer.lua
