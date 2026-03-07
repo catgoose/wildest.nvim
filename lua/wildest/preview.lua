@@ -471,96 +471,67 @@ function M.setup(opts)
 end
 
 --- Returns space reserved on each edge `{top, right, bottom, left}`.
---- Non-zero for screen anchor (when window visible) and popup anchor
---- (so popups shrink to fit the preview).
+--- Always includes outer gaps from the top-level `gaps` config.
+--- Adds preview reservations when a preview is active (screen or popup anchor).
 ---@return {top: integer, right: integer, bottom: integer, left: integer}
 function M.reserved_space()
-  local zero = { top = 0, right = 0, bottom = 0, left = 0 }
+  local gaps_mod = require("wildest.gaps")
+  local outer = gaps_mod.outer()
+  local base = {
+    top = outer.top,
+    right = outer.right,
+    bottom = outer.bottom,
+    left = outer.left,
+  }
+
   if not preview_state.config or not preview_state.enabled then
-    return zero
+    return base
   end
 
   local cfg = preview_state.config
   local pos = cfg.position
   local gap = cfg.gap
+  -- Use top-level inner gap as the between default; preview gap.between overrides
+  local between = gap.between > 0 and gap.between or gaps_mod.inner()
 
   -- Popup anchor: reserve space so the popup shrinks to make room.
   -- Skip window-validity check: popup-anchor preview is drawn AFTER the
   -- renderer, so the window doesn't exist yet when this is called.
   if cfg.anchor == "popup" then
     if pos == "right" then
-      return {
-        top = gap.top,
-        right = parse_dim(cfg.width, vim.o.columns) + gap.right + gap.between,
-        bottom = gap.bottom,
-        left = gap.left,
-      }
+      base.right = base.right + parse_dim(cfg.width, vim.o.columns) + between
     elseif pos == "left" then
-      return {
-        top = gap.top,
-        right = gap.right,
-        bottom = gap.bottom,
-        left = parse_dim(cfg.width, vim.o.columns) + gap.left + gap.between,
-      }
+      base.left = base.left + parse_dim(cfg.width, vim.o.columns) + between
     elseif pos == "top" then
       local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
-      return {
-        top = parse_dim(cfg.height, available_rows) + gap.top + gap.between,
-        right = gap.right,
-        bottom = gap.bottom,
-        left = gap.left,
-      }
+      base.top = base.top + parse_dim(cfg.height, available_rows) + between
     elseif pos == "bottom" then
       local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
-      return {
-        top = gap.top,
-        right = gap.right,
-        bottom = parse_dim(cfg.height, available_rows) + gap.bottom + gap.between,
-        left = gap.left,
-      }
+      base.bottom = base.bottom + parse_dim(cfg.height, available_rows) + between
     end
+    return base
   end
 
   -- Screen anchor: require visible window before reserving,
   -- unless priority="preview" (reserve unconditionally so the menu adapts).
   if cfg.anchor ~= "screen" then
-    return zero
+    return base
   end
   if cfg.priority ~= "preview" and not vim.api.nvim_win_is_valid(preview_state.win) then
-    return zero
+    return base
   end
   if pos == "right" then
-    return {
-      top = gap.top,
-      right = parse_dim(cfg.width, vim.o.columns) + gap.right + gap.between,
-      bottom = gap.bottom,
-      left = gap.left,
-    }
+    base.right = base.right + parse_dim(cfg.width, vim.o.columns) + between
   elseif pos == "left" then
-    return {
-      top = gap.top,
-      right = gap.right,
-      bottom = gap.bottom,
-      left = parse_dim(cfg.width, vim.o.columns) + gap.left + gap.between,
-    }
+    base.left = base.left + parse_dim(cfg.width, vim.o.columns) + between
   elseif pos == "top" then
     local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
-    return {
-      top = parse_dim(cfg.height, available_rows) + gap.top + gap.between,
-      right = gap.right,
-      bottom = gap.bottom,
-      left = gap.left,
-    }
+    base.top = base.top + parse_dim(cfg.height, available_rows) + between
   elseif pos == "bottom" then
     local available_rows = vim.o.lines - util.reserved_chrome_rows() - 1
-    return {
-      top = gap.top,
-      right = gap.right,
-      bottom = parse_dim(cfg.height, available_rows) + gap.bottom + gap.between,
-      left = gap.left,
-    }
+    base.bottom = base.bottom + parse_dim(cfg.height, available_rows) + between
   end
-  return zero
+  return base
 end
 
 --- Returns the column width reserved for the preview window (including border).
@@ -620,6 +591,11 @@ function M._compute_win_config(params)
     local has_border = geom.border and geom.border ~= "none"
     local border_size = has_border and 1 or 0
 
+    local gaps_mod = require("wildest.gaps")
+    local outer = gaps_mod.outer()
+    -- Use top-level inner gap as the between default; preview gap.between overrides
+    local between = gap.between > 0 and gap.between or gaps_mod.inner()
+
     -- When priority="preview", compute height from configured dimension
     -- instead of capping to popup height.
     local function compute_height()
@@ -630,8 +606,8 @@ function M._compute_win_config(params)
     end
 
     if position == "right" then
-      local start_col = geom.col + geom.width + 2 * border_size + gap.between
-      local avail = editor_cols - start_col - gap.right
+      local start_col = geom.col + geom.width + 2 * border_size + between
+      local avail = editor_cols - start_col - outer.right
       if avail < MIN_PREVIEW_COLS then
         return nil
       end
@@ -642,31 +618,31 @@ function M._compute_win_config(params)
       result.width = math.max(1, w - 2)
       result.height = h
     elseif position == "left" then
-      local avail = geom.col - gap.between - gap.left
+      local avail = geom.col - between - outer.left
       if avail < MIN_PREVIEW_COLS then
         return nil
       end
       local w = math.min(parse_dim(cfg_width, editor_cols), avail)
       local h = compute_height()
-      result.col = geom.col - w - gap.between
+      result.col = geom.col - w - between
       result.row = geom.row
       result.width = math.max(1, w - 2)
       result.height = h
     elseif position == "top" then
       local h = parse_dim(cfg_height, available_rows)
-      local avail = geom.row - 2 - gap.between - gap.top
+      local avail = geom.row - 2 - between - outer.top
       if avail < MIN_PREVIEW_ROWS then
         return nil
       end
       h = math.max(1, math.min(h, content_lines, avail))
       result.col = geom.col
-      result.row = geom.row - h - 2 - gap.between
+      result.row = geom.row - h - 2 - between
       result.width = math.max(1, geom.width)
       result.height = h
     elseif position == "bottom" then
       local h = parse_dim(cfg_height, available_rows)
-      local start_row = geom.row + geom.height + 2 * border_size + gap.between
-      local avail = available_rows - start_row - 2 - gap.bottom
+      local start_row = geom.row + geom.height + 2 * border_size + between
+      local avail = available_rows - start_row - 2 - outer.bottom
       if avail < MIN_PREVIEW_ROWS then
         return nil
       end
@@ -677,30 +653,32 @@ function M._compute_win_config(params)
       result.height = h
     end
   else
-    -- Screen anchor: fill entire edge of screen, inset by edge gaps
+    -- Screen anchor: fill entire edge of screen, inset by outer gaps
+    local gaps_mod = require("wildest.gaps")
+    local outer = gaps_mod.outer()
     if position == "right" then
       local w = parse_dim(cfg_width, editor_cols)
-      result.row = gap.top
-      result.col = editor_cols - w - gap.right
+      result.row = outer.top
+      result.col = editor_cols - w - outer.right
       result.width = math.max(1, w - 2)
-      result.height = math.max(1, available_rows - gap.top - gap.bottom)
+      result.height = math.max(1, available_rows - outer.top - outer.bottom)
     elseif position == "left" then
       local w = parse_dim(cfg_width, editor_cols)
-      result.row = gap.top
-      result.col = gap.left
+      result.row = outer.top
+      result.col = outer.left
       result.width = math.max(1, w - 2)
-      result.height = math.max(1, available_rows - gap.top - gap.bottom)
+      result.height = math.max(1, available_rows - outer.top - outer.bottom)
     elseif position == "top" then
       local h = parse_dim(cfg_height, available_rows)
-      result.row = gap.top
-      result.col = gap.left
-      result.width = math.max(1, editor_cols - 2 - gap.left - gap.right)
+      result.row = outer.top
+      result.col = outer.left
+      result.width = math.max(1, editor_cols - 2 - outer.left - outer.right)
       result.height = math.max(1, h - 2)
     elseif position == "bottom" then
       local h = parse_dim(cfg_height, available_rows)
-      result.row = available_rows - h + 1 - gap.bottom
-      result.col = gap.left
-      result.width = math.max(1, editor_cols - 2 - gap.left - gap.right)
+      result.row = available_rows - h + 1 - outer.bottom
+      result.col = outer.left
+      result.width = math.max(1, editor_cols - 2 - outer.left - outer.right)
       result.height = math.max(1, h - 2)
     end
   end

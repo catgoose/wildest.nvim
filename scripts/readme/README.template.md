@@ -26,7 +26,7 @@
   <br>
   <em>Gunsmoke — get the hell out of Dodge!</em>
   <br>
-  <a href="scripts/screenshots/configs.lua">config</a> · <a href="https://github.com/catgoose/wildest.nvim/issues/new?title=GIF%20issue%3A%20gunsmoke&body=**GIF%3A**%20gunsmoke%0A**Config%3A**%20%5B%60scripts%2Fscreenshots%2Fconfigs.lua%60%5D(https%3A%2F%2Fgithub.com%2Fcatgoose%2Fwildest.nvim%2Fblob%2Fmain%2Fscripts%2Fscreenshots%2Fconfigs.lua)%20%E2%80%94%20%60M.random_scenes()%60%2C%20%60M.gif_init()%60%0A%0A**Describe%20the%20issue%3A**%0A">report issue</a>
+  <a href="https://github.com/catgoose/screenshots/blob/main/wildest.nvim/showcase/gunsmoke_scenes.json">config</a> · <a href="https://github.com/catgoose/wildest.nvim/issues/new?title=GIF%20issue%3A%20gunsmoke&body=**GIF%3A**%20gunsmoke%0A**Config%3A**%20%5B%60gunsmoke_scenes.json%60%5D(https%3A%2F%2Fgithub.com%2Fcatgoose%2Fscreenshots%2Fblob%2Fmain%2Fwildest.nvim%2Fshowcase%2Fgunsmoke_scenes.json)%0A%0A**Describe%20the%20issue%3A**%0A">report issue</a>
 </p>
 
 <p align="center">
@@ -34,7 +34,7 @@
   <br>
   <em>Showdown — don't blink pardner</em>
   <br>
-  <a href="scripts/screenshots/configs.lua">config</a> · <a href="https://github.com/catgoose/wildest.nvim/issues/new?title=GIF%20issue%3A%20showdown&body=**GIF%3A**%20showdown%0A**Config%3A**%20%5B%60scripts%2Fscreenshots%2Fconfigs.lua%60%5D(https%3A%2F%2Fgithub.com%2Fcatgoose%2Fwildest.nvim%2Fblob%2Fmain%2Fscripts%2Fscreenshots%2Fconfigs.lua)%20%E2%80%94%20%60M.showdown_scenes()%60%2C%20%60M.showdown_scene_plan()%60%2C%20%60M.gif_init()%60%0A%0A**Describe%20the%20issue%3A**%0A">report issue</a>
+  <a href="https://github.com/catgoose/screenshots/blob/main/wildest.nvim/showcase/showdown_scenes.json">config</a> · <a href="https://github.com/catgoose/wildest.nvim/issues/new?title=GIF%20issue%3A%20showdown&body=**GIF%3A**%20showdown%0A**Config%3A**%20%5B%60showdown_scenes.json%60%5D(https%3A%2F%2Fgithub.com%2Fcatgoose%2Fscreenshots%2Fblob%2Fmain%2Fwildest.nvim%2Fshowcase%2Fshowdown_scenes.json)%0A%0A**Describe%20the%20issue%3A**%0A">report issue</a>
 </p>
 
 **[Wanted Posters](WANTED_POSTERS.md)** — every config combination, pinned up for inspection.
@@ -1156,6 +1156,37 @@ w.setup({
 | `ghost_text` | boolean\|table\|false | `false`     | Enable ghost text preview          |
 | `hl_group`   | string                | `"Comment"` | Highlight group for the ghost text |
 
+## Gaps
+
+i3-style screen gaps. `outer` adds margins between screen edges and floating
+windows. `inner` adds spacing between adjacent windows (menu and preview).
+
+```lua
+-- Uniform: all outer edges = 2, inner = 2
+w.setup({
+  gaps = 2,
+  -- ...
+})
+
+-- Separate outer and inner
+w.setup({
+  gaps = { outer = 2, inner = 1 },
+  -- ...
+})
+
+-- Per-edge outer control
+w.setup({
+  gaps = { outer = { top = 1, right = 2, bottom = 1, left = 2 }, inner = 1 },
+  -- ...
+})
+```
+
+| Option  | Type          | Default | Description                                  |
+| ------- | ------------- | ------- | -------------------------------------------- |
+| `gaps`  | integer\|table\|nil | `nil` | Screen gaps config                         |
+| `outer` | integer\|table | `0`    | Screen-edge margins (number or per-edge table) |
+| `inner` | integer       | `0`    | Spacing between adjacent windows             |
+
 ## Documentation Hints
 
 ![Docs Hints](https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/wanted_posters/docs_hints.png)
@@ -1422,6 +1453,7 @@ Checks for:
 | `preview`          | `nil`               | Preview window config (see Preview section)  |
 | `layout`           | `nil`               | Layout callback (see Layout section)         |
 | `ghost_text`       | `false`             | Show top candidate as inline ghost text      |
+| `gaps`             | `nil`               | Screen gaps (see Gaps section)               |
 | `pipeline`         | `nil`               | Your pipeline (required)                     |
 | `renderer`         | `nil`               | Your renderer (required)                     |
 

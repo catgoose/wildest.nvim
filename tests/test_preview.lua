@@ -8,6 +8,8 @@ local T = new_set()
 local function get_preview()
   local preview = require("wildest.preview")
   preview._reset()
+  -- Reset gaps module so outer/inner default to 0
+  require("wildest.gaps").setup(nil)
   return preview
 end
 
@@ -1314,10 +1316,11 @@ end
 
 T["reserved_space()"]["popup anchor + right with gap adds between and edge"] = function()
   local preview = get_preview()
-  preview.setup({ position = "right", anchor = "popup", width = "50%", gap = 3 })
+  require("wildest.gaps").setup({ outer = 3, inner = 3 })
+  preview.setup({ position = "right", anchor = "popup", width = "50%" })
   local s = preview.reserved_space()
   local expected_width = preview._parse_dim("50%", vim.o.columns)
-  -- right = width + gap.right + gap.between = width + 3 + 3
+  -- right = outer.right + width + inner = 3 + width + 3
   expect.equality(s.right, expected_width + 3 + 3)
   expect.equality(s.top, 3)
   expect.equality(s.bottom, 3)
@@ -1326,10 +1329,11 @@ end
 
 T["reserved_space()"]["popup anchor + left with gap adds between and edge"] = function()
   local preview = get_preview()
-  preview.setup({ position = "left", anchor = "popup", width = "50%", gap = 2 })
+  require("wildest.gaps").setup({ outer = 2, inner = 2 })
+  preview.setup({ position = "left", anchor = "popup", width = "50%" })
   local s = preview.reserved_space()
   local expected_width = preview._parse_dim("50%", vim.o.columns)
-  -- left = width + gap.left + gap.between = width + 2 + 2
+  -- left = outer.left + width + inner = 2 + width + 2
   expect.equality(s.left, expected_width + 2 + 2)
   expect.equality(s.top, 2)
   expect.equality(s.bottom, 2)
@@ -1350,9 +1354,9 @@ end
 
 T["_compute_win_config()"]["popup right: right gap reduces available space"] = function()
   local preview = get_preview()
-  local gap = { top = 0, right = 10, bottom = 0, left = 0, between = 0 }
+  require("wildest.gaps").setup({ outer = { top = 0, right = 10, bottom = 0, left = 0 }, inner = 0 })
   local geom = popup_geom({ col = 170, width = 20 }) -- border=rounded
-  local p = preview._compute_win_config(popup_params("right", { geom = geom, gap = gap }))
+  local p = preview._compute_win_config(popup_params("right", { geom = geom }))
   -- start_col = 170 + 20 + 2 = 192, avail = 200 - 192 - 10 = -2 < 3 → nil
   expect.equality(p, nil)
 end
@@ -1370,9 +1374,9 @@ end
 
 T["_compute_win_config()"]["popup left: left gap reduces available space"] = function()
   local preview = get_preview()
-  local gap = { top = 0, right = 0, bottom = 0, left = 5, between = 0 }
+  require("wildest.gaps").setup({ outer = { top = 0, right = 0, bottom = 0, left = 5 }, inner = 0 })
   local geom = popup_geom({ col = 7 }) -- border=rounded
-  local p = preview._compute_win_config(popup_params("left", { geom = geom, gap = gap }))
+  local p = preview._compute_win_config(popup_params("left", { geom = geom }))
   -- avail = 7 - 0 - 5 = 2 < 3 → nil
   expect.equality(p, nil)
 end
@@ -1401,10 +1405,10 @@ end
 
 T["_compute_win_config()"]["popup bottom: bottom gap reduces available space"] = function()
   local preview = get_preview()
-  local gap = { top = 0, right = 0, bottom = 5, left = 0, between = 0 }
+  require("wildest.gaps").setup({ outer = { top = 0, right = 0, bottom = 5, left = 0 }, inner = 0 })
   local geom = popup_geom({ row = 40, height = 5 }) -- border=rounded
   local p = preview._compute_win_config(
-    popup_params("bottom", { geom = geom, gap = gap, content_lines = 3 })
+    popup_params("bottom", { geom = geom, content_lines = 3 })
   )
   -- start_row = 40 + 5 + 2 + 0 = 47, avail = 50 - 47 - 2 - 5 = -4 < 1 → nil
   expect.equality(p, nil)
@@ -1412,8 +1416,8 @@ end
 
 T["_compute_win_config()"]["screen right: gap insets from edges"] = function()
   local preview = get_preview()
-  local gap = { top = 2, right = 3, bottom = 2, left = 0, between = 0 }
-  local p = preview._compute_win_config(screen_params("right", { gap = gap }))
+  require("wildest.gaps").setup({ outer = { top = 2, right = 3, bottom = 2, left = 0 }, inner = 0 })
+  local p = preview._compute_win_config(screen_params("right"))
   -- w = 80, col = 200 - 80 - 3 = 117
   expect.equality(p.col, 117)
   expect.equality(p.row, 2)
@@ -1423,8 +1427,8 @@ end
 
 T["_compute_win_config()"]["screen left: gap insets from left edge"] = function()
   local preview = get_preview()
-  local gap = { top = 1, right = 0, bottom = 1, left = 5, between = 0 }
-  local p = preview._compute_win_config(screen_params("left", { gap = gap }))
+  require("wildest.gaps").setup({ outer = { top = 1, right = 0, bottom = 1, left = 5 }, inner = 0 })
+  local p = preview._compute_win_config(screen_params("left"))
   expect.equality(p.col, 5)
   expect.equality(p.row, 1)
   expect.equality(p.height, 48) -- 50 - 1 - 1
@@ -1432,8 +1436,8 @@ end
 
 T["_compute_win_config()"]["screen top: gap insets from top and sides"] = function()
   local preview = get_preview()
-  local gap = { top = 3, right = 4, bottom = 0, left = 4, between = 0 }
-  local p = preview._compute_win_config(screen_params("top", { gap = gap }))
+  require("wildest.gaps").setup({ outer = { top = 3, right = 4, bottom = 0, left = 4 }, inner = 0 })
+  local p = preview._compute_win_config(screen_params("top"))
   expect.equality(p.row, 3)
   expect.equality(p.col, 4)
   -- width = max(1, 200 - 2 - 4 - 4) = 190
@@ -1442,8 +1446,8 @@ end
 
 T["_compute_win_config()"]["screen bottom: gap insets from bottom and sides"] = function()
   local preview = get_preview()
-  local gap = { top = 0, right = 2, bottom = 3, left = 2, between = 0 }
-  local p = preview._compute_win_config(screen_params("bottom", { gap = gap }))
+  require("wildest.gaps").setup({ outer = { top = 0, right = 2, bottom = 3, left = 2 }, inner = 0 })
+  local p = preview._compute_win_config(screen_params("bottom"))
   -- h = 20, row = 50 - 20 + 1 - 3 = 28
   expect.equality(p.row, 28)
   expect.equality(p.col, 2)
