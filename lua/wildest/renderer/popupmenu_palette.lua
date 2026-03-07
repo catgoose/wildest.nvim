@@ -124,7 +124,9 @@ function PopupmenuPalette:render(ctx, result)
   local preview = require("wildest.preview")
   local space = preview.reserved_space()
   local editor_lines = vim.o.lines
-  local editor_cols = vim.o.columns - space.left - space.right
+  -- Subtract 2 for left+right border so the total footprint (content + border)
+  -- stays within the available columns.
+  local editor_cols = math.max(1, vim.o.columns - space.left - space.right - 2)
 
   local outer_width =
     renderer_util.calculate_width(state.max_width, state.min_width, editor_cols, ctx)

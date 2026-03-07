@@ -50,6 +50,9 @@ function PopupmenuBorder:render(ctx, result)
   renderer_util.check_run_id(state, ctx)
 
   local row, col, editor_width, avail = renderer_util.default_position(resolve(state.offset, ctx))
+  -- Subtract 2 for left+right border so the total footprint (content + border)
+  -- stays within the available editor_width.
+  editor_width = math.max(1, editor_width - 2)
   local max_h = renderer_util.parse_dimension(state.max_height, vim.o.lines, ctx)
 
   -- Reserve space for chrome lines
