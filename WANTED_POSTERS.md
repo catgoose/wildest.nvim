@@ -1972,19 +1972,11 @@ cmd = ":e lua/wildest/renderer/components/",
 left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
-<<<<<<< Updated upstream
-next_key = { "<C-j>", "<Down>" },
-unmark_key = "<S-Tab>",
-mark_key = "<Tab>",
-actions = { ["<C-q>"] = "send_to_quickfix" },
 previous_key = { "<C-k>", "<Up>" },
-=======
+mark_key = "<Tab>",
 unmark_key = "<S-Tab>",
 next_key = { "<C-j>", "<Down>" },
-previous_key = { "<C-k>", "<Up>" },
 actions = { ["<C-q>"] = "send_to_quickfix" },
-mark_key = "<Tab>",
->>>>>>> Stashed changes
 </code></pre>
 </details>
 </td>
@@ -1998,19 +1990,11 @@ cmd = ":e tests/",
 left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
-<<<<<<< Updated upstream
-next_key = { "<C-j>", "<Down>" },
-unmark_key = "<S-Tab>",
-mark_key = "<Tab>",
-actions = { ["<C-l>"] = "send_to_loclist" },
 previous_key = { "<C-k>", "<Up>" },
-=======
+mark_key = "<Tab>",
 unmark_key = "<S-Tab>",
 next_key = { "<C-j>", "<Down>" },
-previous_key = { "<C-k>", "<Up>" },
 actions = { ["<C-l>"] = "send_to_loclist" },
-mark_key = "<Tab>",
->>>>>>> Stashed changes
 </code></pre>
 </details>
 </td>
@@ -2024,19 +2008,11 @@ cmd = ":e lua/wildest/",
 left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
-<<<<<<< Updated upstream
-next_key = { "<C-j>", "<Down>" },
-unmark_key = "<S-Tab>",
-mark_key = "<Tab>",
-actions = { ["<C-o>"] = "open_marked" },
 previous_key = { "<C-k>", "<Up>" },
-=======
+mark_key = "<Tab>",
 unmark_key = "<S-Tab>",
 next_key = { "<C-j>", "<Down>" },
-previous_key = { "<C-k>", "<Up>" },
 actions = { ["<C-o>"] = "open_marked" },
-mark_key = "<Tab>",
->>>>>>> Stashed changes
 </code></pre>
 </details>
 </td>
@@ -2058,21 +2034,12 @@ preview = {
   position = "right",
   width = "40%",
 },
-<<<<<<< Updated upstream
-frecency = true,
-next_key = { "<C-j>", "<Down>" },
-unmark_key = "<S-Tab>",
-mark_key = "<Tab>",
-actions = { ["<C-q>"] = "send_to_quickfix" },
 previous_key = { "<C-k>", "<Up>" },
-=======
 mark_key = "<Tab>",
 unmark_key = "<S-Tab>",
-next_key = { "<C-j>", "<Down>" },
-previous_key = { "<C-k>", "<Up>" },
-actions = { ["<C-q>"] = "send_to_quickfix" },
 frecency = true,
->>>>>>> Stashed changes
+next_key = { "<C-j>", "<Down>" },
+actions = { ["<C-q>"] = "send_to_quickfix" },
 </code></pre>
 </details>
 </td>
@@ -2096,24 +2063,14 @@ palette = {
   prompt_prefix = " :",
   title = " Multi-Select ",
 },
-<<<<<<< Updated upstream
-next_key = { "<C-j>", "<Down>" },
-unmark_key = "<S-Tab>",
-mark_key = "<Tab>",
-=======
-unmark_key = "<S-Tab>",
-next_key = { "<C-j>", "<Down>" },
 previous_key = { "<C-k>", "<Up>" },
->>>>>>> Stashed changes
+mark_key = "<Tab>",
+unmark_key = "<S-Tab>",
+next_key = { "<C-j>", "<Down>" },
 actions = {
   ["<C-o>"] = "open_marked",
   ["<C-q>"] = "send_to_quickfix",
 },
-<<<<<<< Updated upstream
-previous_key = { "<C-k>", "<Up>" },
-=======
-mark_key = "<Tab>",
->>>>>>> Stashed changes
 </code></pre>
 </details>
 </td>
