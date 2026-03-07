@@ -618,6 +618,28 @@ local function longest_common_prefix(candidates)
   return prefix
 end
 
+--- Apply the current selection: resolve the candidate, update cmdline, and fire the select hook.
+--- No-op if selected is out of bounds.
+local function apply_selection()
+  if state.selected < 0 or not state.result or state.selected >= #state.result.value then
+    return
+  end
+  local candidate = state.result.value[state.selected + 1]
+  if state.result.output then
+    candidate = state.result.output(state.result.data, candidate)
+  end
+  if type(candidate) == "string" and candidate ~= "" then
+    state.replaced_cmdline = candidate
+    M.feedkeys_cmdline(candidate)
+  end
+  hooks.fire(
+    "select",
+    { cmdtype = state.cmdtype, input = state.previous_cmdline },
+    candidate,
+    state.selected
+  )
+end
+
 --- Step selection by n positions (positive = next, negative = previous)
 ---@param n integer
 function M.step(n)
@@ -673,20 +695,7 @@ function M.step(n)
     M.feedkeys_cmdline(state.previous_cmdline)
     state.replaced_cmdline = nil
   else
-    local candidate = state.result.value[state.selected + 1]
-    if state.result.output then
-      candidate = state.result.output(state.result.data, candidate)
-    end
-    if type(candidate) == "string" and candidate ~= "" then
-      state.replaced_cmdline = candidate
-      M.feedkeys_cmdline(candidate)
-    end
-    hooks.fire(
-      "select",
-      { cmdtype = state.cmdtype, input = state.previous_cmdline },
-      candidate,
-      state.selected
-    )
+    apply_selection()
   end
 
   M.draw()
@@ -725,20 +734,7 @@ function M.scroll(n)
     end
   end
 
-  local candidate = state.result.value[state.selected + 1]
-  if state.result.output then
-    candidate = state.result.output(state.result.data, candidate)
-  end
-  if type(candidate) == "string" and candidate ~= "" then
-    state.replaced_cmdline = candidate
-    M.feedkeys_cmdline(candidate)
-  end
-  hooks.fire(
-    "select",
-    { cmdtype = state.cmdtype, input = state.previous_cmdline },
-    candidate,
-    state.selected
-  )
+  apply_selection()
 
   M.draw()
 end
@@ -777,20 +773,7 @@ function M.mark(n)
   end
 
   -- Update cmdline to reflect new selection
-  local candidate = state.result.value[state.selected + 1]
-  if state.result.output then
-    candidate = state.result.output(state.result.data, candidate)
-  end
-  if type(candidate) == "string" and candidate ~= "" then
-    state.replaced_cmdline = candidate
-    M.feedkeys_cmdline(candidate)
-  end
-  hooks.fire(
-    "select",
-    { cmdtype = state.cmdtype, input = state.previous_cmdline },
-    candidate,
-    state.selected
-  )
+  apply_selection()
 
   M.draw()
 end
@@ -822,20 +805,7 @@ function M.unmark(n)
   end
 
   -- Update cmdline
-  local candidate = state.result.value[state.selected + 1]
-  if state.result.output then
-    candidate = state.result.output(state.result.data, candidate)
-  end
-  if type(candidate) == "string" and candidate ~= "" then
-    state.replaced_cmdline = candidate
-    M.feedkeys_cmdline(candidate)
-  end
-  hooks.fire(
-    "select",
-    { cmdtype = state.cmdtype, input = state.previous_cmdline },
-    candidate,
-    state.selected
-  )
+  apply_selection()
 
   M.draw()
 end
