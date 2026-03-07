@@ -923,23 +923,25 @@ selection stepping, pipeline execution, and renderer drawing.
 wildest.State                                                    *wildest.State*
 
     Fields: ~
-        {enabled}            (boolean)                 Whether wildest is globally enabled
-        {active}             (boolean)                 Whether a completion session is active
-        {hidden}             (boolean)                 Whether the renderer is hidden
-        {session_id}         (integer)                 Monotonic session counter
-        {run_id}             (integer)                 Monotonic pipeline run counter
-        {selected}           (integer)                 Selected candidate index (-1 = no selection)
-        {result?}            (wildest.PipelineResult)  Current pipeline result
-        {error?}             (any)                     Current pipeline error
-        {previous_cmdline}   (string)                  Last seen cmdline text
-        {replaced_cmdline?}  (string)                  Cmdline text set by completion
-        {completion_stack}   (table)                   Stack for nested completions
-        {cmdtype}            (string)                  Current cmdtype (':', '/', '?')
-        {draw_done}          (boolean)                 Whether current frame has been drawn
-        {suppress_change}    (boolean)                 Suppress next CmdlineChanged from our setcmdline
-        {triggered}          (boolean)                 For trigger='tab': has Tab been pressed?
-        {pipeline_timer?}    (uv_timer_t)              Timeout timer for pipeline
-        {marked}             (table<integer,boolean>)  Set of marked candidate indices (0-indexed)
+        {enabled}              (boolean)                 Whether wildest is globally enabled
+        {active}               (boolean)                 Whether a completion session is active
+        {hidden}               (boolean)                 Whether the renderer is hidden
+        {session_id}           (integer)                 Monotonic session counter
+        {run_id}               (integer)                 Monotonic pipeline run counter
+        {selected}             (integer)                 Selected candidate index (-1 = no selection)
+        {result?}              (wildest.PipelineResult)  Current pipeline result
+        {error?}               (any)                     Current pipeline error
+        {previous_cmdline}     (string)                  Last seen cmdline text
+        {replaced_cmdline?}    (string)                  Cmdline text set by completion
+        {completion_stack}     (table)                   Stack for nested completions
+        {cmdtype}              (string)                  Current cmdtype (':', '/', '?')
+        {draw_done}            (boolean)                 Whether current frame has been drawn
+        {suppress_change}      (boolean)                 Suppress next CmdlineChanged from our setcmdline
+        {triggered}            (boolean)                 For trigger='tab': has Tab been pressed?
+        {pipeline_timer?}      (uv_timer_t)              Timeout timer for pipeline
+        {marked}               (table<integer,boolean>)  Set of marked candidate indices (0-indexed)
+        {_saved_wildmenu?}     (boolean)                 Saved wildmenu option during session
+        {_saved_wildoptions?}  (string)                  Saved wildoptions option during session
 
 
 M.get()                                                      *wildest.state.get*
