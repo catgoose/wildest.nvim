@@ -82,10 +82,21 @@ end
 ---@param margin any
 ---@param total integer
 ---@param content_size integer
+---@param result? table pipeline result (used for "before_cursor" positioning)
 ---@return integer
-function M.parse_margin(margin, total, content_size)
+function M.parse_margin(margin, total, content_size, result)
   if margin == "auto" then
     return math.floor((total - content_size) / 2)
+  end
+  if margin == "before_cursor" then
+    -- Position popup left edge at the end of current input (tracks cursor).
+    -- Use getcmdline() for the live cmdline text so the popup tracks every
+    -- keystroke, even when the pipeline result is still in-flight (async).
+    -- +1 accounts for the cmdline prompt character (:, /, ?).
+    local input = vim.fn.getcmdline() or ""
+    local col = #input + 1
+    -- Clamp so the popup doesn't overflow the right edge
+    return math.min(col, math.max(0, total - content_size))
   end
   if type(margin) == "number" then
     return margin

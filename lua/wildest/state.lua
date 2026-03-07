@@ -251,6 +251,13 @@ function M.on_change(cmdline)
   end
 
   M.run_pipeline(cmdline)
+
+  -- Redraw immediately so position-tracking features (e.g. margin =
+  -- "before_cursor") update the popup on every keystroke, even while an
+  -- async pipeline result is still in-flight.
+  if state.result and not state.hidden then
+    M.draw()
+  end
 end
 
 --- Trigger completions (for trigger='tab' mode)

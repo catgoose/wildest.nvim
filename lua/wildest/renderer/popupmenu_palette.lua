@@ -223,7 +223,7 @@ function PopupmenuPalette:render(ctx, result)
   local height = self:clamp_height(lines, line_highlights, max_content_height)
 
   -- Position: centered within usable area
-  local margin_left = renderer_util.parse_margin(state.margin, editor_cols, outer_width)
+  local margin_left = renderer_util.parse_margin(state.margin, editor_cols, outer_width, result)
     + space.left
   local total_with_border = height + border_rows
   local margin_top = math.max(

@@ -126,7 +126,7 @@ function PopupmenuBorder:render(ctx, result)
 
   local actual_col
   if state.margin ~= nil then
-    actual_col = col + renderer_util.parse_margin(state.margin, editor_width, outer_width)
+    actual_col = col + renderer_util.parse_margin(state.margin, editor_width, outer_width, result)
   else
     actual_col = renderer_util.center_col(col, outer_width, editor_width)
   end

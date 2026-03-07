@@ -26,6 +26,9 @@ function M.result(opts)
     if ctx.arg then
       data.arg = ctx.arg
     end
+    if ctx.pos then
+      data.pos = ctx.pos
+    end
     if ctx.query then
       data.query = ctx.query
     end

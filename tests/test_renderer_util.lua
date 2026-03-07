@@ -134,6 +134,62 @@ T["parse_margin()"]["returns 0 for unrecognized input"] = function()
   expect.equality(renderer_util.parse_margin(nil, 100, 60), 0)
 end
 
+T["parse_margin()"]["before_cursor uses getcmdline"] = function()
+  -- Stub getcmdline to return a known value
+  local orig = vim.fn.getcmdline
+  vim.fn.getcmdline = function()
+    return "edit foo"
+  end
+  -- col = #"edit foo" + 1 = 9; total=100, content=40 → min(9, 60) = 9
+  expect.equality(renderer_util.parse_margin("before_cursor", 100, 40), 9)
+  vim.fn.getcmdline = orig
+end
+
+T["parse_margin()"]["before_cursor clamps to prevent overflow"] = function()
+  local orig = vim.fn.getcmdline
+  vim.fn.getcmdline = function()
+    return "edit some/very/long/path/that/exceeds/total"
+  end
+  -- col = 43; total=50, content=40 → min(43, max(0, 10)) = 10
+  expect.equality(renderer_util.parse_margin("before_cursor", 50, 40), 10)
+  vim.fn.getcmdline = orig
+end
+
+T["parse_margin()"]["before_cursor with empty cmdline"] = function()
+  local orig = vim.fn.getcmdline
+  vim.fn.getcmdline = function()
+    return ""
+  end
+  -- col = 1; total=100, content=40 → min(1, 60) = 1
+  expect.equality(renderer_util.parse_margin("before_cursor", 100, 40), 1)
+  vim.fn.getcmdline = orig
+end
+
+T["parse_margin()"]["before_cursor with nil getcmdline"] = function()
+  local orig = vim.fn.getcmdline
+  vim.fn.getcmdline = function()
+    return nil
+  end
+  -- input = "", col = 1; total=100, content=40 → min(1, 60) = 1
+  expect.equality(renderer_util.parse_margin("before_cursor", 100, 40), 1)
+  vim.fn.getcmdline = orig
+end
+
+T["parse_margin()"]["before_cursor tracks every character"] = function()
+  local orig = vim.fn.getcmdline
+  -- Simulate typing: "e ", "e l", "e lu", "e lua/"
+  local results = {}
+  for _, text in ipairs({ "e ", "e l", "e lu", "e lua/" }) do
+    vim.fn.getcmdline = function()
+      return text
+    end
+    table.insert(results, renderer_util.parse_margin("before_cursor", 200, 50))
+  end
+  -- Each should be #text + 1: 3, 4, 5, 7
+  expect.equality(results, { 3, 4, 5, 7 })
+  vim.fn.getcmdline = orig
+end
+
 T["make_page()"] = new_set()
 
 T["make_page()"]["returns -1, -1 for empty list"] = function()

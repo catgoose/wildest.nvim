@@ -129,6 +129,17 @@ local function generate_tape(config_name, generate_gifs)
   local typed = cmd:sub(2)
   local nvim_cmd = string.format("WILDEST_CONFIG=%s nvim -u %s -i NONE", config_name, init_lua)
 
+  -- cursor_pos: move cursor left after typing to position it mid-cmdline
+  local cfg = configs_mod.configs[config_name]
+  local cursor_left = ""
+  if cfg and cfg.cursor_pos then
+    local total = #typed
+    local left_count = total - cfg.cursor_pos + 1
+    if left_count > 0 then
+      cursor_left = "\nSleep 200ms\n" .. ("Left\n"):rep(left_count):gsub("\n$", "")
+    end
+  end
+
   local parts = {}
 
   if generate_gifs then
@@ -147,7 +158,7 @@ Sleep 2s
 
 Type "%s"
 Sleep 500ms
-Type@80ms "%s"
+Type@80ms "%s"%s
 Sleep 2s
 
 Screenshot "%s/%s.png"
@@ -161,6 +172,7 @@ Sleep 500ms]],
       nvim_cmd,
       mode,
       typed,
+      cursor_left,
       output_dir,
       config_name
     )
