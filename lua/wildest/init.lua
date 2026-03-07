@@ -48,7 +48,7 @@ function M.setup(opts)
   local cfg = config.setup(opts)
   log.log("setup", "config_done")
 
-  require("wildest.gaps").setup(cfg.gaps)
+  require("wildest.gaps").setup(cfg.gutter, cfg.gap)
 
   if cfg.preview then
     require("wildest.preview").setup(cfg.preview)

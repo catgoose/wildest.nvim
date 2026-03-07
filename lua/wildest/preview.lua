@@ -471,17 +471,17 @@ function M.setup(opts)
 end
 
 --- Returns space reserved on each edge `{top, right, bottom, left}`.
---- Always includes outer gaps from the top-level `gaps` config.
+--- Always includes gutter from the top-level `gutter` config.
 --- Adds preview reservations when a preview is active (screen or popup anchor).
 ---@return {top: integer, right: integer, bottom: integer, left: integer}
 function M.reserved_space()
   local gaps_mod = require("wildest.gaps")
-  local outer = gaps_mod.outer()
+  local gutter = gaps_mod.gutter()
   local base = {
-    top = outer.top,
-    right = outer.right,
-    bottom = outer.bottom,
-    left = outer.left,
+    top = gutter.top,
+    right = gutter.right,
+    bottom = gutter.bottom,
+    left = gutter.left,
   }
 
   if not preview_state.config or not preview_state.enabled then
@@ -491,8 +491,8 @@ function M.reserved_space()
   local cfg = preview_state.config
   local pos = cfg.position
   local gap = cfg.gap
-  -- Use top-level inner gap as the between default; preview gap.between overrides
-  local between = gap.between > 0 and gap.between or gaps_mod.inner()
+  -- Use top-level gap as the between default; preview gap.between overrides
+  local between = gap.between > 0 and gap.between or gaps_mod.gap()
 
   -- Popup anchor: reserve space so the popup shrinks to make room.
   -- Skip window-validity check: popup-anchor preview is drawn AFTER the
@@ -592,9 +592,9 @@ function M._compute_win_config(params)
     local border_size = has_border and 1 or 0
 
     local gaps_mod = require("wildest.gaps")
-    local outer = gaps_mod.outer()
-    -- Use top-level inner gap as the between default; preview gap.between overrides
-    local between = gap.between > 0 and gap.between or gaps_mod.inner()
+    local gutter = gaps_mod.gutter()
+    -- Use top-level gap as the between default; preview gap.between overrides
+    local between = gap.between > 0 and gap.between or gaps_mod.gap()
 
     -- When priority="preview", compute height from configured dimension
     -- instead of capping to popup height.
@@ -607,7 +607,7 @@ function M._compute_win_config(params)
 
     if position == "right" then
       local start_col = geom.col + geom.width + 2 * border_size + between
-      local avail = editor_cols - start_col - outer.right
+      local avail = editor_cols - start_col - gutter.right
       if avail < MIN_PREVIEW_COLS then
         return nil
       end
@@ -618,7 +618,7 @@ function M._compute_win_config(params)
       result.width = math.max(1, w - 2)
       result.height = h
     elseif position == "left" then
-      local avail = geom.col - between - outer.left
+      local avail = geom.col - between - gutter.left
       if avail < MIN_PREVIEW_COLS then
         return nil
       end
@@ -630,7 +630,7 @@ function M._compute_win_config(params)
       result.height = h
     elseif position == "top" then
       local h = parse_dim(cfg_height, available_rows)
-      local avail = geom.row - 2 - between - outer.top
+      local avail = geom.row - 2 - between - gutter.top
       if avail < MIN_PREVIEW_ROWS then
         return nil
       end
@@ -642,7 +642,7 @@ function M._compute_win_config(params)
     elseif position == "bottom" then
       local h = parse_dim(cfg_height, available_rows)
       local start_row = geom.row + geom.height + 2 * border_size + between
-      local avail = available_rows - start_row - 2 - outer.bottom
+      local avail = available_rows - start_row - 2 - gutter.bottom
       if avail < MIN_PREVIEW_ROWS then
         return nil
       end
@@ -653,32 +653,32 @@ function M._compute_win_config(params)
       result.height = h
     end
   else
-    -- Screen anchor: fill entire edge of screen, inset by outer gaps
+    -- Screen anchor: fill entire edge of screen, inset by gutter
     local gaps_mod = require("wildest.gaps")
-    local outer = gaps_mod.outer()
+    local gutter = gaps_mod.gutter()
     if position == "right" then
       local w = parse_dim(cfg_width, editor_cols)
-      result.row = outer.top
-      result.col = editor_cols - w - outer.right
+      result.row = gutter.top
+      result.col = editor_cols - w - gutter.right
       result.width = math.max(1, w - 2)
-      result.height = math.max(1, available_rows - outer.top - outer.bottom)
+      result.height = math.max(1, available_rows - gutter.top - gutter.bottom)
     elseif position == "left" then
       local w = parse_dim(cfg_width, editor_cols)
-      result.row = outer.top
-      result.col = outer.left
+      result.row = gutter.top
+      result.col = gutter.left
       result.width = math.max(1, w - 2)
-      result.height = math.max(1, available_rows - outer.top - outer.bottom)
+      result.height = math.max(1, available_rows - gutter.top - gutter.bottom)
     elseif position == "top" then
       local h = parse_dim(cfg_height, available_rows)
-      result.row = outer.top
-      result.col = outer.left
-      result.width = math.max(1, editor_cols - 2 - outer.left - outer.right)
+      result.row = gutter.top
+      result.col = gutter.left
+      result.width = math.max(1, editor_cols - 2 - gutter.left - gutter.right)
       result.height = math.max(1, h - 2)
     elseif position == "bottom" then
       local h = parse_dim(cfg_height, available_rows)
-      result.row = available_rows - h + 1 - outer.bottom
-      result.col = outer.left
-      result.width = math.max(1, editor_cols - 2 - outer.left - outer.right)
+      result.row = available_rows - h + 1 - gutter.bottom
+      result.col = gutter.left
+      result.width = math.max(1, editor_cols - 2 - gutter.left - gutter.right)
       result.height = math.max(1, h - 2)
     end
   end

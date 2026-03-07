@@ -1298,36 +1298,31 @@ w.setup({
 | `ghost_text` | boolean\|table\|false | `false`     | Enable ghost text preview          |
 | `hl_group`   | string                | `"Comment"` | Highlight group for the ghost text |
 
-## Gaps
+## Gutter and Gap
 
-i3-style screen gaps. `outer` adds margins between screen edges and floating
-windows. `inner` adds spacing between adjacent windows (menu and preview).
+`gutter` adds margins between screen edges and floating windows.
+`gap` adds spacing between adjacent windows (menu and preview).
 
 ```lua
--- Uniform: all outer edges = 2, inner = 2
+-- Uniform gutter on all edges, 1 cell between windows
 w.setup({
-  gaps = 2,
+  gutter = 2,
+  gap = 1,
   -- ...
 })
 
--- Separate outer and inner
+-- Per-edge gutter control
 w.setup({
-  gaps = { outer = 2, inner = 1 },
-  -- ...
-})
-
--- Per-edge outer control
-w.setup({
-  gaps = { outer = { top = 1, right = 2, bottom = 1, left = 2 }, inner = 1 },
+  gutter = { top = 1, right = 2, bottom = 1, left = 2 },
+  gap = 1,
   -- ...
 })
 ```
 
-| Option  | Type          | Default | Description                                  |
-| ------- | ------------- | ------- | -------------------------------------------- |
-| `gaps`  | integer\|table\|nil | `nil` | Screen gaps config                         |
-| `outer` | integer\|table | `0`    | Screen-edge margins (number or per-edge table) |
-| `inner` | integer       | `0`    | Spacing between adjacent windows             |
+| Option   | Type           | Default | Description                                    |
+| -------- | -------------- | ------- | ---------------------------------------------- |
+| `gutter` | integer\|table | `nil`   | Screen-edge margins (number or per-edge table) |
+| `gap`    | integer        | `nil`   | Spacing between adjacent windows               |
 
 ## Documentation Hints
 
@@ -1607,7 +1602,8 @@ Checks for:
 | `preview`          | `nil`               | Preview window config (see Preview section)  |
 | `layout`           | `nil`               | Layout callback (see Layout section)         |
 | `ghost_text`       | `false`             | Show top candidate as inline ghost text      |
-| `gaps`             | `nil`               | Screen gaps (see Gaps section)               |
+| `gutter`           | `nil`               | Screen-edge margins (see Gutter and Gap)     |
+| `gap`              | `nil`               | Between-window spacing (see Gutter and Gap)  |
 | `pipeline`         | `nil`               | Your pipeline (required)                     |
 | `renderer`         | `nil`               | Your renderer (required)                     |
 

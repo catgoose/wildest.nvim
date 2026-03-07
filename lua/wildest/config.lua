@@ -35,7 +35,8 @@
 ---@field preview? wildest.PreviewConfig Preview window configuration
 ---@field layout? fun(geometry: table): table? Layout adjustment callback
 ---@field ghost_text? boolean|wildest.GhostTextConfig Show top candidate as inline ghost text (default: false)
----@field gaps? integer|wildest.GapsConfig Screen gaps like i3: number for uniform, or { outer?, inner? }
+---@field gutter? integer|{top: integer, right: integer, bottom: integer, left: integer} Screen-edge margins (number or per-edge table)
+---@field gap? integer Spacing between adjacent windows (menu ↔ preview)
 ---@field auto_colorscheme? boolean Re-apply highlights on colorscheme change (default: true)
 ---@field renderer? wildest.Renderer Renderer instance
 

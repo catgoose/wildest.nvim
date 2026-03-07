@@ -1,28 +1,24 @@
 ---@mod wildest.gaps Screen Gaps
 ---@brief [[
----i3-style gap system for wildest.nvim floating windows.
+---Gutter and gap system for wildest.nvim floating windows.
 ---
----`outer` adds margins between the screen edges and any floating windows.
----`inner` adds spacing between adjacent floating windows (menu ↔ preview).
+---`gutter` adds margins between the screen edges and any floating windows.
+---`gap` adds spacing between adjacent floating windows (menu ↔ preview).
 ---@brief ]]
 
 local M = {}
 
----@class wildest.GapsConfig
----@field outer integer|{top: integer, right: integer, bottom: integer, left: integer}
----@field inner integer
-
 ---@class wildest.GapsResolved
----@field outer {top: integer, right: integer, bottom: integer, left: integer}
----@field inner integer
+---@field gutter {top: integer, right: integer, bottom: integer, left: integer}
+---@field gap integer
 
 ---@type wildest.GapsResolved
 local state = {
-  outer = { top = 0, right = 0, bottom = 0, left = 0 },
-  inner = 0,
+  gutter = { top = 0, right = 0, bottom = 0, left = 0 },
+  gap = 0,
 }
 
---- Normalize a gap value into a 4-edge table.
+--- Normalize a gutter value into a 4-edge table.
 ---@param raw integer|table|nil
 ---@return {top: integer, right: integer, bottom: integer, left: integer}
 local function normalize_edges(raw)
@@ -41,32 +37,24 @@ local function normalize_edges(raw)
   return { top = 0, right = 0, bottom = 0, left = 0 }
 end
 
---- Configure gaps from the top-level config.
----@param raw integer|table|nil  Number for uniform gaps, or { outer?, inner? }
-function M.setup(raw)
-  if type(raw) == "number" then
-    local g = math.max(0, raw)
-    state.outer = { top = g, right = g, bottom = g, left = g }
-    state.inner = g
-  elseif type(raw) == "table" then
-    state.outer = normalize_edges(raw.outer)
-    state.inner = math.max(0, raw.inner or 0)
-  else
-    state.outer = { top = 0, right = 0, bottom = 0, left = 0 }
-    state.inner = 0
-  end
+--- Configure from top-level config values.
+---@param gutter_raw integer|table|nil  Number for uniform, or per-edge table
+---@param gap_raw integer|nil  Number for between-window spacing
+function M.setup(gutter_raw, gap_raw)
+  state.gutter = normalize_edges(gutter_raw)
+  state.gap = math.max(0, type(gap_raw) == "number" and gap_raw or 0)
 end
 
---- Get outer (screen-edge) gaps.
+--- Get gutter (screen-edge) margins.
 ---@return {top: integer, right: integer, bottom: integer, left: integer}
-function M.outer()
-  return state.outer
+function M.gutter()
+  return state.gutter
 end
 
---- Get inner (between-window) gap.
+--- Get gap (between-window) spacing.
 ---@return integer
-function M.inner()
-  return state.inner
+function M.gap()
+  return state.gap
 end
 
 --- Expose normalize_edges for testing.
