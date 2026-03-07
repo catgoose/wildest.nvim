@@ -1920,8 +1920,8 @@ bottom = { " Press <Tab> to navigate " },
 <pre><code class="language-lua">
 renderer = "border_theme",
 border = "rounded",
-bottom = { " <Tab>/<S-Tab> to navigate " },
 top = { " Completions" },
+bottom = { " <Tab>/<S-Tab> to navigate " },
 </code></pre>
 </details>
 </td>
@@ -1972,11 +1972,11 @@ cmd = ":e lua/wildest/renderer/components/",
 left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
-actions = { ["<C-q>"] = "send_to_quickfix" },
-mark_key = "<Tab>",
-unmark_key = "<S-Tab>",
-previous_key = { "<C-k>", "<Up>" },
 next_key = { "<C-j>", "<Down>" },
+unmark_key = "<S-Tab>",
+mark_key = "<Tab>",
+actions = { ["<C-q>"] = "send_to_quickfix" },
+previous_key = { "<C-k>", "<Up>" },
 </code></pre>
 </details>
 </td>
@@ -1990,11 +1990,11 @@ cmd = ":e tests/",
 left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
-actions = { ["<C-l>"] = "send_to_loclist" },
-mark_key = "<Tab>",
-unmark_key = "<S-Tab>",
-previous_key = { "<C-k>", "<Up>" },
 next_key = { "<C-j>", "<Down>" },
+unmark_key = "<S-Tab>",
+mark_key = "<Tab>",
+actions = { ["<C-l>"] = "send_to_loclist" },
+previous_key = { "<C-k>", "<Up>" },
 </code></pre>
 </details>
 </td>
@@ -2008,11 +2008,11 @@ cmd = ":e lua/wildest/",
 left = { "devicons" },
 right = { "scrollbar" },
 noselect = false,
-actions = { ["<C-o>"] = "open_marked" },
-mark_key = "<Tab>",
-unmark_key = "<S-Tab>",
-previous_key = { "<C-k>", "<Up>" },
 next_key = { "<C-j>", "<Down>" },
+unmark_key = "<S-Tab>",
+mark_key = "<Tab>",
+actions = { ["<C-o>"] = "open_marked" },
+previous_key = { "<C-k>", "<Up>" },
 </code></pre>
 </details>
 </td>
@@ -2034,12 +2034,12 @@ preview = {
   position = "right",
   width = "40%",
 },
-actions = { ["<C-q>"] = "send_to_quickfix" },
-mark_key = "<Tab>",
-unmark_key = "<S-Tab>",
 frecency = true,
-previous_key = { "<C-k>", "<Up>" },
 next_key = { "<C-j>", "<Down>" },
+unmark_key = "<S-Tab>",
+mark_key = "<Tab>",
+actions = { ["<C-q>"] = "send_to_quickfix" },
+previous_key = { "<C-k>", "<Up>" },
 </code></pre>
 </details>
 </td>
@@ -2063,14 +2063,14 @@ palette = {
   prompt_prefix = " :",
   title = " Multi-Select ",
 },
+next_key = { "<C-j>", "<Down>" },
+unmark_key = "<S-Tab>",
+mark_key = "<Tab>",
 actions = {
   ["<C-o>"] = "open_marked",
   ["<C-q>"] = "send_to_quickfix",
 },
-mark_key = "<Tab>",
-unmark_key = "<S-Tab>",
 previous_key = { "<C-k>", "<Up>" },
-next_key = { "<C-j>", "<Down>" },
 </code></pre>
 </details>
 </td>
