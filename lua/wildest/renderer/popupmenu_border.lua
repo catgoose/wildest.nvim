@@ -42,14 +42,15 @@ end
 
 function PopupmenuBorder:render(ctx, result)
   local state = self._state
+  local resolve = require("wildest.util").resolve
   renderer_util.ensure_buf(state, "wildest_popupmenu_border")
 
   local total = #(result.value or {})
 
   renderer_util.check_run_id(state, ctx)
 
-  local row, col, editor_width, avail = renderer_util.default_position(state.offset)
-  local max_h = renderer_util.parse_dimension(state.max_height, vim.o.lines)
+  local row, col, editor_width, avail = renderer_util.default_position(resolve(state.offset, ctx))
+  local max_h = renderer_util.parse_dimension(state.max_height, vim.o.lines, ctx)
 
   -- Reserve space for chrome lines
   local chrome_lines = self:chrome_line_count("top") + self:chrome_line_count("bottom")
@@ -112,10 +113,13 @@ function PopupmenuBorder:render(ctx, result)
 
   self:flush_buffer(lines, line_highlights)
 
+  local position = resolve(state.position, ctx)
+  local margin = resolve(state.margin, ctx)
+
   local win_row
-  if state.position == "top" then
+  if position == "top" then
     win_row = 0
-  elseif state.position == "center" then
+  elseif position == "center" then
     win_row = math.max(0, math.floor((row - height) / 2))
   else
     -- -1 so the top border sits above the content and the bottom border
@@ -125,8 +129,8 @@ function PopupmenuBorder:render(ctx, result)
   end
 
   local actual_col
-  if state.margin ~= nil then
-    actual_col = col + renderer_util.parse_margin(state.margin, editor_width, outer_width, result)
+  if margin ~= nil then
+    actual_col = col + renderer_util.parse_margin(margin, editor_width, outer_width, result)
   else
     actual_col = renderer_util.center_col(col, outer_width, editor_width)
   end

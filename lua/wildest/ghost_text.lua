@@ -83,7 +83,8 @@ function M.update(ctx, result, opts)
     return
   end
 
-  local hl_group = (opts and opts.hl_group) or "Comment"
+  local resolve = require("wildest.util").resolve
+  local hl_group = resolve((opts and opts.hl_group), ctx) or "Comment"
 
   local buf = ensure_buf()
 

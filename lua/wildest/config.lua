@@ -24,12 +24,12 @@
 ---@field actions? table<string, string|fun(ctx: wildest.ActionContext)> Key-to-action mappings
 ---@field interval? integer Debounce interval in ms (default: 100)
 ---@field num_workers? integer Number of async workers (default: 2)
----@field noselect? boolean No item selected initially (default: true)
----@field trigger? 'auto'|'tab' When to show completions (default: 'auto')
----@field longest_prefix? boolean Insert longest common prefix on first Tab (default: false)
+---@field noselect? boolean|fun(cmdtype: string): boolean No item selected initially (default: true)
+---@field trigger? 'auto'|'tab'|fun(cmdtype: string): 'auto'|'tab' When to show completions (default: 'auto')
+---@field longest_prefix? boolean|fun(cmdtype: string): boolean Insert longest common prefix on first Tab (default: false)
 ---@field pipeline_timeout? integer Timeout in ms for pipeline steps, 0 = no timeout (default: 0)
 ---@field skip_commands? string[] Commands to skip completions for (default: {})
----@field min_input? integer Minimum input length before showing completions (default: 0)
+---@field min_input? integer|fun(cmdtype: string): integer Minimum input length before showing completions (default: 0)
 ---@field apply_incsearch_fix? boolean Fix incsearch highlighting for / and ? (default: false)
 ---@field pipeline? wildest.PipelineStep|wildest.PipelineStep[] Pipeline steps or single pipeline step
 ---@field preview? wildest.PreviewConfig Preview window configuration

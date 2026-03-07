@@ -9,6 +9,19 @@ local utf8 = utf8 ---@type {codes: fun(s: string): fun(): integer, integer, char
 
 local M = {}
 
+--- Resolve a config value that may be a function.
+--- If `val` is a function, call it with `ctx` and return the result.
+--- Otherwise return `val` as-is.
+---@param val any
+---@param ctx? any context passed to function values
+---@return any
+function M.resolve(val, ctx)
+  if type(val) == "function" then
+    return val(ctx)
+  end
+  return val
+end
+
 ---Escape special characters in a Vim pattern.
 ---@param str string
 ---@return string

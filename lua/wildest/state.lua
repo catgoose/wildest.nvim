@@ -12,6 +12,7 @@ local ghost_text = require("wildest.ghost_text")
 local hooks = require("wildest.hooks")
 local log = require("wildest.log")
 local pipeline_mod = require("wildest.pipeline")
+local resolve = require("wildest.util").resolve
 
 local M = {}
 
@@ -124,12 +125,12 @@ function M.start(cmdtype)
   state._saved_wildoptions = vim.o.wildoptions
   vim.o.wildmenu = false
   vim.o.wildoptions = ""
-  state.triggered = (cfg.trigger ~= "tab")
+  state.triggered = (resolve(cfg.trigger, cmdtype) ~= "tab")
   log.log("state", "start_done", { session_id = state.session_id, triggered = state.triggered })
 
   hooks.fire("enter", cmdtype)
 
-  if state.triggered and cfg.min_input == 0 then
+  if state.triggered and resolve(cfg.min_input, cmdtype) == 0 then
     M.run_pipeline("")
   end
 end
@@ -242,8 +243,9 @@ function M.on_change(cmdline)
   end
 
   local cfg = config.get()
-  if #cmdline < cfg.min_input then
-    log.log("state", "on_change_below_min_input", { len = #cmdline, min_input = cfg.min_input })
+  local min_input = resolve(cfg.min_input, state.cmdtype)
+  if #cmdline < min_input then
+    log.log("state", "on_change_below_min_input", { len = #cmdline, min_input = min_input })
     state.hidden = true
     state.result = nil
     M.draw()
@@ -410,7 +412,7 @@ function M.on_finish(ctx, result)
   state.error = nil
 
   local cfg = config.get()
-  if not cfg.noselect and state.result and #state.result.value > 0 then
+  if not resolve(cfg.noselect, state.cmdtype) and state.result and #state.result.value > 0 then
     state.selected = 0
   end
 
@@ -511,6 +513,7 @@ function M.draw()
       pcall(cfg.renderer.hide, cfg.renderer)
       require("wildest.preview").hide()
       ghost_text.hide()
+      hooks.fire("hide")
       return
     end
 
@@ -585,6 +588,7 @@ function M.draw()
       end
 
       log.log("state", "draw_render_ok")
+      hooks.fire("show", ctx, result)
       hooks.fire("draw", ctx, result)
       if cfg.ghost_text then
         local gt_opts = type(cfg.ghost_text) == "table" and cfg.ghost_text or {}
@@ -666,7 +670,7 @@ function M.step(n)
   local cfg = config.get()
   local count = #state.result.value
 
-  if cfg.longest_prefix and state.selected == -1 and n > 0 then
+  if resolve(cfg.longest_prefix, state.cmdtype) and state.selected == -1 and n > 0 then
     local candidates = state.result.value
     local lcp = longest_common_prefix(candidates)
     if lcp ~= "" and #lcp > #(state.result.data and state.result.data.arg or "") then
@@ -773,6 +777,8 @@ function M.mark(n)
   -- Toggle mark on current item
   state.marked[state.selected] = not state.marked[state.selected] or nil
 
+  hooks.fire("marked_change", state.marked, state.selected)
+
   -- Advance to next/previous (without wrapping past -1)
   local next_sel = state.selected + n
   if next_sel >= 0 and next_sel < count then
@@ -804,6 +810,8 @@ function M.unmark(n)
 
   -- Unmark current item
   state.marked[state.selected] = nil
+
+  hooks.fire("marked_change", state.marked, state.selected)
 
   -- Move selection
   local next_sel = state.selected + n
@@ -908,7 +916,7 @@ function M.dismiss()
   state.result = nil
 
   local cfg = config.get()
-  if cfg.trigger == "tab" then
+  if resolve(cfg.trigger, state.cmdtype) == "tab" then
     state.triggered = false
   end
 

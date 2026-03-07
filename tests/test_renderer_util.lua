@@ -323,4 +323,55 @@ T["get_popup_win()"]["returns nil for invalid window handle"] = function()
   renderer_util._last_popup_win = nil
 end
 
+-- ─── parse_dimension() with ctx ─────────────────────────────────────────
+
+T["parse_dimension()"]["function receives ctx and can use it"] = function()
+  local dim_fn = function(ctx)
+    if ctx and ctx.cmdtype == ":" then
+      return 20
+    end
+    return 10
+  end
+  expect.equality(renderer_util.parse_dimension(dim_fn, 100, { cmdtype = ":" }), 20)
+  expect.equality(renderer_util.parse_dimension(dim_fn, 100, { cmdtype = "/" }), 10)
+end
+
+T["parse_dimension()"]["function returning percentage with ctx"] = function()
+  local dim_fn = function(ctx)
+    return ctx.cmdtype == ":" and "75%" or "50%"
+  end
+  expect.equality(renderer_util.parse_dimension(dim_fn, 200, { cmdtype = ":" }), 150)
+  expect.equality(renderer_util.parse_dimension(dim_fn, 200, { cmdtype = "/" }), 100)
+end
+
+-- ─── create_base_state() stores raw values ──────────────────────────────
+
+T["create_base_state()"]["stores function values for dimensions"] = function()
+  local max_h_fn = function() return 20 end
+  local min_w_fn = function() return 10 end
+  local state = renderer_util.create_base_state({
+    max_height = max_h_fn,
+    min_width = min_w_fn,
+  })
+  -- Functions are stored as-is, to be resolved at render time
+  expect.equality(type(state.max_height), "function")
+  expect.equality(type(state.min_width), "function")
+  -- parse_dimension can resolve them
+  expect.equality(renderer_util.parse_dimension(state.max_height, 100), 20)
+  expect.equality(renderer_util.parse_dimension(state.min_width, 100), 10)
+end
+
+T["create_base_state()"]["stores function values for offset and reverse"] = function()
+  local offset_fn = function() return 2 end
+  local state = renderer_util.create_base_state({
+    offset = offset_fn,
+    reverse = function() return true end,
+  })
+  expect.equality(type(state.offset), "function")
+  expect.equality(type(state.reverse), "function")
+  local resolve = require("wildest.util").resolve
+  expect.equality(resolve(state.offset), 2)
+  expect.equality(resolve(state.reverse), true)
+end
+
 return T

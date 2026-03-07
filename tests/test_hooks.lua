@@ -243,8 +243,8 @@ T["selection hooks"]["accept hook receives ctx and candidate"] = function()
   expect.equality(captured.candidate, "chosen.lua")
 end
 
-T["selection hooks"]["all seven events are valid"] = function()
-  local events = { "enter", "leave", "draw", "results", "error", "select", "accept" }
+T["selection hooks"]["all events are valid"] = function()
+  local events = { "enter", "leave", "draw", "results", "error", "select", "accept", "show", "hide", "marked_change" }
   for _, event in ipairs(events) do
     local called = false
     hooks.on(event, function()
@@ -254,6 +254,51 @@ T["selection hooks"]["all seven events are valid"] = function()
     expect.equality(called, true)
     hooks.clear()
   end
+end
+
+-- ── new hook events ─────────────────────────────────────────────
+
+T["new events"] = new_set({
+  hooks = {
+    pre_case = function()
+      hooks.clear()
+    end,
+    post_case = function()
+      hooks.clear()
+    end,
+  },
+})
+
+T["new events"]["show hook receives ctx and result"] = function()
+  local captured = {}
+  hooks.on("show", function(ctx, result)
+    captured.ctx = ctx
+    captured.result = result
+  end)
+  hooks.fire("show", { selected = 0, cmdtype = ":" }, { value = { "a" } })
+  expect.equality(captured.ctx.cmdtype, ":")
+  expect.equality(#captured.result.value, 1)
+end
+
+T["new events"]["hide hook fires with no args"] = function()
+  local called = false
+  hooks.on("hide", function()
+    called = true
+  end)
+  hooks.fire("hide")
+  expect.equality(called, true)
+end
+
+T["new events"]["marked_change hook receives marked table and index"] = function()
+  local captured = {}
+  hooks.on("marked_change", function(marked, index)
+    captured.marked = vim.deepcopy(marked)
+    captured.index = index
+  end)
+  hooks.fire("marked_change", { [0] = true, [2] = true }, 2)
+  expect.equality(captured.marked[0], true)
+  expect.equality(captured.marked[2], true)
+  expect.equality(captured.index, 2)
 end
 
 return T

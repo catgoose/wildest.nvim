@@ -312,4 +312,48 @@ T["_cmd_to_expand"]["covers abbreviations for help commands"] = function()
   expect.equality(t.h, "help")
 end
 
+-- ─── resolve() ──────────────────────────────────────────────────────────
+
+T["resolve()"] = new_set()
+
+T["resolve()"]["returns non-function values as-is"] = function()
+  expect.equality(util.resolve(42), 42)
+  expect.equality(util.resolve("hello"), "hello")
+  expect.equality(util.resolve(true), true)
+  expect.equality(util.resolve(nil), nil)
+end
+
+T["resolve()"]["returns table as-is"] = function()
+  local t = { a = 1 }
+  expect.equality(util.resolve(t), t)
+end
+
+T["resolve()"]["calls function and returns result"] = function()
+  expect.equality(util.resolve(function() return 42 end), 42)
+  expect.equality(util.resolve(function() return "tab" end), "tab")
+end
+
+T["resolve()"]["passes ctx to function"] = function()
+  local received = nil
+  util.resolve(function(ctx)
+    received = ctx
+    return true
+  end, ":")
+  expect.equality(received, ":")
+end
+
+T["resolve()"]["passes nil ctx when not provided"] = function()
+  local called = false
+  util.resolve(function(ctx)
+    called = true
+    expect.equality(ctx, nil)
+    return 1
+  end)
+  expect.equality(called, true)
+end
+
+T["resolve()"]["function returning nil"] = function()
+  expect.equality(util.resolve(function() return nil end), nil)
+end
+
 return T
