@@ -2479,6 +2479,10 @@ function M.scene_to_description(cfg)
     end
   end
 
+  if merged.margin == "before_cursor" then
+    add("margin=before_cursor")
+  end
+
   if merged.laststatus ~= M.defaults.laststatus then
     add("laststatus=" .. merged.laststatus)
   end

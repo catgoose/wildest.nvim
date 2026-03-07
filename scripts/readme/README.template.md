@@ -25,12 +25,16 @@
   <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/showcase/gunsmoke.gif" alt="wildest.nvim gunsmoke" width="800">
   <br>
   <em>Gunsmoke — get the hell out of Dodge!</em>
+  <br>
+  <a href="scripts/screenshots/configs.lua">config</a> · <a href="https://github.com/catgoose/wildest.nvim/issues/new?title=GIF%20issue%3A%20gunsmoke&body=**GIF%3A**%20gunsmoke%0A**Config%3A**%20%5B%60scripts%2Fscreenshots%2Fconfigs.lua%60%5D(https%3A%2F%2Fgithub.com%2Fcatgoose%2Fwildest.nvim%2Fblob%2Fmain%2Fscripts%2Fscreenshots%2Fconfigs.lua)%20%E2%80%94%20%60M.random_scenes()%60%2C%20%60M.gif_init()%60%0A%0A**Describe%20the%20issue%3A**%0A">report issue</a>
 </p>
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/catgoose/screenshots/main/wildest.nvim/showcase/showdown.gif" alt="wildest.nvim showdown" width="800">
   <br>
   <em>Showdown — don't blink pardner</em>
+  <br>
+  <a href="scripts/screenshots/configs.lua">config</a> · <a href="https://github.com/catgoose/wildest.nvim/issues/new?title=GIF%20issue%3A%20showdown&body=**GIF%3A**%20showdown%0A**Config%3A**%20%5B%60scripts%2Fscreenshots%2Fconfigs.lua%60%5D(https%3A%2F%2Fgithub.com%2Fcatgoose%2Fwildest.nvim%2Fblob%2Fmain%2Fscripts%2Fscreenshots%2Fconfigs.lua)%20%E2%80%94%20%60M.showdown_scenes()%60%2C%20%60M.showdown_scene_plan()%60%2C%20%60M.gif_init()%60%0A%0A**Describe%20the%20issue%3A**%0A">report issue</a>
 </p>
 
 **[Wanted Posters](WANTED_POSTERS.md)** — every config combination, pinned up for inspection.

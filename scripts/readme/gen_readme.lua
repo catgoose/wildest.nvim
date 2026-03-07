@@ -267,6 +267,7 @@ local config_field_order = {
   "min_height",
   "fixed_height",
   "max_width",
+  "margin",
   "noselect",
   "reverse",
   "pumblend",
@@ -548,8 +549,8 @@ local function replace_markers(template)
   local lines = {}
   local in_marker = nil
   for line in template:gmatch("([^\n]*)\n?") do
-    local start_name = line:match("^<!%-%- gen:([%w_]+):start %-%->$")
-    local end_name = line:match("^<!%-%- gen:([%w_]+):end %-%->$")
+    local start_name = line:match("^%s*<!%-%- gen:([%w_]+):start %-%->%s*$")
+    local end_name = line:match("^%s*<!%-%- gen:([%w_]+):end %-%->%s*$")
     if start_name then
       in_marker = start_name
       lines[#lines + 1] = line
