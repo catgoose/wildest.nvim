@@ -1557,13 +1557,14 @@ M.parse_dimension({value}, {total}, {ctx?})
 
 
                                                  *wildest.renderer.parse_margin*
-M.parse_margin({margin}, {total}, {content_size})
+M.parse_margin({margin}, {total}, {content_size}, {result?})
      Parse margin: number, percentage string, or 'auto'
 
     Parameters: ~
         {margin}        (any)
         {total}         (integer)
         {content_size}  (integer)
+        {result?}       (table)    pipeline result (used for "before_cursor" positioning)
 
     Returns: ~
         (integer)
