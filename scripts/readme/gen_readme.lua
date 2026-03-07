@@ -280,6 +280,12 @@ local config_field_order = {
   "preview",
   "palette",
   "mux",
+  "mark_key",
+  "unmark_key",
+  "next_key",
+  "previous_key",
+  "actions",
+  "frecency",
 }
 
 local config_skip_keys = { category = true, label = true }
@@ -297,10 +303,15 @@ local function config_to_lua(name)
       parts[#parts + 1] = key .. " = " .. serialize_lua(raw[key], 0) .. ","
     end
   end
-  for k, v in pairs(raw) do
+  local rest = {}
+  for k in pairs(raw) do
     if not seen[k] and not config_skip_keys[k] then
-      parts[#parts + 1] = k .. " = " .. serialize_lua(v, 0) .. ","
+      rest[#rest + 1] = k
     end
+  end
+  table.sort(rest)
+  for _, k in ipairs(rest) do
+    parts[#parts + 1] = k .. " = " .. serialize_lua(raw[k], 0) .. ","
   end
   if #parts == 0 then
     return "-- (default settings)"
