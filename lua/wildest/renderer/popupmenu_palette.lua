@@ -126,7 +126,8 @@ function PopupmenuPalette:render(ctx, result)
   local editor_lines = vim.o.lines
   local editor_cols = vim.o.columns - space.left - space.right
 
-  local outer_width = renderer_util.calculate_width(state.max_width, state.min_width, editor_cols, ctx)
+  local outer_width =
+    renderer_util.calculate_width(state.max_width, state.min_width, editor_cols, ctx)
 
   local max_h = renderer_util.parse_dimension(state.max_height, editor_lines, ctx)
   local chrome_lines = 2 + self:chrome_line_count("top") + self:chrome_line_count("bottom") -- prompt + separator + user chrome
@@ -229,10 +230,8 @@ function PopupmenuPalette:render(ctx, result)
     + space.left
   local total_with_border = height + border_rows
   local offset = resolve(state.offset, ctx) or 0
-  local margin_top = math.max(
-    0,
-    math.floor((usable_lines - total_with_border) / 2) - offset
-  ) + space.top
+  local margin_top = math.max(0, math.floor((usable_lines - total_with_border) / 2) - offset)
+    + space.top
 
   self:flush_buffer(lines, line_highlights)
 
