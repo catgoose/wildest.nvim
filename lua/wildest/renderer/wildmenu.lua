@@ -296,7 +296,8 @@ function M.new(opts)
     end
 
     -- Position: single line above cmdline
-    local row, col = renderer_util.default_position(state.offset)
+    local resolve = require("wildest.util").resolve
+    local row, col = renderer_util.default_position(resolve(state.offset, ctx))
     local win_config = {
       relative = "editor",
       row = row,

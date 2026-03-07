@@ -29,6 +29,7 @@ end
 
 function Popupmenu:render(ctx, result)
   local state = self._state
+  local resolve = require("wildest.util").resolve
   renderer_util.ensure_buf(state, "wildest_popupmenu")
 
   local total = #(result.value or {})
@@ -37,14 +38,15 @@ function Popupmenu:render(ctx, result)
 
   -- Reserve space for chrome lines
   local chrome_lines = self:chrome_line_count("top") + self:chrome_line_count("bottom")
-  local content_max_h = math.max(1, state.max_height - chrome_lines)
+  local max_height = renderer_util.parse_dimension(state.max_height, vim.o.lines, ctx)
+  local content_max_h = math.max(1, max_height - chrome_lines)
 
   local page_start, page_end, show_empty = self:paginate(ctx, total, content_max_h)
   if not page_start then
     return
   end
 
-  local row, col, editor_width, avail = renderer_util.default_position(state.offset)
+  local row, col, editor_width, avail = renderer_util.default_position(resolve(state.offset, ctx))
   local width = renderer_util.calculate_width(state.max_width, state.min_width, editor_width)
 
   -- Top chrome

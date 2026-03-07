@@ -381,4 +381,152 @@ T["single candidate"]["scroll clamps to it"] = function()
   expect.equality(state.get().selected, 0)
 end
 
+-- ── dynamic config (function values) ────────────────────────────
+
+T["dynamic config"] = new_set({ hooks = { post_case = teardown_state } })
+
+T["dynamic config"]["noselect as function selects first when false"] = function()
+  local config = require("wildest.config")
+  config.setup({
+    modes = { ":" },
+    pipeline = { function() end },
+    noselect = function(cmdtype)
+      return cmdtype ~= ":"
+    end,
+  })
+  local state_mod = require("wildest.state")
+  local s = state_mod.get()
+  s.enabled = true
+  s.active = true
+  s.triggered = true
+  s.cmdtype = ":"
+  s.selected = -1
+  s.marked = {}
+  -- Simulate on_finish with candidates
+  state_mod.on_finish(
+    { run_id = s.run_id, session_id = s.session_id, input = "" },
+    { value = { "alpha", "beta" }, data = { input = "" } }
+  )
+  -- noselect returns false for ":", so first item should be selected
+  expect.equality(s.selected, 0)
+end
+
+T["dynamic config"]["noselect as function keeps -1 when true"] = function()
+  local config = require("wildest.config")
+  config.setup({
+    modes = { ":" },
+    pipeline = { function() end },
+    noselect = function(cmdtype)
+      return cmdtype == ":"
+    end,
+  })
+  local state_mod = require("wildest.state")
+  local s = state_mod.get()
+  s.enabled = true
+  s.active = true
+  s.triggered = true
+  s.cmdtype = ":"
+  s.selected = -1
+  s.marked = {}
+  state_mod.on_finish(
+    { run_id = s.run_id, session_id = s.session_id, input = "" },
+    { value = { "alpha", "beta" }, data = { input = "" } }
+  )
+  -- noselect returns true for ":", so stays at -1
+  expect.equality(s.selected, -1)
+end
+
+T["dynamic config"]["trigger as function controls triggered state"] = function()
+  local config = require("wildest.config")
+  config.setup({
+    modes = { ":", "/" },
+    pipeline = { function() end },
+    trigger = function(cmdtype)
+      return cmdtype == "/" and "tab" or "auto"
+    end,
+  })
+  local state_mod = require("wildest.state")
+
+  -- Command mode: trigger returns "auto" → triggered = true
+  state_mod.start(":")
+  expect.equality(state_mod.get().triggered, true)
+  state_mod.get().active = false
+
+  -- Search mode: trigger returns "tab" → triggered = false
+  state_mod.start("/")
+  expect.equality(state_mod.get().triggered, false)
+  state_mod.get().active = false
+end
+
+T["dynamic config"]["min_input as function"] = function()
+  local config = require("wildest.config")
+  config.setup({
+    modes = { ":" },
+    pipeline = { function() end },
+    min_input = function(cmdtype)
+      return cmdtype == ":" and 3 or 0
+    end,
+  })
+  local state_mod = require("wildest.state")
+  local s = state_mod.get()
+  s.enabled = true
+  s.active = true
+  s.triggered = true
+  s.cmdtype = ":"
+  s.previous_cmdline = ""
+  s.hidden = false
+  s.suppress_change = false
+  s.selected = -1
+  s.replaced_cmdline = nil
+  s.completion_stack = {}
+  s.draw_done = false
+  s.marked = {}
+
+  -- Input shorter than min_input (3) should hide
+  state_mod.on_change("ab")
+  expect.equality(s.hidden, true)
+end
+
+-- ── marked_change hook fires ────────────────────────────────────
+
+T["marked_change hook"] = new_set({
+  hooks = {
+    pre_case = function()
+      require("wildest.hooks").clear()
+    end,
+    post_case = function()
+      teardown_state()
+      require("wildest.hooks").clear()
+    end,
+  },
+})
+
+T["marked_change hook"]["fires on mark"] = function()
+  local hooks = require("wildest.hooks")
+  local captured = {}
+  hooks.on("marked_change", function(marked, index)
+    captured.marked = vim.deepcopy(marked)
+    captured.index = index
+  end)
+  local state = setup_state({ "alpha", "beta", "gamma" })
+  state.mark(1) -- selects 0, marks 0
+  expect.equality(captured.marked[0], true)
+  expect.equality(captured.index, 0)
+end
+
+T["marked_change hook"]["fires on unmark"] = function()
+  local hooks = require("wildest.hooks")
+  local captured = {}
+  local state = setup_state({ "alpha", "beta", "gamma" })
+  state.mark(1) -- mark 0, advance to 1
+  hooks.on("marked_change", function(marked, index)
+    captured.marked = vim.deepcopy(marked)
+    captured.index = index
+  end)
+  state.get().selected = 0
+  state.unmark(1)
+  expect.equality(captured.marked[0], nil)
+  expect.equality(captured.index, 0)
+end
+
 return T

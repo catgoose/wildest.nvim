@@ -1845,15 +1845,18 @@ w.on("draw", function(ctx, result)
 end)
 ```
 
-| Event     | Args                      | When                                  |
-| --------- | ------------------------- | ------------------------------------- |
-| `enter`   | `(cmdtype: string)`       | CmdlineEnter, after wildest activates |
-| `leave`   | _(none)_                  | CmdlineLeave, before cleanup          |
-| `draw`    | `(ctx, result)`           | After each successful renderer draw   |
-| `results` | `(ctx, result)`           | Pipeline finishes with candidates     |
-| `error`   | `(ctx, err)`              | Pipeline errors                       |
-| `select`  | `(ctx, candidate, index)` | Candidate selected via step/scroll    |
-| `accept`  | `(ctx, candidate)`        | Completion accepted                   |
+| Event            | Args                         | When                                  |
+| ---------------- | ---------------------------- | ------------------------------------- |
+| `enter`          | `(cmdtype: string)`          | CmdlineEnter, after wildest activates |
+| `leave`          | _(none)_                     | CmdlineLeave, before cleanup          |
+| `show`           | `(ctx, result)`              | Popup shown with candidates           |
+| `hide`           | _(none)_                     | Popup hidden                          |
+| `draw`           | `(ctx, result)`              | After each successful renderer draw   |
+| `results`        | `(ctx, result)`              | Pipeline finishes with candidates     |
+| `error`          | `(ctx, err)`                 | Pipeline errors                       |
+| `select`         | `(ctx, candidate, index)`    | Candidate selected via step/scroll    |
+| `accept`         | `(ctx, candidate)`           | Completion accepted                   |
+| `marked_change`  | `(marked, index)`            | Item marked or unmarked               |
 
 Remove a listener with `w.off(event, fn)` — pass the same function reference:
 
@@ -1863,6 +1866,66 @@ local my_hook = function(cmdtype)
 end
 w.on("enter", my_hook)
 w.off("enter", my_hook) -- unregistered
+```
+
+## Dynamic Config
+
+Most config values accept functions that are evaluated at runtime.
+This lets you change behavior based on mode, input, or editor state.
+
+### Top-level config
+
+`noselect`, `trigger`, `min_input`, and `longest_prefix` accept `fun(cmdtype): value`:
+
+```lua
+w.setup({
+  -- Auto-complete in command mode, require Tab in search
+  trigger = function(cmdtype)
+    return cmdtype == ":" and "auto" or "tab"
+  end,
+  -- Don't auto-select in search mode
+  noselect = function(cmdtype)
+    return cmdtype ~= ":"
+  end,
+  -- ...
+})
+```
+
+### Renderer options
+
+`max_height`, `min_height`, `max_width`, `min_width`, `offset`, `position`,
+`margin`, and `reverse` accept functions. Dimension values receive `ctx`
+(with `cmdtype`, `selected`, `run_id`):
+
+```lua
+w.popupmenu_border_theme({
+  max_height = function(ctx)
+    return ctx.cmdtype == ":" and 20 or 10
+  end,
+  position = function(ctx)
+    return ctx.cmdtype == ":" and "bottom" or "center"
+  end,
+  -- ...
+})
+```
+
+### Preview options
+
+`width`, `height`, and `position` accept `fun(ctx): value` where `ctx`
+contains `candidate` and `mode`:
+
+```lua
+w.setup({
+  preview = {
+    position = function(ctx)
+      return ctx.mode == ":" and "right" or "bottom"
+    end,
+    width = function(ctx)
+      return ctx.mode == ":" and "40%" or "60%"
+    end,
+  },
+  -- ...
+})
 ```
 
 ## Utilities

@@ -755,11 +755,13 @@ function M.update(ctx, result)
   local available_rows = math.max(1, editor_lines - reserved_rows - 1)
   local content_lines = vim.api.nvim_buf_line_count(preview_state.buf)
 
+  local resolve = require("wildest.util").resolve
+  local preview_ctx = { candidate = candidate, mode = ctx.cmdtype }
   local pos = M._compute_win_config({
-    position = cfg.position,
+    position = resolve(cfg.position, preview_ctx),
     anchor = cfg.anchor,
-    width = cfg.width,
-    height = cfg.height,
+    width = resolve(cfg.width, preview_ctx),
+    height = resolve(cfg.height, preview_ctx),
     editor_cols = editor_cols,
     available_rows = available_rows,
     content_lines = content_lines,

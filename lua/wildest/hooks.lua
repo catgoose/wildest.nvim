@@ -15,6 +15,9 @@ local valid_events = {
   error = true,
   select = true,
   accept = true,
+  show = true,
+  hide = true,
+  marked_change = true,
 }
 
 --- Register a listener for an event.

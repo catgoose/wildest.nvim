@@ -114,6 +114,7 @@ end
 
 function PopupmenuPalette:render(ctx, result)
   local state = self._state
+  local resolve = require("wildest.util").resolve
   renderer_util.ensure_buf(state, "wildest_popupmenu_palette")
 
   local total = #(result.value or {})
@@ -125,9 +126,9 @@ function PopupmenuPalette:render(ctx, result)
   local editor_lines = vim.o.lines
   local editor_cols = vim.o.columns - space.left - space.right
 
-  local outer_width = renderer_util.calculate_width(state.max_width, state.min_width, editor_cols)
+  local outer_width = renderer_util.calculate_width(state.max_width, state.min_width, editor_cols, ctx)
 
-  local max_h = renderer_util.parse_dimension(state.max_height, editor_lines)
+  local max_h = renderer_util.parse_dimension(state.max_height, editor_lines, ctx)
   local chrome_lines = 2 + self:chrome_line_count("top") + self:chrome_line_count("bottom") -- prompt + separator + user chrome
   local content_max_h = math.max(1, max_h - chrome_lines)
 
@@ -176,7 +177,7 @@ function PopupmenuPalette:render(ctx, result)
       page_start,
       page_end,
       content_width,
-      { reverse = state.reverse }
+      { reverse = resolve(state.reverse, ctx) }
     )
     for i, line in ipairs(cand_lines) do
       table.insert(lines, line)
@@ -223,12 +224,14 @@ function PopupmenuPalette:render(ctx, result)
   local height = self:clamp_height(lines, line_highlights, max_content_height)
 
   -- Position: centered within usable area
-  local margin_left = renderer_util.parse_margin(state.margin, editor_cols, outer_width, result)
+  local margin = resolve(state.margin, ctx)
+  local margin_left = renderer_util.parse_margin(margin, editor_cols, outer_width, result)
     + space.left
   local total_with_border = height + border_rows
+  local offset = resolve(state.offset, ctx) or 0
   local margin_top = math.max(
     0,
-    math.floor((usable_lines - total_with_border) / 2) - (state.offset or 0)
+    math.floor((usable_lines - total_with_border) / 2) - offset
   ) + space.top
 
   self:flush_buffer(lines, line_highlights)
