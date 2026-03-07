@@ -1975,6 +1975,7 @@ noselect = false,
 mark_key = "<Tab>",
 unmark_key = "<S-Tab>",
 next_key = { "<C-j>", "<Down>" },
+previous_key = { "<C-k>", "<Up>" },
 actions = { ["<C-q>"] = "send_to_quickfix" },
 </code></pre>
 </details>
@@ -1992,6 +1993,7 @@ noselect = false,
 mark_key = "<Tab>",
 unmark_key = "<S-Tab>",
 next_key = { "<C-j>", "<Down>" },
+previous_key = { "<C-k>", "<Up>" },
 actions = { ["<C-l>"] = "send_to_loclist" },
 </code></pre>
 </details>
@@ -2009,6 +2011,7 @@ noselect = false,
 mark_key = "<Tab>",
 unmark_key = "<S-Tab>",
 next_key = { "<C-j>", "<Down>" },
+previous_key = { "<C-k>", "<Up>" },
 actions = { ["<C-o>"] = "open_marked" },
 </code></pre>
 </details>
@@ -2033,8 +2036,8 @@ preview = {
 },
 mark_key = "<Tab>",
 unmark_key = "<S-Tab>",
-frecency = true,
 next_key = { "<C-j>", "<Down>" },
+previous_key = { "<C-k>", "<Up>" },
 actions = { ["<C-q>"] = "send_to_quickfix" },
 frecency = true,
 </code></pre>
