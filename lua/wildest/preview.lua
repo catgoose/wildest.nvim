@@ -712,10 +712,23 @@ local function load_event(candidate)
   return load_help(candidate)
 end
 
---- Load fallback content.
+--- Load unsupported-type message into the preview buffer.
 ---@param candidate string
-local function load_fallback(candidate)
-  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, { candidate })
+---@param expand? string the expand type, if known
+local function load_unsupported(candidate, expand)
+  local lines = {
+    "  " .. candidate,
+    "",
+  }
+  if expand then
+    lines[#lines + 1] = "  Preview not supported for type: " .. expand
+  else
+    lines[#lines + 1] = "  Preview not available"
+  end
+  lines[#lines + 1] = ""
+  lines[#lines + 1] = "  Open an issue for support:"
+  lines[#lines + 1] = "  https://github.com/catgoose/wildest.nvim/issues"
+  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
   vim.bo[preview_state.buf].filetype = ""
 end
 
@@ -1033,14 +1046,18 @@ function M.update(ctx, result)
       load_fallback(candidate)
       title = candidate
     end
+  elseif data.expand and data.expand ~= "" then
+    -- Known expand type without a handler — show unsupported message
+    load_unsupported(candidate, data.expand)
+    title = candidate
   else
-    -- Heuristic: try as file/directory first
+    -- No expand info: try as file/directory first
     local expanded = safe_expand(candidate)
     local st = vim.uv.fs_stat(expanded)
     if st then
       title = load_file(candidate, cfg)
     else
-      load_fallback(candidate)
+      load_unsupported(candidate)
       title = candidate
     end
   end
