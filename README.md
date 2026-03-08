@@ -1713,9 +1713,21 @@ w.setup({
 | `priority`  | string              | `"menu"`   | `"menu"` or `"preview"` (see below)                      |
 
 The preview auto-detects content type from the pipeline's `expand` metadata:
-files get syntax highlighting, buffers show their contents, and help tags
-display the relevant help page. Shell commands and environment variables
-automatically hide the preview (no content to show without executing).
+
+| Type | Commands | Preview shows |
+|------|----------|---------------|
+| file | `:edit`, `:split`, `:vsplit`, `:tabedit` | File contents with syntax highlighting, directory listings, binary/special file metadata |
+| buffer | `:buffer`, `:sbuffer` | Buffer contents with syntax highlighting |
+| help | `:help` | Help page scrolled to the matching tag |
+| option | `:set`, `:setlocal`, `:setglobal` | Current value, default, type, scope, and help text |
+| highlight | `:highlight` | fg/bg/sp colors, style attributes, link target, and a sample line rendered with the highlight |
+| command | `:command`, `:delcommand` | User command definition (nargs, completion, range, bang) or builtin help |
+| environment | `$VAR` completions | Variable value (PATH-like values split per entry) |
+| shellcmd | shell command completions | Executable path and `--help` output |
+| event | `:autocmd`, `:doautocmd` | Help text for the autocmd event |
+| search | `/`, `?` | Current buffer scrolled to matching line with pattern highlights |
+
+Unrecognized expand types show a message linking to the issue tracker.
 
 Default: `preview = nil` (disabled unless configured).
 
