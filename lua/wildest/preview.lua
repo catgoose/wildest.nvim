@@ -491,7 +491,8 @@ local function load_option(candidate)
   -- Default
   if info.default ~= nil then
     if type(info.default) == "string" then
-      lines[#lines + 1] = "  Default:  " .. (info.default == "" and "(empty)" or vim.inspect(info.default))
+      lines[#lines + 1] = "  Default:  "
+        .. (info.default == "" and "(empty)" or vim.inspect(info.default))
     else
       lines[#lines + 1] = "  Default:  " .. tostring(info.default)
     end
@@ -566,7 +567,15 @@ local function load_highlight(candidate)
     lines[#lines + 1] = string.format("  sp:       #%06x", hl.sp)
   end
   local attrs = {}
-  for _, attr in ipairs({ "bold", "italic", "underline", "undercurl", "strikethrough", "reverse", "standout" }) do
+  for _, attr in ipairs({
+    "bold",
+    "italic",
+    "underline",
+    "undercurl",
+    "strikethrough",
+    "reverse",
+    "standout",
+  }) do
     if hl[attr] then
       attrs[#attrs + 1] = attr
     end
