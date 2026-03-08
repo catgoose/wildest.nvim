@@ -277,7 +277,33 @@ end
 T["_detect_expand()"]["returns nil for unknown"] = function()
   local preview = get_preview()
   expect.equality(preview._detect_expand({}), nil)
-  expect.equality(preview._detect_expand({ cmd = "set" }), nil)
+  expect.equality(preview._detect_expand({ cmd = "lua" }), nil)
+end
+
+T["_detect_expand()"]["detects option"] = function()
+  local preview = get_preview()
+  expect.equality(preview._detect_expand({ expand = "option" }), "option")
+  expect.equality(preview._detect_expand({ cmd = "set" }), "option")
+  expect.equality(preview._detect_expand({ cmd = "setlocal" }), "option")
+end
+
+T["_detect_expand()"]["detects highlight"] = function()
+  local preview = get_preview()
+  expect.equality(preview._detect_expand({ expand = "highlight" }), "highlight")
+  expect.equality(preview._detect_expand({ cmd = "hi" }), "highlight")
+end
+
+T["_detect_expand()"]["detects command"] = function()
+  local preview = get_preview()
+  expect.equality(preview._detect_expand({ expand = "command" }), "command")
+  expect.equality(preview._detect_expand({ expand = "user_commands" }), "command")
+  expect.equality(preview._detect_expand({ cmd = "command" }), "command")
+end
+
+T["_detect_expand()"]["detects event"] = function()
+  local preview = get_preview()
+  expect.equality(preview._detect_expand({ expand = "event" }), "event")
+  expect.equality(preview._detect_expand({ cmd = "autocmd" }), "event")
 end
 
 -- ─── _parse_dim() ──────────────────────────────────────────────────────────

@@ -444,6 +444,274 @@ local function load_search(candidate, pattern, cfg)
   return title, scroll
 end
 
+--- Load vim option info into the preview buffer.
+---@param candidate string option name (may have "no" prefix or trailing "?" / "=" / "&")
+---@return string|nil title, integer|nil scroll_line
+local function load_option(candidate)
+  -- Strip common suffixes/prefixes: "nofoo", "foo?", "foo=", "foo&", "inv"
+  local name = candidate:gsub("[?=&]+$", "")
+  if name:match("^no") then
+    local stripped = name:sub(3)
+    local ok = pcall(vim.api.nvim_get_option_info2, stripped, {})
+    if ok then
+      name = stripped
+    end
+  end
+  if name:match("^inv") then
+    local stripped = name:sub(4)
+    local ok = pcall(vim.api.nvim_get_option_info2, stripped, {})
+    if ok then
+      name = stripped
+    end
+  end
+
+  local ok, info = pcall(vim.api.nvim_get_option_info2, name, {})
+  if not ok or not info or not info.name then
+    return nil, nil
+  end
+
+  -- Current value
+  local val_ok, current = pcall(vim.api.nvim_get_option_value, name, {})
+  if not val_ok then
+    current = "?"
+  end
+
+  local lines = {
+    "  " .. info.name,
+    "",
+  }
+
+  -- Value
+  if type(current) == "string" then
+    lines[#lines + 1] = "  Value:    " .. (current == "" and "(empty)" or vim.inspect(current))
+  else
+    lines[#lines + 1] = "  Value:    " .. tostring(current)
+  end
+
+  -- Default
+  if info.default ~= nil then
+    if type(info.default) == "string" then
+      lines[#lines + 1] = "  Default:  " .. (info.default == "" and "(empty)" or vim.inspect(info.default))
+    else
+      lines[#lines + 1] = "  Default:  " .. tostring(info.default)
+    end
+  end
+
+  -- Type and scope
+  lines[#lines + 1] = "  Type:     " .. (info.type or "unknown")
+  lines[#lines + 1] = "  Scope:    " .. (info.scope or "unknown")
+  if info.shortname and info.shortname ~= "" then
+    lines[#lines + 1] = "  Short:    " .. info.shortname
+  end
+
+  -- Help text — find the option tag in help files and show surrounding lines
+  local help_file = find_help_tag("'" .. name .. "'")
+  if help_file then
+    local tag_marker = string.format("*'%s'*", name)
+    local f = io.open(help_file, "r")
+    if f then
+      local tag_line = nil
+      local all = {}
+      local i = 0
+      for line in f:lines() do
+        i = i + 1
+        all[#all + 1] = line
+        if not tag_line and line:find(tag_marker, 1, true) then
+          tag_line = i
+        end
+      end
+      f:close()
+      if tag_line then
+        lines[#lines + 1] = ""
+        -- Show up to 30 lines of help starting from the tag
+        local end_line = math.min(#all, tag_line + 30)
+        for j = tag_line, end_line do
+          lines[#lines + 1] = all[j]
+        end
+      end
+    end
+  end
+
+  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+  vim.bo[preview_state.buf].filetype = "help"
+  return info.name, nil
+end
+
+--- Load highlight group info into the preview buffer.
+---@param candidate string highlight group name
+---@return string|nil title
+local function load_highlight(candidate)
+  local ok, hl = pcall(vim.api.nvim_get_hl, 0, { name = candidate, link = false })
+  if not ok or not hl then
+    return nil
+  end
+  local ok_link, hl_link = pcall(vim.api.nvim_get_hl, 0, { name = candidate })
+  local lines = {
+    "  " .. candidate,
+    "",
+  }
+  -- Show link target if linked
+  if ok_link and hl_link and hl_link.link then
+    lines[#lines + 1] = "  Link:     " .. hl_link.link
+    lines[#lines + 1] = ""
+  end
+  -- Resolved attributes
+  if hl.fg then
+    lines[#lines + 1] = string.format("  fg:       #%06x", hl.fg)
+  end
+  if hl.bg then
+    lines[#lines + 1] = string.format("  bg:       #%06x", hl.bg)
+  end
+  if hl.sp then
+    lines[#lines + 1] = string.format("  sp:       #%06x", hl.sp)
+  end
+  local attrs = {}
+  for _, attr in ipairs({ "bold", "italic", "underline", "undercurl", "strikethrough", "reverse", "standout" }) do
+    if hl[attr] then
+      attrs[#attrs + 1] = attr
+    end
+  end
+  if #attrs > 0 then
+    lines[#lines + 1] = "  Style:    " .. table.concat(attrs, ", ")
+  end
+  -- Sample text
+  lines[#lines + 1] = ""
+  lines[#lines + 1] = "  Sample text with this highlight"
+
+  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+  vim.bo[preview_state.buf].filetype = ""
+
+  -- Apply the highlight to the sample line
+  if preview_state.ns_id ~= -1 then
+    vim.api.nvim_buf_clear_namespace(preview_state.buf, preview_state.ns_id, 0, -1)
+    local sample_line = #lines - 1
+    vim.api.nvim_buf_set_extmark(preview_state.buf, preview_state.ns_id, sample_line, 2, {
+      end_col = #lines[#lines],
+      hl_group = candidate,
+      priority = 200,
+    })
+  end
+
+  return candidate
+end
+
+--- Load Ex command info into the preview buffer.
+---@param candidate string command name
+---@return string|nil title, integer|nil scroll_line
+local function load_command(candidate)
+  -- Try user command first
+  local cmds = vim.api.nvim_get_commands({})
+  local info = cmds[candidate]
+  -- Also check buffer-local
+  if not info then
+    local ok, buf_cmds = pcall(vim.api.nvim_buf_get_commands, 0, {})
+    if ok then
+      info = buf_cmds[candidate]
+    end
+  end
+
+  if info then
+    local lines = {
+      "  :" .. candidate,
+      "",
+    }
+    if info.definition and info.definition ~= "" then
+      lines[#lines + 1] = "  Definition: " .. info.definition
+    end
+    if info.nargs and info.nargs ~= "" then
+      lines[#lines + 1] = "  Args:       " .. info.nargs
+    end
+    if info.complete and info.complete ~= "" then
+      lines[#lines + 1] = "  Complete:   " .. info.complete
+    end
+    if info.range then
+      lines[#lines + 1] = "  Range:      yes"
+    end
+    if info.bang then
+      lines[#lines + 1] = "  Bang:       yes"
+    end
+    vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+    vim.bo[preview_state.buf].filetype = ""
+    return candidate, nil
+  end
+
+  -- Builtin command: try help
+  local title, scroll_line = load_help(":" .. candidate)
+  if title then
+    return title, scroll_line
+  end
+
+  return nil, nil
+end
+
+--- Load environment variable value into the preview buffer.
+---@param candidate string variable name (may have $ prefix)
+---@return string|nil title
+local function load_environment(candidate)
+  local name = candidate:gsub("^%$", "")
+  local value = vim.env[name]
+  local lines = {
+    "  $" .. name,
+    "",
+  }
+  if value then
+    lines[#lines + 1] = "  Value:"
+    lines[#lines + 1] = ""
+    -- Split long values (like PATH) for readability
+    if name == "PATH" or name == "MANPATH" or name == "LD_LIBRARY_PATH" then
+      for segment in value:gmatch("[^:]+") do
+        lines[#lines + 1] = "  " .. segment
+      end
+    else
+      lines[#lines + 1] = "  " .. value
+    end
+  else
+    lines[#lines + 1] = "  (not set)"
+  end
+  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+  vim.bo[preview_state.buf].filetype = ""
+  return "$" .. name
+end
+
+--- Load shell command info into the preview buffer.
+---@param candidate string command name
+---@return string|nil title
+local function load_shellcmd(candidate)
+  -- Find the executable
+  local path = vim.fn.exepath(candidate)
+  if path == "" then
+    return nil
+  end
+  local lines = {
+    "  " .. candidate,
+    "",
+    "  Path:  " .. path,
+  }
+  -- Try to get a brief description via --help (first 20 lines)
+  local ok, output = pcall(vim.fn.system, { candidate, "--help" })
+  if ok and type(output) == "string" and vim.v.shell_error <= 2 then
+    lines[#lines + 1] = ""
+    local count = 0
+    for line in output:gmatch("[^\n]+") do
+      lines[#lines + 1] = line
+      count = count + 1
+      if count >= 25 then
+        break
+      end
+    end
+  end
+  vim.api.nvim_buf_set_lines(preview_state.buf, 0, -1, false, lines)
+  vim.bo[preview_state.buf].filetype = ""
+  return candidate
+end
+
+--- Load autocmd event help into the preview buffer.
+---@param candidate string event name
+---@return string|nil title, integer|nil scroll_line
+local function load_event(candidate)
+  return load_help(candidate)
+end
+
 --- Load fallback content.
 ---@param candidate string
 local function load_fallback(candidate)
@@ -733,9 +1001,38 @@ function M.update(ctx, result)
   elseif expand == "search" then
     local pattern = data.input or ""
     title, scroll_line = load_search(candidate, pattern, cfg)
-  elseif expand == "shellcmd" or expand == "environment" then
-    M.hide()
-    return
+  elseif expand == "option" then
+    title, scroll_line = load_option(candidate)
+    if not title then
+      load_fallback(candidate)
+      title = candidate
+    end
+  elseif expand == "highlight" then
+    title = load_highlight(candidate)
+    if not title then
+      load_fallback(candidate)
+      title = candidate
+    end
+  elseif expand == "command" then
+    title, scroll_line = load_command(candidate)
+    if not title then
+      load_fallback(candidate)
+      title = candidate
+    end
+  elseif expand == "environment" then
+    title = load_environment(candidate)
+  elseif expand == "shellcmd" then
+    title = load_shellcmd(candidate)
+    if not title then
+      load_fallback(candidate)
+      title = candidate
+    end
+  elseif expand == "event" then
+    title, scroll_line = load_event(candidate)
+    if not title then
+      load_fallback(candidate)
+      title = candidate
+    end
   else
     -- Heuristic: try as file/directory first
     local expanded = safe_expand(candidate)
