@@ -263,10 +263,47 @@ T["detect_expand()"]["detects from cmd heuristic"] = function()
   expect.equality(util.detect_expand({ cmd = "tabedit" }), "file")
 end
 
+T["detect_expand()"]["detects option from expand field"] = function()
+  expect.equality(util.detect_expand({ expand = "option" }), "option")
+end
+
+T["detect_expand()"]["detects option from cmd heuristic"] = function()
+  expect.equality(util.detect_expand({ cmd = "set" }), "option")
+  expect.equality(util.detect_expand({ cmd = "se" }), "option")
+  expect.equality(util.detect_expand({ cmd = "setlocal" }), "option")
+  expect.equality(util.detect_expand({ cmd = "setl" }), "option")
+  expect.equality(util.detect_expand({ cmd = "setglobal" }), "option")
+  expect.equality(util.detect_expand({ cmd = "setg" }), "option")
+end
+
+T["detect_expand()"]["detects highlight from expand field"] = function()
+  expect.equality(util.detect_expand({ expand = "highlight" }), "highlight")
+end
+
+T["detect_expand()"]["detects command from expand and cmd"] = function()
+  expect.equality(util.detect_expand({ expand = "command" }), "command")
+  expect.equality(util.detect_expand({ expand = "user_commands" }), "command")
+  expect.equality(util.detect_expand({ cmd = "command" }), "command")
+  expect.equality(util.detect_expand({ cmd = "com" }), "command")
+  expect.equality(util.detect_expand({ cmd = "delcommand" }), "command")
+end
+
+T["detect_expand()"]["detects event from expand and cmd"] = function()
+  expect.equality(util.detect_expand({ expand = "event" }), "event")
+  expect.equality(util.detect_expand({ cmd = "autocmd" }), "event")
+  expect.equality(util.detect_expand({ cmd = "au" }), "event")
+  expect.equality(util.detect_expand({ cmd = "doautocmd" }), "event")
+end
+
+T["detect_expand()"]["detects highlight from cmd heuristic"] = function()
+  expect.equality(util.detect_expand({ cmd = "highlight" }), "highlight")
+  expect.equality(util.detect_expand({ cmd = "hi" }), "highlight")
+end
+
 T["detect_expand()"]["returns nil for unknown"] = function()
   expect.equality(util.detect_expand({}), nil)
-  expect.equality(util.detect_expand({ cmd = "set" }), nil)
-  expect.equality(util.detect_expand({ expand = "option" }), nil)
+  expect.equality(util.detect_expand({ cmd = "lua" }), nil)
+  expect.equality(util.detect_expand({ expand = "custom" }), nil)
 end
 
 T["detect_expand()"]["expand field takes priority over cmd"] = function()
@@ -279,7 +316,7 @@ T["detect_expand()"]["cmd matching is case-insensitive"] = function()
 end
 
 T["detect_expand()"]["all _cmd_to_expand entries are valid"] = function()
-  local valid = { file = true, buffer = true, help = true }
+  local valid = { file = true, buffer = true, help = true, option = true, highlight = true, command = true, event = true }
   for cmd, expand in pairs(util._cmd_to_expand) do
     expect.equality(valid[expand], true)
     expect.equality(type(cmd), "string")
@@ -310,6 +347,39 @@ T["_cmd_to_expand"]["covers abbreviations for help commands"] = function()
   local t = util._cmd_to_expand
   expect.equality(t.help, "help")
   expect.equality(t.h, "help")
+end
+
+T["_cmd_to_expand"]["covers abbreviations for option commands"] = function()
+  local t = util._cmd_to_expand
+  expect.equality(t.set, "option")
+  expect.equality(t.se, "option")
+  expect.equality(t.setlocal, "option")
+  expect.equality(t.setl, "option")
+  expect.equality(t.setglobal, "option")
+  expect.equality(t.setg, "option")
+end
+
+T["_cmd_to_expand"]["covers abbreviations for highlight commands"] = function()
+  local t = util._cmd_to_expand
+  expect.equality(t.highlight, "highlight")
+  expect.equality(t.hi, "highlight")
+end
+
+T["_cmd_to_expand"]["covers abbreviations for command commands"] = function()
+  local t = util._cmd_to_expand
+  expect.equality(t.command, "command")
+  expect.equality(t.com, "command")
+  expect.equality(t.delcommand, "command")
+  expect.equality(t.delc, "command")
+end
+
+T["_cmd_to_expand"]["covers abbreviations for event commands"] = function()
+  local t = util._cmd_to_expand
+  expect.equality(t.autocmd, "event")
+  expect.equality(t.au, "event")
+  expect.equality(t.doautocmd, "event")
+  expect.equality(t.doa, "event")
+  expect.equality(t.doautoall, "event")
 end
 
 -- ─── resolve() ──────────────────────────────────────────────────────────

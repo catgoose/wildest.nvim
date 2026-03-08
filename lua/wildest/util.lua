@@ -225,6 +225,18 @@ function M.detect_expand(data)
     if e == "environment" then
       return "environment"
     end
+    if e == "option" then
+      return "option"
+    end
+    if e == "highlight" then
+      return "highlight"
+    end
+    if e == "command" or e == "user_commands" then
+      return "command"
+    end
+    if e == "event" then
+      return "event"
+    end
     return nil
   end
   if data.cmd then
@@ -250,6 +262,23 @@ M._cmd_to_expand = {
   vs = "file",
   tabedit = "file",
   tabe = "file",
+  set = "option",
+  se = "option",
+  setlocal = "option",
+  setl = "option",
+  setglobal = "option",
+  setg = "option",
+  highlight = "highlight",
+  hi = "highlight",
+  command = "command",
+  com = "command",
+  delcommand = "command",
+  delc = "command",
+  autocmd = "event",
+  au = "event",
+  doautocmd = "event",
+  doa = "event",
+  doautoall = "event",
 }
 
 return M
