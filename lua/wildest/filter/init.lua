@@ -1,4 +1,4 @@
----@mod wildest.filter Fuzzy Filter
+---@mod wildest.fuzzy Fuzzy Filter
 ---@brief [[
 ---C FFI fuzzy matching filter for wildest.nvim.
 ---Uses a compiled C library (fuzzy.so) for high-performance fuzzy matching,

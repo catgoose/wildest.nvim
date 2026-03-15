@@ -592,13 +592,6 @@ function M.popupmenu_buffer_flags(opts)
   return require("wildest.renderer.components.buffer_flags").new(opts)
 end
 
----Frecency heatmap bar — colored indicator based on usage frequency.
----@param opts? table
----@return wildest.Component
-function M.popupmenu_frecency_bar(opts)
-  return require("wildest.renderer.components.frecency_bar").new(opts)
-end
-
 ---Empty message with animated spinner.
 ---@param opts? table
 ---@return wildest.Component

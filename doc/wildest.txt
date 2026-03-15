@@ -26,7 +26,7 @@ Session State ·································
 Utilities ······················································· |wildest.util|
 Cache ·························································· |wildest.cache|
 Pipeline Engine ············································· |wildest.pipeline|
-Fuzzy Filter ·················································· |wildest.filter|
+Fuzzy Filter ··················································· |wildest.fuzzy|
 Highlight Utilities ········································ |wildest.highlight|
 Renderer Utilities ·········································· |wildest.renderer|
 
@@ -493,16 +493,6 @@ M.popupmenu_devicons({opts?})                       *wildest.popupmenu_devicons*
 
 M.popupmenu_buffer_flags({opts?})               *wildest.popupmenu_buffer_flags*
     Buffer flags component (modified, readonly, etc.).
-
-    Parameters: ~
-        {opts?}  (table)
-
-    Returns: ~
-        (wildest.Component)
-
-
-M.popupmenu_frecency_bar({opts?})               *wildest.popupmenu_frecency_bar*
-    Frecency heatmap bar — colored indicator based on usage frequency.
 
     Parameters: ~
         {opts?}  (table)
@@ -1375,7 +1365,7 @@ M.run({pipeline}, {on_finish}, {on_error}, {ctx}, {x})
 
 
 ==============================================================================
-Fuzzy Filter                                                    *wildest.filter*
+Fuzzy Filter                                                     *wildest.fuzzy*
 
 C FFI fuzzy matching filter for wildest.nvim.
 Uses a compiled C library (fuzzy.so) for high-performance fuzzy matching,
@@ -1387,7 +1377,7 @@ wildest.FuzzyFilterOpts                                *wildest.FuzzyFilterOpts*
         {key?}  (fun(candidate:any):string)  Key extraction function
 
 
-M.has_match({needle}, {haystack})                     *wildest.filter.has_match*
+M.has_match({needle}, {haystack})                      *wildest.fuzzy.has_match*
      Check if needle fuzzy-matches haystack
 
     Parameters: ~
@@ -1398,7 +1388,7 @@ M.has_match({needle}, {haystack})                     *wildest.filter.has_match*
         (boolean)
 
 
-M.score({needle}, {haystack})                             *wildest.filter.score*
+M.score({needle}, {haystack})                              *wildest.fuzzy.score*
      Score a single fuzzy match
 
     Parameters: ~
@@ -1409,7 +1399,7 @@ M.score({needle}, {haystack})                             *wildest.filter.score*
         (number)
 
 
-M.filter_sort({needle}, {candidates})               *wildest.filter.filter_sort*
+M.filter_sort({needle}, {candidates})                *wildest.fuzzy.filter_sort*
      Batch filter and sort candidates by fuzzy match score
      This is the hot path — called on every keystroke
 
@@ -1422,7 +1412,7 @@ M.filter_sort({needle}, {candidates})               *wildest.filter.filter_sort*
         (number[])  scores
 
 
-M.positions({needle}, {haystack})                     *wildest.filter.positions*
+M.positions({needle}, {haystack})                      *wildest.fuzzy.positions*
      Get matched character positions for highlighting
 
     Parameters: ~
@@ -1433,7 +1423,7 @@ M.positions({needle}, {haystack})                     *wildest.filter.positions*
         (integer[]|nil)  (0-indexed byte positions)
 
 
-M.fuzzy_filter({opts?})                            *wildest.filter.fuzzy_filter*
+M.fuzzy_filter({opts?})                             *wildest.fuzzy.fuzzy_filter*
      Create a fuzzy filter pipeline function
 
     Parameters: ~
